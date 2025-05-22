@@ -1,103 +1,64 @@
-import Image from "next/image";
+// import Image from "next/image"; // Keep Image import if you plan to use a logo later
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-160px)] text-center p-6 bg-gray-50">
+      <div className="max-w-2xl">
+        {/* Optional: You can add a logo here if you have one */}
+        {/* <Image src="/logo.svg" alt="WeSustainEco Logo" width={150} height={50} className="mb-8" /> */}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+        <h1 className="text-5xl font-bold text-green-700 mb-6">
+          WeSustainEco is Coming Soon!
+        </h1>
+
+        <p className="text-xl text-gray-700 mb-4">
+          Our new website is currently under construction. We&apos;re working
+          hard to create a platform dedicated to driving sustainable futures.
+        </p>
+
+        <p className="text-lg text-gray-600 mb-8">
+          We&apos;re excited to share our innovative solutions for
+          environmental, governmental, and social sustainability. Please check
+          back soon for updates!
+        </p>
+
+        <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+            Want to get in touch or learn more?
+          </h2>
+          <p className="text-gray-700 mb-1">
+            This project is being developed by EKD Digital.
+          </p>
+          <p className="text-gray-700">
+            Contact us at:{" "}
+            <a
+              href="mailto:ekd@ekddigital.com"
+              className="text-blue-600 hover:underline"
+            >
+              ekd@ekddigital.com
+            </a>
+          </p>
+          <p className="text-gray-700 mt-1">
+            Visit our website:{" "}
+            <a
+              href="https://www.ekddigital.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline"
+            >
+              www.ekddigital.com
+            </a>
+          </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        {/* Optional: Add a countdown timer or a newsletter signup form here later */}
+        {/* 
+        <div className="mt-10">
+          <p className="text-gray-500">Sign up for our newsletter to get notified when we launch!</p>
+          // Newsletter form component
+        </div>
+        */}
+      </div>
     </div>
   );
 }
