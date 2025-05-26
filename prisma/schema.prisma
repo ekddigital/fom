@@ -1,0 +1,211 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  clerk_id   String   @unique
+  email      String   @unique
+  name       String?
+  avatar_url String?
+  role       Role     @default(STUDENT)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  studentProgress     StudentProgress[] // Relation to StudentProgress
+  createdSubjects     Subject[]         @relation("CreatedSubjects") // Subjects created by this user (e.g. teacher/admin)
+  authoredDiscussions Discussion[] // Discussions authored by this user
+  friendshipsA        Friendship[]      @relation("FriendshipsA") // Friendships initiated by this user
+  friendshipsB        Friendship[]      @relation("FriendshipsB") // Friendships received by this user
+  testAttempts        TestAttempt[] // Test attempts by this user
+  tips                Tip[] // Tips created by this user
+  teacherAssignments  Assignment[]      @relation("TeacherAssignments") // Assignments created by this teacher
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+model Subject {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  created_by  String? // clerk_id of the user who created this subject
+  creator     User?        @relation("CreatedSubjects", fields: [created_by], references: [clerk_id])
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  chapters    Chapter[] // Relation to Chapter
+  assignments Assignment[] // Assignments for this subject
+}
+
+model Chapter {
+  id         String   @id @default(cuid())
+  title      String
+  order      Int // Order of the chapter within a subject
+  subject_id String
+  subject    Subject  @relation(fields: [subject_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  topics     Topic[] // Relation to Topic
+}
+
+model Topic {
+  id         String   @id @default(cuid())
+  title      String
+  order      Int // Order of the topic within a chapter
+  chapter_id String
+  chapter    Chapter  @relation(fields: [chapter_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  studentProgress StudentProgress[] // Relation to StudentProgress
+  questions       Question[] // Questions for this topic
+  discussions     Discussion[] // Discussions related to this topic
+  tips            Tip[] // Tips for this topic
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+model StudentProgress {
+  id             String         @id @default(cuid())
+  user_id        String
+  user           User           @relation(fields: [user_id], references: [clerk_id]) // Changed to clerk_id
+  topic_id       String
+  topic          Topic          @relation(fields: [topic_id], references: [id])
+  status         ProgressStatus @default(NOT_STARTED)
+  best_score     Int?
+  last_attempted DateTime?
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+
+  @@unique([user_id, topic_id]) // Ensure a user has only one progress entry per topic
+}
+
+// Models for Milestone 3: Adaptive Testing & Personalized Recommendations
+model Question {
+  id               String        @id @default(cuid())
+  topic_id         String
+  topic            Topic         @relation(fields: [topic_id], references: [id])
+  question_text    String        @db.Text
+  choices          Json // Example: { "a": "Choice A", "b": "Choice B", "c": "Choice C" }
+  correct_choice   String // Example: "a"
+  difficulty_level Int           @default(1) // e.g., 1 (easy), 2 (medium), 3 (hard)
+  explanation      String?       @db.Text
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  testAttempts     TestAttempt[]
+}
+
+model TestAttempt {
+  id            String   @id @default(cuid())
+  user_id       String
+  user          User     @relation(fields: [user_id], references: [clerk_id]) // Changed to clerk_id
+  question_id   String
+  question      Question @relation(fields: [question_id], references: [id])
+  chosen_choice String
+  is_correct    Boolean
+  attempted_at  DateTime @default(now())
+
+  @@index([user_id])
+  @@index([question_id])
+}
+
+// Models for Milestone 4: Social Learning & Collaboration
+model Friendship {
+  id           String           @id @default(cuid())
+  requester_id String
+  requester    User             @relation("FriendshipsA", fields: [requester_id], references: [clerk_id]) // Changed to clerk_id
+  addressee_id String
+  addressee    User             @relation("FriendshipsB", fields: [addressee_id], references: [clerk_id]) // Changed to clerk_id
+  status       FriendshipStatus @default(PENDING)
+  created_at   DateTime         @default(now())
+  updated_at   DateTime         @updatedAt
+
+  @@unique([requester_id, addressee_id])
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+  DECLINED // Added DECLINED status
+}
+
+model Discussion {
+  id         String       @id @default(cuid())
+  topic_id   String? // Can be null if discussion is general (not tied to a topic)
+  topic      Topic?       @relation(fields: [topic_id], references: [id])
+  author_id  String
+  author     User         @relation(fields: [author_id], references: [clerk_id]) // Changed to clerk_id
+  content    String       @db.Text
+  parent_id  String? // For threaded replies
+  parent     Discussion?  @relation("Replies", fields: [parent_id], references: [id], onDelete: Cascade)
+  replies    Discussion[] @relation("Replies")
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+
+  @@index([author_id])
+  @@index([topic_id])
+  @@index([parent_id])
+}
+
+// Optional: Model for user-posted tips (Milestone 5)
+model Tip {
+  id       String  @id @default(cuid())
+  user_id  String
+  user     User    @relation(fields: [user_id], references: [clerk_id]) // Changed to clerk_id
+  content  String  @db.Text
+  topic_id String? // Optional: Tip can be general or topic-specific
+  topic    Topic?  @relation(fields: [topic_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([user_id])
+  @@index([topic_id])
+}
+
+model Assignment {
+  id          String           @id @default(cuid())
+  title       String
+  description String?          @db.Text
+  dueDate     DateTime?
+  status      AssignmentStatus @default(DRAFT)
+
+  teacherId String // clerk_id of the teacher who created the assignment
+  teacher   User   @relation("TeacherAssignments", fields: [teacherId], references: [clerk_id])
+
+  subjectId String? // Optional: if the assignment is for a specific subject
+  subject   Subject? @relation(fields: [subjectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Future: Consider a relation for student submissions/grades
+  // studentSubmissions StudentAssignmentSubmission[]
+
+  @@index([teacherId])
+  @@index([subjectId])
+}
+
+enum AssignmentStatus {
+  DRAFT
+  PUBLISHED // Available to students
+  GRADING // Submissions closed, teacher is grading
+  COMPLETED // Grading finished, results may be available
+  ARCHIVED // No longer active
+}
