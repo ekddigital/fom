@@ -29,7 +29,7 @@ export function HeroSection({ className = "" }: HeroSectionProps) {
         </h1>
 
         <p className="text-xl sm:text-2xl md:text-3xl text-fom-secondary mb-8 max-w-4xl mx-auto font-semibold leading-relaxed">
-          "{FOM_BRAND.scriptureText}" - {FOM_BRAND.scriptureVerse}
+          &quot;{FOM_BRAND.scriptureText}&quot; - {FOM_BRAND.scriptureVerse}
         </p>
 
         <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-12 max-w-5xl mx-auto leading-relaxed">

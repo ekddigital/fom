@@ -25,7 +25,9 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                 gospel and making disciples of all nations.
               </p>
               <div className="mt-8 text-sm text-blue-200">
-                <p>"Go therefore and make disciples of all nations..."</p>
+                <p>
+                  &quot;Go therefore and make disciples of all nations...&quot;
+                </p>
                 <p className="font-semibold">- Matthew 28:19-20</p>
               </div>
             </div>

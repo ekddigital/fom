@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/lib/hooks/use-auth";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -26,7 +27,6 @@ import {
   Calendar,
   MessageCircle,
   Users,
-  Heart,
   Award,
   Shield,
   BarChart3,
@@ -34,7 +34,7 @@ import {
 
 // Mobile Sidebar Component
 function MobileSidebar({ onClose }: { onClose: () => void }) {
-  const { user, canManageContent, canAccessAdmin } = useAuth();
+  const { canManageContent, canAccessAdmin } = useAuth();
   const pathname = usePathname();
 
   const navigation = [
@@ -135,14 +135,14 @@ function MobileSidebar({ onClose }: { onClose: () => void }) {
       </div>
       <nav className="flex-1 px-4 py-4 space-y-2 overflow-y-auto">
         {/* Back to Main Site - Mobile Only */}
-        <a
+        <Link
           href="/"
           onClick={onClose}
           className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-b border-gray-100 mb-2 pb-2"
         >
           <Home className="mr-3 h-5 w-5 text-gray-400" />
           Back to Main Site
-        </a>
+        </Link>
 
         {navigation.map((item) => {
           const IconComponent = item.icon;
@@ -255,19 +255,19 @@ export function DashboardHeader() {
               <MobileSidebar onClose={() => setIsMobileMenuOpen(false)} />
             </SheetContent>
           </Sheet>
-          <a
+          <Link
             href="/"
             className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
           >
             <FomLogo size="md" />
-          </a>
+          </Link>
           <div className="hidden md:flex items-center space-x-4">
             <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
             <Button variant="outline" size="sm" asChild>
-              <a href="/" className="flex items-center space-x-1">
+              <Link href="/" className="flex items-center space-x-1">
                 <Home className="w-4 h-4" />
                 <span>Back to Main Site</span>
-              </a>
+              </Link>
             </Button>
           </div>
         </div>

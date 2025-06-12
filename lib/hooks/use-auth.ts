@@ -3,10 +3,21 @@
 
 "use client";
 
-import { useSession, signIn as nextAuthSignIn, signOut as nextAuthSignOut } from "next-auth/react";
+import {
+  useSession,
+  signIn as nextAuthSignIn,
+  signOut as nextAuthSignOut,
+} from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FOMUser, UserRegistrationData, SignInResponse, SignUpResponse, AuthResponse, UserProfileUpdateData } from "@/lib/types/auth";
+import {
+  FOMUser,
+  UserRegistrationData,
+  SignInResponse,
+  SignUpResponse,
+  AuthResponse,
+  UserProfileUpdateData,
+} from "@/lib/types/auth";
 import { formatUserName } from "@/lib/utils/user";
 
 export function useAuth() {
@@ -18,27 +29,39 @@ export function useAuth() {
   const loading = status === "loading" || isLoading;
 
   // Convert NextAuth session to FOM user format
-  const user: FOMUser | null = session?.user ? {
-    id: session.user.id,
-    email: session.user.email!,
-    emailVerified: null, // Would be populated from database if needed
-    firstName: session.user.firstName,
-    lastName: session.user.lastName,
-    username: session.user.username || null,
-    displayNamePreference: session.user.displayNamePreference as any,
-    profileVisibility: "members_only", // Default, would be loaded from database
-    role: session.user.role as any,
-    password: null,
-    avatarUrl: session.user.image || null,
-    ministryInterests: [], // Would be loaded from database
-    certificateSharingEnabled: true, // Default
-    joinedDate: new Date(), // Would be actual date from database
-    lastActive: new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  } : null;
+  const user: FOMUser | null = session?.user
+    ? {
+        id: session.user.id,
+        email: session.user.email!,
+        emailVerified: null, // Would be populated from database if needed
+        firstName: session.user.firstName,
+        lastName: session.user.lastName,
+        username: session.user.username || null,
+        displayNamePreference: session.user.displayNamePreference as
+          | "first_name"
+          | "username"
+          | "full_name",
+        profileVisibility: "members_only", // Default, would be loaded from database
+        role: session.user.role as
+          | "member"
+          | "ministry_leader"
+          | "visitor"
+          | "administrator",
+        password: null,
+        avatarUrl: session.user.image || null,
+        ministryInterests: [], // Would be loaded from database
+        certificateSharingEnabled: true, // Default
+        joinedDate: new Date(), // Would be actual date from database
+        lastActive: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+    : null;
 
-  const signIn = async (email: string, password: string): Promise<SignInResponse> => {
+  const signIn = async (
+    email: string,
+    password: string
+  ): Promise<SignInResponse> => {
     setIsLoading(true);
     try {
       const result = await nextAuthSignIn("credentials", {
@@ -120,7 +143,9 @@ export function useAuth() {
     }
   };
 
-  const signUp = async (userData: UserRegistrationData): Promise<SignUpResponse> => {
+  const signUp = async (
+    userData: UserRegistrationData
+  ): Promise<SignUpResponse> => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/auth/register", {
@@ -142,8 +167,8 @@ export function useAuth() {
       }
 
       // Automatically sign in after successful registration
-      const signInResult = await signIn(userData.email, userData.password);
-      
+      await signIn(userData.email, userData.password);
+
       return {
         success: true,
         message: "Account created successfully",
@@ -160,7 +185,9 @@ export function useAuth() {
     }
   };
 
-  const updateProfile = async (profileData: UserProfileUpdateData): Promise<AuthResponse> => {
+  const updateProfile = async (
+    profileData: UserProfileUpdateData
+  ): Promise<AuthResponse> => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/users/profile", {
@@ -197,9 +224,13 @@ export function useAuth() {
     }
   };
 
-  const checkUsernameAvailability = async (username: string): Promise<boolean> => {
+  const checkUsernameAvailability = async (
+    username: string
+  ): Promise<boolean> => {
     try {
-      const response = await fetch(`/api/users/check-username?username=${encodeURIComponent(username)}`);
+      const response = await fetch(
+        `/api/users/check-username?username=${encodeURIComponent(username)}`
+      );
       const data = await response.json();
       return data.available;
     } catch (error) {
@@ -221,8 +252,10 @@ export function useAuth() {
       administrator: 3,
     };
 
-    const userLevel = roleHierarchy[user?.role as keyof typeof roleHierarchy] ?? 0;
-    const requiredLevel = roleHierarchy[minimumRole as keyof typeof roleHierarchy] ?? 0;
+    const userLevel =
+      roleHierarchy[user?.role as keyof typeof roleHierarchy] ?? 0;
+    const requiredLevel =
+      roleHierarchy[minimumRole as keyof typeof roleHierarchy] ?? 0;
 
     return userLevel >= requiredLevel;
   };
@@ -253,7 +286,9 @@ export function useAuth() {
 
   const getUserInitials = (): string => {
     if (!user) return "";
-    return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+    return `${user.firstName.charAt(0)}${user.lastName.charAt(
+      0
+    )}`.toUpperCase();
   };
 
   return {
@@ -261,28 +296,28 @@ export function useAuth() {
     user,
     isAuthenticated,
     isLoading: loading,
-    
+
     // Authentication methods
     signIn,
     signInWithGoogle,
     signOut,
     signUp,
-    
+
     // Profile management
     updateProfile,
     checkUsernameAvailability,
-    
+
     // Role-based access
     hasRole,
     hasMinimumRole,
     canAccessDashboard,
     canManageContent,
     canAccessAdmin,
-    
+
     // User utilities
     getDisplayName,
     getUserInitials,
-    
+
     // Convenience properties
     role: user?.role || null,
     displayName: getDisplayName(),

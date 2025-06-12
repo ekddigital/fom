@@ -107,12 +107,12 @@ export default function AboutPage() {
                 {FOM_BRAND.name} is dedicated to fulfilling the Great Commission
                 by making disciples of all nations. We believe in the
                 transformative power of the Gospel and are committed to sharing
-                God's love through practical ministry, community outreach, and
-                global missions.
+                God&apos;s love through practical ministry, community outreach,
+                and global missions.
               </p>
               <blockquote className="border-l-4 border-blue-500 pl-6 mb-6">
                 <p className="text-xl font-semibold text-blue-950 mb-2">
-                  "{FOM_BRAND.scriptureText}"
+                  &quot;{FOM_BRAND.scriptureText}&quot;
                 </p>
                 <cite className="text-blue-700">
                   - {FOM_BRAND.scriptureVerse}
@@ -120,7 +120,7 @@ export default function AboutPage() {
               </blockquote>
               <blockquote className="border-l-4 border-blue-500 pl-6">
                 <p className="text-xl font-semibold text-blue-950 mb-2">
-                  "{FOM_BRAND.greatCommissionText}"
+                  &quot;{FOM_BRAND.greatCommissionText}&quot;
                 </p>
                 <cite className="text-blue-700">
                   - {FOM_BRAND.greatCommission}
@@ -136,7 +136,7 @@ export default function AboutPage() {
                 </CardHeader>
                 <CardContent className="p-8 text-center">
                   <p className="text-xl font-semibold text-blue-950 mb-4">
-                    "{FOM_BRAND.covenantText}"
+                    &quot;{FOM_BRAND.covenantText}&quot;
                   </p>
                   <cite className="text-blue-700 font-medium">
                     - {FOM_BRAND.covenantVerse}

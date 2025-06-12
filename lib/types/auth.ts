@@ -2,7 +2,6 @@
 // Following Prisma camelCase naming and NextAuth integration
 
 import { DefaultSession, DefaultUser } from "next-auth";
-import { JWT } from "next-auth/jwt";
 
 // Extend the built-in NextAuth types
 declare module "next-auth" {

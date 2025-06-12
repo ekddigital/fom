@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
   Eye,
@@ -89,27 +88,30 @@ export default function SignUpPage() {
     "idle" | "checking" | "available" | "taken"
   >("idle");
 
-  // Debounced username check
-  const debouncedUsernameCheck = useCallback(
-    debounce(async (username: string) => {
-      if (username.length >= 3) {
-        setUsernameStatus("checking");
-        const available = await checkUsernameAvailability(username);
-        setUsernameStatus(available ? "available" : "taken");
+  // Create the username check function
+  const checkUsername = useCallback(async (username: string) => {
+    if (username.length >= 3) {
+      setUsernameStatus("checking");
+      const available = await checkUsernameAvailability(username);
+      setUsernameStatus(available ? "available" : "taken");
 
-        if (!available) {
-          setErrors((prev) => ({
-            ...prev,
-            username: "This username is already taken",
-          }));
-        } else {
-          setErrors((prev) => ({ ...prev, username: "" }));
-        }
+      if (!available) {
+        setErrors((prev) => ({
+          ...prev,
+          username: "This username is already taken",
+        }));
       } else {
-        setUsernameStatus("idle");
+        setErrors((prev) => ({ ...prev, username: "" }));
       }
-    }, 500),
-    [checkUsernameAvailability]
+    } else {
+      setUsernameStatus("idle");
+    }
+  }, []);
+
+  // Debounced username check
+  const debouncedUsernameCheck = useMemo(
+    () => debounce(checkUsername, 500),
+    [checkUsername]
   );
 
   const handleInputChange = (field: string, value: string) => {
@@ -474,7 +476,7 @@ export default function SignUpPage() {
               Ministry Interests (Optional)
             </Label>
             <p className="text-xs text-gray-600">
-              Select areas where you'd like to serve or learn more about:
+              Select areas where you&apos;d like to serve or learn more about:
             </p>
             <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
               {MINISTRY_INTERESTS.map((interest) => (

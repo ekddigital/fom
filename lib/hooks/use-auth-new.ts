@@ -37,9 +37,16 @@ export function useAuth() {
         firstName: session.user.firstName,
         lastName: session.user.lastName,
         username: session.user.username || null,
-        displayNamePreference: session.user.displayNamePreference as any,
+        displayNamePreference: session.user.displayNamePreference as
+          | "first_name"
+          | "username"
+          | "full_name",
         profileVisibility: "members_only", // Default, would be loaded from database
-        role: session.user.role as any,
+        role: session.user.role as
+          | "member"
+          | "ministry_leader"
+          | "visitor"
+          | "administrator",
         password: null,
         avatarUrl: session.user.image || null,
         ministryInterests: [], // Would be loaded from database
@@ -160,7 +167,7 @@ export function useAuth() {
       }
 
       // Automatically sign in after successful registration
-      const signInResult = await signIn(userData.email, userData.password);
+      await signIn(userData.email, userData.password);
 
       return {
         success: true,

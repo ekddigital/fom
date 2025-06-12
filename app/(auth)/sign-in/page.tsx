@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,8 +24,7 @@ const signInSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
-export default function SignInPage() {
-  const router = useRouter();
+function SignInForm() {
   const searchParams = useSearchParams();
   const { signIn, signInWithGoogle, isLoading } = useAuth();
 
@@ -37,7 +36,6 @@ export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [generalError, setGeneralError] = useState("");
 
-  const callbackUrl = searchParams?.get("callbackUrl") || "/dash";
   const error = searchParams?.get("error");
 
   const handleInputChange = (field: string, value: string) => {
@@ -256,7 +254,7 @@ export default function SignInPage() {
         {/* Sign Up Link */}
         <div className="text-center">
           <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link
               href="/sign-up"
               className="font-medium text-fom-primary hover:underline"
@@ -267,5 +265,13 @@ export default function SignInPage() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInForm />
+    </Suspense>
   );
 }

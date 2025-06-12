@@ -97,9 +97,9 @@ export default function ContactPage() {
               Contact Us
             </h1>
             <p className="text-xl sm:text-2xl text-gray-700 max-w-4xl mx-auto mb-8 leading-relaxed">
-              We'd love to hear from you! Whether you have questions, prayer
-              requests, or want to get involved in our ministry, we're here to
-              connect.
+              We&apos;d love to hear from you! Whether you have questions,
+              prayer requests, or want to get involved in our ministry,
+              we&apos;re here to connect.
             </p>
             <Badge
               variant="outline"
@@ -336,8 +336,8 @@ export default function ContactPage() {
             Emergency Pastoral Care
           </h2>
           <p className="text-lg text-red-700 mb-6">
-            If you're experiencing a spiritual or personal crisis and need
-            immediate pastoral care, we're here for you 24/7.
+            If you&apos;re experiencing a spiritual or personal crisis and need
+            immediate pastoral care, we&apos;re here for you 24/7.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button

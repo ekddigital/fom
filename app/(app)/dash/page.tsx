@@ -244,7 +244,7 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle>Upcoming Events</CardTitle>
             <CardDescription>
-              Don't miss these ministry opportunities
+              Don&apos;t miss these ministry opportunities
             </CardDescription>
           </CardHeader>
           <CardContent>

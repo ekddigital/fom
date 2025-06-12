@@ -47,7 +47,7 @@ function TestimonialCard({
               featured ? "text-lg" : "text-base"
             } text-gray-700 leading-relaxed italic flex-1`}
           >
-            "{quote}"
+            &quot;{quote}&quot;
           </blockquote>
         </div>
 

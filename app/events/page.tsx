@@ -145,7 +145,7 @@ export default function EventsPage() {
               Featured Events
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Don't miss these special upcoming events and celebrations
+              Don&apos;t miss these special upcoming events and celebrations
             </p>
           </div>
 

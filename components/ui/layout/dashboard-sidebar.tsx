@@ -10,7 +10,6 @@ import {
   Calendar,
   MessageCircle,
   Users,
-  Heart,
   Award,
   Settings,
   Shield,
@@ -19,7 +18,7 @@ import {
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const { user, canManageContent, canAccessAdmin } = useAuth();
+  const { canManageContent, canAccessAdmin } = useAuth();
 
   const navigation = [
     {

@@ -41,7 +41,7 @@ const profileUpdateSchema = z.object({
   avatarUrl: z.string().url().optional().nullable(),
 });
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
 
@@ -156,7 +156,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Prepare update object
-    const updateObject: any = {};
+    const updateObject: Record<string, unknown> = {};
 
     if (updateData.firstName !== undefined)
       updateObject.firstName = updateData.firstName;

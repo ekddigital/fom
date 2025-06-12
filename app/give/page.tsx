@@ -100,9 +100,9 @@ export default function GivePage() {
               disciples of all nations.
             </p>
             <blockquote className="text-lg italic text-blue-800 mb-8">
-              "Give, and it will be given to you. A good measure, pressed down,
-              shaken together and running over, will be poured into your lap." -
-              Luke 6:38
+              &quot;Give, and it will be given to you. A good measure, pressed
+              down, shaken together and running over, will be poured into your
+              lap.&quot; - Luke 6:38
             </blockquote>
             <Button className="bg-gradient-to-r from-blue-950 to-blue-800 hover:from-blue-800 hover:to-blue-700 text-white px-8 py-3 text-lg">
               <Heart className="w-5 h-5 mr-2" />

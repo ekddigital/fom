@@ -16,7 +16,6 @@ import { FOM_NAVIGATION, FOM_FEATURES } from "@/lib/constants/fom";
 import { useAuth } from "@/lib/hooks/use-auth";
 import {
   Menu,
-  ChevronDown,
   Heart,
   Users,
   Globe,
@@ -25,7 +24,6 @@ import {
   MessageCircle,
   User,
   Settings,
-  Shield,
   Award,
   FileText,
   Video,
@@ -76,7 +74,7 @@ const communityIcons = {
 };
 
 export function PublicHeader({ className = "" }: PublicHeaderProps) {
-  const { isAuthenticated, user, signOut } = useAuth();
+  const { isAuthenticated, signOut } = useAuth();
 
   return (
     <header

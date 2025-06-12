@@ -1,11 +1,11 @@
 import { FomLogo } from "@/components/ui/branding/fom-logo";
-import { FOM_BRAND, FOM_NAVIGATION } from "@/lib/constants/fom";
+import { FOM_BRAND } from "@/lib/constants/fom";
 
 interface PublicFooterProps {
   className?: string;
 }
 
-export function PublicFooter({ className = "" }: PublicFooterProps) {
+export function PublicFooter({}: PublicFooterProps) {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -147,11 +147,11 @@ export function PublicFooter({ className = "" }: PublicFooterProps) {
             rights reserved. | Founded in {FOM_BRAND.foundedYear}
           </p>
           <p className="text-cyan-300 text-xl max-w-4xl mx-auto leading-relaxed font-semibold">
-            "{FOM_BRAND.greatCommissionText}" - {FOM_BRAND.greatCommission}
+            &quot;{FOM_BRAND.greatCommissionText}&quot; -{" "}
+            {FOM_BRAND.greatCommission}
           </p>
         </div>
       </div>
-      
     </footer>
   );
 }
