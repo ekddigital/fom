@@ -37,15 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 
 ```bash
-### seed content into database
-npx prisma db seed
+npx create-next-app@latest . --typescript --tailwind --eslint --app --use-npm --import-alias "@/*"
 
-### if an update is done to the schema then run
-npx prisma db push
-
-### to see your prisma studio run
-npx prisma studio
-
-### start ngrok for webhook
-ngrok http 3000 
 ```

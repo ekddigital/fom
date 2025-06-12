@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Fishers of Men (FOM) Ministry Platform Database Schema with NextAuth Integration
+// Comprehensive digital ministry solution with robust authentication, certificate management, and social features
 
 generator client {
   provider = "prisma-client-js"
@@ -10,202 +10,522 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ========================================
+// NEXTAUTH.JS AUTHENTICATION MODELS
+// ========================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ========================================
+// ENHANCED USER MANAGEMENT
+// ========================================
+
 model User {
-  id         String   @id @default(cuid())
-  clerk_id   String   @unique
-  email      String   @unique
-  name       String?
-  avatar_url String?
-  role       Role     @default(STUDENT)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime? @map("email_verified")
+  
+  // Enhanced name fields following FOM requirements
+  firstName String   @map("first_name") @db.VarChar(50)
+  lastName  String   @map("last_name") @db.VarChar(50)
+  username  String?  @unique @db.VarChar(30)
+  
+  // Profile settings with FOM-specific preferences
+  displayNamePreference String @default("full_name") @map("display_name_preference") // "username" | "full_name" | "first_name"
+  profileVisibility     String @default("members_only") @map("profile_visibility") // "public" | "members_only" | "private"
+  
+  // Authentication & Role-based access control
+  role     String  @default("member") // "visitor" | "member" | "ministry_leader" | "administrator"
+  password String? // For email/password authentication (hashed with bcrypt)
+  
+  // Ministry-specific profile data
+  avatarUrl                 String?  @map("avatar_url") @db.VarChar(500)
+  ministryInterests         Json?    @map("ministry_interests") // Array of ministry interests
+  certificateSharingEnabled Boolean  @default(true) @map("certificate_sharing_enabled")
+  
+  // Timestamps
+  joinedDate DateTime @default(now()) @map("joined_date")
+  lastActive DateTime @default(now()) @map("last_active")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
-  studentProgress     StudentProgress[] // Relation to StudentProgress
-  createdSubjects     Subject[]         @relation("CreatedSubjects") // Subjects created by this user (e.g. teacher/admin)
-  authoredDiscussions Discussion[] // Discussions authored by this user
-  friendshipsA        Friendship[]      @relation("FriendshipsA") // Friendships initiated by this user
-  friendshipsB        Friendship[]      @relation("FriendshipsB") // Friendships received by this user
-  testAttempts        TestAttempt[] // Test attempts by this user
-  tips                Tip[] // Tips created by this user
-  teacherAssignments  Assignment[]      @relation("TeacherAssignments") // Assignments created by this teacher
+  // NextAuth Relations
+  accounts Account[]
+  sessions Session[]
+  
+  // FOM Platform Relations (to be implemented in future phases)
+  posts                Post[]
+  sermons              Sermon[]
+  donations            Donation[]
+  partnerships         Partnership[]
+  prayerRequests       PrayerRequest[]
+  eventRegistrations   EventRegistration[]
+  certificatesIssued   Certificate[]         @relation("CertificateIssuer")
+  certificatesReceived Certificate[]         @relation("CertificateRecipient")
+  friendsRequested     Friendship[]          @relation("FriendRequester")
+  friendsAddressed     Friendship[]          @relation("FriendAddressee")
+  conversationsCreated Conversation[]        @relation("ConversationCreator")
+  messages             Message[]
+  reactions            Reaction[]
+  comments             Comment[]
+  analyticsEvents      AnalyticsEvent[]
+  reportsGenerated     Report[]
+  createdEvents        Event[]
+  mediaUploads         Media[]
+  templateCreations    CertificateTemplate[]
+  missionTripsLed      MissionTrip[]
+
+  @@map("users")
 }
 
-enum Role {
-  STUDENT
-  TEACHER
-  ADMIN
+// ========================================
+// CONTENT MANAGEMENT & BLOG SYSTEM
+// ========================================
+
+model Post {
+  id                  String  @id @default(cuid())
+  authorId            String  @map("author_id")
+  title               String  @db.VarChar(255)
+  slug                String  @unique @db.VarChar(255)
+  content             String  @db.LongText
+  excerpt             String? @db.Text
+  category            String // "sermon" | "devotional" | "biblical_study" | "testimony" | "mission_report"
+  status              String  @default("draft") // "draft" | "published" | "scheduled"
+  featuredImage       String? @map("featured_image")
+  scriptureReferences Json?   @map("scripture_references") // Array of Bible references
+  tags                Json? // Array of tags
+  viewsCount          Int     @default(0) @map("views_count")
+
+  publishedAt DateTime? @map("published_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  // Relationships
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reactions Reaction[] @relation("PostReactions")
+  comments  Comment[]  @relation("PostComments")
+
+  @@map("posts")
 }
 
-model Subject {
-  id          String       @id @default(cuid())
-  title       String
-  description String?
-  created_by  String? // clerk_id of the user who created this subject
-  creator     User?        @relation("CreatedSubjects", fields: [created_by], references: [clerk_id])
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
-  chapters    Chapter[] // Relation to Chapter
-  assignments Assignment[] // Assignments for this subject
+model Media {
+  id           String   @id @default(cuid())
+  filename     String   @db.VarChar(255)
+  originalName String   @map("original_name") @db.VarChar(255)
+  mimeType     String   @map("mime_type") @db.VarChar(100)
+  fileSize     Int      @map("file_size")
+  filePath     String   @map("file_path") @db.VarChar(500)
+  altText      String?  @map("alt_text") @db.VarChar(255)
+  caption      String?  @db.Text
+  uploadedBy   String   @map("uploaded_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  uploader User @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@map("media")
 }
 
-model Chapter {
-  id         String   @id @default(cuid())
-  title      String
-  order      Int // Order of the chapter within a subject
-  subject_id String
-  subject    Subject  @relation(fields: [subject_id], references: [id])
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  topics     Topic[] // Relation to Topic
+model Sermon {
+  id                 String   @id @default(cuid())
+  title              String   @db.VarChar(255)
+  speaker            String   @db.VarChar(100)
+  seriesName         String?  @map("series_name") @db.VarChar(255)
+  scriptureReference String?  @map("scripture_reference") @db.VarChar(255)
+  audioUrl           String?  @map("audio_url") @db.VarChar(500)
+  videoUrl           String?  @map("video_url") @db.VarChar(500)
+  transcript         String?  @db.LongText
+  duration           Int? // Duration in seconds
+  datePreached       DateTime @map("date_preached")
+  tags               Json? // Array of tags
+  downloadsCount     Int      @default(0) @map("downloads_count")
+  viewsCount         Int      @default(0) @map("views_count")
+  createdBy          String   @map("created_by")
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  creator   User       @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  reactions Reaction[] @relation("SermonReactions")
+  comments  Comment[]  @relation("SermonComments")
+
+  @@map("sermons")
 }
 
-model Topic {
-  id         String   @id @default(cuid())
-  title      String
-  order      Int // Order of the topic within a chapter
-  chapter_id String
-  chapter    Chapter  @relation(fields: [chapter_id], references: [id])
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+// ========================================
+// PARTNERSHIP & DONATION SYSTEM
+// ========================================
 
-  studentProgress StudentProgress[] // Relation to StudentProgress
-  questions       Question[] // Questions for this topic
-  discussions     Discussion[] // Discussions related to this topic
-  tips            Tip[] // Tips for this topic
+model Donation {
+  id            String    @id @default(cuid())
+  donorId       String    @map("donor_id")
+  amount        Decimal   @db.Decimal(10, 2)
+  currency      String    @default("USD") @db.VarChar(3)
+  frequency     String // "one_time" | "monthly" | "quarterly" | "annual"
+  designation   String?   @db.VarChar(255) // What the donation is for
+  paymentMethod String    @map("payment_method") @db.VarChar(50)
+  transactionId String    @unique @map("transaction_id") @db.VarChar(255)
+  status        String    @default("pending") // "pending" | "completed" | "failed" | "refunded"
+  receiptSentAt DateTime? @map("receipt_sent_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // Relationships
+  donor User @relation(fields: [donorId], references: [id], onDelete: Cascade)
+
+  @@map("donations")
 }
 
-enum ProgressStatus {
-  NOT_STARTED
-  IN_PROGRESS
-  COMPLETED
+model Partnership {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  type              String // "prayer" | "financial" | "mission"
+  monthlyCommitment Decimal? @map("monthly_commitment") @db.Decimal(10, 2)
+  startDate         DateTime @map("start_date")
+  status            String   @default("active") // "active" | "paused" | "ended"
+  specialRequests   String?  @map("special_requests") @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  partner User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("partnerships")
 }
 
-model StudentProgress {
-  id             String         @id @default(cuid())
-  user_id        String
-  user           User           @relation(fields: [user_id], references: [clerk_id]) // Changed to clerk_id
-  topic_id       String
-  topic          Topic          @relation(fields: [topic_id], references: [id])
-  status         ProgressStatus @default(NOT_STARTED)
-  best_score     Int?
-  last_attempted DateTime?
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
+model Project {
+  id             String    @id @default(cuid())
+  title          String    @db.VarChar(255)
+  description    String    @db.Text
+  fundingGoal    Decimal   @map("funding_goal") @db.Decimal(12, 2)
+  currentFunding Decimal   @default(0) @map("current_funding") @db.Decimal(12, 2)
+  startDate      DateTime  @map("start_date")
+  endDate        DateTime? @map("end_date")
+  status         String    @default("active") // "active" | "completed" | "cancelled"
+  featuredImage  String?   @map("featured_image") @db.VarChar(500)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
-  @@unique([user_id, topic_id]) // Ensure a user has only one progress entry per topic
+  @@map("projects")
 }
 
-// Models for Milestone 3: Adaptive Testing & Personalized Recommendations
-model Question {
-  id               String        @id @default(cuid())
-  topic_id         String
-  topic            Topic         @relation(fields: [topic_id], references: [id])
-  question_text    String        @db.Text
-  choices          Json // Example: { "a": "Choice A", "b": "Choice B", "c": "Choice C" }
-  correct_choice   String // Example: "a"
-  difficulty_level Int           @default(1) // e.g., 1 (easy), 2 (medium), 3 (hard)
-  explanation      String?       @db.Text
-  created_at       DateTime      @default(now())
-  updated_at       DateTime      @updatedAt
-  testAttempts     TestAttempt[]
+// ========================================
+// EVENTS & MISSION MANAGEMENT
+// ========================================
+
+model Event {
+  id                   String    @id @default(cuid())
+  title                String    @db.VarChar(255)
+  description          String    @db.Text
+  eventType            String    @map("event_type") // "service" | "bible_study" | "mission_trip" | "conference"
+  startDate            DateTime  @map("start_date")
+  endDate              DateTime? @map("end_date")
+  location             String?   @db.VarChar(255)
+  registrationRequired Boolean   @default(false) @map("registration_required")
+  maxParticipants      Int?      @map("max_participants")
+  registrationDeadline DateTime? @map("registration_deadline")
+  cost                 Decimal?  @db.Decimal(10, 2)
+  featuredImage        String?   @map("featured_image") @db.VarChar(500)
+  createdBy            String    @map("created_by")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Relationships
+  creator       User                @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  registrations EventRegistration[]
+  reactions     Reaction[]          @relation("EventReactions")
+  comments      Comment[]           @relation("EventComments")
+
+  @@map("events")
 }
 
-model TestAttempt {
+model EventRegistration {
+  id               String   @id @default(cuid())
+  eventId          String   @map("event_id")
+  userId           String   @map("user_id")
+  registrationDate DateTime @default(now()) @map("registration_date")
+  paymentStatus    String   @default("pending") @map("payment_status") // "pending" | "paid" | "cancelled"
+  specialRequests  String?  @map("special_requests") @db.Text
+
+  // Relationships
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@map("event_registrations")
+}
+
+model MissionTrip {
   id            String   @id @default(cuid())
-  user_id       String
-  user          User     @relation(fields: [user_id], references: [clerk_id]) // Changed to clerk_id
-  question_id   String
-  question      Question @relation(fields: [question_id], references: [id])
-  chosen_choice String
-  is_correct    Boolean
-  attempted_at  DateTime @default(now())
+  destination   String   @db.VarChar(255)
+  purpose       String   @db.Text
+  teamLeader    String   @map("team_leader")
+  departureDate DateTime @map("departure_date")
+  returnDate    DateTime @map("return_date")
+  cost          Decimal? @db.Decimal(10, 2)
+  maxTeamSize   Int      @map("max_team_size")
+  requirements  String?  @db.Text
+  packingList   Json?    @map("packing_list") // Array of items
+  updates       Json? // Array of mission updates
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  @@index([user_id])
-  @@index([question_id])
+  // Relationships
+  leader User @relation(fields: [teamLeader], references: [id], onDelete: Cascade)
+
+  @@map("mission_trips")
 }
 
-// Models for Milestone 4: Social Learning & Collaboration
+// ========================================
+// SOCIAL FEATURES & COMMUNITY
+// ========================================
+
 model Friendship {
-  id           String           @id @default(cuid())
-  requester_id String
-  requester    User             @relation("FriendshipsA", fields: [requester_id], references: [clerk_id]) // Changed to clerk_id
-  addressee_id String
-  addressee    User             @relation("FriendshipsB", fields: [addressee_id], references: [clerk_id]) // Changed to clerk_id
-  status       FriendshipStatus @default(PENDING)
-  created_at   DateTime         @default(now())
-  updated_at   DateTime         @updatedAt
+  id          String   @id @default(cuid())
+  requesterId String   @map("requester_id")
+  addresseeId String   @map("addressee_id")
+  status      String   @default("pending") // "pending" | "accepted" | "blocked"
+  createdAt   DateTime @default(now()) @map("created_at")
 
-  @@unique([requester_id, addressee_id])
+  // Relationships
+  requester User @relation("FriendRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("FriendAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@map("friendships")
 }
 
-enum FriendshipStatus {
-  PENDING
-  ACCEPTED
-  BLOCKED
-  DECLINED // Added DECLINED status
+model Conversation {
+  id            String   @id @default(cuid())
+  type          String // "direct" | "group"
+  name          String?  @db.VarChar(255) // For group chats
+  creatorId     String   @map("creator_id")
+  lastMessageAt DateTime @default(now()) @map("last_message_at")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  creator  User      @relation("ConversationCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@map("conversations")
 }
 
-model Discussion {
-  id         String       @id @default(cuid())
-  topic_id   String? // Can be null if discussion is general (not tied to a topic)
-  topic      Topic?       @relation(fields: [topic_id], references: [id])
-  author_id  String
-  author     User         @relation(fields: [author_id], references: [clerk_id]) // Changed to clerk_id
-  content    String       @db.Text
-  parent_id  String? // For threaded replies
-  parent     Discussion?  @relation("Replies", fields: [parent_id], references: [id], onDelete: Cascade)
-  replies    Discussion[] @relation("Replies")
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String   @map("conversation_id")
+  senderId       String   @map("sender_id")
+  content        String   @db.Text
+  messageType    String   @default("text") @map("message_type") // "text" | "media" | "prayer"
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  @@index([author_id])
-  @@index([topic_id])
-  @@index([parent_id])
+  // Relationships
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
 }
 
-// Optional: Model for user-posted tips (Milestone 5)
-model Tip {
-  id       String  @id @default(cuid())
-  user_id  String
-  user     User    @relation(fields: [user_id], references: [clerk_id]) // Changed to clerk_id
-  content  String  @db.Text
-  topic_id String? // Optional: Tip can be general or topic-specific
-  topic    Topic?  @relation(fields: [topic_id], references: [id])
+model Reaction {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  targetType String   @map("target_type") // "post" | "prayer" | "comment" | "sermon" | "event"
+  targetId   String   @map("target_id")
+  emoji      String // "like" | "love" | "pray" | "amen" | "fire" | "smile" | "sad"
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  // Relationships with proper relation names to avoid conflicts
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post          Post?          @relation("PostReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_post_fkey")
+  sermon        Sermon?        @relation("SermonReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_sermon_fkey")
+  event         Event?         @relation("EventReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_event_fkey")
+  prayerRequest PrayerRequest? @relation("PrayerReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_prayer_fkey")
+  comment       Comment?       @relation("CommentReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_comment_fkey")
 
-  @@index([user_id])
-  @@index([topic_id])
+  @@unique([userId, targetType, targetId, emoji])
+  @@map("reactions")
 }
 
-model Assignment {
-  id          String           @id @default(cuid())
-  title       String
-  description String?          @db.Text
-  dueDate     DateTime?
-  status      AssignmentStatus @default(DRAFT)
+model PrayerRequest {
+  id                  String   @id @default(cuid())
+  requesterId         String   @map("requester_id")
+  title               String   @db.VarChar(255)
+  description         String   @db.Text
+  category            String // "personal" | "family" | "ministry" | "world"
+  urgency             String   @default("medium") // "low" | "medium" | "high"
+  anonymous           Boolean  @default(false)
+  status              String   @default("active") // "active" | "answered" | "closed"
+  answeredDescription String?  @map("answered_description") @db.Text
+  reactionCount       Json?    @map("reaction_count") // Count of different reactions
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
-  teacherId String // clerk_id of the teacher who created the assignment
-  teacher   User   @relation("TeacherAssignments", fields: [teacherId], references: [clerk_id])
+  // Relationships
+  requester User       @relation(fields: [requesterId], references: [id], onDelete: Cascade)
+  reactions Reaction[] @relation("PrayerReactions")
+  comments  Comment[]  @relation("PrayerComments")
 
-  subjectId String? // Optional: if the assignment is for a specific subject
-  subject   Subject? @relation(fields: [subjectId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Future: Consider a relation for student submissions/grades
-  // studentSubmissions StudentAssignmentSubmission[]
-
-  @@index([teacherId])
-  @@index([subjectId])
+  @@map("prayer_requests")
 }
 
-enum AssignmentStatus {
-  DRAFT
-  PUBLISHED // Available to students
-  GRADING // Submissions closed, teacher is grading
-  COMPLETED // Grading finished, results may be available
-  ARCHIVED // No longer active
+model Comment {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  targetType    String   @map("target_type") // "post" | "prayer" | "event" | "sermon"
+  targetId      String   @map("target_id")
+  content       String   @db.Text
+  parentId      String?  @map("parent_id") // For nested comments
+  reactionCount Json?    @map("reaction_count") // Count of different reactions
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent        Comment?       @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies       Comment[]      @relation("CommentReplies")
+  reactions     Reaction[]     @relation("CommentReactions")
+  post          Post?          @relation("PostComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_post_fkey")
+  sermon        Sermon?        @relation("SermonComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_sermon_fkey")
+  event         Event?         @relation("EventComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_event_fkey")
+  prayerRequest PrayerRequest? @relation("PrayerComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_prayer_fkey")
+
+  @@map("comments")
+}
+
+// ========================================
+// CERTIFICATE MANAGEMENT SYSTEM
+// ========================================
+
+model CertificateTemplate {
+  id           String   @id @default(cuid())
+  name         String   @db.VarChar(255)
+  description  String   @db.Text
+  category     String // "baptism" | "confirmation" | "course" | "training" | "volunteer" | "mission"
+  templateData Json     @map("template_data") // Stores design layout, fonts, positions, fields
+  isActive     Boolean  @default(true) @map("is_active")
+  createdBy    String   @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  creator      User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  certificates Certificate[]
+
+  @@map("certificate_templates")
+}
+
+model Certificate {
+  id         String @id @default(cuid())
+  templateId String @map("template_id")
+
+  // Enhanced recipient information with separate name fields
+  recipientFirstName String  @map("recipient_first_name") @db.VarChar(50)
+  recipientLastName  String  @map("recipient_last_name") @db.VarChar(50)
+  recipientEmail     String  @map("recipient_email") @db.VarChar(255)
+  issuedTo           String? @map("issued_to") // User ID if recipient is registered user
+
+  // Certificate metadata
+  issuedBy        String @map("issued_by")
+  verificationId  String @unique @map("verification_id") @db.VarChar(50)
+  certificateData Json   @map("certificate_data") // Stores personalized content
+
+  // File storage (EKD Digital Assets integration)
+  pdfPath    String @map("pdf_path") @db.VarChar(500)
+  pngPath    String @map("png_path") @db.VarChar(500)
+  qrCodeData String @map("qr_code_data") @db.VarChar(500)
+
+  // Status and dates
+  issueDate  DateTime  @default(now()) @map("issue_date")
+  expiryDate DateTime? @map("expiry_date")
+  status     String    @default("active") // "active" | "revoked" | "expired"
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  // Relationships
+  template      CertificateTemplate       @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  issuer        User                      @relation("CertificateIssuer", fields: [issuedBy], references: [id], onDelete: Cascade)
+  recipient     User?                     @relation("CertificateRecipient", fields: [issuedTo], references: [id], onDelete: SetNull)
+  verifications CertificateVerification[]
+
+  @@map("certificates")
+}
+
+model CertificateVerification {
+  id                 String   @id @default(cuid())
+  certificateId      String   @map("certificate_id")
+  verifiedByIp       String   @map("verified_by_ip") @db.VarChar(45)
+  verifiedAt         DateTime @default(now()) @map("verified_at")
+  verificationMethod String   @map("verification_method") // "qr_code" | "manual" | "api"
+
+  // Relationships
+  certificate Certificate @relation(fields: [certificateId], references: [id], onDelete: Cascade)
+
+  @@map("certificate_verifications")
+}
+
+// ========================================
+// ANALYTICS & ADMINISTRATION
+// ========================================
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  eventType String   @map("event_type") @db.VarChar(100)
+  userId    String?  @map("user_id")
+  metadata  Json? // Additional event data
+  ipAddress String   @map("ip_address") @db.VarChar(45)
+  userAgent String?  @map("user_agent") @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("analytics_events")
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  reportType  String   @map("report_type") @db.VarChar(100)
+  parameters  Json? // Report configuration
+  generatedBy String   @map("generated_by")
+  filePath    String?  @map("file_path") @db.VarChar(500)
+  status      String   @default("pending") // "pending" | "completed" | "failed"
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relationships
+  generator User @relation(fields: [generatedBy], references: [id], onDelete: Cascade)
+
+  @@map("reports")
 }

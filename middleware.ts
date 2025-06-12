@@ -1,25 +1,73 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-// Define public routes that do not require authentication
-const isPublicRoute = createRouteMatcher([
-  "/", // Make the root page public
-  "/sign-in(.*)", // Public sign-in route
-  "/sign-up(.*)", // Public sign-up route
-  "/api/auth/webhooks/clerk(.*)", // Public webhook route
-]);
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token;
+    const isAuthPage = req.nextUrl.pathname.startsWith("/auth");
+    const isProtectedRoute =
+      req.nextUrl.pathname.startsWith("/dash") ||
+      req.nextUrl.pathname.startsWith("/mgmt") ||
+      req.nextUrl.pathname.startsWith("/admin");
 
-export default clerkMiddleware((authObject, req) => {
-  // If the route is not public, protect it
-  if (!isPublicRoute(req)) {
-    authObject.protect();
+    // Redirect authenticated users away from auth pages
+    if (isAuthPage && token) {
+      return NextResponse.redirect(new URL("/dash", req.url));
+    }
+
+    // Allow unauthenticated access to auth pages
+    if (isAuthPage) {
+      return NextResponse.next();
+    }
+
+    // Protect dashboard routes
+    if (isProtectedRoute && !token) {
+      const signInUrl = new URL("/sign-in", req.url);
+      signInUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    // Role-based protection
+    if (token) {
+      const userRole = token.role as string;
+
+      // Ministry leader routes
+      if (req.nextUrl.pathname.startsWith("/mgmt")) {
+        if (!["ministry_leader", "administrator"].includes(userRole)) {
+          return NextResponse.redirect(new URL("/dash", req.url));
+        }
+      }
+
+      // Admin routes
+      if (req.nextUrl.pathname.startsWith("/admin")) {
+        if (userRole !== "administrator") {
+          return NextResponse.redirect(new URL("/dash", req.url));
+        }
+      }
+    }
+
+    return NextResponse.next();
+  },
+  {
+    callbacks: {
+      authorized: ({ token, req }) => {
+        // Allow all requests to proceed to middleware logic
+        return true;
+      },
+    },
   }
-});
+);
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
-    "/(api|trpc)(.*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
   ],
 };
