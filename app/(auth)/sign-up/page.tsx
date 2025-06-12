@@ -89,24 +89,27 @@ export default function SignUpPage() {
   >("idle");
 
   // Create the username check function
-  const checkUsername = useCallback(async (username: string) => {
-    if (username.length >= 3) {
-      setUsernameStatus("checking");
-      const available = await checkUsernameAvailability(username);
-      setUsernameStatus(available ? "available" : "taken");
+  const checkUsername = useCallback(
+    async (username: string) => {
+      if (username.length >= 3) {
+        setUsernameStatus("checking");
+        const available = await checkUsernameAvailability(username);
+        setUsernameStatus(available ? "available" : "taken");
 
-      if (!available) {
-        setErrors((prev) => ({
-          ...prev,
-          username: "This username is already taken",
-        }));
+        if (!available) {
+          setErrors((prev) => ({
+            ...prev,
+            username: "This username is already taken",
+          }));
+        } else {
+          setErrors((prev) => ({ ...prev, username: "" }));
+        }
       } else {
-        setErrors((prev) => ({ ...prev, username: "" }));
+        setUsernameStatus("idle");
       }
-    } else {
-      setUsernameStatus("idle");
-    }
-  }, []);
+    },
+    [checkUsernameAvailability]
+  );
 
   // Debounced username check
   const debouncedUsernameCheck = useMemo(
