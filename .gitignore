@@ -184,6 +184,7 @@ uploads/
 CERTIFICATE_SECURITY_GUIDE.md
 
 .env.production.example
+scripts/
 # Database
 *.sqlite
 *.db

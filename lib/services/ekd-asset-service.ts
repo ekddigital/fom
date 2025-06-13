@@ -10,21 +10,29 @@ interface EKDLoginResponse {
 
 interface EKDUploadResponse {
   id: string;
-  title: string;
+  client_identifier: string;
+  project_name: string;
+  type: string;
   filename: string;
-  file_url: string;
-  download_url: string;
-  created_at: string;
+  size_bytes: number;
+  uploaded_at: string;
+  tags: string[];
+  owner_id: string;
+  access_url: string;
 }
 
 interface EKDAssetResponse {
   id: string;
-  title: string;
+  client_identifier: string;
+  project_name: string;
+  type: string;
   filename: string;
-  file_url: string;
-  download_url: string;
+  size_bytes: number;
+  uploaded_at: string;
+  tags: string[];
+  owner_id: string;
+  access_url: string;
   metadata: Record<string, unknown>;
-  created_at: string;
 }
 
 export class EKDAssetService {
@@ -113,7 +121,7 @@ export class EKDAssetService {
       formData.append("project_name", "fom-certificates");
       formData.append(
         "asset_type",
-        filename.endsWith(".pdf") ? "documents" : "images"
+        filename.endsWith(".pdf") ? "document" : "image"
       );
 
       formData.append(
@@ -186,7 +194,7 @@ export class EKDAssetService {
       }
 
       const asset: EKDAssetResponse = await response.json();
-      return asset.download_url;
+      return asset.access_url;
     } catch (error) {
       console.error("EKD download URL error:", error);
       throw new Error("Failed to get certificate download URL");

@@ -181,7 +181,7 @@ export async function GET(
               certificateData: {
                 ...(certificate.certificateData as Record<string, unknown>),
                 ekdAssetId: uploadResult.id,
-                ekdDownloadUrl: uploadResult.download_url,
+                ekdAccessUrl: uploadResult.access_url,
               },
             },
           });
