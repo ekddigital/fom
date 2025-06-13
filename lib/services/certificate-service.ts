@@ -4,6 +4,7 @@
  */
 import { prisma } from "@/lib/prisma";
 import { generateVerificationId } from "@/lib/utils/certificate";
+import { getVerificationUrl } from "@/lib/utils/url";
 import {
   generateCertificatePDF,
   generateCertificatePNG,
@@ -202,7 +203,7 @@ export async function issueCertificate(data: {
 
     const pngPath = await generateCertificatePNG();
 
-    const verificationUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-certificate?id=${verificationId}`;
+    const verificationUrl = getVerificationUrl(verificationId);
     const qrCodeData = await generateQRCode(verificationUrl);
 
     // Create certificate record in database

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getVerificationUrl } from "@/lib/utils/url";
 
 export async function GET(
   request: NextRequest,
@@ -71,7 +72,9 @@ export async function GET(
       expiryDate: certificate.expiryDate?.toISOString(),
       status: certificate.status,
       templateData: certificate.certificateData, // This contains the full resolved design
-      verificationUrl: `/community/verify-certificate?id=${certificate.verificationId}`,
+      verificationUrl: getVerificationUrl(
+        certificate.verificationId || certificate.id
+      ),
       qrCode: certificate.qrCodeData,
     });
   } catch (error) {

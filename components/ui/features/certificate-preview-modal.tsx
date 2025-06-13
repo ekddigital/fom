@@ -3,6 +3,7 @@ import Image from "next/image";
 import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
 import { TemplateData, generateCertificateId } from "@/lib/utils/certificate";
+import { getVerificationUrl } from "@/lib/utils/url";
 import {
   X,
   Download,
@@ -48,13 +49,16 @@ export function CertificatePreviewModal({
     return generateCertificateId(template.name || "Certificate", 1);
   }, [template.name]);
 
-  // Sample security features for preview
-  const sampleVerificationUrl = `https://fom.church/verify/${certificateId}`;
+  // Sample security features for preview - using environment-aware URL
+  const sampleVerificationUrl = React.useMemo(() => {
+    return getVerificationUrl(certificateId);
+  }, [certificateId]);
 
   // Generate QR Code
   React.useEffect(() => {
     const generateQRCode = async () => {
       try {
+        console.log("Generating QR code for URL:", sampleVerificationUrl);
         const qrDataUrl = await QRCode.toDataURL(sampleVerificationUrl, {
           width: 200,
           margin: 2,
@@ -63,18 +67,25 @@ export function CertificatePreviewModal({
             light: "#FFFFFF",
           },
         });
+        console.log(
+          "QR code generated successfully:",
+          qrDataUrl.substring(0, 50) + "..."
+        );
         setQrCodeDataUrl(qrDataUrl);
       } catch (error) {
         console.error("Error generating QR code:", error);
         // Fallback to a simple data URL if QR generation fails
-        setQrCodeDataUrl(
-          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+"
-        );
+        const fallbackQr =
+          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+";
+        console.log("Using fallback QR code");
+        setQrCodeDataUrl(fallbackQr);
       }
     };
 
-    generateQRCode();
-  }, [sampleVerificationUrl, setQrCodeDataUrl]);
+    if (isOpen) {
+      generateQRCode();
+    }
+  }, [sampleVerificationUrl, setQrCodeDataUrl, isOpen]);
 
   // Download functions
   const downloadAsPNG = async () => {
@@ -263,7 +274,10 @@ export function CertificatePreviewModal({
 
   // Function to replace image variables
   const replaceImageVariables = (content: string) => {
-    return content
+    console.log("Replacing image variables in content:", content);
+    console.log("Current QR code data URL available:", !!qrCodeDataUrl);
+
+    const result = content
       .replace(
         /\{\{qrCode\}\}/g,
         qrCodeDataUrl ||
@@ -274,6 +288,9 @@ export function CertificatePreviewModal({
         qrCodeDataUrl ||
           "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+"
       );
+
+    console.log("Result after replacement:", result);
+    return result;
   };
 
   // Enhanced close handler with debugging

@@ -6,6 +6,8 @@
 import puppeteer from "puppeteer";
 import fs from "fs/promises";
 import path from "path";
+import QRCode from "qrcode";
+import { getVerificationUrl } from "./url";
 
 export interface CertificateData {
   id: string;
@@ -89,6 +91,15 @@ export class HybridCertificateRenderer {
   private baseUrl: string;
 
   constructor(certificate: CertificateData, baseUrl?: string) {
+    console.log("🏗️ HybridCertificateRenderer constructor:", {
+      certificateId: certificate.id,
+      hasQrCodeData: !!certificate.qrCodeData,
+      qrCodeData: certificate.qrCodeData,
+      hasVerificationUrl: !!certificate.verificationUrl,
+      verificationUrl: certificate.verificationUrl,
+      elementsCount: certificate.templateData?.elements?.length || 0,
+    });
+
     this.certificate = certificate;
     this.templateData = certificate.templateData;
     this.elements = this.templateData?.elements || [];
@@ -112,6 +123,61 @@ export class HybridCertificateRenderer {
         border: "2px solid #2563eb",
       },
     };
+  }
+
+  /**
+   * Generate QR code as base64 data URL
+   */
+  private async generateQRCodeDataURL(url: string): Promise<string> {
+    try {
+      console.log(`Generating QR code for URL: ${url}`);
+      const qrCodeDataURL = await QRCode.toDataURL(url, {
+        errorCorrectionLevel: "H",
+        margin: 1,
+        scale: 8,
+        color: {
+          dark: "#000000",
+          light: "#ffffff",
+        },
+      });
+      console.log(
+        `QR code generated successfully, length: ${qrCodeDataURL.length}`
+      );
+      return qrCodeDataURL;
+    } catch (error) {
+      console.warn(`Failed to generate QR code for URL: ${url}`, error);
+      // Return a simple placeholder base64 image if QR generation fails
+      return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==";
+    }
+  }
+
+  /**
+   * Generate QR code as base64 data URL
+   */
+  private async generateQRCodeBase64(data: string): Promise<string> {
+    try {
+      console.log("🔍 QR Code generation started:", { data });
+
+      const qrCodeDataUrl = await QRCode.toDataURL(data, {
+        errorCorrectionLevel: "H",
+        margin: 1,
+        scale: 8,
+        color: {
+          dark: "#000000",
+          light: "#ffffff",
+        },
+      });
+
+      console.log("✅ QR Code generated successfully:", {
+        dataLength: qrCodeDataUrl.length,
+        prefix: qrCodeDataUrl.substring(0, 50) + "...",
+      });
+
+      return qrCodeDataUrl;
+    } catch (error) {
+      console.error("❌ QR Code generation failed:", error);
+      throw error;
+    }
   }
 
   /**
@@ -258,20 +324,33 @@ export class HybridCertificateRenderer {
           );
 
         // Handle security features placeholders separately
-        content = content
-          .replace(
-            /\{\{qrCode\}\}/g,
-            this.certificate.qrCodeData || "/uploads/qrcodes/placeholder-qr.png"
-          )
-          .replace(
-            /\{\{verificationUrl\}\}/g,
-            this.certificate.verificationUrl ||
-              `${
-                process.env.NEXTAUTH_URL || "https://yourdomain.com"
-              }/community/verify-certificate?id=${
-                this.certificate.verificationId || this.certificate.id
-              }`
+        if (content.includes("{{qrCode}}")) {
+          console.log(
+            `Found {{qrCode}} placeholder in text element: ${element.id}`
           );
+          // Generate QR code dynamically using the verification URL
+          const verificationUrl =
+            this.certificate.verificationUrl ||
+            getVerificationUrl(
+              this.certificate.verificationId || this.certificate.id
+            );
+          console.log(`Text QR verification URL: ${verificationUrl}`);
+          const qrCodeDataURL = await this.generateQRCodeBase64(
+            verificationUrl
+          );
+          console.log(
+            `Text QR code generated with data URL length: ${qrCodeDataURL.length}`
+          );
+          content = content.replace(/\{\{qrCode\}\}/g, qrCodeDataURL);
+        }
+
+        content = content.replace(
+          /\{\{verificationUrl\}\}/g,
+          this.certificate.verificationUrl ||
+            getVerificationUrl(
+              this.certificate.verificationId || this.certificate.id
+            )
+        );
 
         content = content
 
@@ -298,11 +377,53 @@ export class HybridCertificateRenderer {
           content,
         });
       } else if (element.type === "image") {
-        // Convert image to base64 for embedding
-        const base64Content = await this.imageToBase64(element.content);
+        // Handle QR code placeholders in image elements
+        if (element.content === "{{qrCode}}") {
+          console.log(
+            `Found {{qrCode}} placeholder in image element: ${element.id}`
+          );
+          // Generate QR code dynamically using the verification URL
+          const verificationUrl =
+            this.certificate.verificationUrl ||
+            getVerificationUrl(
+              this.certificate.verificationId || this.certificate.id
+            );
+          console.log(`Image QR verification URL: ${verificationUrl}`);
+          const qrCodeDataURL = await this.generateQRCodeBase64(
+            verificationUrl
+          );
+          console.log(
+            `Image QR code generated with data URL length: ${qrCodeDataURL.length}`
+          );
+          processedElements.push({
+            ...element,
+            content: qrCodeDataURL,
+          });
+        } else {
+          // Convert regular image to base64 for embedding
+          const base64Content = await this.imageToBase64(element.content);
+          processedElements.push({
+            ...element,
+            content: base64Content,
+          });
+        }
+      } else if (element.type === "qr") {
+        // Handle QR code elements - generate QR code dynamically
+        console.log(`Processing QR code element: ${element.id}`);
+        const verificationUrl =
+          this.certificate.verificationUrl ||
+          getVerificationUrl(
+            this.certificate.verificationId || this.certificate.id
+          );
+        console.log(`QR verification URL: ${verificationUrl}`);
+        const qrCodeDataURL = await this.generateQRCodeBase64(verificationUrl);
+        console.log(
+          `QR code element converted to image with data URL length: ${qrCodeDataURL.length}`
+        );
         processedElements.push({
           ...element,
-          content: base64Content,
+          type: "image", // Convert to image type for rendering
+          content: qrCodeDataURL,
         });
       } else {
         processedElements.push(element);
@@ -564,7 +685,10 @@ export class HybridCertificateRenderer {
         const shapeCss = this.styleToCSS(shapeStyle);
         elementsHtml += `<div style="${shapeCss}"></div>`;
       } else if (element.type === "qr") {
-        // QR code styling
+        // QR code fallback (QR elements should be converted to images in processElements)
+        console.warn(
+          "QR element not converted to image - this shouldn't happen"
+        );
         const qrStyle = {
           ...elementStyle,
           backgroundColor: "#f0f0f0",
@@ -577,7 +701,7 @@ export class HybridCertificateRenderer {
         };
 
         const qrCss = this.styleToCSS(qrStyle);
-        elementsHtml += `<div style="${qrCss}">QR Code</div>`;
+        elementsHtml += `<div style="${qrCss}">QR Code Unavailable</div>`;
       }
     });
 
