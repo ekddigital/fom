@@ -11,6 +11,101 @@ datasource db {
 }
 
 // ========================================
+// ENUMS FOR TYPE SAFETY AND CONSISTENCY
+// ========================================
+
+enum UserRole {
+  VISITOR // Can view public content only
+  MEMBER // Basic authenticated user
+  MINISTRY_LEADER // Can manage ministry content and events
+  ADMIN // Can manage users and advanced features
+  SUPER_ADMIN // Full system access
+
+  @@map("user_role")
+}
+
+enum DisplayNamePreference {
+  USERNAME
+  FULL_NAME
+  FIRST_NAME
+
+  @@map("display_name_preference")
+}
+
+enum ProfileVisibility {
+  PUBLIC
+  MEMBERS_ONLY
+  PRIVATE
+
+  @@map("profile_visibility")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+
+  @@map("post_status")
+}
+
+enum PostCategory {
+  SERMON
+  DEVOTIONAL
+  BIBLICAL_STUDY
+  TESTIMONY
+  MISSION_REPORT
+  ANNOUNCEMENT
+
+  @@map("post_category")
+}
+
+enum EventType {
+  SERVICE
+  BIBLE_STUDY
+  MISSION_TRIP
+  CONFERENCE
+  RETREAT
+  FELLOWSHIP
+  OUTREACH
+
+  @@map("event_type")
+}
+
+enum PrayerCategory {
+  PERSONAL
+  FAMILY
+  MINISTRY
+  WORLD
+  HEALING
+  SALVATION
+
+  @@map("prayer_category")
+}
+
+enum PrayerUrgency {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+
+  @@map("prayer_urgency")
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  PRAY
+  AMEN
+  FIRE
+  SMILE
+  SAD
+  HEART
+
+  @@map("reaction_type")
+}
+
+// ========================================
 // NEXTAUTH.JS AUTHENTICATION MODELS
 // ========================================
 
@@ -61,25 +156,25 @@ model User {
   id            String    @id @default(cuid())
   email         String    @unique
   emailVerified DateTime? @map("email_verified")
-  
+
   // Enhanced name fields following FOM requirements
-  firstName String   @map("first_name") @db.VarChar(50)
-  lastName  String   @map("last_name") @db.VarChar(50)
-  username  String?  @unique @db.VarChar(30)
-  
+  firstName String  @map("first_name") @db.VarChar(50)
+  lastName  String  @map("last_name") @db.VarChar(50)
+  username  String? @unique @db.VarChar(30)
+
   // Profile settings with FOM-specific preferences
-  displayNamePreference String @default("full_name") @map("display_name_preference") // "username" | "full_name" | "first_name"
-  profileVisibility     String @default("members_only") @map("profile_visibility") // "public" | "members_only" | "private"
-  
+  displayNamePreference DisplayNamePreference @default(FULL_NAME) @map("display_name_preference")
+  profileVisibility     ProfileVisibility     @default(MEMBERS_ONLY) @map("profile_visibility")
+
   // Authentication & Role-based access control
-  role     String  @default("member") // "visitor" | "member" | "ministry_leader" | "administrator"
+  role     UserRole @default(MEMBER)
   password String? // For email/password authentication (hashed with bcrypt)
-  
+
   // Ministry-specific profile data
-  avatarUrl                 String?  @map("avatar_url") @db.VarChar(500)
-  ministryInterests         Json?    @map("ministry_interests") // Array of ministry interests
-  certificateSharingEnabled Boolean  @default(true) @map("certificate_sharing_enabled")
-  
+  avatarUrl                 String? @map("avatar_url") @db.VarChar(500)
+  ministryInterests         Json?   @map("ministry_interests") // Array of ministry interests
+  certificateSharingEnabled Boolean @default(true) @map("certificate_sharing_enabled")
+
   // Timestamps
   joinedDate DateTime @default(now()) @map("joined_date")
   lastActive DateTime @default(now()) @map("last_active")
@@ -89,7 +184,7 @@ model User {
   // NextAuth Relations
   accounts Account[]
   sessions Session[]
-  
+
   // FOM Platform Relations (to be implemented in future phases)
   posts                Post[]
   sermons              Sermon[]
@@ -120,18 +215,18 @@ model User {
 // ========================================
 
 model Post {
-  id                  String  @id @default(cuid())
-  authorId            String  @map("author_id")
-  title               String  @db.VarChar(255)
-  slug                String  @unique @db.VarChar(255)
-  content             String  @db.LongText
-  excerpt             String? @db.Text
-  category            String // "sermon" | "devotional" | "biblical_study" | "testimony" | "mission_report"
-  status              String  @default("draft") // "draft" | "published" | "scheduled"
-  featuredImage       String? @map("featured_image")
-  scriptureReferences Json?   @map("scripture_references") // Array of Bible references
+  id                  String       @id @default(cuid())
+  authorId            String       @map("author_id")
+  title               String       @db.VarChar(255)
+  slug                String       @unique @db.VarChar(255)
+  content             String       @db.LongText
+  excerpt             String?      @db.Text
+  category            PostCategory
+  status              PostStatus   @default(DRAFT)
+  featuredImage       String?      @map("featured_image")
+  scriptureReferences Json?        @map("scripture_references") // Array of Bible references
   tags                Json? // Array of tags
-  viewsCount          Int     @default(0) @map("views_count")
+  viewsCount          Int          @default(0) @map("views_count")
 
   publishedAt DateTime? @map("published_at")
   createdAt   DateTime  @default(now()) @map("created_at")
@@ -253,7 +348,7 @@ model Event {
   id                   String    @id @default(cuid())
   title                String    @db.VarChar(255)
   description          String    @db.Text
-  eventType            String    @map("event_type") // "service" | "bible_study" | "mission_trip" | "conference"
+  eventType            EventType @map("event_type")
   startDate            DateTime  @map("start_date")
   endDate              DateTime? @map("end_date")
   location             String?   @db.VarChar(255)
@@ -382,18 +477,18 @@ model Reaction {
 }
 
 model PrayerRequest {
-  id                  String   @id @default(cuid())
-  requesterId         String   @map("requester_id")
-  title               String   @db.VarChar(255)
-  description         String   @db.Text
-  category            String // "personal" | "family" | "ministry" | "world"
-  urgency             String   @default("medium") // "low" | "medium" | "high"
-  anonymous           Boolean  @default(false)
-  status              String   @default("active") // "active" | "answered" | "closed"
-  answeredDescription String?  @map("answered_description") @db.Text
-  reactionCount       Json?    @map("reaction_count") // Count of different reactions
-  createdAt           DateTime @default(now()) @map("created_at")
-  updatedAt           DateTime @updatedAt @map("updated_at")
+  id                  String         @id @default(cuid())
+  requesterId         String         @map("requester_id")
+  title               String         @db.VarChar(255)
+  description         String         @db.Text
+  category            PrayerCategory
+  urgency             PrayerUrgency  @default(MEDIUM)
+  anonymous           Boolean        @default(false)
+  status              String         @default("active") // "active" | "answered" | "closed"
+  answeredDescription String?        @map("answered_description") @db.Text
+  reactionCount       Json?          @map("reaction_count") // Count of different reactions
+  createdAt           DateTime       @default(now()) @map("created_at")
+  updatedAt           DateTime       @updatedAt @map("updated_at")
 
   // Relationships
   requester User       @relation(fields: [requesterId], references: [id], onDelete: Cascade)
@@ -431,15 +526,25 @@ model Comment {
 // ========================================
 
 model CertificateTemplate {
-  id           String   @id @default(cuid())
-  name         String   @db.VarChar(255)
-  description  String   @db.Text
-  category     String // "baptism" | "confirmation" | "course" | "training" | "volunteer" | "mission"
-  templateData Json     @map("template_data") // Stores design layout, fonts, positions, fields
-  isActive     Boolean  @default(true) @map("is_active")
-  createdBy    String   @map("created_by")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id           String @id @default(cuid())
+  name         String @db.VarChar(255)
+  description  String @db.Text
+  category     String @db.VarChar(100) // "baptism" | "confirmation" | "course" | "training" | "volunteer" | "mission" | "appreciation" | "excellence" | "leadership"
+  typeCode     String @map("type_code") @db.VarChar(3) // APP, EXC, LED, etc.
+  templateData Json   @map("template_data") // Stores design layout, fonts, positions, fields
+
+  // Security settings
+  defaultSecurityLevel String  @default("STANDARD") @map("default_security_level") // "BASIC" | "STANDARD" | "HIGH"
+  requiresApproval     Boolean @default(false) @map("requires_approval")
+
+  // Organization support
+  organizationId String? @map("organization_id") @db.VarChar(50) // null = available to all orgs
+
+  // Status
+  isActive  Boolean  @default(true) @map("is_active")
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relationships
   creator      User          @relation(fields: [createdBy], references: [id], onDelete: Cascade)
@@ -463,6 +568,16 @@ model Certificate {
   verificationId  String @unique @map("verification_id") @db.VarChar(50)
   certificateData Json   @map("certificate_data") // Stores personalized content
 
+  // Security features
+  securityLevel    String  @default("BASIC") @map("security_level") // "BASIC" | "STANDARD" | "HIGH"
+  digitalSignature String? @map("digital_signature") @db.VarChar(255)
+  blockchainHash   String? @map("blockchain_hash") @db.VarChar(255)
+  watermarkData    Json?   @map("watermark_data") // Stores watermark configuration
+  securityMetadata Json?   @map("security_metadata") // Additional security data
+
+  // Organization support
+  organizationId String @default("fom") @map("organization_id") @db.VarChar(50)
+
   // File storage (EKD Digital Assets integration)
   pdfPath    String @map("pdf_path") @db.VarChar(500)
   pngPath    String @map("png_path") @db.VarChar(500)
@@ -473,6 +588,7 @@ model Certificate {
   expiryDate DateTime? @map("expiry_date")
   status     String    @default("active") // "active" | "revoked" | "expired"
   createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
 
   // Relationships
   template      CertificateTemplate       @relation(fields: [templateId], references: [id], onDelete: Cascade)
@@ -528,4 +644,34 @@ model Report {
   generator User @relation(fields: [generatedBy], references: [id], onDelete: Cascade)
 
   @@map("reports")
+}
+
+model Organization {
+  id      String  @id @default(cuid())
+  slug    String  @unique @db.VarChar(50) // URL-friendly identifier
+  name    String  @db.VarChar(255)
+  tagline String? @db.VarChar(255)
+  logoUrl String? @map("logo_url") @db.VarChar(500)
+
+  // Branding
+  colorPrimary   String? @map("color_primary") @db.VarChar(7) // Hex color
+  colorSecondary String? @map("color_secondary") @db.VarChar(7)
+  colorAccent    String? @map("color_accent") @db.VarChar(7)
+  colorText      String? @map("color_text") @db.VarChar(7)
+
+  // Covenant verse
+  covenantText      String? @map("covenant_text") @db.Text
+  covenantReference String? @map("covenant_reference") @db.VarChar(100)
+
+  // Leadership
+  executiveDirector String? @map("executive_director") @db.VarChar(255)
+  chairperson       String? @map("chairperson") @db.VarChar(255)
+  secretary         String? @map("secretary") @db.VarChar(255)
+
+  // Settings
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("organizations")
 }

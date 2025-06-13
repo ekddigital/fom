@@ -20,6 +20,7 @@ import {
   Award,
   Users,
   TrendingUp,
+  Shield,
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -38,7 +39,7 @@ export default function DashboardPage() {
     );
   }
 
-  const quickActions = [
+  const baseQuickActions = [
     {
       title: "Join Prayer Network",
       description: "Connect with others in prayer",
@@ -68,6 +69,21 @@ export default function DashboardPage() {
       color: "bg-orange-500",
     },
   ];
+
+  // Add admin dashboard for admin users
+  const quickActions =
+    user?.role === "ADMIN" || user?.role === "SUPER_ADMIN"
+      ? [
+          {
+            title: "Admin Dashboard",
+            description: "Platform administration",
+            icon: Shield,
+            href: "/admin",
+            color: "bg-red-500",
+          },
+          ...baseQuickActions,
+        ]
+      : baseQuickActions;
 
   const stats = [
     {

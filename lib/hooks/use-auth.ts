@@ -10,6 +10,7 @@ import {
 } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import * as React from "react";
 import {
   FOMUser,
   UserRegistrationData,
@@ -20,8 +21,14 @@ import {
 } from "@/lib/types/auth";
 import { formatUserName } from "@/lib/utils/user";
 
+import {
+  UserRole,
+  DisplayNamePreference,
+  ProfileVisibility,
+} from "@prisma/client";
+
 export function useAuth() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,16 +44,10 @@ export function useAuth() {
         firstName: session.user.firstName,
         lastName: session.user.lastName,
         username: session.user.username || null,
-        displayNamePreference: session.user.displayNamePreference as
-          | "first_name"
-          | "username"
-          | "full_name",
-        profileVisibility: "members_only", // Default, would be loaded from database
-        role: session.user.role as
-          | "member"
-          | "ministry_leader"
-          | "visitor"
-          | "administrator",
+        displayNamePreference: session.user
+          .displayNamePreference as DisplayNamePreference,
+        profileVisibility: "MEMBERS_ONLY" as ProfileVisibility, // Default, would be loaded from database
+        role: session.user.role as UserRole,
         password: null,
         avatarUrl: session.user.image || null,
         ministryInterests: [], // Would be loaded from database
@@ -79,7 +80,7 @@ export function useAuth() {
       }
 
       if (result?.ok) {
-        router.push("/dash");
+        router.push("/");
         return {
           success: true,
           message: "Successfully signed in",
@@ -106,7 +107,7 @@ export function useAuth() {
     try {
       const result = await nextAuthSignIn("google", {
         redirect: false,
-        callbackUrl: "/dash",
+        callbackUrl: "/",
       });
 
       if (result?.error) {
@@ -240,36 +241,35 @@ export function useAuth() {
   };
 
   // Role-based permission checks
-  const hasRole = (role: string): boolean => {
+  const hasRole = (role: UserRole): boolean => {
     return user?.role === role;
   };
 
-  const hasMinimumRole = (minimumRole: string): boolean => {
+  const hasMinimumRole = (minimumRole: UserRole): boolean => {
     const roleHierarchy = {
-      visitor: 0,
-      member: 1,
-      ministry_leader: 2,
-      administrator: 3,
+      [UserRole.VISITOR]: 0,
+      [UserRole.MEMBER]: 1,
+      [UserRole.MINISTRY_LEADER]: 2,
+      [UserRole.ADMIN]: 3,
+      [UserRole.SUPER_ADMIN]: 4,
     };
 
-    const userLevel =
-      roleHierarchy[user?.role as keyof typeof roleHierarchy] ?? 0;
-    const requiredLevel =
-      roleHierarchy[minimumRole as keyof typeof roleHierarchy] ?? 0;
+    const userLevel = roleHierarchy[user?.role || UserRole.VISITOR];
+    const requiredLevel = roleHierarchy[minimumRole];
 
     return userLevel >= requiredLevel;
   };
 
   const canAccessDashboard = (): boolean => {
-    return hasMinimumRole("member");
+    return hasMinimumRole(UserRole.MEMBER);
   };
 
   const canManageContent = (): boolean => {
-    return hasMinimumRole("ministry_leader");
+    return hasMinimumRole(UserRole.MINISTRY_LEADER);
   };
 
   const canAccessAdmin = (): boolean => {
-    return hasRole("administrator");
+    return hasRole(UserRole.ADMIN);
   };
 
   const getDisplayName = (): string => {
@@ -291,6 +291,18 @@ export function useAuth() {
     )}`.toUpperCase();
   };
 
+  const refreshSession = async () => {
+    // Force session refresh by triggering a new session fetch
+    await update();
+  };
+
+  // Debug helper - log current role when it changes
+  React.useEffect(() => {
+    if (user?.role) {
+      console.log("Current user role:", user.role);
+    }
+  }, [user?.role]);
+
   return {
     // User data
     user,
@@ -306,6 +318,7 @@ export function useAuth() {
     // Profile management
     updateProfile,
     checkUsernameAvailability,
+    refreshSession,
 
     // Role-based access
     hasRole,

@@ -39,4 +39,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ```bash
 npx create-next-app@latest . --typescript --tailwind --eslint --app --use-npm --import-alias "@/*"
 
+npx tsc --noEmit
+
+npx tsc --noEmit --skipLibCheck
+
+
+
 ```

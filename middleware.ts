@@ -4,7 +4,10 @@ import { NextResponse } from "next/server";
 export default withAuth(
   function middleware(req) {
     const token = req.nextauth.token;
-    const isAuthPage = req.nextUrl.pathname.startsWith("/auth");
+    const isAuthPage =
+      req.nextUrl.pathname === "/sign-in" ||
+      req.nextUrl.pathname === "/sign-up" ||
+      req.nextUrl.pathname.startsWith("/auth");
     const isProtectedRoute =
       req.nextUrl.pathname.startsWith("/dash") ||
       req.nextUrl.pathname.startsWith("/mgmt") ||
@@ -12,7 +15,7 @@ export default withAuth(
 
     // Redirect authenticated users away from auth pages
     if (isAuthPage && token) {
-      return NextResponse.redirect(new URL("/dash", req.url));
+      return NextResponse.redirect(new URL("/", req.url));
     }
 
     // Allow unauthenticated access to auth pages
@@ -33,14 +36,14 @@ export default withAuth(
 
       // Ministry leader routes
       if (req.nextUrl.pathname.startsWith("/mgmt")) {
-        if (!["ministry_leader", "administrator"].includes(userRole)) {
+        if (!["MINISTRY_LEADER", "ADMIN", "SUPER_ADMIN"].includes(userRole)) {
           return NextResponse.redirect(new URL("/dash", req.url));
         }
       }
 
       // Admin routes
       if (req.nextUrl.pathname.startsWith("/admin")) {
-        if (userRole !== "administrator") {
+        if (!["ADMIN", "SUPER_ADMIN"].includes(userRole)) {
           return NextResponse.redirect(new URL("/dash", req.url));
         }
       }

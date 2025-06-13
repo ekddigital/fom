@@ -1,13 +1,13 @@
 // User utility functions following DRY principles
 // Enhanced user name formatting and display logic
 
+import { UserRole, DisplayNamePreference } from "@prisma/client";
+
 export interface UserNameData {
   firstName: string;
   lastName: string;
   username?: string | null;
 }
-
-export type DisplayNameFormat = "username" | "full_name" | "first_name";
 
 /**
  * Format user name based on preference following FOM requirements
@@ -17,14 +17,14 @@ export type DisplayNameFormat = "username" | "full_name" | "first_name";
  */
 export const formatUserName = (
   user: UserNameData,
-  format: DisplayNameFormat = "full_name"
+  format: DisplayNamePreference = "FULL_NAME"
 ): string => {
   switch (format) {
-    case "username":
+    case "USERNAME":
       return user.username || `${user.firstName} ${user.lastName}`;
-    case "first_name":
+    case "FIRST_NAME":
       return user.firstName;
-    case "full_name":
+    case "FULL_NAME":
     default:
       return `${user.firstName} ${user.lastName}`;
   }
@@ -47,7 +47,7 @@ export const getUserInitials = (user: UserNameData): string => {
  * @returns Full name with username context (e.g., "John Doe (@johndoe)")
  */
 export const formatUserNameWithUsername = (user: UserNameData): string => {
-  const fullName = formatUserName(user, "full_name");
+  const fullName = formatUserName(user, "FULL_NAME");
   const usernameContext = user.username ? ` (@${user.username})` : "";
   return `${fullName}${usernameContext}`;
 };
@@ -109,17 +109,18 @@ export const generateUsernameSuggestions = (
  * @returns boolean - True if user has sufficient permissions
  */
 export const hasRolePermission = (
-  userRole: string,
-  requiredRole: "visitor" | "member" | "ministry_leader" | "administrator"
+  userRole: UserRole,
+  requiredRole: UserRole
 ): boolean => {
   const roleHierarchy = {
-    visitor: 0,
-    member: 1,
-    ministry_leader: 2,
-    administrator: 3,
+    [UserRole.VISITOR]: 0,
+    [UserRole.MEMBER]: 1,
+    [UserRole.MINISTRY_LEADER]: 2,
+    [UserRole.ADMIN]: 3,
+    [UserRole.SUPER_ADMIN]: 4,
   };
 
-  const userLevel = roleHierarchy[userRole as keyof typeof roleHierarchy] ?? 0;
+  const userLevel = roleHierarchy[userRole] ?? 0;
   const requiredLevel = roleHierarchy[requiredRole];
 
   return userLevel >= requiredLevel;
@@ -130,16 +131,18 @@ export const hasRolePermission = (
  * @param role - User role
  * @returns Formatted role name
  */
-export const getRoleDisplayName = (role: string): string => {
+export const getRoleDisplayName = (role: UserRole): string => {
   switch (role) {
-    case "visitor":
+    case UserRole.VISITOR:
       return "Visitor";
-    case "member":
+    case UserRole.MEMBER:
       return "Member";
-    case "ministry_leader":
+    case UserRole.MINISTRY_LEADER:
       return "Ministry Leader";
-    case "administrator":
+    case UserRole.ADMIN:
       return "Administrator";
+    case UserRole.SUPER_ADMIN:
+      return "Super Administrator";
     default:
       return "Unknown Role";
   }
@@ -150,8 +153,8 @@ export const getRoleDisplayName = (role: string): string => {
  * @param userRole - Current user role
  * @returns boolean - True if user can access ministry features
  */
-export const canAccessMinistryFeatures = (userRole: string): boolean => {
-  return hasRolePermission(userRole, "ministry_leader");
+export const canAccessMinistryFeatures = (userRole: UserRole): boolean => {
+  return hasRolePermission(userRole, UserRole.MINISTRY_LEADER);
 };
 
 /**
@@ -159,6 +162,6 @@ export const canAccessMinistryFeatures = (userRole: string): boolean => {
  * @param userRole - Current user role
  * @returns boolean - True if user can access admin features
  */
-export const canAccessAdminFeatures = (userRole: string): boolean => {
-  return hasRolePermission(userRole, "administrator");
+export const canAccessAdminFeatures = (userRole: UserRole): boolean => {
+  return hasRolePermission(userRole, UserRole.ADMIN);
 };

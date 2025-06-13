@@ -2,6 +2,11 @@
 // Following Prisma camelCase naming and NextAuth integration
 
 import { DefaultSession, DefaultUser } from "next-auth";
+import {
+  UserRole,
+  DisplayNamePreference,
+  ProfileVisibility,
+} from "@prisma/client";
 
 // Extend the built-in NextAuth types
 declare module "next-auth" {
@@ -52,11 +57,11 @@ export interface FOMUser {
   username?: string | null;
 
   // Profile settings
-  displayNamePreference: "username" | "full_name" | "first_name";
-  profileVisibility: "public" | "members_only" | "private";
+  displayNamePreference: DisplayNamePreference;
+  profileVisibility: ProfileVisibility;
 
   // Authentication & Role
-  role: "visitor" | "member" | "ministry_leader" | "administrator";
+  role: UserRole;
   password?: string | null;
 
   // Profile data
@@ -76,8 +81,8 @@ export interface UserProfileUpdateData {
   firstName?: string;
   lastName?: string;
   username?: string;
-  displayNamePreference?: "username" | "full_name" | "first_name";
-  profileVisibility?: "public" | "members_only" | "private";
+  displayNamePreference?: DisplayNamePreference;
+  profileVisibility?: ProfileVisibility;
   ministryInterests?: string[];
   certificateSharingEnabled?: boolean;
   avatarUrl?: string;
@@ -98,16 +103,10 @@ export interface AuthState {
   user: FOMUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  role: string | null;
+  role: UserRole | null;
 }
 
-// Role permissions mapping
-export type UserRole =
-  | "visitor"
-  | "member"
-  | "ministry_leader"
-  | "administrator";
-
+// Role permissions mapping - UserRole is now imported from Prisma
 export interface RolePermissions {
   canViewContent: boolean;
   canCreateContent: boolean;
@@ -144,7 +143,7 @@ export type MinistryInterest = (typeof MINISTRY_INTERESTS)[number];
 export interface UserSearchFilters {
   role?: UserRole[];
   ministryInterests?: MinistryInterest[];
-  profileVisibility?: ("public" | "members_only" | "private")[];
+  profileVisibility?: ProfileVisibility[];
   searchTerm?: string;
   joinedAfter?: Date;
   joinedBefore?: Date;

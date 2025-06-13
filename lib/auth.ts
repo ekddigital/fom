@@ -1,7 +1,12 @@
 import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaClient } from "@prisma/client";
+import {
+  PrismaClient,
+  UserRole,
+  DisplayNamePreference,
+  ProfileVisibility,
+} from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { formatUserName } from "@/lib/utils/user";
 
@@ -19,9 +24,9 @@ export const authOptions: NextAuthOptions = {
           lastName: profile.family_name || "",
           email: profile.email,
           avatarUrl: profile.picture,
-          role: "member", // Default role for new users
-          displayNamePreference: "full_name",
-          profileVisibility: "members_only",
+          role: UserRole.MEMBER, // Default role for new users
+          displayNamePreference: DisplayNamePreference.FULL_NAME,
+          profileVisibility: ProfileVisibility.MEMBERS_ONLY,
           ministryInterests: [],
           certificateSharingEnabled: true,
         };
@@ -93,6 +98,8 @@ export const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // 24 hours - update session this often
   },
   pages: {
     signIn: "/sign-in",
@@ -100,6 +107,7 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async jwt({ token, user, account }) {
+      // If user is signing in for the first time, set initial token data
       if (user) {
         token.id = user.id;
         token.role = user.role;
@@ -107,6 +115,39 @@ export const authOptions: NextAuthOptions = {
         token.lastName = user.lastName;
         token.username = user.username;
         token.displayNamePreference = user.displayNamePreference;
+      }
+
+      // Always fetch fresh user data from database to ensure latest role/info
+      if (token.id) {
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: token.id as string },
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              username: true,
+              role: true,
+              displayNamePreference: true,
+              avatarUrl: true,
+              profileVisibility: true,
+            },
+          });
+
+          if (dbUser) {
+            // Update token with fresh data from database
+            token.role = dbUser.role;
+            token.firstName = dbUser.firstName;
+            token.lastName = dbUser.lastName;
+            token.username = dbUser.username || undefined;
+            token.displayNamePreference = dbUser.displayNamePreference;
+            token.email = dbUser.email;
+            token.picture = dbUser.avatarUrl;
+          }
+        } catch (error) {
+          console.error("Error fetching user data in JWT callback:", error);
+        }
       }
 
       // Update user data on each request for Google OAuth users
@@ -134,7 +175,7 @@ export const authOptions: NextAuthOptions = {
             lastName: token.lastName as string,
             username: token.username as string | undefined,
           },
-          token.displayNamePreference as "username" | "full_name" | "first_name"
+          token.displayNamePreference as DisplayNamePreference
         );
       }
       return session;
@@ -154,9 +195,9 @@ export const authOptions: NextAuthOptions = {
                 email: user.email!,
                 firstName: user.firstName || "",
                 lastName: user.lastName || "",
-                role: "member",
-                displayNamePreference: "full_name",
-                profileVisibility: "members_only",
+                role: UserRole.MEMBER,
+                displayNamePreference: DisplayNamePreference.FULL_NAME,
+                profileVisibility: ProfileVisibility.MEMBERS_ONLY,
                 avatarUrl: user.image,
                 certificateSharingEnabled: true,
                 lastActive: new Date(),

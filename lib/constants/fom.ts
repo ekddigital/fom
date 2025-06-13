@@ -61,9 +61,9 @@ export const FOM_NAVIGATION = {
     { label: "My Journey", href: "/dash/journey" },
   ],
   ministry: [
-    { label: "Content Management", href: "/ministry/content" },
-    { label: "Events", href: "/ministry/events" },
-    { label: "Certificates", href: "/ministry/certificates" },
+    { label: "Content Management", href: "/content" },
+    { label: "Manage Events", href: "/manage-events" },
+    { label: "Certificates", href: "/ministry-certificates" },
   ],
   admin: [
     { label: "Admin Dashboard", href: "/admin" },
@@ -113,10 +113,11 @@ export const FOM_FEATURES = {
 } as const;
 
 export const USER_ROLES = {
-  VISITOR: "visitor",
-  MEMBER: "member",
-  MINISTRY_LEADER: "ministry_leader",
-  ADMINISTRATOR: "administrator",
+  VISITOR: "VISITOR",
+  MEMBER: "MEMBER",
+  MINISTRY_LEADER: "MINISTRY_LEADER",
+  ADMIN: "ADMIN",
+  SUPER_ADMIN: "SUPER_ADMIN",
 } as const;
 
 export const CONTENT_CATEGORIES = {

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,8 +26,17 @@ const signInSchema = z.object({
 
 function SignInForm() {
   const searchParams = useSearchParams();
-  const { signIn, signInWithGoogle, isLoading } = useAuth();
+  const { signIn, signInWithGoogle, isLoading, isAuthenticated } = useAuth();
+  const router = useRouter();
 
+  // Redirect authenticated users away from sign-in page
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
+
+  // Don't render the form if user is authenticated
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,6 +44,10 @@ function SignInForm() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [generalError, setGeneralError] = useState("");
+
+  if (isAuthenticated) {
+    return <div>Redirecting...</div>;
+  }
 
   const error = searchParams?.get("error");
 

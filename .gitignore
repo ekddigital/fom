@@ -177,10 +177,11 @@ logs
 *.tsbuildinfo
 
 # Certificate files (will be generated)
-certificates/
+# certificates/
 *.pdf
 *.png
 uploads/
+CERTIFICATE_SECURITY_GUIDE.md
 
 # Database
 *.sqlite

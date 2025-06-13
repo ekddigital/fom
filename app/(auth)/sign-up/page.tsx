@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,8 +68,21 @@ const signUpSchema = z
   });
 
 export default function SignUpPage() {
-  const { signUp, signInWithGoogle, checkUsernameAvailability, isLoading } =
-    useAuth();
+  const {
+    signUp,
+    signInWithGoogle,
+    checkUsernameAvailability,
+    isLoading,
+    isAuthenticated,
+  } = useAuth();
+  const router = useRouter();
+
+  // Redirect authenticated users away from sign-up page
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, router]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -134,6 +148,11 @@ export default function SignUpPage() {
       }
     }
   };
+
+  // Don't render the form if user is authenticated
+  if (isAuthenticated) {
+    return <div>Redirecting...</div>;
+  }
 
   const handleMinistryInterestToggle = (interest: string) => {
     setFormData((prev) => ({

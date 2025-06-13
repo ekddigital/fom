@@ -33,6 +33,9 @@ import {
   UserPlus,
   Coffee,
   LogOut,
+  Shield,
+  BarChart3,
+  UserCog,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -73,8 +76,15 @@ const communityIcons = {
   Connect: UserPlus,
 };
 
+const adminIcons = {
+  "Admin Dashboard": Shield,
+  Users: UserCog,
+  Analytics: BarChart3,
+  Settings: Settings,
+};
+
 export function PublicHeader({ className = "" }: PublicHeaderProps) {
-  const { isAuthenticated, signOut } = useAuth();
+  const { isAuthenticated, signOut, user } = useAuth();
 
   return (
     <header
@@ -208,7 +218,7 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                               return (
                                 <NavigationMenuLink
                                   key={key}
-                                  href={`/ministry/${key}`}
+                                  href={`/${key}`}
                                   className="group flex items-start space-x-3 rounded-lg p-3 hover:bg-blue-50 transition-all duration-200 hover:shadow-sm border border-transparent hover:border-blue-100"
                                 >
                                   <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
@@ -292,13 +302,31 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                       Account
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="!left-auto !right-0 !translate-x-0">
-                      <div className="bg-white/95 backdrop-blur-xl border border-gray-200/80 shadow-xl rounded-lg">
-                        <div className="grid gap-2 p-4 w-[280px]">
+                      <div className="bg-white/95 backdrop-blur-xl border border-gray-200/80 shadow-xl rounded-lg max-h-[80vh] overflow-y-auto">
+                        <div className="grid gap-2 p-4 w-[320px]">
+                          {/* User Info Section */}
                           <div className="mb-2 pb-2 border-b border-gray-200">
+                            <div className="flex flex-col space-y-1">
+                              <p className="text-sm font-medium leading-none text-gray-900">
+                                {user?.firstName} {user?.lastName}
+                              </p>
+                              <p className="text-xs leading-none text-gray-600">
+                                {user?.email}
+                              </p>
+                              {user?.role && (
+                                <p className="text-xs leading-none text-blue-700 font-medium">
+                                  Role: {user.role}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Account Management Section */}
+                          <div className="mb-2 pb-1">
                             <h3 className="text-sm font-semibold text-blue-950 mb-1">
                               Account Management
                             </h3>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-xs text-gray-600 mb-2">
                               Manage your profile and settings
                             </p>
                           </div>
@@ -322,6 +350,44 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                               </NavigationMenuLink>
                             );
                           })}
+
+                          {/* Admin Section - Only show for ADMIN and SUPER_ADMIN */}
+                          {user &&
+                            (user.role === "ADMIN" ||
+                              user.role === "SUPER_ADMIN") && (
+                              <>
+                                <div className="my-2 border-b border-gray-200"></div>
+                                <div className="mb-2 pb-1">
+                                  <h3 className="text-sm font-semibold text-red-700 mb-1">
+                                    <Shield className="w-3 h-3 inline mr-1" />
+                                    Administration
+                                  </h3>
+                                  <p className="text-xs text-gray-600 mb-2">
+                                    Platform administration tools
+                                  </p>
+                                </div>
+                                {FOM_NAVIGATION.admin.map((item) => {
+                                  const IconComponent =
+                                    adminIcons[
+                                      item.label as keyof typeof adminIcons
+                                    ] || Shield;
+                                  return (
+                                    <NavigationMenuLink
+                                      key={item.href}
+                                      href={item.href}
+                                      className="flex items-center space-x-3 rounded-lg p-2 hover:bg-red-50 transition-all duration-200 group border border-transparent hover:border-red-100"
+                                    >
+                                      <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-md flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                                        <IconComponent className="w-3 h-3 text-red-700" />
+                                      </div>
+                                      <span className="text-sm font-medium text-gray-900 group-hover:text-red-700">
+                                        {item.label}
+                                      </span>
+                                    </NavigationMenuLink>
+                                  );
+                                })}
+                              </>
+                            )}
 
                           {/* Sign Out Button */}
                           <div className="mt-2 pt-2 border-t border-gray-200">
@@ -458,7 +524,7 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                           asChild
                         >
                           <a
-                            href={`/ministry/${key}`}
+                            href={`/${key}`}
                             className="flex items-start space-x-3"
                           >
                             <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-md flex items-center justify-center">
@@ -493,6 +559,44 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                     </Button>
                   ))}
                 </div>
+
+                {/* Admin Section - Only show for ADMIN and SUPER_ADMIN when authenticated */}
+                {isAuthenticated &&
+                  user &&
+                  (user.role === "ADMIN" || user.role === "SUPER_ADMIN") && (
+                    <div className="space-y-1">
+                      <h3 className="text-sm font-semibold text-red-600 uppercase tracking-wider mb-3">
+                        <Shield className="w-3 h-3 inline mr-1" />
+                        Administration
+                      </h3>
+                      {FOM_NAVIGATION.admin.map((item) => {
+                        const IconComponent =
+                          adminIcons[item.label as keyof typeof adminIcons] ||
+                          Shield;
+                        return (
+                          <Button
+                            key={item.href}
+                            variant="ghost"
+                            className="justify-start text-red-700 hover:bg-red-50/80 hover:text-red-800 h-auto p-3 w-full"
+                            asChild
+                          >
+                            <a href={item.href}>
+                              <div className="flex items-start space-x-3">
+                                <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-md flex items-center justify-center">
+                                  <IconComponent className="w-3 h-3 text-red-700" />
+                                </div>
+                                <div className="flex-1 text-left">
+                                  <div className="font-medium text-sm">
+                                    {item.label}
+                                  </div>
+                                </div>
+                              </div>
+                            </a>
+                          </Button>
+                        );
+                      })}
+                    </div>
+                  )}
 
                 {/* Account Section - Only show when authenticated */}
                 {isAuthenticated && (

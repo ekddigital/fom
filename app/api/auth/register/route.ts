@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import {
+  PrismaClient,
+  UserRole,
+  DisplayNamePreference,
+  ProfileVisibility,
+} from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { isUsernameAvailable } from "@/lib/utils/user";
@@ -118,9 +123,9 @@ export async function POST(request: NextRequest) {
           ministryInterests && ministryInterests.length > 0
             ? JSON.stringify(ministryInterests)
             : undefined,
-        role: "member", // Default role
-        displayNamePreference: "full_name",
-        profileVisibility: "members_only",
+        role: UserRole.MEMBER, // Default role
+        displayNamePreference: DisplayNamePreference.FULL_NAME,
+        profileVisibility: ProfileVisibility.MEMBERS_ONLY,
         certificateSharingEnabled: true,
       },
       select: {
