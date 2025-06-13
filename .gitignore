@@ -183,6 +183,7 @@ logs
 uploads/
 CERTIFICATE_SECURITY_GUIDE.md
 
+.env.production.example
 # Database
 *.sqlite
 *.db

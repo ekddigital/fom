@@ -43,6 +43,6 @@ npx tsc --noEmit
 
 npx tsc --noEmit --skipLibCheck
 
-
+openssl rand -base64 32
 
 ```

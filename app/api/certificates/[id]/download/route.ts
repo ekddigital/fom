@@ -8,6 +8,7 @@ import {
   HybridCertificateRenderer,
   TemplateData,
 } from "@/lib/utils/hybrid-certificate-renderer";
+import { EKDAssetService } from "@/lib/services/ekd-asset-service";
 
 export async function GET(
   request: NextRequest,
@@ -38,7 +39,32 @@ export async function GET(
       );
     }
 
-    // Check if pre-generated file exists
+    // Check if certificate is stored in EKD Assets
+    const certificateData = certificate.certificateData as Record<
+      string,
+      unknown
+    >;
+    const ekdAssetId = certificateData?.ekdAssetId as string;
+
+    if (ekdAssetId) {
+      try {
+        // Get download URL from EKD Assets
+        const downloadUrl = await EKDAssetService.getCertificateDownloadUrl(
+          ekdAssetId
+        );
+
+        // Redirect to EKD Assets download URL
+        return NextResponse.redirect(downloadUrl);
+      } catch (error) {
+        console.error(
+          "EKD Assets download failed, falling back to generation:",
+          error
+        );
+        // Continue to generate on-demand if EKD fails
+      }
+    }
+
+    // Check if pre-generated file exists (legacy fallback)
     const fileExtension = format.toLowerCase();
     const filePath =
       fileExtension === "pdf" ? certificate.pdfPath : certificate.pngPath;
@@ -133,6 +159,41 @@ export async function GET(
       const headers = new Headers();
       headers.set("Content-Type", contentType);
       headers.set("Content-Disposition", `attachment; filename="${filename}"`);
+
+      // Upload to EKD Assets for future downloads (background task)
+      if (!ekdAssetId) {
+        try {
+          const uploadResult = await EKDAssetService.uploadCertificate(
+            fileBuffer,
+            filename,
+            {
+              certificateId: certificate.id,
+              recipientName: `${certificate.recipientFirstName} ${certificate.recipientLastName}`,
+              templateName: certificate.template?.name || "Certificate",
+              issueDate: certificate.issueDate.toISOString().split("T")[0],
+            }
+          );
+
+          // Update database with EKD Asset ID for future downloads
+          await prisma.certificate.update({
+            where: { id: certificate.id },
+            data: {
+              certificateData: {
+                ...(certificate.certificateData as Record<string, unknown>),
+                ekdAssetId: uploadResult.id,
+                ekdDownloadUrl: uploadResult.download_url,
+              },
+            },
+          });
+
+          console.log(
+            `Certificate ${certificate.id} uploaded to EKD Assets: ${uploadResult.id}`
+          );
+        } catch (uploadError) {
+          console.error("Failed to upload to EKD Assets:", uploadError);
+          // Continue with download even if upload fails
+        }
+      }
 
       return new NextResponse(fileBuffer, {
         status: 200,
