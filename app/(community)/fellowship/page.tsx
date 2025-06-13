@@ -131,8 +131,8 @@ export default function FellowshipPage() {
         <Coffee className="w-10 h-10 mx-auto mb-3" />
         <h3 className="text-xl font-bold mb-2">Want to Host an Event?</h3>
         <p className="mb-4 opacity-90">
-          Have an idea for a fellowship event? We&apos;d love to help you organize it
-          and bring our community together.
+          Have an idea for a fellowship event? We&apos;d love to help you
+          organize it and bring our community together.
         </p>
         <Button size="lg" className="bg-white text-blue-950 hover:bg-gray-100">
           Propose an Event
@@ -196,6 +196,7 @@ export default function FellowshipPage() {
               <div className="flex flex-col lg:flex-row gap-6">
                 <div className="lg:w-1/3">
                   <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
+                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <Image className="w-12 h-12 text-gray-400" />
                   </div>
                 </div>
@@ -243,6 +244,7 @@ export default function FellowshipPage() {
                       </Badge>
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center">
+                      {/* eslint-disable-next-line jsx-a11y/alt-text */}
                       <Image className="w-12 h-12 text-gray-400" />
                     </div>
                   </div>

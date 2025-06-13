@@ -645,7 +645,7 @@ export default function AdminCertificatesPage() {
     return { categoryStats, recentActivity };
   };
 
-  const { categoryStats, recentActivity } = getAnalyticsData();
+  const { categoryStats } = getAnalyticsData();
 
   const stats = [
     {

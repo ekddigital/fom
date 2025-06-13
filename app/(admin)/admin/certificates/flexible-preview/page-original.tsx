@@ -240,6 +240,7 @@ export default function FlexibleCertificatePreviewPage() {
     type: string;
     content: string;
     position: { x: number; y: number; width: number; height: number };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     style: any;
   }) => {
     const { position, style, content, type } = element;

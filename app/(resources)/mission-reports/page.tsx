@@ -178,6 +178,7 @@ export default function MissionReportsPage() {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-600">
+                  {/* eslint-disable-next-line jsx-a11y/alt-text */}
                   <Image className="w-4 h-4 mr-1" />
                   {report.photos} photos available
                 </div>
@@ -274,6 +275,7 @@ export default function MissionReportsPage() {
 
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center text-xs text-gray-500">
+                    {/* eslint-disable-next-line jsx-a11y/alt-text */}
                     <Image className="w-3 h-3 mr-1" />
                     {report.photos} photos
                   </div>
@@ -300,8 +302,8 @@ export default function MissionReportsPage() {
         <FileText className="w-12 h-12 mx-auto mb-4" />
         <h3 className="text-2xl font-bold mb-4">Join Our Next Mission</h3>
         <p className="mb-6 opacity-90">
-          Experience the joy of serving others and sharing God's love around the
-          world. Our next mission trip is forming now.
+          Experience the joy of serving others and sharing God&apos;s love
+          around the world. Our next mission trip is forming now.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button

@@ -169,8 +169,8 @@ export default function SmallGroupsPage() {
         <Users className="w-10 h-10 mx-auto mb-3" />
         <h3 className="text-xl font-bold mb-2">Want to Lead a Group?</h3>
         <p className="mb-4 opacity-90">
-          Feel called to lead others in community and spiritual growth? We'd
-          love to help you start a new small group.
+          Feel called to lead others in community and spiritual growth?
+          We&apos;d love to help you start a new small group.
         </p>
         <Button size="lg" className="bg-white text-blue-950 hover:bg-gray-100">
           Start a Small Group
@@ -402,8 +402,8 @@ export default function SmallGroupsPage() {
               Spiritual Growth
             </h4>
             <p className="text-sm text-gray-600">
-              Study God's Word together, share insights, and grow in your faith
-              through discussion and accountability.
+              Study God&apos;s Word together, share insights, and grow in your
+              faith through discussion and accountability.
             </p>
           </div>
           <div className="text-center">

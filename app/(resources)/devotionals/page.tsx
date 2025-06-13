@@ -90,8 +90,8 @@ export default function DevotionalsPage() {
           </h1>
         </div>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Start each day with God's Word. Find inspiration, encouragement, and
-          practical wisdom for your spiritual journey.
+          Start each day with God&apos;s Word. Find inspiration, encouragement,
+          and practical wisdom for your spiritual journey.
         </p>
       </div>
 
@@ -106,7 +106,7 @@ export default function DevotionalsPage() {
             <CardHeader>
               <div className="flex items-center justify-between mb-2">
                 <Badge className="bg-blue-950 text-white">
-                  Today's Devotional
+                  Today&apos;s Devotional
                 </Badge>
                 <div className="flex items-center text-sm text-gray-600">
                   <Calendar className="w-4 h-4 mr-1" />
@@ -118,7 +118,7 @@ export default function DevotionalsPage() {
               </CardTitle>
               <div className="text-sm text-gray-600 space-y-1">
                 <div className="font-medium">{devotional.verse}</div>
-                <div className="italic">"{devotional.verseText}"</div>
+                <div className="italic">&quot;{devotional.verseText}&quot;</div>
               </div>
             </CardHeader>
             <CardContent>
@@ -223,7 +223,7 @@ export default function DevotionalsPage() {
         <h3 className="text-2xl font-bold mb-4">Never Miss a Devotional</h3>
         <p className="mb-6 opacity-90">
           Get daily devotionals delivered to your inbox every morning to start
-          your day with God's Word.
+          your day with God&apos;s Word.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
           <input

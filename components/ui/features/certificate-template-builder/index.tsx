@@ -26,8 +26,6 @@ import {
 import {
   CERTIFICATE_TYPES,
   DESIGN_TEMPLATES,
-  CertificateType,
-  DesignTemplate,
   createCertificateFromDesignAndType,
   getCertificateTypeById,
   getDesignTemplateById,

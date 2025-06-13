@@ -111,7 +111,9 @@ export async function POST(req: Request) {
         fullTemplateDesignData.elements &&
         Array.isArray(fullTemplateDesignData.elements)
       ) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const elements = fullTemplateDesignData.elements as any[];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         elements.forEach((element: any) => {
           if (element.content && typeof element.content === "string") {
             const originalContent = element.content;

@@ -27,7 +27,6 @@ import {
   Send,
   Eye,
   User,
-  Mail,
   Calendar,
   Award,
   Palette,
@@ -52,7 +51,7 @@ export default function FlexibleIssueCertificatePage() {
     designTemplateId: "",
     recipientName: "",
     recipientEmail: "",
-    customFields: {} as Record<string, any>,
+    customFields: {} as Record<string, unknown>,
     securityLevel: "STANDARD",
     validityPeriod: null as number | null, // null = never expires, number = days until expiry
     notes: "",
@@ -93,14 +92,14 @@ export default function FlexibleIssueCertificatePage() {
     }
   };
 
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | null) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleCustomFieldChange = (field: string, value: any) => {
+  const handleCustomFieldChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       customFields: {
@@ -290,7 +289,7 @@ export default function FlexibleIssueCertificatePage() {
                     {field.type === "text" && (
                       <Input
                         id={field.id}
-                        value={formData.customFields[field.id] || ""}
+                        value={String(formData.customFields[field.id] || "")}
                         onChange={(e) =>
                           handleCustomFieldChange(field.id, e.target.value)
                         }
@@ -300,7 +299,7 @@ export default function FlexibleIssueCertificatePage() {
                     {field.type === "textarea" && (
                       <Textarea
                         id={field.id}
-                        value={formData.customFields[field.id] || ""}
+                        value={String(formData.customFields[field.id] || "")}
                         onChange={(e) =>
                           handleCustomFieldChange(field.id, e.target.value)
                         }
@@ -311,7 +310,7 @@ export default function FlexibleIssueCertificatePage() {
                       <Input
                         id={field.id}
                         type="date"
-                        value={formData.customFields[field.id] || ""}
+                        value={String(formData.customFields[field.id] || "")}
                         onChange={(e) =>
                           handleCustomFieldChange(field.id, e.target.value)
                         }
@@ -320,7 +319,7 @@ export default function FlexibleIssueCertificatePage() {
                     )}
                     {field.type === "select" && field.options && (
                       <Select
-                        value={formData.customFields[field.id] || ""}
+                        value={String(formData.customFields[field.id] || "")}
                         onValueChange={(value) =>
                           handleCustomFieldChange(field.id, value)
                         }

@@ -3,6 +3,8 @@
  * Integrates the certificate manager with Prisma database
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { PrismaClient, Prisma } from "@prisma/client";
 import {
   CertificateManager,

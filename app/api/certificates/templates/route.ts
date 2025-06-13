@@ -86,6 +86,7 @@ export async function POST(req: Request) {
 
     if (error instanceof Error && error.name === "ZodError") {
       return NextResponse.json(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { error: "Invalid request data", details: (error as any).errors },
         { status: 400 }
       );

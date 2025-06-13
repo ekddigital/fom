@@ -11,7 +11,6 @@ import {
   BookOpen,
   Download,
   Search,
-  Filter,
   Book,
   Video,
   FileText,
@@ -326,7 +325,7 @@ export default function ResourcesLibraryPage() {
         <h3 className="text-2xl font-bold mb-4">Share Your Resources</h3>
         <p className="mb-6 opacity-90">
           Do you have study materials, guides, or other resources that could
-          bless our community? We'd love to include them in our library.
+          bless our community? We&apos;d love to include them in our library.
         </p>
         <Button size="lg" className="bg-white text-blue-950 hover:bg-gray-100">
           Submit a Resource

@@ -6,7 +6,6 @@
 
 import jsPDF from "jspdf";
 import puppeteer from "puppeteer";
-import html2canvas from "html2canvas";
 
 export interface CertificateData {
   id: string;
@@ -15,7 +14,9 @@ export interface CertificateData {
   recipientLastName: string;
   recipientEmail: string;
   issueDate: Date;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   templateData: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
 
@@ -39,6 +40,7 @@ export interface TemplateElement {
     border?: string;
     borderRadius?: string;
     padding?: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [key: string]: any;
   };
 }
@@ -74,6 +76,7 @@ export const CERTIFICATE_PRESETS = {
 
 export class CertificateRenderer {
   private certificate: CertificateData;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private templateData: any;
   private elements: TemplateElement[];
   private pageSettings: PageSettings;

@@ -8,7 +8,6 @@ import {
   QrCode,
   Award,
   Crown,
-  MapPin,
   Calendar,
   User,
   Building2,

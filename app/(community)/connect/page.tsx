@@ -357,8 +357,8 @@ export default function ConnectPage() {
             </div>
             <h4 className="font-semibold text-gray-900 mb-2">Be Genuine</h4>
             <p className="text-sm text-gray-600">
-              Share authentically about your interests, needs, and what you're
-              looking for in a connection.
+              Share authentically about your interests, needs, and what
+              you&apos;re looking for in a connection.
             </p>
           </div>
           <div className="text-center">
@@ -380,7 +380,7 @@ export default function ConnectPage() {
             <h4 className="font-semibold text-gray-900 mb-2">Be Patient</h4>
             <p className="text-sm text-gray-600">
               Building meaningful relationships takes time. Be patient and open
-              to God's timing.
+              to God&apos;s timing.
             </p>
           </div>
         </div>

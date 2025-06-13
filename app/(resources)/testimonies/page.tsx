@@ -247,8 +247,8 @@ export default function TestimoniesPage() {
         <Heart className="w-12 h-12 mx-auto mb-4" />
         <h3 className="text-2xl font-bold mb-4">Share Your Story</h3>
         <p className="mb-6 opacity-90">
-          Has God transformed your life? We'd love to hear your testimony and
-          share it to encourage others.
+          Has God transformed your life? We&apos;d love to hear your testimony
+          and share it to encourage others.
         </p>
         <Button size="lg" className="bg-white text-blue-950 hover:bg-gray-100">
           Submit Your Testimony

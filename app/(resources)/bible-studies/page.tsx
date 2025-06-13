@@ -87,7 +87,7 @@ export default function BibleStudiesPage() {
           <h1 className="text-4xl font-bold text-blue-950">Bible Studies</h1>
         </div>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Deepen your understanding of God's Word through structured Bible
+          Deepen your understanding of God&apos;s Word through structured Bible
           studies and small group discussions.
         </p>
       </div>
@@ -190,8 +190,8 @@ export default function BibleStudiesPage() {
           Ready to Dive Deeper?
         </h3>
         <p className="text-gray-600 mb-6">
-          Join one of our Bible studies and grow in your understanding of God's
-          Word alongside fellow believers.
+          Join one of our Bible studies and grow in your understanding of
+          God&apos;s Word alongside fellow believers.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button size="lg" className="bg-blue-950 hover:bg-blue-800">

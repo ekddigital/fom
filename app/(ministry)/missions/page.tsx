@@ -108,8 +108,8 @@ export default function MissionsPage() {
           <h1 className="text-4xl font-bold text-blue-950">Mission Trips</h1>
         </div>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          "Go therefore and make disciples of all nations..." - Matthew 28:19.
-          Join us in spreading God's love around the world.
+          &quot;Go therefore and make disciples of all nations...&quot; -
+          Matthew 28:19. Join us in spreading God&apos;s love around the world.
         </p>
       </div>
 

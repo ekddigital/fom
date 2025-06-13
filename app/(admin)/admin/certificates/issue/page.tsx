@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Send, Eye, User, Mail, Calendar } from "lucide-react";
+import { ArrowLeft, Send, Eye, User, Calendar } from "lucide-react";
 import { toast } from "sonner";
 
 interface CertificateTemplate {
@@ -30,7 +30,7 @@ interface CertificateTemplate {
   name: string;
   description: string;
   category: string;
-  templateData: any;
+  templateData: Record<string, unknown>;
   isActive: boolean;
 }
 
@@ -47,71 +47,74 @@ export default function IssueCertificatePage() {
     recipientEmail: "",
     authorizingOfficial: "", // New field for authorizing official (like "Hetawk", "Executive Director", etc.)
     issueDate: new Date().toISOString().split("T")[0], // Default to today's date in YYYY-MM-DD format
-    customFields: {} as Record<string, any>,
+    customFields: {} as Record<string, unknown>,
     securityLevel: "STANDARD",
     validityPeriod: null as number | null, // null = never expires, number = days until expiry
     notes: "",
   });
+
+  const loadTemplate = useCallback(
+    async (id: string) => {
+      try {
+        const response = await fetch(`/api/certificates/templates/${id}`);
+        if (response.ok) {
+          const templateData = await response.json();
+          setTemplate(templateData);
+        } else if (response.status === 404) {
+          // Template not found, try to initialize database first
+          toast.info("Initializing database with default templates...");
+
+          try {
+            const initResponse = await fetch("/api/admin/initialize-database", {
+              method: "POST",
+            });
+
+            if (initResponse.ok) {
+              toast.success("Database initialized successfully");
+              // Try loading the template again
+              const retryResponse = await fetch(
+                `/api/certificates/templates/${id}`
+              );
+              if (retryResponse.ok) {
+                const templateData = await retryResponse.json();
+                setTemplate(templateData);
+                return;
+              }
+            }
+          } catch (initError) {
+            console.error("Error initializing database:", initError);
+          }
+
+          toast.error("Failed to load certificate template");
+          router.push("/admin/certificates");
+        } else {
+          toast.error("Failed to load certificate template");
+          router.push("/admin/certificates");
+        }
+      } catch (error) {
+        console.error("Error loading template:", error);
+        toast.error("Failed to load certificate template");
+        router.push("/admin/certificates");
+      }
+    },
+    [router]
+  );
 
   // Load template data
   useEffect(() => {
     if (templateId) {
       loadTemplate(templateId);
     }
-  }, [templateId]);
+  }, [templateId, loadTemplate]);
 
-  const loadTemplate = async (id: string) => {
-    try {
-      const response = await fetch(`/api/certificates/templates/${id}`);
-      if (response.ok) {
-        const templateData = await response.json();
-        setTemplate(templateData);
-      } else if (response.status === 404) {
-        // Template not found, try to initialize database first
-        toast.info("Initializing database with default templates...");
-
-        try {
-          const initResponse = await fetch("/api/admin/initialize-database", {
-            method: "POST",
-          });
-
-          if (initResponse.ok) {
-            toast.success("Database initialized successfully");
-            // Try loading the template again
-            const retryResponse = await fetch(
-              `/api/certificates/templates/${id}`
-            );
-            if (retryResponse.ok) {
-              const templateData = await retryResponse.json();
-              setTemplate(templateData);
-              return;
-            }
-          }
-        } catch (initError) {
-          console.error("Error initializing database:", initError);
-        }
-
-        toast.error("Failed to load certificate template");
-        router.push("/admin/certificates");
-      } else {
-        toast.error("Failed to load certificate template");
-        router.push("/admin/certificates");
-      }
-    } catch (error) {
-      console.error("Error loading template:", error);
-      toast.error("Failed to load certificate template");
-      router.push("/admin/certificates");
-    }
-  };
-
-  const handleInputChange = (field: string, value: any) => {
+  const handleInputChange = (field: string, value: string | number | null) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleCustomFieldChange = (field: string, value: any) => {
+  const handleCustomFieldChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       customFields: {
@@ -502,7 +505,7 @@ export default function IssueCertificatePage() {
                   <Label htmlFor="achievement">Achievement/Course</Label>
                   <Input
                     id="achievement"
-                    value={formData.customFields.achievement || ""}
+                    value={(formData.customFields.achievement as string) || ""}
                     onChange={(e) =>
                       handleCustomFieldChange("achievement", e.target.value)
                     }
@@ -517,12 +520,9 @@ export default function IssueCertificatePage() {
                   <Input
                     id="serviceYears"
                     type="number"
-                    value={formData.customFields.serviceYears || ""}
+                    value={(formData.customFields.serviceYears as string) || ""}
                     onChange={(e) =>
-                      handleCustomFieldChange(
-                        "serviceYears",
-                        parseInt(e.target.value)
-                      )
+                      handleCustomFieldChange("serviceYears", e.target.value)
                     }
                     placeholder="e.g., 5"
                     className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
@@ -534,7 +534,7 @@ export default function IssueCertificatePage() {
                   <Label htmlFor="department">Department/Ministry</Label>
                   <Input
                     id="department"
-                    value={formData.customFields.department || ""}
+                    value={(formData.customFields.department as string) || ""}
                     onChange={(e) =>
                       handleCustomFieldChange("department", e.target.value)
                     }
@@ -550,7 +550,9 @@ export default function IssueCertificatePage() {
                   </Label>
                   <Textarea
                     id="specialRecognition"
-                    value={formData.customFields.specialRecognition || ""}
+                    value={
+                      (formData.customFields.specialRecognition as string) || ""
+                    }
                     onChange={(e) =>
                       handleCustomFieldChange(
                         "specialRecognition",
