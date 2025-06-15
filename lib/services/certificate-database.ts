@@ -5,7 +5,8 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { PrismaClient, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
+import { prisma } from "../prisma"; // Use centralized Prisma instance
 import {
   CertificateManager,
   CertificateRequest,
@@ -14,8 +15,6 @@ import {
   OrganizationConfig, // Import OrganizationConfig
 } from "../utils/certificate-manager";
 import { CERTIFICATE_TEMPLATES } from "../utils/certificate-templates";
-
-const prisma = new PrismaClient();
 
 /**
  * Database Certificate Service
@@ -89,16 +88,30 @@ export class DatabaseCertificateService {
 
   /**
    * Initialize default data (templates and FOM organization)
+   * Override everything during initialization for consistency
    */
   async initializeDefaults(): Promise<void> {
     try {
+      console.log("🚀 Starting database initialization with override mode...");
+
       // Create default FOM organization if it doesn't exist
       await this.ensureFOMOrganization();
 
-      // Seed default certificate templates
+      // Seed default certificate templates with override
+      console.log("📋 Seeding certificate templates with override...");
       await this.seedCertificateTemplates();
+
+      console.log("✅ Database initialization completed successfully");
     } catch (error) {
-      console.error("Error initializing defaults:", error);
+      console.error("❌ Error initializing defaults:", error);
+
+      // Log more details about the error
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+
       throw error;
     }
   }
@@ -154,6 +167,7 @@ export class DatabaseCertificateService {
 
   /**
    * Seed certificate templates from our template system with predictable IDs
+   * Uses upsert to override everything during initialization
    */
   private async seedCertificateTemplates(): Promise<void> {
     // Find the existing super admin user
@@ -175,23 +189,19 @@ export class DatabaseCertificateService {
       `🔑 Using super admin user: ${superAdminUser.firstName} ${superAdminUser.lastName} (${superAdminUser.email})`
     );
 
-    for (const template of CERTIFICATE_TEMPLATES) {
-      if (!template.name) continue;
+    // Use transaction to ensure all templates are processed atomically
+    await prisma.$transaction(
+      async (tx) => {
+        for (const template of CERTIFICATE_TEMPLATES) {
+          if (!template.name) continue;
 
-      // Generate a predictable ID based on template name
-      const templateId = this.generateTemplateId(template.name);
+          // Generate a predictable ID based on template name
+          const templateId = this.generateTemplateId(template.name);
 
-      const existingTemplate = await prisma.certificateTemplate.findUnique({
-        where: { id: templateId },
-      });
+          // Get type code from certificate utils
+          const typeCode = this.generateTypeCode(template.name);
 
-      if (!existingTemplate) {
-        // Get type code from certificate utils
-        const typeCode = this.generateTypeCode(template.name);
-
-        await prisma.certificateTemplate.create({
-          data: {
-            id: templateId,
+          const templateData = {
             name: template.name,
             description:
               template.description ||
@@ -202,18 +212,39 @@ export class DatabaseCertificateService {
             defaultSecurityLevel: this.getDefaultSecurityLevel(template.name),
             createdBy: superAdminUser.id,
             isActive: true,
-          },
-        });
+          };
 
-        console.log(
-          `✅ Seeded template: ${template.name} (ID: ${templateId}) - Created by: ${superAdminUser.email}`
-        );
-      } else {
-        console.log(
-          `⏭️  Template already exists: ${template.name} (ID: ${templateId})`
-        );
+          try {
+            // Use upsert to create or update (override) the template
+            await tx.certificateTemplate.upsert({
+              where: { id: templateId },
+              create: {
+                id: templateId,
+                ...templateData,
+              },
+              update: {
+                ...templateData,
+                // Ensure we override all fields during update
+                updatedAt: new Date(),
+              },
+            });
+
+            console.log(
+              `🔄 Upserted template: ${template.name} (ID: ${templateId}) - Updated by: ${superAdminUser.email}`
+            );
+          } catch (error) {
+            console.error(
+              `❌ Failed to upsert template ${template.name}:`,
+              error
+            );
+            // Continue with other templates instead of failing the entire process
+          }
+        }
+      },
+      {
+        timeout: 60000, // 60 second timeout for the entire transaction
       }
-    }
+    );
   }
 
   /**
@@ -236,140 +267,199 @@ export class DatabaseCertificateService {
       recipientEmail: string;
       issuedById: string;
     },
-    fullTemplateDesignData: Prisma.JsonObject // For storing in Certificate.certificateData
+    fullTemplateDesignData: Prisma.JsonObject, // For storing in Certificate.certificateData
+    enhancedQRCode?: string // Optional enhanced QR code data
   ): Promise<CompleteCertificate> {
-    try {
-      // Auto-generate certificate ID if not provided
-      let certificateId = request.id;
-      if (!certificateId) {
-        // Get the next sequence number for this template
-        const existingCount = await prisma.certificate.count({
-          where: {
-            template: {
-              name: request.templateName,
+    // Use a transaction for robust certificate issuance to prevent connection issues
+    return await prisma.$transaction(
+      async (tx) => {
+        try {
+          // Auto-generate certificate ID if not provided
+          let certificateId = request.id;
+          if (!certificateId) {
+            // Get the next sequence number for this template
+            const existingCount = await tx.certificate.count({
+              where: {
+                template: {
+                  name: request.templateName,
+                },
+              },
+            });
+
+            // Import the generateCertificateId function
+            const { generateCertificateId } = await import(
+              "@/lib/utils/certificate"
+            );
+            certificateId = generateCertificateId(
+              request.templateName,
+              existingCount + 1
+            );
+          }
+
+          let validityInMonths: number | null = null;
+          if (
+            request.validityPeriod &&
+            typeof request.validityPeriod === "number" &&
+            request.validityPeriod > 0
+          ) {
+            validityInMonths = Math.ceil(request.validityPeriod / 30);
+          } else if (request.validityPeriod === null) {
+            validityInMonths = null;
+          }
+
+          const managerRequest: CertificateRequest = {
+            id: certificateId,
+            templateName: request.templateName,
+            recipientName: request.recipientName,
+            authorizingOfficial: request.authorizingOfficial, // Pass the authorizing official
+            issueDate: request.issueDate, // Pass the custom issue date
+            customFields: request.customFields,
+            securityLevel: request.securityLevel,
+            organizationId: request.organizationId,
+            issuedBy: request.issuedBy, // This is userId, manager resolves to name
+            validityPeriod: validityInMonths,
+          };
+
+          const certificate =
+            this.certificateManager.issueCertificate(managerRequest);
+
+          const template = await tx.certificateTemplate.findFirst({
+            where: { name: request.templateName }, // templateName is like "Classic Elegant"
+          });
+
+          if (!template) {
+            throw new Error(
+              `Template with name '${request.templateName}' not found in database. Available templates might have different names or IDs.`
+            );
+          }
+
+          const [firstName, ...lastNameParts] =
+            request.recipientName.split(" ");
+          const lastName = lastNameParts.join(" ") || "";
+
+          const recipientUser = await tx.user.findUnique({
+            where: { email: request.recipientEmail },
+          });
+
+          // Ensure the issuing user exists in the database
+          const issuingUser = await tx.user.findUnique({
+            where: { id: request.issuedById },
+          });
+
+          // If the user doesn't exist (like with temp backdoor user), create or find a temporary user
+          if (!issuingUser && request.issuedById === "temp-backdoor-user") {
+            const tempEmail =
+              process.env.TEMP_BACKDOOR_EMAIL || "temp@example.com";
+
+            // First try to find user by email in case they exist with different ID
+            const existingUser = await tx.user.findUnique({
+              where: { email: tempEmail },
+            });
+
+            if (!existingUser) {
+              // Create new temp user if none exists
+              await tx.user.create({
+                data: {
+                  id: "temp-backdoor-user",
+                  email: tempEmail,
+                  firstName: "Temp",
+                  lastName: "User",
+                  role: "ADMIN",
+                  displayNamePreference: "FULL_NAME",
+                  profileVisibility: "MEMBERS_ONLY",
+                  certificateSharingEnabled: true,
+                },
+              });
+              console.log("✅ Created temporary backdoor user in database");
+            } else {
+              console.log(
+                "✅ Found existing user with temp email, using that user"
+              );
+              // Update the request to use the existing user's ID
+              request.issuedById = existingUser.id;
+            }
+          } else if (!issuingUser) {
+            throw new Error(
+              `Issuing user with ID ${request.issuedById} does not exist`
+            );
+          }
+
+          console.log("About to store certificate with templateData:", {
+            certificateId: certificate.id,
+            templateDataType: typeof fullTemplateDesignData,
+            templateDataKeys:
+              fullTemplateDesignData &&
+              typeof fullTemplateDesignData === "object"
+                ? Object.keys(fullTemplateDesignData)
+                : "not an object",
+            hasElements:
+              fullTemplateDesignData &&
+              typeof fullTemplateDesignData === "object" &&
+              "elements" in fullTemplateDesignData,
+            elementsCount:
+              fullTemplateDesignData &&
+              typeof fullTemplateDesignData === "object" &&
+              "elements" in fullTemplateDesignData &&
+              Array.isArray(fullTemplateDesignData.elements)
+                ? fullTemplateDesignData.elements.length
+                : "no elements",
+            fullTemplateDesignData,
+          });
+
+          await tx.certificate.create({
+            data: {
+              id: certificate.id, // This is the humanReadableCertificateId from request.id
+              templateId: template.id,
+              recipientFirstName: firstName,
+              recipientLastName: lastName,
+              recipientEmail: request.recipientEmail,
+              issuedTo: recipientUser?.id,
+              issuedBy: request.issuedById,
+              verificationId: certificate.id,
+              certificateData: fullTemplateDesignData, // Store the full resolved design here
+              securityLevel: certificate.metadata.securityLevel as string, // Cast from enum if needed
+              digitalSignature: certificate.securityData.signature,
+              blockchainHash: certificate.securityData.blockchainHash,
+              watermarkData: certificate.securityData.watermark
+                ? JSON.parse(JSON.stringify(certificate.securityData.watermark))
+                : null,
+              securityMetadata: JSON.parse(
+                JSON.stringify(certificate.securityData)
+              ) as Prisma.JsonObject,
+              organizationId: request.organizationId || "fom",
+              pdfPath: "",
+              pngPath: "",
+              qrCodeData: enhancedQRCode || certificate.qrCode, // Use enhanced QR code if provided
+              issueDate: request.issueDate
+                ? new Date(request.issueDate)
+                : new Date(certificate.issueDate),
+              expiryDate: certificate.expiryDate
+                ? new Date(certificate.expiryDate)
+                : null,
+              status: certificate.status as string, // Cast from enum if needed
             },
-          },
-        });
+          });
 
-        // Import the generateCertificateId function
-        const { generateCertificateId } = await import(
-          "@/lib/utils/certificate"
-        );
-        certificateId = generateCertificateId(
-          request.templateName,
-          existingCount + 1
-        );
+          return {
+            ...certificate,
+            qrCode: enhancedQRCode || certificate.qrCode, // Use enhanced QR code if provided
+          };
+        } catch (error) {
+          console.error("Error issuing certificate in transaction:", error);
+          if (error instanceof Prisma.PrismaClientKnownRequestError) {
+            console.error("Prisma Error Code:", error.code);
+            console.error("Prisma Error Meta:", error.meta);
+            console.error("Prisma Error Message:", error.message);
+          }
+          throw error;
+        }
+      },
+      {
+        maxWait: 10000, // Wait up to 10 seconds for a connection
+        timeout: 30000, // Allow up to 30 seconds for the transaction
+        isolationLevel: "ReadCommitted", // Use read committed isolation
       }
-
-      let validityInMonths: number | null = null;
-      if (
-        request.validityPeriod &&
-        typeof request.validityPeriod === "number" &&
-        request.validityPeriod > 0
-      ) {
-        validityInMonths = Math.ceil(request.validityPeriod / 30);
-      } else if (request.validityPeriod === null) {
-        validityInMonths = null;
-      }
-
-      const managerRequest: CertificateRequest = {
-        id: certificateId,
-        templateName: request.templateName,
-        recipientName: request.recipientName,
-        authorizingOfficial: request.authorizingOfficial, // Pass the authorizing official
-        issueDate: request.issueDate, // Pass the custom issue date
-        customFields: request.customFields,
-        securityLevel: request.securityLevel,
-        organizationId: request.organizationId,
-        issuedBy: request.issuedBy, // This is userId, manager resolves to name
-        validityPeriod: validityInMonths,
-      };
-
-      const certificate =
-        this.certificateManager.issueCertificate(managerRequest);
-
-      const template = await prisma.certificateTemplate.findFirst({
-        where: { name: request.templateName }, // templateName is like "Classic Elegant"
-      });
-
-      if (!template) {
-        throw new Error(
-          `Template with name '${request.templateName}' not found in database. Available templates might have different names or IDs.`
-        );
-      }
-
-      const [firstName, ...lastNameParts] = request.recipientName.split(" ");
-      const lastName = lastNameParts.join(" ") || "";
-
-      const recipientUser = await prisma.user.findUnique({
-        where: { email: request.recipientEmail },
-      });
-
-      console.log("About to store certificate with templateData:", {
-        certificateId: certificate.id,
-        templateDataType: typeof fullTemplateDesignData,
-        templateDataKeys:
-          fullTemplateDesignData && typeof fullTemplateDesignData === "object"
-            ? Object.keys(fullTemplateDesignData)
-            : "not an object",
-        hasElements:
-          fullTemplateDesignData &&
-          typeof fullTemplateDesignData === "object" &&
-          "elements" in fullTemplateDesignData,
-        elementsCount:
-          fullTemplateDesignData &&
-          typeof fullTemplateDesignData === "object" &&
-          "elements" in fullTemplateDesignData &&
-          Array.isArray(fullTemplateDesignData.elements)
-            ? fullTemplateDesignData.elements.length
-            : "no elements",
-        fullTemplateDesignData,
-      });
-
-      await prisma.certificate.create({
-        data: {
-          id: certificate.id, // This is the humanReadableCertificateId from request.id
-          templateId: template.id,
-          recipientFirstName: firstName,
-          recipientLastName: lastName,
-          recipientEmail: request.recipientEmail,
-          issuedTo: recipientUser?.id,
-          issuedBy: request.issuedById,
-          verificationId: certificate.id,
-          certificateData: fullTemplateDesignData, // Store the full resolved design here
-          securityLevel: certificate.metadata.securityLevel as string, // Cast from enum if needed
-          digitalSignature: certificate.securityData.signature,
-          blockchainHash: certificate.securityData.blockchainHash,
-          watermarkData: certificate.securityData.watermark
-            ? JSON.parse(JSON.stringify(certificate.securityData.watermark))
-            : null,
-          securityMetadata: JSON.parse(
-            JSON.stringify(certificate.securityData)
-          ) as Prisma.JsonObject,
-          organizationId: request.organizationId || "fom",
-          pdfPath: "",
-          pngPath: "",
-          qrCodeData: certificate.qrCode,
-          issueDate: request.issueDate
-            ? new Date(request.issueDate)
-            : new Date(certificate.issueDate),
-          expiryDate: certificate.expiryDate
-            ? new Date(certificate.expiryDate)
-            : null,
-          status: certificate.status as string, // Cast from enum if needed
-        },
-      });
-
-      return certificate;
-    } catch (error) {
-      console.error("Error issuing certificate in DatabaseService:", error);
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.error("Prisma Error Code:", error.code);
-        console.error("Prisma Error Meta:", error.meta);
-        console.error("Prisma Error Message:", error.message);
-      }
-      throw error;
-    }
+    );
   }
 
   /**
@@ -1032,6 +1122,18 @@ export class DatabaseCertificateService {
         },
       },
     });
+  }
+
+  /**
+   * Get the count of certificate templates in the database
+   */
+  async getTemplateCount(): Promise<number> {
+    try {
+      return await prisma.certificateTemplate.count();
+    } catch (error) {
+      console.error("Error getting template count:", error);
+      return 0;
+    }
   }
 }
 

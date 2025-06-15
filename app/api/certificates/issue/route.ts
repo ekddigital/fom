@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { dbCertificateService } from "@/lib/services/certificate-database";
+import { generateEnhancedQRCodeData } from "@/lib/utils/certificate";
 import { z, ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 
@@ -16,6 +17,12 @@ const IssueCertificateSchema = z.object({
   securityLevel: z.enum(["BASIC", "STANDARD", "HIGH"]).optional(),
   organizationId: z.string().optional(),
   validityPeriod: z.union([z.number().positive(), z.null()]).optional(), // null = never expires
+
+  // JICF Certificate of Service specific fields
+  gender: z.enum(["Male", "Female"]).optional(), // For determining his/her in template
+  position: z.string().optional(), // Position(s) served in ministry
+  pastorName: z.string().optional(), // Pastor name for signature area
+  pastorSignature: z.string().optional(), // Custom pastor signature path, defaults to /pastor_Joe_signaturepng.png
 });
 
 export async function POST(req: Request) {
@@ -43,8 +50,17 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validatedData = IssueCertificateSchema.parse(body);
 
-    // Initialize database service if needed
-    await dbCertificateService.initializeDefaults();
+    // Initialize database service if needed (only if templates don't exist)
+    try {
+      const templateCount = await dbCertificateService.getTemplateCount();
+      if (templateCount === 0) {
+        console.log("📋 No templates found, initializing database...");
+        await dbCertificateService.initializeDefaults();
+      }
+    } catch (initError) {
+      console.error("❌ Failed to initialize database:", initError);
+      // Continue without initialization - the template lookup will handle missing templates
+    }
 
     // Get the actual template data from the database
     const templateName = validatedData.templateName;
@@ -125,11 +141,52 @@ export async function POST(req: Request) {
               .replace(/\{\{issuerName\}\}/g, issuerDisplayName)
               .replace(/\{\{issueDate\}\}/g, issueDate)
               .replace(/\{\{certificateId\}\}/g, certificateId)
+              // JICF Certificate of Service specific replacements
+              .replace(
+                /\{\{gender\}\}/g,
+                validatedData.gender === "Male"
+                  ? "his"
+                  : validatedData.gender === "Female"
+                  ? "her"
+                  : "his/her"
+              )
+              .replace(
+                /\{\{position\}\}/g,
+                validatedData.position || "Ministry Position"
+              )
+              .replace(
+                /\{\{pastorName\}\}/g,
+                validatedData.pastorName || "Pst. Joseph G. Summers"
+              )
+              .replace(
+                /\{\{pastorSignature\}\}/g,
+                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png"
+              )
               // Single curly brace format
               .replace(/\{recipientName\}/g, validatedData.recipientName)
               .replace(/\{issuerName\}/g, issuerDisplayName)
               .replace(/\{issueDate\}/g, issueDate)
               .replace(/\{certificateId\}/g, certificateId)
+              .replace(
+                /\{gender\}/g,
+                validatedData.gender === "Male"
+                  ? "his"
+                  : validatedData.gender === "Female"
+                  ? "her"
+                  : "his/her"
+              )
+              .replace(
+                /\{position\}/g,
+                validatedData.position || "Ministry Position"
+              )
+              .replace(
+                /\{pastorName\}/g,
+                validatedData.pastorName || "Pst. Joseph G. Summers"
+              )
+              .replace(
+                /\{pastorSignature\}/g,
+                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png"
+              )
               // Plain text replacements
               .replace(/Sample Recipient/g, validatedData.recipientName)
               .replace(/System Administrator/g, issuerDisplayName)
@@ -158,6 +215,105 @@ export async function POST(req: Request) {
                 original: originalContent,
                 updated: element.content,
               });
+            }
+
+            // Dynamic sizing for JICF Certificate of Service position field
+            if (element.id === "position-served" && validatedData.position) {
+              const positionText = validatedData.position;
+              const textLength = positionText.length;
+
+              // Calculate optimal font size and height based on text length and content
+              let fontSize = 22; // Default size
+              let height = 30; // Default height
+
+              // Count semicolons and line breaks to determine if text spans multiple lines
+              const semicolonCount = (positionText.match(/;/g) || []).length;
+              const hasMultipleRoles = semicolonCount > 0;
+
+              if (textLength > 80 || (hasMultipleRoles && textLength > 50)) {
+                // Very long text or multiple roles - much smaller font, more height
+                fontSize = 14;
+                height = 60;
+              } else if (
+                textLength > 60 ||
+                (hasMultipleRoles && textLength > 30)
+              ) {
+                // Long text with multiple roles - smaller font, more height
+                fontSize = 16;
+                height = 50;
+              } else if (textLength > 40) {
+                // Medium-long text - medium font
+                fontSize = 18;
+                height = 40;
+              } else if (textLength > 25) {
+                // Medium text - slightly smaller font
+                fontSize = 20;
+                height = 35;
+              }
+              // Short text (≤25 chars) keeps default 22px font and 30px height
+
+              // Update element style and position
+              element.style.fontSize = fontSize;
+              element.position.height = height;
+
+              // Add line-height for better text spacing when multiple lines
+              if (height > 35) {
+                element.style.lineHeight = "1.3";
+              }
+
+              console.log(
+                `Dynamic sizing applied to position: "${positionText}" (${textLength} chars, ${semicolonCount} semicolons) - Font: ${fontSize}px, Height: ${height}px`
+              );
+            }
+
+            // Dynamic sizing for recipient name field (in case of very long names)
+            if (
+              element.id === "recipient-name" &&
+              validatedData.recipientName
+            ) {
+              const nameText = validatedData.recipientName;
+              const nameLength = nameText.length;
+
+              let fontSize = 36; // Default size
+              let height = 45; // Default height
+
+              if (nameLength > 30) {
+                // Very long name - smaller font, more height
+                fontSize = 28;
+                height = 55;
+              } else if (nameLength > 20) {
+                // Long name - medium font
+                fontSize = 32;
+                height = 50;
+              }
+              // Short names keep default 36px
+
+              element.style.fontSize = fontSize;
+              element.position.height = height;
+
+              console.log(
+                `Dynamic sizing applied to recipient name: "${nameText}" (${nameLength} chars) - Font: ${fontSize}px, Height: ${height}px`
+              );
+            }
+
+            // Dynamic sizing for recipient name if very long
+            if (
+              element.id === "recipient-name" &&
+              validatedData.recipientName
+            ) {
+              const nameLength = validatedData.recipientName.length;
+              let fontSize = 36; // Default size
+
+              if (nameLength > 25) {
+                fontSize = 30;
+              } else if (nameLength > 20) {
+                fontSize = 32;
+              }
+
+              element.style.fontSize = fontSize;
+              console.log(
+                `Dynamic sizing applied to name: "${validatedData.recipientName}" (${nameLength} chars) - Font: ${fontSize}px`
+              );
             }
           }
         });
@@ -194,12 +350,13 @@ export async function POST(req: Request) {
         }
 
         // Add security features based on security level if not already present
-        const hasQrCode = elements.some((el) => el.id === "qr-code");
-        const hasSecurityWatermark = elements.some(
-          (el) => el.id === "security-watermark"
+        const hasQrCode = elements.some((el) => el.id.includes("qr-code"));
+        const hasSecurityWatermark = elements.some((el) =>
+          el.id.includes("security-watermark")
         );
         const hasDigitalSignature = elements.some(
-          (el) => el.id === "digital-signature"
+          (el) =>
+            el.id === "digital-signature" || el.id === "digital-verification"
         );
 
         // Add QR code for BASIC level and above
@@ -287,6 +444,48 @@ export async function POST(req: Request) {
         : 0,
     });
 
+    // Generate enhanced QR code data for localhost environments BEFORE issuing certificate
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+    // For JICF Certificate of Service, use pastor name; otherwise use authorizing official
+    let issuerDisplayName =
+      validatedData.authorizingOfficial ||
+      session.user.firstName + " " + session.user.lastName;
+
+    if (
+      template.name === "Certificate of Service" &&
+      validatedData.pastorName
+    ) {
+      issuerDisplayName = validatedData.pastorName;
+    }
+
+    const issueDate = validatedData.issueDate
+      ? new Date(validatedData.issueDate).toLocaleDateString()
+      : new Date().toLocaleDateString();
+
+    const enhancedQRCode = generateEnhancedQRCodeData(
+      {
+        certificateId: certificateId,
+        recipientName: validatedData.recipientName,
+        recipientEmail: validatedData.recipientEmail,
+        templateName: template.name,
+        issueDate: issueDate,
+        issuerName: issuerDisplayName,
+        organizationName: "FOM", // You can make this dynamic based on organization
+      },
+      baseUrl
+    );
+
+    // Debug logging
+    console.log("🐛 QR Code Debug Info:");
+    console.log("Base URL:", baseUrl);
+    console.log("Enhanced QR Code length:", enhancedQRCode.length);
+    console.log(
+      "Enhanced QR Code preview:",
+      enhancedQRCode.substring(0, 100) + "..."
+    );
+    console.log("Is Enhanced QR Code JSON?", enhancedQRCode.startsWith("{"));
+
     // Issue the certificate with the pre-generated ID
     const certificate = await dbCertificateService.issueCertificate(
       {
@@ -294,7 +493,8 @@ export async function POST(req: Request) {
         id: certificateId, // Pass the pre-generated certificate ID
         issuedById: session.user.id,
       },
-      fullTemplateDesignData
+      fullTemplateDesignData,
+      enhancedQRCode // Pass enhanced QR code as third parameter
     );
 
     return NextResponse.json({

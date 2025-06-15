@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 import {
   Users,
   Activity,
@@ -19,6 +20,7 @@ import {
   Database,
   Bell,
   Plus,
+  Heart,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -115,6 +117,13 @@ export default function AdminDashboardPage() {
       icon: Users,
       href: "/admin/users",
       color: "bg-blue-500",
+    },
+    {
+      title: "Create Cards",
+      description: "Design beautiful graduation cards",
+      icon: Heart,
+      href: "/admin/cards",
+      color: "bg-pink-500",
     },
     {
       title: "View Analytics",
@@ -242,7 +251,10 @@ export default function AdminDashboardPage() {
                     className="h-20 justify-start p-4"
                     asChild
                   >
-                    <div className="flex items-center gap-3 cursor-pointer">
+                    <Link
+                      href={action.href}
+                      className="flex items-center gap-3"
+                    >
                       <div className={`p-2 rounded-lg ${action.color}`}>
                         <action.icon className="h-5 w-5 text-white" />
                       </div>
@@ -252,7 +264,7 @@ export default function AdminDashboardPage() {
                           {action.description}
                         </p>
                       </div>
-                    </div>
+                    </Link>
                   </Button>
                 ))}
               </div>

@@ -28,12 +28,23 @@ export function generateCertificateId(
 ): string {
   const currentYear = new Date().getFullYear();
 
+  // Determine organization prefix based on template name
+  const getOrgPrefix = (name: string): string => {
+    const nameUpper = name.toUpperCase();
+    if (nameUpper.includes("JULS")) return "JULS";
+    if (nameUpper.includes("JICF") || nameUpper.includes("SERVICE"))
+      return "JICF";
+    return "FOM";
+  };
+
   // Generate certificate type code based on template name
   const getTypeCode = (name: string): string => {
     const nameUpper = name.toUpperCase();
 
     if (nameUpper.includes("APPRECIATION")) return "APP";
     if (nameUpper.includes("EXCELLENCE")) return "EXC";
+    if (nameUpper.includes("OUTSTANDING")) return "OUT";
+    if (nameUpper.includes("CONTRIBUTION")) return "CON";
     if (nameUpper.includes("LEADERSHIP")) return "LED";
     if (nameUpper.includes("SERVICE") || nameUpper.includes("FAITHFUL"))
       return "SRV";
@@ -54,6 +65,7 @@ export function generateCertificateId(
       .padEnd(3, "X");
   };
 
+  const orgPrefix = getOrgPrefix(templateName);
   const typeCode = getTypeCode(templateName);
 
   // Generate sequence number (if not provided, use timestamp-based)
@@ -64,9 +76,9 @@ export function generateCertificateId(
   const nanoid = customAlphabet("23456789ABCDEFGHJKLMNPQRSTUVWXYZ", 2);
   const suffix = nanoid();
 
-  // Format: FOM-YYYY-TYPE-NNNN-XX
-  // Example: FOM-2025-APP-0001-K7
-  return `FOM-${currentYear}-${typeCode}-${sequenceStr}-${suffix}`;
+  // Format: ORG-YYYY-TYPE-NNNN-XX
+  // Example: FOM-2025-APP-0001-K7 or JULS-2025-APP-0001-K7
+  return `${orgPrefix}-${currentYear}-${typeCode}-${sequenceStr}-${suffix}`;
 }
 
 // Generate a QR code verification URL
@@ -219,6 +231,132 @@ export function generateQRCodeData(
   baseUrl: string
 ): string {
   return `${baseUrl}/community/verify-certificate?id=${verificationId}`;
+}
+
+// Generate enhanced QR code data with user information for development
+export function generateEnhancedQRCodeData(
+  certificateData: {
+    certificateId: string;
+    recipientName: string;
+    recipientEmail: string;
+    templateName: string;
+    issueDate: string;
+    issuerName: string;
+    organizationName?: string;
+  },
+  baseUrl: string
+): string {
+  // Check if running on localhost or local network
+  const isLocalhost =
+    baseUrl.includes("localhost") ||
+    baseUrl.includes("127.0.0.1") ||
+    baseUrl.includes("192.168.") ||
+    baseUrl.includes("10.0.") ||
+    baseUrl.includes("172.16.") ||
+    baseUrl.includes("172.17.") ||
+    baseUrl.includes("172.18.") ||
+    baseUrl.includes("172.19.") ||
+    baseUrl.includes("172.20.") ||
+    baseUrl.includes("172.21.") ||
+    baseUrl.includes("172.22.") ||
+    baseUrl.includes("172.23.") ||
+    baseUrl.includes("172.24.") ||
+    baseUrl.includes("172.25.") ||
+    baseUrl.includes("172.26.") ||
+    baseUrl.includes("172.27.") ||
+    baseUrl.includes("172.28.") ||
+    baseUrl.includes("172.29.") ||
+    baseUrl.includes("172.30.") ||
+    baseUrl.includes("172.31.") ||
+    baseUrl.includes(":3000") || // Development port
+    baseUrl.includes(":3001") || // Alternative dev port
+    baseUrl.includes(":8000") || // Alternative dev port
+    baseUrl.includes(":8080"); // Alternative dev port
+
+  console.log("🐛 Enhanced QR Code Generation Debug:");
+  console.log("Base URL:", baseUrl);
+  console.log("Is Localhost detected?", isLocalhost);
+  console.log("Certificate ID:", certificateData.certificateId);
+
+  if (isLocalhost) {
+    // Check if this is Certificate of Service template
+    const isCertificateOfService = certificateData.templateName
+      .toLowerCase()
+      .includes("service");
+
+    if (isCertificateOfService) {
+      // For localhost Certificate of Service: use simplified JSON with only requested fields
+      const qrData = {
+        certificateId: certificateData.certificateId,
+        recipientName: certificateData.recipientName,
+        issueDate: certificateData.issueDate,
+        pastorName: certificateData.issuerName, // Pastor name is the issuer
+      };
+
+      console.log(
+        "📱 Localhost QR Data (Certificate of Service - simplified):",
+        {
+          originalLength: JSON.stringify({
+            type: "CERTIFICATE_INFO",
+            certificateId: certificateData.certificateId,
+            recipientName: certificateData.recipientName,
+            recipientEmail: certificateData.recipientEmail,
+            templateName: certificateData.templateName,
+            issueDate: certificateData.issueDate,
+            issuerName: certificateData.issuerName,
+            organizationName: certificateData.organizationName || "FOM",
+            verificationUrl: `${baseUrl}/community/verify-certificate?id=${certificateData.certificateId}`,
+            generatedAt: new Date().toISOString(),
+            environment: "development",
+          }).length,
+          simplifiedLength: JSON.stringify(qrData).length,
+          reduction:
+            "Certificate of Service - simplified to only include certificate ID, recipient name, date, and pastor name",
+        }
+      );
+
+      // Return simplified JSON string for localhost Certificate of Service
+      return JSON.stringify(qrData);
+    } else {
+      // For localhost other certificates: use enhanced JSON structure
+      const enhancedData = {
+        t: "CERT",
+        id: certificateData.certificateId,
+        n: certificateData.recipientName,
+        e: certificateData.recipientEmail?.substring(0, 10) + "..." || "",
+        tpl:
+          certificateData.templateName.substring(0, 20) +
+          (certificateData.templateName.length > 20 ? "..." : ""),
+        iss: certificateData.issuerName,
+        d: certificateData.issueDate,
+        v: `${baseUrl}/community/verify-certificate?id=${certificateData.certificateId}`,
+      };
+
+      console.log("📱 Localhost QR Data (other certificates - enhanced):", {
+        originalLength: JSON.stringify({
+          type: "CERTIFICATE_INFO",
+          certificateId: certificateData.certificateId,
+          recipientName: certificateData.recipientName,
+          recipientEmail: certificateData.recipientEmail,
+          templateName: certificateData.templateName,
+          issueDate: certificateData.issueDate,
+          issuerName: certificateData.issuerName,
+          organizationName: certificateData.organizationName || "FOM",
+          verificationUrl: `${baseUrl}/community/verify-certificate?id=${certificateData.certificateId}`,
+          generatedAt: new Date().toISOString(),
+          environment: "development",
+        }).length,
+        enhancedLength: JSON.stringify(enhancedData).length,
+        reduction: "Enhanced compact format for other certificates",
+      });
+
+      // Return enhanced JSON string for localhost other certificates
+      return JSON.stringify(enhancedData);
+    }
+  } else {
+    // For production: use standard verification URL
+    return `${baseUrl}/community/verify-certificate?id=${certificateData.certificateId}`;
+  }
 }
 
 // Format certificate display name
@@ -473,4 +611,72 @@ export function verifyCertificateIntegrity(
 ): boolean {
   const expectedSecurity = generateCertificateSecurity(certificateData);
   return expectedSecurity.signature === providedSignature;
+}
+
+// Utility function to decode enhanced QR code data
+export function decodeEnhancedQRCode(qrCodeData: string): {
+  isEnhanced: boolean;
+  data: unknown;
+  formatted?: string;
+} {
+  try {
+    // Try to parse as JSON (enhanced QR code)
+    const parsed = JSON.parse(qrCodeData);
+
+    if (parsed.type === "CERTIFICATE_INFO") {
+      // Format the data nicely for display
+      const formatted = `
+📜 CERTIFICATE INFORMATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🆔 Certificate ID: ${parsed.certificateId}
+👤 Recipient: ${parsed.recipientName}
+📧 Email: ${parsed.recipientEmail}
+📋 Template: ${parsed.templateName}
+📅 Issue Date: ${parsed.issueDate}
+✍️ Issued By: ${parsed.issuerName}
+🏢 Organization: ${parsed.organizationName}
+🌍 Environment: ${parsed.environment}
+⏰ Generated: ${new Date(parsed.generatedAt).toLocaleString()}
+
+🔗 Verification URL:
+${parsed.verificationUrl}
+      `.trim();
+
+      return {
+        isEnhanced: true,
+        data: parsed,
+        formatted: formatted,
+      };
+    }
+  } catch {
+    // Not JSON, probably a regular URL
+  }
+
+  // Regular verification URL
+  return {
+    isEnhanced: false,
+    data: qrCodeData,
+    formatted: `🔗 Verification URL: ${qrCodeData}`,
+  };
+}
+
+// Format certificate information for display
+export function formatCertificateInfo(
+  certInfo: Record<string, unknown>
+): string {
+  if (!certInfo || typeof certInfo !== "object") {
+    return "Invalid certificate information";
+  }
+
+  return `
+Certificate Details:
+• ID: ${certInfo.certificateId || "N/A"}
+• Recipient: ${certInfo.recipientName || "N/A"}
+• Email: ${certInfo.recipientEmail || "N/A"}
+• Template: ${certInfo.templateName || "N/A"}
+• Issue Date: ${certInfo.issueDate || "N/A"}
+• Issued By: ${certInfo.issuerName || "N/A"}
+• Organization: ${certInfo.organizationName || "N/A"}
+  `.trim();
 }

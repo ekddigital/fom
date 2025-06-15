@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download } from "lucide-react";
 import { toast } from "sonner";
-import QRCode from "qrcode";
+import { generateCertificateQRCode } from "@/lib/utils/qr-code-generator";
 import { FormatSelectionDialog } from "@/components/ui/format-selection-dialog";
 import {
   createCertificateFromDesignAndType,
@@ -38,14 +38,8 @@ export default function FlexibleCertificatePreviewPage() {
       try {
         const verificationUrl = `https://fom.church/verify/${certificateId}`;
         console.log("Generating QR code for URL:", verificationUrl);
-        const qrDataUrl = await QRCode.toDataURL(verificationUrl, {
-          width: 200,
-          margin: 2,
-          color: {
-            dark: "#000000",
-            light: "#FFFFFF",
-          },
-        });
+        // Use centralized ultra-scannable QR code generator (DRY principle)
+        const qrDataUrl = await generateCertificateQRCode(verificationUrl);
         console.log("QR code generated successfully");
         setQrCodeDataUrl(qrDataUrl);
       } catch (error) {

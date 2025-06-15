@@ -207,6 +207,10 @@ model User {
   templateCreations    CertificateTemplate[]
   missionTripsLed      MissionTrip[]
 
+  // Card Relations
+  cardTemplatesCreated CardTemplate[] @relation("CardTemplateCreator")
+  cardsCreated         Card[]         @relation("CardCreator")
+
   @@map("users")
 }
 
@@ -644,6 +648,93 @@ model Report {
   generator User @relation(fields: [generatedBy], references: [id], onDelete: Cascade)
 
   @@map("reports")
+}
+
+// ========================================
+// JICF GRADUATION CARDS
+// ========================================
+
+enum CardCategory {
+  GRADUATION
+  APPRECIATION
+  BLESSING
+  CONGRATULATION
+  INVITATION
+
+  @@map("card_category")
+}
+
+enum CardStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+
+  @@map("card_status")
+}
+
+model CardTemplate {
+  id          String       @id @default(cuid())
+  name        String       @db.VarChar(255)
+  description String?      @db.Text
+  category    CardCategory @default(GRADUATION)
+  status      CardStatus   @default(ACTIVE)
+
+  // Template data stored as JSON
+  templateData Json // Contains elements, settings, and design configuration
+
+  // Metadata
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Preview image
+  previewUrl String? @map("preview_url") @db.VarChar(500)
+
+  // Relationships
+  creator User   @relation("CardTemplateCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+  cards   Card[]
+
+  @@map("card_templates")
+}
+
+model Card {
+  id         String @id @default(cuid())
+  templateId String @map("template_id")
+
+  // Optional recipient information
+  recipientName String? @map("recipient_name") @db.VarChar(255)
+  customMessage String? @map("custom_message") @db.Text
+
+  // Service outline specific fields
+  serviceOutline String? @map("service_outline") @db.Text
+  eventName      String? @map("event_name") @db.VarChar(255)
+  eventDate      String? @map("event_date") @db.VarChar(100)
+  mcName         String? @map("mc_name") @db.VarChar(255)
+
+  // Graduates name list specific fields
+  graduatesList String? @map("graduates_list") @db.Text
+
+  // Meet Our Graduates specific fields
+  meetOurGraduatesData String? @map("meet_our_graduates_data") @db.Text
+
+  // Generated files
+  pngUrl String? @map("png_url") @db.VarChar(500)
+  pdfUrl String? @map("pdf_url") @db.VarChar(500)
+
+  // Metadata
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Analytics
+  downloadCount Int @default(0) @map("download_count")
+  viewCount     Int @default(0) @map("view_count")
+
+  // Relationships
+  template CardTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  creator  User         @relation("CardCreator", fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@map("cards")
 }
 
 model Organization {

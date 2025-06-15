@@ -66,6 +66,11 @@ export async function POST(request: NextRequest) {
       } certificates in ${format.toUpperCase()} format`
     );
 
+    // Get the base URL for the website renderer - DECLARE THESE FIRST
+    const protocol = request.headers.get("x-forwarded-proto") || "http";
+    const host = request.headers.get("host") || "localhost:3000";
+    const baseUrl = `${protocol}://${host}`;
+
     // Process each certificate
     for (const certificate of certificates) {
       try {
@@ -76,15 +81,16 @@ export async function POST(request: NextRequest) {
           recipientFirstName: certificate.recipientFirstName,
           recipientLastName: certificate.recipientLastName,
           recipientEmail: certificate.recipientEmail,
+          authorizingOfficial: (
+            certificate.certificateData as { authorizingOfficial?: string }
+          )?.authorizingOfficial, // Extract from stored data for pastor name
           issueDate: certificate.issueDate,
           templateData: (certificate.certificateData ||
             certificate.template?.templateData) as TemplateData,
+          qrCodeData: certificate.qrCodeData, // Include QR code data
+          verificationUrl: `${protocol}://${host}/community/verify-certificate?id=${certificate.verificationId}`, // Generate verification URL
+          verificationId: certificate.verificationId, // Include verification ID
         };
-
-        // Get the base URL for the website renderer
-        const protocol = request.headers.get("x-forwarded-proto") || "http";
-        const host = request.headers.get("host") || "localhost:3000";
-        const baseUrl = `${protocol}://${host}`;
 
         // Generate certificate using hybrid renderer
         const renderer = new HybridCertificateRenderer(

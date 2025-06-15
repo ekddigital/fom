@@ -3,8 +3,12 @@ import { dbCertificateService } from "@/lib/services/certificate-database";
 
 export async function GET() {
   try {
-    // Initialize defaults to ensure templates are seeded
-    await dbCertificateService.initializeDefaults();
+    // Smart initialization - only if templates don't exist
+    const templateCount = await dbCertificateService.getTemplateCount();
+    if (templateCount === 0) {
+      console.log("📋 No templates found, initializing database...");
+      await dbCertificateService.initializeDefaults();
+    }
 
     // Get all available template options
     const templateOptions = await dbCertificateService.getTemplateOptions();

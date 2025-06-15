@@ -3,9 +3,9 @@
  */
 import path from "path";
 import fs from "fs/promises";
-import QRCode from "qrcode";
 import { nanoid } from "nanoid";
 import { TemplateData } from "@/lib/utils/certificate";
+import { generateCertificateQRCode } from "@/lib/utils/qr-code-generator";
 
 // Function to generate a PDF certificate
 // In a real implementation, you'd use a library like PDFKit, jsPDF, or html-pdf
@@ -69,7 +69,7 @@ export async function generateCertificatePNG(): Promise<string> {
   }
 }
 
-// Function to generate a QR code for certificate verification
+// Function to generate a QR code for certificate verification using centralized logic
 export async function generateQRCode(verificationUrl: string): Promise<string> {
   try {
     // Ensure the directory exists
@@ -78,25 +78,16 @@ export async function generateQRCode(verificationUrl: string): Promise<string> {
 
     // Generate a unique filename
     const filename = `qrcode-${nanoid()}.png`;
-    const filePath = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "qrcodes",
-      filename
-    );
     const relativePath = path.join("uploads", "qrcodes", filename);
+    const filePath = path.join(process.cwd(), "public", relativePath);
 
-    // Generate QR code
-    await QRCode.toFile(filePath, verificationUrl, {
-      errorCorrectionLevel: "H",
-      margin: 1,
-      scale: 8,
-      color: {
-        dark: "#000000",
-        light: "#ffffff",
-      },
-    });
+    // Generate QR code using our centralized ultra-scannable generator
+    const qrCodeDataURL = await generateCertificateQRCode(verificationUrl);
+
+    // Convert base64 to buffer and save as file
+    const base64Data = qrCodeDataURL.replace(/^data:image\/png;base64,/, "");
+    const buffer = Buffer.from(base64Data, "base64");
+    await fs.writeFile(filePath, buffer);
 
     return relativePath;
   } catch (error) {

@@ -109,6 +109,13 @@ export default function AdminCertificatesPage() {
     useState<IssuedCertificate | null>(null);
   const [isBulkDownload, setIsBulkDownload] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [paginatedCertificates, setPaginatedCertificates] = useState<
+    IssuedCertificate[]
+  >([]);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -130,6 +137,39 @@ export default function AdminCertificatesPage() {
     setSelectedCertificates(new Set());
     setIsAllSelected(false);
   }, [filteredCertificates]);
+
+  // Reset to page 1 when search changes or items per page changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, itemsPerPage]);
+
+  // Update paginated certificates when filtered certificates or pagination settings change
+  useEffect(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    setPaginatedCertificates(filteredCertificates.slice(startIndex, endIndex));
+  }, [filteredCertificates, currentPage, itemsPerPage]);
+
+  // Update isAllSelected when paginated certificates change
+  useEffect(() => {
+    if (paginatedCertificates.length > 0) {
+      setIsAllSelected(
+        paginatedCertificates.every((cert) => selectedCertificates.has(cert.id))
+      );
+    } else {
+      setIsAllSelected(false);
+    }
+  }, [paginatedCertificates, selectedCertificates]);
+
+  // Calculate pagination info
+  const totalPages = Math.ceil(filteredCertificates.length / itemsPerPage);
+  const startItem = (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(
+    currentPage * itemsPerPage,
+    filteredCertificates.length
+  );
+  const hasNextPage = currentPage < totalPages;
+  const hasPrevPage = currentPage > 1;
 
   // Load templates from database
   useEffect(() => {
@@ -199,7 +239,8 @@ export default function AdminCertificatesPage() {
   const loadIssuedCertificates = async () => {
     try {
       setLoadingIssued(true);
-      const response = await fetch("/api/certificates/issued");
+      // Request all certificates by setting a high limit
+      const response = await fetch("/api/certificates/issued?limit=1000");
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
@@ -402,24 +443,47 @@ export default function AdminCertificatesPage() {
     const newSelected = new Set(selectedCertificates);
     if (newSelected.has(certificateId)) {
       newSelected.delete(certificateId);
+      console.log("Deselected certificate:", certificateId);
     } else {
       newSelected.add(certificateId);
+      console.log("Selected certificate:", certificateId);
     }
     setSelectedCertificates(newSelected);
+    console.log(
+      "Total selected certificates:",
+      newSelected.size,
+      Array.from(newSelected)
+    );
+
+    // Update isAllSelected based on current page only
     setIsAllSelected(
-      newSelected.size === filteredCertificates.length &&
-        filteredCertificates.length > 0
+      paginatedCertificates.every((cert) => newSelected.has(cert.id)) &&
+        paginatedCertificates.length > 0
     );
   };
 
   const handleSelectAll = () => {
     if (isAllSelected) {
-      setSelectedCertificates(new Set());
+      // Deselect all certificates on current page
+      const newSelected = new Set(selectedCertificates);
+      paginatedCertificates.forEach((cert) => newSelected.delete(cert.id));
+      setSelectedCertificates(newSelected);
       setIsAllSelected(false);
+      console.log(
+        "Deselected all on current page. Total selected:",
+        newSelected.size
+      );
     } else {
-      const allIds = new Set(filteredCertificates.map((cert) => cert.id));
-      setSelectedCertificates(allIds);
+      // Select all certificates on current page
+      const newSelected = new Set(selectedCertificates);
+      paginatedCertificates.forEach((cert) => newSelected.add(cert.id));
+      setSelectedCertificates(newSelected);
       setIsAllSelected(true);
+      console.log(
+        "Selected all on current page. Total selected:",
+        newSelected.size,
+        Array.from(newSelected)
+      );
     }
   };
 
@@ -435,31 +499,57 @@ export default function AdminCertificatesPage() {
       return;
     }
 
+    console.log(
+      "Selected certificates for revoke:",
+      Array.from(selectedCertificates)
+    );
+
     if (
       confirm(
         `Are you sure you want to revoke ${selectedCertificates.size} certificate(s)?`
       )
     ) {
       try {
-        const promises = Array.from(selectedCertificates).map((id) =>
-          fetch(`/api/certificates/${id}`, { method: "DELETE" })
-        );
+        const certificateIds = Array.from(selectedCertificates);
+        console.log("Sending bulk revoke request with IDs:", certificateIds);
 
-        const results = await Promise.allSettled(promises);
-        const successful = results.filter(
-          (r) => r.status === "fulfilled"
-        ).length;
-        const failed = results.length - successful;
+        const response = await fetch("/api/certificates/bulk-revoke", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ certificateIds }),
+        });
 
-        if (successful > 0) {
-          toast.success(`${successful} certificate(s) revoked successfully`);
-        }
-        if (failed > 0) {
-          toast.error(`Failed to revoke ${failed} certificate(s)`);
+        console.log("Bulk revoke response status:", response.status);
+        const result = await response.json();
+        console.log("Bulk revoke response data:", result);
+
+        if (response.ok) {
+          toast.success(result.message);
+
+          // Log details for debugging
+          console.log("Bulk revoke completed:", result.details);
+
+          if (result.details?.alreadyRevoked > 0) {
+            toast.info(
+              `Note: ${result.details.alreadyRevoked} certificate(s) were already revoked`
+            );
+          }
+        } else {
+          console.error("Bulk revoke failed:", result);
+
+          if (result.notFound && result.notFound.length > 0) {
+            toast.error(
+              `Some certificates not found: ${result.notFound.join(", ")}`
+            );
+          } else {
+            toast.error(result.error || "Failed to revoke certificates");
+          }
         }
 
         clearSelection();
-        loadIssuedCertificates();
+        await loadIssuedCertificates();
       } catch (error) {
         console.error("Error revoking certificates:", error);
         toast.error("Failed to revoke certificates");
@@ -473,33 +563,60 @@ export default function AdminCertificatesPage() {
       return;
     }
 
+    console.log(
+      "Selected certificates for deletion:",
+      Array.from(selectedCertificates)
+    );
+
     if (
       confirm(
         `⚠️ PERMANENT DELETE WARNING ⚠️\n\nThis will PERMANENTLY DELETE ${selectedCertificates.size} certificate(s).\n\nThis action CANNOT be undone and will:\n- Remove the certificates from the database\n- Delete associated files\n- Make the certificates unverifiable\n\nAre you absolutely sure you want to proceed?`
       )
     ) {
       try {
-        const promises = Array.from(selectedCertificates).map((id) =>
-          fetch(`/api/certificates/${id}/delete-permanent`, {
-            method: "DELETE",
-          })
+        const certificateIds = Array.from(selectedCertificates);
+        console.log("Sending bulk delete request with IDs:", certificateIds);
+
+        const response = await fetch(
+          "/api/certificates/bulk-permanent-delete",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ certificateIds }),
+          }
         );
 
-        const results = await Promise.allSettled(promises);
-        const successful = results.filter(
-          (r) => r.status === "fulfilled"
-        ).length;
-        const failed = results.length - successful;
+        console.log("Bulk delete response status:", response.status);
+        const result = await response.json();
+        console.log("Bulk delete response data:", result);
 
-        if (successful > 0) {
-          toast.success(`${successful} certificate(s) permanently deleted`);
-        }
-        if (failed > 0) {
-          toast.error(`Failed to delete ${failed} certificate(s)`);
+        if (response.ok) {
+          toast.success(result.message);
+
+          // Log details for debugging
+          console.log("Bulk delete completed:", result.details);
+
+          if (result.details?.fileErrors > 0) {
+            toast.warning(
+              `Note: ${result.details.fileErrors} file(s) could not be deleted`
+            );
+          }
+        } else {
+          console.error("Bulk delete failed:", result);
+
+          if (result.notFound && result.notFound.length > 0) {
+            toast.error(
+              `Some certificates not found: ${result.notFound.join(", ")}`
+            );
+          } else {
+            toast.error(result.error || "Failed to delete certificates");
+          }
         }
 
         clearSelection();
-        loadIssuedCertificates();
+        await loadIssuedCertificates();
       } catch (error) {
         console.error("Error deleting certificates:", error);
         toast.error("Failed to delete certificates");
@@ -1025,6 +1142,104 @@ export default function AdminCertificatesPage() {
             </div>
           )}
 
+          {/* Pagination Controls */}
+          {filteredCertificates.length > 0 && (
+            <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-gray-700">
+                  Showing {startItem} to {endItem} of{" "}
+                  {filteredCertificates.length} certificates
+                </div>
+                <div className="flex items-center gap-2">
+                  <label
+                    htmlFor="itemsPerPage"
+                    className="text-sm text-gray-600"
+                  >
+                    Show:
+                  </label>
+                  <Select
+                    value={itemsPerPage.toString()}
+                    onValueChange={(value) => setItemsPerPage(Number(value))}
+                  >
+                    <SelectTrigger className="w-20 h-8 text-sm bg-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                      <SelectItem
+                        value="10"
+                        className="hover:bg-blue-50 focus:bg-blue-50"
+                      >
+                        10
+                      </SelectItem>
+                      <SelectItem
+                        value="30"
+                        className="hover:bg-blue-50 focus:bg-blue-50"
+                      >
+                        30
+                      </SelectItem>
+                      <SelectItem
+                        value="50"
+                        className="hover:bg-blue-50 focus:bg-blue-50"
+                      >
+                        50
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={!hasPrevPage}
+                  className="h-8"
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(
+                      (page) =>
+                        page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= 1
+                    )
+                    .map((page, index, array) => {
+                      const showEllipsis =
+                        index > 0 && page > array[index - 1] + 1;
+                      return (
+                        <div key={page} className="flex items-center">
+                          {showEllipsis && (
+                            <span className="px-2 text-gray-400">...</span>
+                          )}
+                          <Button
+                            variant={
+                              currentPage === page ? "default" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => setCurrentPage(page)}
+                            className="h-8 w-8 p-0"
+                          >
+                            {page}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={!hasNextPage}
+                  className="h-8"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
+
           <Card>
             <CardContent className="p-0">
               <div className="overflow-x-auto">
@@ -1078,7 +1293,7 @@ export default function AdminCertificatesPage() {
                           </div>
                         </td>
                       </tr>
-                    ) : filteredCertificates.length === 0 ? (
+                    ) : paginatedCertificates.length === 0 ? (
                       <tr>
                         <td colSpan={7} className="px-6 py-12 text-center">
                           <div className="text-gray-500">
@@ -1097,7 +1312,7 @@ export default function AdminCertificatesPage() {
                         </td>
                       </tr>
                     ) : (
-                      filteredCertificates.map((certificate) => (
+                      paginatedCertificates.map((certificate) => (
                         <tr
                           key={certificate.id}
                           className={`hover:bg-gray-50 ${
@@ -1220,6 +1435,66 @@ export default function AdminCertificatesPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Bottom Pagination Controls */}
+          {filteredCertificates.length > 0 && (
+            <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-lg p-4">
+              <div className="text-sm text-gray-700">
+                Showing {startItem} to {endItem} of{" "}
+                {filteredCertificates.length} certificates
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                  disabled={!hasPrevPage}
+                  className="h-8"
+                >
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter(
+                      (page) =>
+                        page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= 1
+                    )
+                    .map((page, index, array) => {
+                      const showEllipsis =
+                        index > 0 && page > array[index - 1] + 1;
+                      return (
+                        <div key={page} className="flex items-center">
+                          {showEllipsis && (
+                            <span className="px-2 text-gray-400">...</span>
+                          )}
+                          <Button
+                            variant={
+                              currentPage === page ? "default" : "outline"
+                            }
+                            size="sm"
+                            onClick={() => setCurrentPage(page)}
+                            className="h-8 w-8 p-0"
+                          >
+                            {page}
+                          </Button>
+                        </div>
+                      );
+                    })}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  disabled={!hasNextPage}
+                  className="h-8"
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">

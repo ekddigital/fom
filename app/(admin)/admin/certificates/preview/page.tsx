@@ -15,6 +15,9 @@ export default function CertificatePreviewPage() {
   const templateId = searchParams.get("template");
   const recipientName = searchParams.get("recipientName") || "Sample Recipient";
   const issuerName = searchParams.get("issuerName") || "System Administrator";
+  const position = searchParams.get("position") || "Sample Position";
+  const gender = searchParams.get("gender") || "his/her";
+  const pastorName = searchParams.get("pastorName") || "Pst. Joseph G. Summers";
 
   const [template, setTemplate] = useState<TemplateData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -146,6 +149,9 @@ export default function CertificatePreviewPage() {
             recipientName={recipientName}
             issuerName={issuerName}
             issueDate={new Date().toLocaleDateString()}
+            position={position}
+            gender={gender}
+            pastorName={pastorName}
           />
         </div>
       </div>

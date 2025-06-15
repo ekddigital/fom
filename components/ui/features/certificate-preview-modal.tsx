@@ -1,9 +1,13 @@
 import React from "react";
 import Image from "next/image";
-import QRCode from "qrcode";
 import { Button } from "@/components/ui/button";
-import { TemplateData, generateCertificateId } from "@/lib/utils/certificate";
+import {
+  TemplateData,
+  TemplateElement,
+  generateCertificateId,
+} from "@/lib/utils/certificate";
 import { getVerificationUrl } from "@/lib/utils/url";
+import { generateCertificateQRCode } from "@/lib/utils/qr-code-generator";
 import {
   X,
   Download,
@@ -29,6 +33,9 @@ interface CertificatePreviewModalProps {
   recipientName?: string;
   issuerName?: string;
   issueDate?: string;
+  position?: string; // For JICF certificates
+  gender?: string; // For JICF certificates
+  pastorName?: string; // For JICF certificates
 }
 
 export function CertificatePreviewModal({
@@ -38,6 +45,9 @@ export function CertificatePreviewModal({
   recipientName = "Sample Recipient",
   issuerName = "Sample Issuer",
   issueDate = new Date().toLocaleDateString(),
+  position = "Sample Position",
+  gender = "his/her",
+  pastorName = "Pst. Joseph G. Summers",
 }: CertificatePreviewModalProps) {
   const [zoom, setZoom] = React.useState(1);
   const [isDownloading, setIsDownloading] = React.useState(false);
@@ -54,19 +64,15 @@ export function CertificatePreviewModal({
     return getVerificationUrl(certificateId);
   }, [certificateId]);
 
-  // Generate QR Code
+  // Generate QR Code using centralized ultra-scannable QR code generator
   React.useEffect(() => {
     const generateQRCode = async () => {
       try {
         console.log("Generating QR code for URL:", sampleVerificationUrl);
-        const qrDataUrl = await QRCode.toDataURL(sampleVerificationUrl, {
-          width: 200,
-          margin: 2,
-          color: {
-            dark: "#000000",
-            light: "#FFFFFF",
-          },
-        });
+        // Use the same ultra-scannable QR code logic as downloads (DRY principle)
+        const qrDataUrl = await generateCertificateQRCode(
+          sampleVerificationUrl
+        );
         console.log(
           "QR code generated successfully:",
           qrDataUrl.substring(0, 50) + "..."
@@ -193,6 +199,62 @@ export function CertificatePreviewModal({
     }
   }, [isOpen, template]);
 
+  // Function to calculate dynamic sizing for JICF certificate fields
+  const applyDynamicSizing = (
+    element: TemplateElement,
+    formData: { position?: string; recipientName?: string }
+  ) => {
+    let fontSize = element.style.fontSize;
+    let height = element.position.height;
+    let lineHeight = element.style.lineHeight || "1.2";
+
+    // Dynamic sizing for position field
+    if (element.id === "position-served" && formData?.position) {
+      const positionText = formData.position;
+      const textLength = positionText.length;
+      const semicolonCount = (positionText.match(/;/g) || []).length;
+      const hasMultipleRoles = semicolonCount > 0;
+
+      if (textLength > 80 || (hasMultipleRoles && textLength > 50)) {
+        fontSize = 14;
+        height = 60;
+        lineHeight = "1.3";
+      } else if (textLength > 60 || (hasMultipleRoles && textLength > 30)) {
+        fontSize = 16;
+        height = 50;
+        lineHeight = "1.3";
+      } else if (textLength > 40) {
+        fontSize = 18;
+        height = 40;
+      } else if (textLength > 25) {
+        fontSize = 20;
+        height = 35;
+      } else {
+        fontSize = 22;
+        height = 30;
+      }
+    }
+
+    // Dynamic sizing for recipient name field
+    if (element.id === "recipient-name" && formData?.recipientName) {
+      const nameText = formData.recipientName;
+      const nameLength = nameText.length;
+
+      if (nameLength > 30) {
+        fontSize = 28;
+        height = 55;
+      } else if (nameLength > 20) {
+        fontSize = 32;
+        height = 50;
+      } else {
+        fontSize = 36;
+        height = 45;
+      }
+    }
+
+    return { fontSize, height, lineHeight };
+  };
+
   // Replace template variables with sample data
   const replaceVariables = (content: string): string => {
     return (
@@ -237,6 +299,22 @@ export function CertificatePreviewModal({
         .replace(
           /\{\{verificationUrl\}\}/g,
           `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`
+        )
+
+        // JICF Certificate of Service specific variables
+        .replace(
+          /\{\{gender\}\}/g,
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${
+            gender === "Male" ? "his" : gender === "Female" ? "her" : "his/her"
+          }</span>`
+        )
+        .replace(
+          /\{\{position\}\}/g,
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${position}</span>`
+        )
+        .replace(
+          /\{\{pastorName\}\}/g,
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${pastorName}</span>`
         )
 
         // Handle single brace format (issued certificates)
@@ -287,7 +365,10 @@ export function CertificatePreviewModal({
         /\{qrCode\}/g,
         qrCodeDataUrl ||
           "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+"
-      );
+      )
+      // JICF Certificate of Service pastor signature
+      .replace(/\{\{pastorSignature\}\}/g, "/pastor_Joe_signaturepng.png")
+      .replace(/\{pastorSignature\}/g, "/pastor_Joe_signaturepng.png");
 
     console.log("Result after replacement:", result);
     return result;
@@ -451,14 +532,20 @@ export function CertificatePreviewModal({
             >
               {/* Certificate Elements */}
               {template.elements.map((element) => {
+                // Apply dynamic sizing for JICF certificate fields
+                const dynamicSizing = applyDynamicSizing(element, {
+                  position: position,
+                  recipientName: recipientName,
+                });
+
                 const elementStyle: React.CSSProperties = {
                   position: "absolute",
                   left: `${element.position.x * zoom}px`,
                   top: `${element.position.y * zoom}px`,
                   width: `${element.position.width * zoom}px`,
-                  height: `${element.position.height * zoom}px`,
-                  fontSize: element.style.fontSize
-                    ? `${element.style.fontSize * zoom}px`
+                  height: `${dynamicSizing.height * zoom}px`,
+                  fontSize: dynamicSizing.fontSize
+                    ? `${dynamicSizing.fontSize * zoom}px`
                     : undefined,
                   fontFamily: element.style.fontFamily || "serif",
                   fontWeight: element.style.fontWeight || "normal",
@@ -476,7 +563,7 @@ export function CertificatePreviewModal({
                       ? "flex-end"
                       : "flex-start",
                   overflow: "hidden",
-                  lineHeight: "1.2",
+                  lineHeight: dynamicSizing.lineHeight,
                 };
 
                 if (element.type === "text") {
@@ -504,6 +591,10 @@ export function CertificatePreviewModal({
                           width: "100%",
                           height: "100%",
                           objectFit: "contain",
+                          borderRadius: element.style.borderRadius || "0px", // Apply template borderRadius
+                          border: "none", // Ensure no browser default border
+                          outline: "none", // Ensure no outline
+                          boxShadow: "none", // Ensure no box shadow
                         }}
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;

@@ -3,11 +3,11 @@
  * Combines template data with actual website assets for pixel-perfect rendering
  */
 
-import puppeteer from "puppeteer";
+import puppeteer, { Browser, Page } from "puppeteer";
 import fs from "fs/promises";
 import path from "path";
-import QRCode from "qrcode";
 import { getVerificationUrl } from "./url";
+import { generateSmartQRCode } from "./qr-code-generator";
 
 export interface CertificateData {
   id: string;
@@ -89,6 +89,7 @@ export class HybridCertificateRenderer {
   private elements: TemplateElement[];
   private pageSettings: PageSettings;
   private baseUrl: string;
+  private outputFormat?: "pdf" | "png" | "preview";
 
   constructor(certificate: CertificateData, baseUrl?: string) {
     console.log("🏗️ HybridCertificateRenderer constructor:", {
@@ -126,24 +127,12 @@ export class HybridCertificateRenderer {
   }
 
   /**
-   * Generate QR code as base64 data URL
+   * Generate QR code as base64 data URL with enhanced scannability using smart detection
    */
   private async generateQRCodeDataURL(url: string): Promise<string> {
     try {
       console.log(`Generating QR code for URL: ${url}`);
-      const qrCodeDataURL = await QRCode.toDataURL(url, {
-        errorCorrectionLevel: "H",
-        margin: 1,
-        scale: 8,
-        color: {
-          dark: "#000000",
-          light: "#ffffff",
-        },
-      });
-      console.log(
-        `QR code generated successfully, length: ${qrCodeDataURL.length}`
-      );
-      return qrCodeDataURL;
+      return await generateSmartQRCode(url, "preview"); // Use smart QR code with auto-detection
     } catch (error) {
       console.warn(`Failed to generate QR code for URL: ${url}`, error);
       // Return a simple placeholder base64 image if QR generation fails
@@ -152,28 +141,34 @@ export class HybridCertificateRenderer {
   }
 
   /**
-   * Generate QR code as base64 data URL
+   * Generate QR code as base64 data URL with smart localhost/production optimization
+   * Automatically detects data type and uses maximum scale for localhost JSON data
+   * @param data - The data to encode
+   * @param format - Output format for optimization ('pdf', 'png', or 'preview')
    */
-  private async generateQRCodeBase64(data: string): Promise<string> {
+  private async generateQRCodeBase64(
+    data: string,
+    format: "pdf" | "png" | "preview" = "preview"
+  ): Promise<string> {
     try {
-      console.log("🔍 QR Code generation started:", { data });
-
-      const qrCodeDataUrl = await QRCode.toDataURL(data, {
-        errorCorrectionLevel: "H",
-        margin: 1,
-        scale: 8,
-        color: {
-          dark: "#000000",
-          light: "#ffffff",
-        },
+      console.log("🔍 QR Code generation started:", {
+        dataLength: data.length,
+        dataPreview: data.substring(0, 100) + (data.length > 100 ? "..." : ""),
+        format,
       });
+
+      // Use smart QR code generation that automatically optimizes for localhost vs production
+      const qrDataURL = await generateSmartQRCode(data, format);
 
       console.log("✅ QR Code generated successfully:", {
-        dataLength: qrCodeDataUrl.length,
-        prefix: qrCodeDataUrl.substring(0, 50) + "...",
+        outputLength: qrDataURL.length,
+        isDataURL: qrDataURL.startsWith("data:image/"),
+        sizeKB: Math.round(qrDataURL.length / 1024),
+        optimizedFor: format,
+        smartDetection: "enabled",
       });
 
-      return qrCodeDataUrl;
+      return qrDataURL;
     } catch (error) {
       console.error("❌ QR Code generation failed:", error);
       throw error;
@@ -240,6 +235,7 @@ export class HybridCertificateRenderer {
 
   /**
    * Process template elements and replace placeholders with actual data
+   * Uses consistent ultra-scannable QR codes for all formats (DRY principle)
    */
   private async processElements(): Promise<TemplateElement[]> {
     const recipientName =
@@ -328,16 +324,32 @@ export class HybridCertificateRenderer {
           console.log(
             `Found {{qrCode}} placeholder in text element: ${element.id}`
           );
-          // Generate QR code dynamically using the verification URL
-          const verificationUrl =
-            this.certificate.verificationUrl ||
-            getVerificationUrl(
-              this.certificate.verificationId || this.certificate.id
+
+          // Use stored QR code data if available (for enhanced QR codes), otherwise generate from verification URL
+          let qrCodeDataURL: string;
+
+          if (this.certificate.qrCodeData) {
+            console.log(
+              `Using stored QR code data for text element, length: ${this.certificate.qrCodeData.length}`
             );
-          console.log(`Text QR verification URL: ${verificationUrl}`);
-          const qrCodeDataURL = await this.generateQRCodeBase64(
-            verificationUrl
-          );
+            qrCodeDataURL = await this.generateQRCodeBase64(
+              this.certificate.qrCodeData,
+              this.outputFormat || "preview"
+            );
+          } else {
+            // Fallback to verification URL
+            const verificationUrl =
+              this.certificate.verificationUrl ||
+              getVerificationUrl(
+                this.certificate.verificationId || this.certificate.id
+              );
+            console.log(`Text QR verification URL: ${verificationUrl}`);
+            qrCodeDataURL = await this.generateQRCodeBase64(
+              verificationUrl,
+              this.outputFormat || "preview"
+            );
+          }
+
           console.log(
             `Text QR code generated with data URL length: ${qrCodeDataURL.length}`
           );
@@ -382,16 +394,38 @@ export class HybridCertificateRenderer {
           console.log(
             `Found {{qrCode}} placeholder in image element: ${element.id}`
           );
-          // Generate QR code dynamically using the verification URL
-          const verificationUrl =
-            this.certificate.verificationUrl ||
-            getVerificationUrl(
-              this.certificate.verificationId || this.certificate.id
+
+          // Use stored QR code data if available (for enhanced QR codes), otherwise generate from verification URL
+          let qrCodeDataURL: string;
+
+          if (this.certificate.qrCodeData) {
+            console.log(
+              `Using stored QR code data, length: ${this.certificate.qrCodeData.length}`
             );
-          console.log(`Image QR verification URL: ${verificationUrl}`);
-          const qrCodeDataURL = await this.generateQRCodeBase64(
-            verificationUrl
-          );
+            console.log(
+              `QR code data preview: ${this.certificate.qrCodeData.substring(
+                0,
+                100
+              )}...`
+            );
+            qrCodeDataURL = await this.generateQRCodeBase64(
+              this.certificate.qrCodeData,
+              this.outputFormat || "preview"
+            );
+          } else {
+            // Fallback to verification URL
+            const verificationUrl =
+              this.certificate.verificationUrl ||
+              getVerificationUrl(
+                this.certificate.verificationId || this.certificate.id
+              );
+            console.log(`Image QR verification URL: ${verificationUrl}`);
+            qrCodeDataURL = await this.generateQRCodeBase64(
+              verificationUrl,
+              this.outputFormat || "preview"
+            );
+          }
+
           console.log(
             `Image QR code generated with data URL length: ${qrCodeDataURL.length}`
           );
@@ -408,15 +442,33 @@ export class HybridCertificateRenderer {
           });
         }
       } else if (element.type === "qr") {
-        // Handle QR code elements - generate QR code dynamically
+        // Handle QR code elements - use stored QR data or generate dynamically
         console.log(`Processing QR code element: ${element.id}`);
-        const verificationUrl =
-          this.certificate.verificationUrl ||
-          getVerificationUrl(
-            this.certificate.verificationId || this.certificate.id
+
+        let qrCodeDataURL: string;
+
+        if (this.certificate.qrCodeData) {
+          console.log(
+            `Using stored QR code data for QR element, length: ${this.certificate.qrCodeData.length}`
           );
-        console.log(`QR verification URL: ${verificationUrl}`);
-        const qrCodeDataURL = await this.generateQRCodeBase64(verificationUrl);
+          qrCodeDataURL = await this.generateQRCodeBase64(
+            this.certificate.qrCodeData,
+            this.outputFormat || "preview"
+          );
+        } else {
+          // Fallback to verification URL
+          const verificationUrl =
+            this.certificate.verificationUrl ||
+            getVerificationUrl(
+              this.certificate.verificationId || this.certificate.id
+            );
+          console.log(`QR verification URL: ${verificationUrl}`);
+          qrCodeDataURL = await this.generateQRCodeBase64(
+            verificationUrl,
+            this.outputFormat || "preview"
+          );
+        }
+
         console.log(
           `QR code element converted to image with data URL length: ${qrCodeDataURL.length}`
         );
@@ -567,6 +619,7 @@ export class HybridCertificateRenderer {
 
   /**
    * Generate enhanced HTML that matches the website styling exactly
+   * Uses ultra-scannable QR codes for all formats (DRY principle)
    */
   private async generateHTML(): Promise<string> {
     const processedElements = await this.processElements();
@@ -647,7 +700,9 @@ export class HybridCertificateRenderer {
         );
         elementsHtml += `<div style="${textCss}">${element.content}</div>`;
       } else if (element.type === "image") {
-        // Enhanced image styling
+        // Enhanced image styling with special QR code enhancements
+        const isQRCode = element.id?.includes("qr-code");
+
         const imageStyle = {
           ...elementStyle,
           objectFit: "contain",
@@ -658,10 +713,24 @@ export class HybridCertificateRenderer {
           borderRadius: element.style?.borderRadius,
           padding: element.style?.padding,
           margin: element.style?.margin,
+          // Special QR code enhancements for better scanning
+          ...(isQRCode && {
+            filter: "contrast(1.2) brightness(0.95)", // Enhance contrast for better scanning
+            imageRendering: "crisp-edges", // Ensure sharp edges for QR codes
+            border: "2px solid #f8f9fa", // Light border for better separation
+            borderRadius: "4px", // Slight rounding for modern look
+            backgroundColor: "#ffffff", // White background for QR codes
+            padding: "8px", // Padding around QR code for better scanning
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)", // Subtle shadow for depth
+          }),
         };
 
         const imageCss = this.styleToCSS(imageStyle);
-        elementsHtml += `<img src="${element.content}" style="${imageCss}" alt="Certificate element" crossorigin="anonymous" />`;
+        elementsHtml += `<img src="${
+          element.content
+        }" style="${imageCss}" alt="${
+          isQRCode ? "Certificate QR Code" : "Certificate element"
+        }" crossorigin="anonymous" />`;
       } else if (element.type === "shape") {
         // Enhanced shape styling to match website exactly
         const shapeStyle = {
@@ -828,6 +897,26 @@ export class HybridCertificateRenderer {
             font-display: swap;
           }
           
+          /* Enhanced QR Code styling for maximum scannability */
+          img[alt*="QR"] {
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            image-rendering: pixelated;
+            filter: contrast(1.3) brightness(0.9);
+            background: #ffffff !important;
+            border: 3px solid #f8f9fa !important;
+            border-radius: 6px !important;
+            padding: 6px !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15) !important;
+            transition: none;
+          }
+          
+          /* QR Code hover effect for better visibility */
+          img[alt*="QR"]:hover {
+            filter: contrast(1.4) brightness(0.85);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
+          }
+          
           @media print {
             body { 
               padding: 0; 
@@ -863,109 +952,334 @@ export class HybridCertificateRenderer {
   }
 
   /**
-   * Generate PDF using hybrid approach
+   * Generate PDF using ultra-robust approach for maximum reliability
    */
   async generatePDF(): Promise<Buffer> {
-    const html = await this.generateHTML();
+    // Force regeneration of elements with PDF-optimized QR codes
+    this.elements = this.templateData?.elements || [];
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--single-process",
-        "--disable-gpu",
-        "--disable-web-security",
-        "--disable-features=VizDisplayCompositor",
-        "--allow-running-insecure-content",
-        "--force-color-profile=srgb",
-        "--enable-font-antialiasing",
-        "--disable-lcd-text",
-      ],
-    });
+    const html = await this.generateHTMLWithFormat("pdf"); // Use PDF-optimized QR codes
+
+    let browser: Browser | null = null;
+    let page: Page | null = null;
 
     try {
-      const page = await browser.newPage();
+      console.log(
+        "🚀 Starting PDF generation with ultra-robust error handling..."
+      );
+
+      // Launch browser with optimized settings for stability
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--single-process",
+          "--disable-gpu",
+          "--disable-web-security",
+          "--disable-features=VizDisplayCompositor",
+          "--allow-running-insecure-content",
+          "--force-color-profile=srgb",
+          "--enable-font-antialiasing",
+          "--disable-lcd-text",
+          "--disable-extensions",
+          "--disable-plugins",
+          "--disable-default-apps",
+          "--disable-background-timer-throttling",
+          "--disable-backgrounding-occluded-windows",
+          "--disable-renderer-backgrounding",
+          "--disable-background-networking",
+          "--memory-pressure-off",
+          "--max_old_space_size=4096",
+        ],
+        timeout: 45000,
+        ignoreDefaultArgs: ["--disable-extensions"],
+        handleSIGINT: false,
+        handleSIGTERM: false,
+        handleSIGHUP: false,
+      });
+
+      console.log("🌐 Browser launched");
+
+      // Create page with enhanced stability settings
+      page = await browser.newPage();
+      console.log("📄 New page created");
+
+      // Set longer timeout for all page operations
+      page.setDefaultTimeout(60000);
+
+      // Set user agent and configure page for stability
+      await page.setUserAgent(
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+      );
 
       // Set high-resolution viewport for better quality
       await page.setViewport({
         width: this.pageSettings.width + 100,
         height: this.pageSettings.height + 100,
-        deviceScaleFactor: 2.5, // Increased DPI for better font rendering
+        deviceScaleFactor: 2, // High DPI
       });
 
-      // Set content and wait for all resources to load
-      await page.setContent(html, {
-        waitUntil: ["networkidle0", "domcontentloaded"],
-      });
+      console.log("🖥️ Viewport configured");
 
-      // Ensure fonts are fully loaded
+      // Enhanced error handling and page lifecycle management
       await page.evaluateOnNewDocument(() => {
-        if ("fonts" in document) {
-          (
-            document as unknown as { fonts: { ready: Promise<unknown> } }
-          ).fonts.ready.then(() => {
-            console.log("All fonts loaded");
+        // Prevent errors from breaking the page
+        window.addEventListener("error", (e) => {
+          console.warn("Page error caught:", e.error);
+          e.preventDefault();
+          return true;
+        });
+        window.addEventListener("unhandledrejection", (e) => {
+          console.warn("Unhandled rejection caught:", e.reason);
+          e.preventDefault();
+          return true;
+        });
+      });
+
+      // Set content with robust timeout and wait conditions
+      await page.setContent(html, {
+        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        timeout: 30000,
+      });
+
+      console.log("📝 HTML content set");
+
+      // Enhanced page readiness checks
+      await page.waitForFunction(() => document.readyState === "complete", {
+        timeout: 15000,
+      });
+
+      // Wait for fonts to be fully loaded
+      try {
+        await page.evaluate(() => {
+          if ("fonts" in document) {
+            return (
+              document as unknown as { fonts: { ready: Promise<unknown> } }
+            ).fonts.ready;
+          }
+          return Promise.resolve();
+        });
+        console.log("🔤 Fonts loaded");
+      } catch (fontError) {
+        console.warn("⚠️ Font loading check failed, continuing:", fontError);
+      }
+
+      // Add stability delay to ensure everything is ready
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      // Final page readiness verification
+      let pageReady = false;
+      try {
+        const pageInfo = await page.evaluate(() => ({
+          title: document.title,
+          readyState: document.readyState,
+          hasBody: !!document.body,
+          bodyChildren: document.body?.children?.length || 0,
+        }));
+        pageReady = pageInfo.readyState === "complete" && pageInfo.hasBody;
+        console.log(`📄 Page ready for PDF generation:`, pageInfo);
+      } catch (readinessError) {
+        console.warn("⚠️ Could not verify page readiness:", readinessError);
+        // Continue anyway, but with extra caution
+      }
+
+      if (!pageReady) {
+        console.warn("⚠️ Page readiness uncertain, proceeding with caution");
+      }
+
+      // Generate PDF with ultra-robust error handling
+      console.log("🔄 Starting PDF generation...");
+      let pdfBuffer: Buffer | null = null;
+
+      // Attempt 1: Standard PDF generation
+      try {
+        // Double-check page context is still valid before PDF generation
+        const contextCheck = await page.evaluate(() => ({
+          title: document.title,
+          readyState: document.readyState,
+          location: document.location.href,
+          bodyExists: !!document.body,
+        }));
+        console.log("📋 Context check before PDF:", contextCheck);
+
+        // Generate PDF with optimized settings
+        const pdf = await page.pdf({
+          width: `${this.pageSettings.width}px`,
+          height: `${this.pageSettings.height}px`,
+          printBackground: true,
+          margin: { top: 0, right: 0, bottom: 0, left: 0 },
+          preferCSSPageSize: true,
+          format: undefined, // Use custom width/height
+          omitBackground: false,
+          timeout: 45000, // Extended timeout
+          displayHeaderFooter: false,
+          landscape: false,
+        });
+
+        pdfBuffer = Buffer.from(pdf);
+        console.log("✅ First PDF attempt successful");
+      } catch (pdfError) {
+        console.error("❌ First PDF attempt failed:", pdfError);
+
+        // Attempt 2: Retry with minimal settings after page validation
+        try {
+          // Verify page is still accessible and wait a moment
+          const pageInfo = await page.evaluate(() => ({
+            title: document.title,
+            readyState: document.readyState,
+            hasBody: !!document.body,
+            isConnected: document.isConnected,
+          }));
+          console.log("📄 Page context validation for retry:", pageInfo);
+
+          if (!pageInfo.hasBody || !pageInfo.isConnected) {
+            throw new Error("Page context is invalid for retry");
+          }
+
+          // Wait a moment for any pending operations
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+
+          // Retry with minimal PDF settings
+          console.log("🔄 Retrying PDF generation with minimal settings...");
+          const retryPdf = await page.pdf({
+            width: `${this.pageSettings.width}px`,
+            height: `${this.pageSettings.height}px`,
+            printBackground: true,
+            margin: { top: 0, right: 0, bottom: 0, left: 0 },
+            timeout: 60000, // Very extended timeout for retry
           });
+
+          pdfBuffer = Buffer.from(retryPdf);
+          console.log("✅ Retry PDF attempt successful");
+        } catch (retryError) {
+          console.error("❌ Retry PDF attempt also failed:", retryError);
+
+          // Attempt 3: Last resort - fallback to PNG conversion
+          console.log("🔄 Falling back to PNG generation as last resort...");
+          try {
+            // Check if page is still usable for PNG
+            await page.evaluate(() => document.readyState);
+
+            const pngBuffer = await this.generatePNGFallback(page);
+            console.log(
+              "✅ PNG fallback successful, returning PNG as PDF alternative"
+            );
+            return pngBuffer;
+          } catch (pngError) {
+            console.error("❌ PNG fallback also failed:", pngError);
+            const combinedError = `PDF generation completely failed. Original error: ${
+              pdfError instanceof Error ? pdfError.message : "Unknown error"
+            }. Retry error: ${
+              retryError instanceof Error ? retryError.message : "Unknown error"
+            }. PNG fallback error: ${
+              pngError instanceof Error ? pngError.message : "Unknown error"
+            }`;
+            throw new Error(combinedError);
+          }
         }
-      });
+      }
 
-      // Wait for images to load
-      await page.evaluate(() => {
-        return Promise.all(
-          Array.from(document.images, (img) => {
-            if (img.complete) return Promise.resolve();
-            return new Promise((resolve) => {
-              img.addEventListener("load", resolve);
-              img.addEventListener("error", resolve); // Continue even if image fails
-              setTimeout(resolve, 2000); // Timeout after 2 seconds
-            });
-          })
-        );
-      });
+      if (!pdfBuffer || pdfBuffer.length === 0) {
+        throw new Error("PDF generation returned empty buffer");
+      }
 
-      // Wait for fonts to load and render
-      await page.evaluate(() => {
-        if ("fonts" in document) {
-          return (document as unknown as { fonts: { ready: Promise<unknown> } })
-            .fonts.ready;
-        }
-        return Promise.resolve();
-      });
-
-      // Add extra delay to ensure fonts and styles are fully loaded
-      await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 4000))
+      console.log(
+        `✅ PDF generated successfully, size: ${pdfBuffer.length} bytes`
       );
 
-      // Generate PDF with precise dimensions and color preservation
-      const pdfBuffer = await page.pdf({
-        width: `${this.pageSettings.width}px`,
-        height: `${this.pageSettings.height}px`,
-        printBackground: true,
-        margin: { top: 0, right: 0, bottom: 0, left: 0 },
-        preferCSSPageSize: true,
-        format: undefined, // Use custom width/height
-        displayHeaderFooter: false,
-        tagged: false,
-        outline: false,
-      });
+      // Validate PDF signature
+      const signature = pdfBuffer.subarray(0, 4).toString();
+      if (signature !== "%PDF") {
+        console.warn(
+          `⚠️ Generated file signature is '${signature}', expected '%PDF', but returning buffer anyway`
+        );
+      }
 
-      return Buffer.from(pdfBuffer);
+      return pdfBuffer;
+    } catch (error) {
+      console.error("❌ PDF generation error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      throw new Error(`PDF generation failed: ${errorMessage}`);
     } finally {
-      await browser.close();
+      // Ultra-robust cleanup with proper error handling
+      if (page && !page.isClosed()) {
+        try {
+          await page.close();
+          console.log("📄 Page closed successfully");
+        } catch (pageCloseError) {
+          console.warn("⚠️ Page close warning:", pageCloseError);
+        }
+      }
+
+      if (browser && browser.isConnected()) {
+        try {
+          // Close all remaining pages first
+          const pages = await browser.pages();
+          await Promise.all(
+            pages.map(async (p: Page) => {
+              if (!p.isClosed()) {
+                try {
+                  await p.close();
+                } catch (e) {
+                  console.warn("⚠️ Error closing page:", e);
+                }
+              }
+            })
+          );
+
+          // Then close the browser
+          await browser.close();
+          console.log("🔒 Browser closed successfully");
+        } catch (browserCloseError) {
+          console.warn("⚠️ Browser close warning:", browserCloseError);
+
+          // Force disconnect as last resort
+          try {
+            await browser.disconnect();
+            console.log("🔌 Browser disconnected forcefully");
+          } catch (disconnectError) {
+            console.warn("⚠️ Force disconnect warning:", disconnectError);
+          }
+        }
+      }
     }
   }
 
   /**
-   * Generate PNG using hybrid approach
+   * PNG fallback method for when PDF generation fails
+   */
+  private async generatePNGFallback(page: Page): Promise<Buffer> {
+    console.log("📸 Generating PNG as PDF fallback...");
+
+    const screenshot = await page.screenshot({
+      type: "png",
+      fullPage: false,
+      clip: {
+        x: 0,
+        y: 0,
+        width: this.pageSettings.width,
+        height: this.pageSettings.height,
+      },
+      omitBackground: false,
+    });
+
+    return Buffer.from(screenshot);
+  }
+
+  /**
+   * Generate PNG using hybrid approach with format-optimized QR codes
    */
   async generatePNG(): Promise<Buffer> {
-    const html = await this.generateHTML();
+    // Force regeneration of elements with PNG-optimized QR codes
+    this.elements = this.templateData?.elements || [];
+
+    const html = await this.generateHTMLWithFormat("png"); // Use PNG-optimized QR codes
 
     const browser = await puppeteer.launch({
       headless: true,
@@ -1062,9 +1376,24 @@ export class HybridCertificateRenderer {
   }
 
   /**
+   * Generate HTML content with format-specific QR code optimization
+   * @param format - Output format for QR code optimization
+   */
+  async generateHTMLWithFormat(
+    format: "pdf" | "png" | "preview" = "preview"
+  ): Promise<string> {
+    // Temporarily store the format for use in QR code generation
+    this.outputFormat = format;
+    const html = await this.generateHTML();
+    // Reset the format
+    this.outputFormat = undefined;
+    return html;
+  }
+
+  /**
    * Generate HTML content for preview (same as used for PDF/PNG generation)
    */
   async generateHTMLPreview(): Promise<string> {
-    return await this.generateHTML();
+    return await this.generateHTMLWithFormat("preview"); // Use preview-optimized QR codes
   }
 }

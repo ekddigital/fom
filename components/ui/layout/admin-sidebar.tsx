@@ -19,6 +19,7 @@ import {
   Lock,
   Activity,
   Award,
+  Heart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -86,6 +87,12 @@ const adminMenuItems = [
         href: "/admin/certificates",
         icon: Award,
         description: "Certificate templates and issuance",
+      },
+      {
+        label: "Cards",
+        href: "/admin/cards",
+        icon: Heart,
+        description: "Beautiful graduation and appreciation cards",
       },
       {
         label: "Messages",

@@ -43,6 +43,7 @@ export default function IssueCertificatePage() {
 
   const [template, setTemplate] = useState<CertificateTemplate | null>(null);
   const [loading, setLoading] = useState(false);
+
   // Single certificate form data
   const [formData, setFormData] = useState({
     recipientName: "",
@@ -53,12 +54,6 @@ export default function IssueCertificatePage() {
     securityLevel: "STANDARD",
     validityPeriod: null as number | null,
     notes: "",
-
-    // JICF Certificate of Service specific fields
-    gender: "Male" as "Male" | "Female",
-    position: "",
-    pastorName: "Pst. Joseph G. Summers",
-    pastorSignature: "", // Will default to /pastor_Joe_signaturepng.png in API
   });
 
   // Bulk upload state
@@ -77,12 +72,6 @@ export default function IssueCertificatePage() {
   const [bulkSecurityLevel, setBulkSecurityLevel] = useState("STANDARD");
   const [bulkValidityPeriod, setBulkValidityPeriod] = useState<number | null>(
     null
-  );
-  // JICF Certificate of Service bulk fields
-  const [selectedGenderColumn, setSelectedGenderColumn] = useState("");
-  const [selectedPositionColumn, setSelectedPositionColumn] = useState("");
-  const [bulkPastorName, setBulkPastorName] = useState(
-    "Pst. Joseph G. Summers"
   );
 
   const loadTemplate = useCallback(
@@ -152,28 +141,15 @@ export default function IssueCertificatePage() {
       },
     }));
   };
+
   const handleIssueCertificate = async () => {
     if (!formData.recipientName || !formData.recipientEmail) {
       toast.error("Please fill in all required fields");
       return;
     }
 
-    // Additional validation for Certificate of Service
-    if (
-      template?.name === "Certificate of Service" &&
-      !formData.position.trim()
-    ) {
-      toast.error("Position is required for Certificate of Service");
-      return;
-    }
     setLoading(true);
     try {
-      // For Certificate of Service, use pastor name as authorizing official
-      const authorizingOfficial =
-        template?.name === "Certificate of Service"
-          ? formData.pastorName || "Pst. Joseph G. Summers"
-          : formData.authorizingOfficial;
-
       const response = await fetch("/api/certificates/issue", {
         method: "POST",
         headers: {
@@ -183,17 +159,11 @@ export default function IssueCertificatePage() {
           templateName: template?.name,
           recipientName: formData.recipientName,
           recipientEmail: formData.recipientEmail,
-          authorizingOfficial: authorizingOfficial,
+          authorizingOfficial: formData.authorizingOfficial,
           issueDate: formData.issueDate,
           customFields: formData.customFields,
           securityLevel: formData.securityLevel,
           validityPeriod: formData.validityPeriod,
-
-          // JICF Certificate of Service specific fields
-          gender: formData.gender,
-          position: formData.position,
-          pastorName: formData.pastorName,
-          pastorSignature: formData.pastorSignature,
         }),
       });
 
@@ -212,32 +182,17 @@ export default function IssueCertificatePage() {
       setLoading(false);
     }
   };
-  const handlePreview = () => {
-    // For Certificate of Service, use pastor name as authorizing official
-    const authorizingOfficial =
-      template?.name === "Certificate of Service"
-        ? formData.pastorName || "Pst. Joseph G. Summers"
-        : formData.authorizingOfficial ||
-          session?.user?.name ||
-          "System Administrator";
 
+  const handlePreview = () => {
     const params = new URLSearchParams({
       template: templateId || "",
       recipientName: formData.recipientName || "Sample Recipient",
-      authorizingOfficial: authorizingOfficial,
+      authorizingOfficial:
+        formData.authorizingOfficial ||
+        session?.user?.name ||
+        "System Administrator",
       issueDate: formData.issueDate,
     });
-
-    // Add JICF-specific fields if they exist
-    if (formData.position) {
-      params.append("position", formData.position);
-    }
-    if (formData.gender) {
-      params.append("gender", formData.gender);
-    }
-    if (formData.pastorName) {
-      params.append("pastorName", formData.pastorName);
-    }
 
     Object.entries(formData.customFields).forEach(([key, value]) => {
       if (value) {
@@ -350,104 +305,80 @@ export default function IssueCertificatePage() {
         toast.error("Selected columns not found in the data");
         return;
       }
+
+      const batchSize = 5;
+      const totalBatches = Math.ceil(fileData.length / batchSize);
       let successCount = 0;
-      let errorCount = 0; // Process certificates one by one to avoid duplicate sequence numbers
-      for (let i = 0; i < fileData.length; i++) {
-        const row = fileData[i];
-        const recipientName = row[nameColumnIndex]?.trim();
-        const recipientEmail = row[emailColumnIndex]?.trim();
+      let errorCount = 0;
 
-        // Extract JICF Certificate of Service specific data if template matches
-        let genderValue, positionValue;
-        if (template.name === "Certificate of Service") {
-          const genderColumnIndex =
-            selectedGenderColumn && selectedGenderColumn !== "none"
-              ? fileColumns.indexOf(selectedGenderColumn)
-              : -1;
-          const positionColumnIndex =
-            selectedPositionColumn && selectedPositionColumn !== "none"
-              ? fileColumns.indexOf(selectedPositionColumn)
-              : -1;
+      for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+        const startIndex = batchIndex * batchSize;
+        const endIndex = Math.min(startIndex + batchSize, fileData.length);
+        const batch = fileData.slice(startIndex, endIndex);
 
-          genderValue =
-            genderColumnIndex >= 0 ? row[genderColumnIndex]?.trim() : undefined;
-          positionValue =
-            positionColumnIndex >= 0
-              ? row[positionColumnIndex]?.trim()
-              : undefined;
-        }
+        const batchPromises = batch.map(async (row, rowIndex) => {
+          const recipientName = row[nameColumnIndex]?.trim();
+          const recipientEmail = row[emailColumnIndex]?.trim();
 
-        if (!recipientName || !recipientEmail) {
-          console.warn(`Skipping row ${i + 1}: Missing name or email`);
-          errorCount++;
-          continue;
-        }
-
-        try {
-          // For Certificate of Service, use pastor name as authorizing official
-          const authorizingOfficial =
-            template.name === "Certificate of Service"
-              ? bulkPastorName || "Pst. Joseph G. Summers"
-              : bulkAuthorizingOfficial.trim() ||
-                session?.user?.name ||
-                "System Administrator";
-
-          const certificateData = {
-            templateName: template.name,
-            recipientName,
-            recipientEmail,
-            authorizingOfficial: authorizingOfficial,
-            issueDate: bulkIssueDate,
-            customFields: {},
-            securityLevel: bulkSecurityLevel,
-            validityPeriod: bulkValidityPeriod,
-            notes: bulkNotes.trim() || undefined,
-            // Add JICF Certificate of Service specific fields
-            ...(template.name === "Certificate of Service" && {
-              gender: genderValue === "Female" ? "Female" : "Male", // Default to Male if not specified
-              position: positionValue || "Ministry Position",
-              pastorName: bulkPastorName || "Pst. Joseph G. Summers",
-              pastorSignature: "", // Will default in API
-            }),
-          };
-
-          const response = await fetch("/api/certificates/issue", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(certificateData),
-          });
-
-          if (response.ok) {
-            successCount++;
-            console.log(
-              `✅ Certificate ${i + 1}/${
-                fileData.length
-              } created for ${recipientName}`
+          if (!recipientName || !recipientEmail) {
+            console.warn(
+              `Skipping row ${startIndex + rowIndex + 1}: Missing name or email`
             );
-          } else {
-            const error = await response.json();
+            errorCount++;
+            return null;
+          }
+
+          try {
+            const certificateData = {
+              templateName: template.name,
+              recipientName,
+              recipientEmail,
+              authorizingOfficial:
+                bulkAuthorizingOfficial.trim() ||
+                session?.user?.name ||
+                "System Administrator",
+              issueDate: bulkIssueDate,
+              customFields: {},
+              securityLevel: bulkSecurityLevel,
+              validityPeriod: bulkValidityPeriod,
+              notes: bulkNotes.trim() || undefined,
+            };
+
+            const response = await fetch("/api/certificates/issue", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(certificateData),
+            });
+
+            if (response.ok) {
+              successCount++;
+              return true;
+            } else {
+              const error = await response.json();
+              console.error(
+                `Failed to create certificate for ${recipientName}:`,
+                error
+              );
+              errorCount++;
+              return false;
+            }
+          } catch (error) {
             console.error(
-              `❌ Failed to create certificate for ${recipientName}:`,
+              `Error creating certificate for ${recipientName}:`,
               error
             );
             errorCount++;
+            return false;
           }
-        } catch (error) {
-          console.error(
-            `❌ Error creating certificate for ${recipientName}:`,
-            error
-          );
-          errorCount++;
-        }
+        });
 
-        // Show progress every 5 certificates or at the end
-        if ((i + 1) % 5 === 0 || i === fileData.length - 1) {
-          toast.info(
-            `Progress: ${i + 1}/${
-              fileData.length
-            } certificates processed (${successCount} successful, ${errorCount} failed)`
-          );
-        }
+        await Promise.all(batchPromises);
+
+        toast.info(
+          `Progress: ${Math.min(endIndex, fileData.length)}/${
+            fileData.length
+          } certificates processed`
+        );
       }
 
       if (successCount > 0) {
@@ -596,7 +527,7 @@ export default function IssueCertificatePage() {
                         placeholder="Enter full name"
                         className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                       />
-                    </div>{" "}
+                    </div>
                     <div>
                       <Label htmlFor="recipientEmail">Email Address *</Label>
                       <Input
@@ -610,103 +541,28 @@ export default function IssueCertificatePage() {
                         className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
-                    {/* Hide Authorizing Official for Certificate of Service since Pastor info is used */}
-                    {template?.name !== "Certificate of Service" && (
-                      <div>
-                        <Label htmlFor="authorizingOfficial">
-                          Authorizing Official
-                        </Label>
-                        <Input
-                          id="authorizingOfficial"
-                          value={formData.authorizingOfficial}
-                          onChange={(e) =>
-                            handleInputChange(
-                              "authorizingOfficial",
-                              e.target.value
-                            )
-                          }
-                          placeholder={`Enter authorizing official (default: ${
-                            session?.user?.name || "System Administrator"
-                          })`}
-                          className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        />{" "}
-                        <p className="text-sm text-gray-500 mt-1">
-                          The person or title that authorizes this certificate
-                        </p>
-                      </div>
-                    )}
-                    {/* JICF Certificate of Service specific fields */}
-                    {template?.name === "Certificate of Service" && (
-                      <>
-                        <div className="border-t pt-4">
-                          <h4 className="font-medium text-gray-900 mb-3">
-                            Certificate of Service Details
-                          </h4>
-                        </div>
-                        <div>
-                          <Label htmlFor="gender">Gender *</Label>
-                          <Select
-                            value={formData.gender}
-                            onValueChange={(value: "Male" | "Female") =>
-                              handleInputChange("gender", value)
-                            }
-                          >
-                            <SelectTrigger className="bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500">
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                              <SelectItem
-                                value="Male"
-                                className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer"
-                              >
-                                Male
-                              </SelectItem>
-                              <SelectItem
-                                value="Female"
-                                className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer"
-                              >
-                                Female
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>{" "}
-                          <p className="text-sm text-gray-500 mt-1">
-                            Used to determine &ldquo;his&rdquo; or
-                            &ldquo;her&rdquo; in the certificate text
-                          </p>
-                        </div>
-                        <div>
-                          <Label htmlFor="position">Position(s) Served *</Label>
-                          <Input
-                            id="position"
-                            value={formData.position}
-                            onChange={(e) =>
-                              handleInputChange("position", e.target.value)
-                            }
-                            placeholder="e.g., Usher Coordinator, Prayer Ministry Secretary"
-                            className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          />
-                          <p className="text-sm text-gray-500 mt-1">
-                            Enter the ministry position(s) the person served in
-                          </p>
-                        </div>
-                        <div>
-                          <Label htmlFor="pastorName">Pastor Name</Label>
-                          <Input
-                            id="pastorName"
-                            value={formData.pastorName}
-                            onChange={(e) =>
-                              handleInputChange("pastorName", e.target.value)
-                            }
-                            placeholder="Pastor name for signature"
-                            className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          />{" "}
-                          <p className="text-sm text-gray-500 mt-1">
-                            Defaults to &ldquo;Pst. Joseph G. Summers&rdquo; if
-                            not specified
-                          </p>
-                        </div>
-                      </>
-                    )}
+                    <div>
+                      <Label htmlFor="authorizingOfficial">
+                        Authorizing Official
+                      </Label>
+                      <Input
+                        id="authorizingOfficial"
+                        value={formData.authorizingOfficial}
+                        onChange={(e) =>
+                          handleInputChange(
+                            "authorizingOfficial",
+                            e.target.value
+                          )
+                        }
+                        placeholder={`Enter authorizing official (default: ${
+                          session?.user?.name || "System Administrator"
+                        })`}
+                        className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      />
+                      <p className="text-sm text-gray-500 mt-1">
+                        The person or title that authorizes this certificate
+                      </p>
+                    </div>
                     <div>
                       <Label htmlFor="issueDate">Issue Date</Label>
                       <Input
@@ -748,30 +604,13 @@ export default function IssueCertificatePage() {
                         <SelectTrigger className="mt-1 bg-white border-gray-300">
                           <SelectValue placeholder="Select security level" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                          <SelectItem
-                            value="BASIC"
-                            className="hover:bg-green-50 focus:bg-green-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              Basic (QR Code)
-                            </span>
+                        <SelectContent>
+                          <SelectItem value="BASIC">Basic (QR Code)</SelectItem>
+                          <SelectItem value="STANDARD">
+                            Standard (QR + Signature)
                           </SelectItem>
-                          <SelectItem
-                            value="STANDARD"
-                            className="hover:bg-yellow-50 focus:bg-yellow-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              Standard (QR + Signature)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="HIGH"
-                            className="hover:bg-red-50 focus:bg-red-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              High (Full Security Suite)
-                            </span>
+                          <SelectItem value="HIGH">
+                            High (Full Security Suite)
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -793,67 +632,22 @@ export default function IssueCertificatePage() {
                           )
                         }
                       >
-                        {" "}
                         <SelectTrigger className="mt-1 bg-white border-gray-300">
                           <SelectValue placeholder="Select validity period" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
-                          <SelectItem
-                            value="never"
-                            className="hover:bg-green-50 focus:bg-green-50 cursor-pointer bg-white"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-gray-900">
-                                Never Expires (Recommended)
-                              </span>
-                            </div>
+                        <SelectContent>
+                          <SelectItem value="never">Never Expires</SelectItem>
+                          <SelectItem value="30">30 Days</SelectItem>
+                          <SelectItem value="90">90 Days (3 Months)</SelectItem>
+                          <SelectItem value="180">
+                            180 Days (6 Months)
                           </SelectItem>
-                          <SelectItem
-                            value="30"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">30 Days</span>
+                          <SelectItem value="365">365 Days (1 Year)</SelectItem>
+                          <SelectItem value="730">
+                            730 Days (2 Years)
                           </SelectItem>
-                          <SelectItem
-                            value="90"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              90 Days (3 Months)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="180"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              180 Days (6 Months)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="365"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              365 Days (1 Year)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="730"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              730 Days (2 Years)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="1095"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              1095 Days (3 Years)
-                            </span>
+                          <SelectItem value="1095">
+                            1095 Days (3 Years)
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -1011,9 +805,7 @@ export default function IssueCertificatePage() {
                         disabled={
                           loading ||
                           !formData.recipientName ||
-                          !formData.recipientEmail ||
-                          (template?.name === "Certificate of Service" &&
-                            !formData.position.trim())
+                          !formData.recipientEmail
                         }
                         className="w-full bg-red-600 hover:bg-red-700"
                       >
@@ -1106,7 +898,8 @@ export default function IssueCertificatePage() {
                         Please ensure the file is in CSV format with columns for
                         recipient name and email.
                       </p>
-                    </div>{" "}
+                    </div>
+
                     {fileColumns.length > 0 && (
                       <>
                         <div>
@@ -1118,19 +911,16 @@ export default function IssueCertificatePage() {
                             <SelectTrigger className="mt-1 bg-white border-gray-300">
                               <SelectValue placeholder="Select name column" />
                             </SelectTrigger>
-                            <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
+                            <SelectContent>
                               {fileColumns.map((col) => (
-                                <SelectItem
-                                  key={col}
-                                  value={col}
-                                  className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                                >
-                                  <span className="text-gray-900">{col}</span>
+                                <SelectItem key={col} value={col}>
+                                  {col}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        </div>{" "}
+                        </div>
+
                         <div>
                           <Label htmlFor="emailColumn">Email Column</Label>
                           <Select
@@ -1140,105 +930,15 @@ export default function IssueCertificatePage() {
                             <SelectTrigger className="mt-1 bg-white border-gray-300">
                               <SelectValue placeholder="Select email column" />
                             </SelectTrigger>
-                            <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
+                            <SelectContent>
                               {fileColumns.map((col) => (
-                                <SelectItem
-                                  key={col}
-                                  value={col}
-                                  className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                                >
-                                  <span className="text-gray-900">{col}</span>
+                                <SelectItem key={col} value={col}>
+                                  {col}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         </div>
-                        {/* JICF Certificate of Service specific column mappings */}
-                        {template?.name === "Certificate of Service" && (
-                          <>
-                            <div className="border-t pt-4">
-                              <h4 className="text-sm font-medium text-gray-900 mb-3">
-                                Certificate of Service Column Mapping
-                              </h4>
-                            </div>
-                            <div>
-                              <Label htmlFor="genderColumn">
-                                Gender Column (Optional)
-                              </Label>
-                              <Select
-                                value={selectedGenderColumn}
-                                onValueChange={setSelectedGenderColumn}
-                              >
-                                <SelectTrigger className="mt-1 bg-white border-gray-300">
-                                  <SelectValue placeholder="Select gender column (optional)" />
-                                </SelectTrigger>{" "}
-                                <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
-                                  <SelectItem
-                                    value="none"
-                                    className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                                  >
-                                    <span className="text-gray-500">
-                                      None (defaults to Male)
-                                    </span>
-                                  </SelectItem>
-                                  {fileColumns.map((col) => (
-                                    <SelectItem
-                                      key={col}
-                                      value={col}
-                                      className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                                    >
-                                      <span className="text-gray-900">
-                                        {col}
-                                      </span>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <p className="text-sm text-gray-500 mt-1">
-                                Column containing &ldquo;Male&rdquo; or
-                                &ldquo;Female&rdquo; values
-                              </p>
-                            </div>
-
-                            <div>
-                              <Label htmlFor="positionColumn">
-                                Position Column (Optional)
-                              </Label>
-                              <Select
-                                value={selectedPositionColumn}
-                                onValueChange={setSelectedPositionColumn}
-                              >
-                                <SelectTrigger className="mt-1 bg-white border-gray-300">
-                                  <SelectValue placeholder="Select position column (optional)" />
-                                </SelectTrigger>{" "}
-                                <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
-                                  <SelectItem
-                                    value="none"
-                                    className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                                  >
-                                    <span className="text-gray-500">
-                                      None (defaults to Ministry Position)
-                                    </span>
-                                  </SelectItem>
-                                  {fileColumns.map((col) => (
-                                    <SelectItem
-                                      key={col}
-                                      value={col}
-                                      className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                                    >
-                                      <span className="text-gray-900">
-                                        {col}
-                                      </span>
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              <p className="text-sm text-gray-500 mt-1">
-                                Column containing ministry positions served
-                              </p>
-                            </div>
-                          </>
-                        )}
                       </>
                     )}
                   </CardContent>
@@ -1253,28 +953,26 @@ export default function IssueCertificatePage() {
                     </CardTitle>
                     <CardDescription>
                       Configure common settings for all bulk certificates
-                    </CardDescription>{" "}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Hide Authorizing Official for Certificate of Service since Pastor info is used */}
-                    {template?.name !== "Certificate of Service" && (
-                      <div>
-                        <Label htmlFor="authorizingOfficialBulk">
-                          Authorizing Official
-                        </Label>
-                        <Input
-                          id="authorizingOfficialBulk"
-                          value={bulkAuthorizingOfficial}
-                          onChange={(e) =>
-                            setBulkAuthorizingOfficial(e.target.value)
-                          }
-                          placeholder={`Enter authorizing official (default: ${
-                            session?.user?.name || "System Administrator"
-                          })`}
-                          className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                        />
-                      </div>
-                    )}
+                    <div>
+                      <Label htmlFor="authorizingOfficialBulk">
+                        Authorizing Official
+                      </Label>
+                      <Input
+                        id="authorizingOfficialBulk"
+                        value={bulkAuthorizingOfficial}
+                        onChange={(e) =>
+                          setBulkAuthorizingOfficial(e.target.value)
+                        }
+                        placeholder={`Enter authorizing official (default: ${
+                          session?.user?.name || "System Administrator"
+                        })`}
+                        className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+
                     <div>
                       <Label htmlFor="issueDateBulk">Issue Date</Label>
                       <Input
@@ -1284,7 +982,8 @@ export default function IssueCertificatePage() {
                         onChange={(e) => setBulkIssueDate(e.target.value)}
                         className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                       />
-                    </div>{" "}
+                    </div>
+
                     <div>
                       <Label htmlFor="bulkSecurityLevel">Security Level</Label>
                       <Select
@@ -1294,34 +993,18 @@ export default function IssueCertificatePage() {
                         <SelectTrigger className="mt-1 bg-white border-gray-300">
                           <SelectValue placeholder="Select security level" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                          <SelectItem
-                            value="BASIC"
-                            className="hover:bg-green-50 focus:bg-green-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              Basic (QR Code)
-                            </span>
+                        <SelectContent>
+                          <SelectItem value="BASIC">Basic (QR Code)</SelectItem>
+                          <SelectItem value="STANDARD">
+                            Standard (QR + Signature)
                           </SelectItem>
-                          <SelectItem
-                            value="STANDARD"
-                            className="hover:bg-yellow-50 focus:bg-yellow-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              Standard (QR + Signature)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="HIGH"
-                            className="hover:bg-red-50 focus:bg-red-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              High (Full Security Suite)
-                            </span>
+                          <SelectItem value="HIGH">
+                            High (Full Security Suite)
                           </SelectItem>
                         </SelectContent>
                       </Select>
-                    </div>{" "}
+                    </div>
+
                     <div>
                       <Label htmlFor="bulkValidityPeriod">
                         Certificate Validity
@@ -1341,63 +1024,19 @@ export default function IssueCertificatePage() {
                         <SelectTrigger className="mt-1 bg-white border-gray-300">
                           <SelectValue placeholder="Select validity period" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
-                          <SelectItem
-                            value="never"
-                            className="hover:bg-green-50 focus:bg-green-50 cursor-pointer bg-white"
-                          >
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              <span className="text-gray-900">
-                                Never Expires (Recommended)
-                              </span>
-                            </div>
+                        <SelectContent>
+                          <SelectItem value="never">Never Expires</SelectItem>
+                          <SelectItem value="30">30 Days</SelectItem>
+                          <SelectItem value="90">90 Days (3 Months)</SelectItem>
+                          <SelectItem value="180">
+                            180 Days (6 Months)
                           </SelectItem>
-                          <SelectItem
-                            value="30"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">30 Days</span>
+                          <SelectItem value="365">365 Days (1 Year)</SelectItem>
+                          <SelectItem value="730">
+                            730 Days (2 Years)
                           </SelectItem>
-                          <SelectItem
-                            value="90"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              90 Days (3 Months)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="180"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              180 Days (6 Months)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="365"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              365 Days (1 Year)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="730"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              730 Days (2 Years)
-                            </span>
-                          </SelectItem>
-                          <SelectItem
-                            value="1095"
-                            className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
-                          >
-                            <span className="text-gray-900">
-                              1095 Days (3 Years)
-                            </span>
+                          <SelectItem value="1095">
+                            1095 Days (3 Years)
                           </SelectItem>
                         </SelectContent>
                       </Select>
@@ -1406,7 +1045,8 @@ export default function IssueCertificatePage() {
                           ? "Certificates will remain valid forever"
                           : `Certificates will expire in ${bulkValidityPeriod} days`}
                       </p>
-                    </div>{" "}
+                    </div>
+
                     <div>
                       <Label htmlFor="notesBulk">Additional Notes</Label>
                       <Textarea
@@ -1418,30 +1058,6 @@ export default function IssueCertificatePage() {
                         className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
                       />
                     </div>
-                    {/* JICF Certificate of Service specific bulk settings */}
-                    {template?.name === "Certificate of Service" && (
-                      <>
-                        <div className="border-t pt-4">
-                          <h4 className="text-sm font-medium text-gray-900 mb-3">
-                            Certificate of Service Settings
-                          </h4>
-                        </div>
-                        <div>
-                          <Label htmlFor="bulkPastorName">Pastor Name</Label>
-                          <Input
-                            id="bulkPastorName"
-                            value={bulkPastorName}
-                            onChange={(e) => setBulkPastorName(e.target.value)}
-                            placeholder="Pastor name for signature"
-                            className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                          />
-                          <p className="text-sm text-gray-500 mt-1">
-                            Defaults to &ldquo;Pst. Joseph G. Summers&rdquo; if
-                            not specified
-                          </p>
-                        </div>
-                      </>
-                    )}
                   </CardContent>
                 </Card>
               </div>

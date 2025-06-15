@@ -1,0 +1,978 @@
+/**
+ * Card Renderer for JICF Graduation Cards
+ * Generates beautiful cards with floral designs
+ */
+
+import puppeteer from "puppeteer";
+import { CardTemplate, CardElement } from "./card-templates";
+import { Card } from "@prisma/client";
+
+export interface CardData {
+  id: string;
+  templateId: string;
+  recipientName?: string;
+  customMessage?: string;
+  createdAt: Date;
+  // Additional fields for special cards
+  serviceOutline?: string; // CSV format - each line is a service item
+  eventName?: string;
+  eventDate?: string;
+  mcName?: string;
+  graduatesList?: string; // JSON format - array of graduate objects
+  meetOurGraduatesData?: string; // Detailed graduates data for the multi-page document
+}
+
+/**
+ * Convert Prisma Card model to CardData interface
+ */
+export function cardToCardData(card: Card): CardData {
+  return {
+    id: card.id,
+    templateId: card.templateId,
+    recipientName: card.recipientName || undefined,
+    customMessage: card.customMessage || undefined,
+    serviceOutline: card.serviceOutline || undefined,
+    eventName: card.eventName || undefined,
+    eventDate: card.eventDate || undefined,
+    mcName: card.mcName || undefined,
+    graduatesList: card.graduatesList || undefined,
+    createdAt: card.createdAt,
+  };
+}
+
+export class CardRenderer {
+  private template: CardTemplate;
+  private cardData: CardData;
+
+  constructor(template: CardTemplate, cardData: CardData) {
+    this.template = template;
+    this.cardData = cardData;
+  }
+
+  /**
+   * Convert relative URLs to absolute URLs for downloads
+   */
+  private getAbsoluteUrl(url: string): string {
+    if (url.startsWith("http")) {
+      return url;
+    }
+    // For local images, use the full URL
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    return `${baseUrl}${url.startsWith("/") ? "" : "/"}${url}`;
+  }
+
+  /**
+   * Generate HTML for the card (optimized for downloads)
+   */
+  async generateHTML(): Promise<string> {
+    const { settings, elements } = this.template;
+
+    // Process elements and replace placeholders
+    const processedElements = elements.map((element) =>
+      this.processElement(element)
+    );
+
+    const elementsHtml = processedElements
+      .map((element) => this.renderElement(element))
+      .join("\n");
+
+    return `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>JICF Graduation Card - ${this.cardData.id}</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
+          
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          
+          body {
+            font-family: 'Georgia', serif;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            width: ${settings.width}px;
+            height: ${settings.height}px;
+            overflow: hidden;
+          }
+          
+          .card-container {
+            position: relative;
+            width: ${settings.width}px;
+            height: ${settings.height}px;
+            background-color: ${settings.backgroundColor};
+            ${
+              settings.backgroundImage
+                ? `background-image: url(${this.getAbsoluteUrl(
+                    settings.backgroundImage
+                  )});`
+                : ""
+            }
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+          }
+          
+          .card-element {
+            position: absolute;
+            box-sizing: border-box;
+          }
+          
+          .card-text {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+          }
+          
+          .card-image {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+          }
+          
+          /* Ensure floral SVGs render properly */
+          svg {
+            display: block;
+          }
+          
+          /* Remove any hover effects for downloads */
+          .card-container:hover {
+            transform: none;
+          }
+          
+          /* Print styles for PDF */
+          @media print {
+            body { 
+              padding: 0; 
+              background: white;
+              display: block;
+              min-height: auto;
+            }
+            .card-container {
+              box-shadow: none;
+              margin: 0;
+              page-break-inside: avoid;
+              transform: none;
+            }
+            * {
+              -webkit-print-color-adjust: exact !important;
+              color-adjust: exact !important;
+            }
+          }
+          
+          @page {
+            size: ${settings.width}px ${settings.height}px;
+            margin: 0;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="card-container">
+          ${elementsHtml}
+        </div>
+      </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Generate HTML for preview (optimized for web display)
+   */
+  async generatePreviewHTML(): Promise<string> {
+    const { settings, elements } = this.template;
+
+    // Process elements and replace placeholders
+    const processedElements = elements.map((element) =>
+      this.processElement(element)
+    );
+
+    const elementsHtml = processedElements
+      .map((element) => this.renderElement(element))
+      .join("\n");
+
+    return `
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
+        
+        .card-preview-container {
+          position: relative;
+          width: ${settings.width}px;
+          height: ${settings.height}px;
+          background-color: ${settings.backgroundColor};
+          ${
+            settings.backgroundImage
+              ? `background-image: url(${settings.backgroundImage});`
+              : ""
+          }
+          background-size: cover;
+          background-position: center;
+          border-radius: 20px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+          overflow: hidden;
+          margin: 0 auto;
+        }
+        
+        .card-preview-container .card-element {
+          position: absolute;
+          box-sizing: border-box;
+        }
+        
+        .card-preview-container .card-text {
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          hyphens: auto;
+        }
+        
+        .card-preview-container .card-image {
+          max-width: 100%;
+          height: auto;
+          object-fit: contain;
+        }
+        
+        .card-preview-container svg {
+          display: block;
+        }
+      </style>
+      <div class="card-preview-container">
+        ${elementsHtml}
+      </div>
+    `;
+  }
+
+  /**
+   * Process element and replace placeholders
+   */
+  private processElement(element: CardElement): CardElement {
+    let content = element.content;
+
+    // Replace placeholders
+    if (content.includes("{{recipientName}}")) {
+      // Only show recipient name if it's provided and not empty
+      if (this.cardData.recipientName && this.cardData.recipientName.trim()) {
+        content = content.replace(
+          "{{recipientName}}",
+          this.cardData.recipientName
+        );
+      } else {
+        // If no recipient name, hide this element by making it transparent
+        return {
+          ...element,
+          content: "",
+          style: {
+            ...element.style,
+            display: "none",
+          },
+        };
+      }
+    }
+
+    if (content.includes("{{customMessage}}")) {
+      if (this.cardData.customMessage && this.cardData.customMessage.trim()) {
+        content = content.replace(
+          "{{customMessage}}",
+          this.cardData.customMessage
+        );
+      } else {
+        return {
+          ...element,
+          content: "",
+          style: {
+            ...element.style,
+            display: "none",
+          },
+        };
+      }
+    }
+
+    if (content.includes("{{date}}")) {
+      const formattedDate = this.cardData.createdAt.toLocaleDateString(
+        "en-US",
+        {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        }
+      );
+      content = content.replace("{{date}}", formattedDate);
+    } // Handle service outline - split into individual lines
+    if (content.includes("{{serviceOutlineItems}}")) {
+      console.log(
+        "🔍 Processing serviceOutlineItems, cardData.serviceOutline:",
+        this.cardData.serviceOutline
+      );
+      if (this.cardData.serviceOutline && this.cardData.serviceOutline.trim()) {
+        const serviceItems = this.cardData.serviceOutline
+          .split("\n")
+          .filter((item) => item.trim());
+        console.log("🔍 Service items:", serviceItems);
+        const itemsHtml = serviceItems
+          .map(
+            (item) =>
+              `<div style="margin-bottom: 3px; padding: 4px 6px; background: rgba(255,255,255,0.08); border-radius: 3px; font-size: 12px; line-height: 1.1; border-left: 2px solid rgba(255,255,255,0.3);">${item.trim()}</div>`
+          )
+          .join("");
+        console.log("🔍 Generated items HTML:", itemsHtml);
+        content = content.replace("{{serviceOutlineItems}}", itemsHtml);
+      } else {
+        console.log("🔍 No service outline data found, hiding element");
+        return {
+          ...element,
+          content: "",
+          style: {
+            ...element.style,
+            display: "none",
+          },
+        };
+      }
+    }
+    // Handle other event-specific fields
+    if (content.includes("{{eventName}}")) {
+      content = content.replace(
+        "{{eventName}}",
+        this.cardData.eventName || "SERVICE OUTLINE"
+      );
+    }
+
+    if (content.includes("{{eventDate}}")) {
+      content = content.replace(
+        "{{eventDate}}",
+        this.cardData.eventDate || new Date().toLocaleDateString()
+      );
+    }
+    if (content.includes("{{mcName}}")) {
+      if (this.cardData.mcName && this.cardData.mcName.trim()) {
+        content = content.replace("{{mcName}}", this.cardData.mcName);
+      } else {
+        return {
+          ...element,
+          content: "",
+          style: {
+            ...element.style,
+            display: "none",
+          },
+        };
+      }
+    } // Handle graduates list - parse formatted string and convert to HTML
+    if (content.includes("{{graduatesList}}")) {
+      console.log(
+        "🔍 Processing graduatesList, cardData.graduatesList:",
+        this.cardData.graduatesList
+      );
+      if (this.cardData.graduatesList && this.cardData.graduatesList.trim()) {
+        try {
+          // First, try to parse as JSON (new format)
+          let graduates;
+          if (this.cardData.graduatesList.startsWith("[")) {
+            graduates = JSON.parse(this.cardData.graduatesList);
+          } else {
+            // Parse formatted string (current format)
+            const lines = this.cardData.graduatesList
+              .split("\n")
+              .filter((line) => line.trim());
+            graduates = lines
+              .map((line) => {
+                // Parse format: "1. Name • Country • University • Major"
+                const match = line.match(
+                  /^\d+\.\s*(.+?)\s*•\s*(.+?)\s*•\s*(.+?)\s*•\s*(.+)$/
+                );
+                if (match) {
+                  return {
+                    name: match[1].trim(),
+                    country: match[2].trim(),
+                    university: match[3].trim(),
+                    major: match[4].trim(),
+                  };
+                }
+                return null;
+              })
+              .filter(Boolean);
+          }
+
+          console.log("🔍 Parsed graduates:", graduates);
+          if (Array.isArray(graduates) && graduates.length > 0) {
+            const graduatesHtml = graduates
+              .map((graduate, index) => {
+                const name = graduate.name || graduate.Name || "N/A";
+                const country = graduate.country || graduate.Country || "N/A";
+                const university =
+                  graduate.university || graduate.University || "N/A";
+                const major =
+                  graduate.major ||
+                  graduate.Major ||
+                  graduate.academicMajor ||
+                  graduate["Academic Major"] ||
+                  "N/A";
+
+                return `<div style="margin-bottom: 6px; padding: 4px 6px; background: rgba(255,255,255,0.15); border-radius: 3px; font-size: 11px; line-height: 1.2; border-left: 2px solid rgba(255,255,255,0.5);">
+                  <div style="font-weight: bold; color: #fff; margin-bottom: 1px; font-size: 12px;">${
+                    index + 1
+                  }. ${name}</div>
+                  <div style="font-size: 9px; opacity: 0.9; color: #fff;">
+                    <span style="margin-right: 10px;">🌍 ${country}</span>
+                    <span style="margin-right: 10px;">🎓 ${university}</span>
+                    <span>📚 ${major}</span>
+                  </div>
+                </div>`;
+              })
+              .join("");
+            console.log("🔍 Generated graduates HTML:", graduatesHtml);
+            content = content.replace("{{graduatesList}}", graduatesHtml);
+          } else {
+            console.log("🔍 No graduates data found, showing placeholder");
+            content = content.replace(
+              "{{graduatesList}}",
+              "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
+            );
+          }
+        } catch (error) {
+          console.error("❌ Error parsing graduates list:", error);
+          console.log(
+            "🔍 Raw graduatesList data:",
+            this.cardData.graduatesList
+          );
+          content = content.replace(
+            "{{graduatesList}}",
+            "<div style='text-align: center; font-style: italic; opacity: 0.7; color: #ff6b6b;'>Error loading graduates data</div>"
+          );
+        }
+      } else {
+        console.log("🔍 No graduates list data found, hiding element");
+        return {
+          ...element,
+          content: "",
+          style: {
+            ...element.style,
+            display: "none",
+          },
+        };
+      }
+    }
+
+    // Handle Meet Our Graduates - Multi-page content generation
+    if (content.includes("{{meetOurGraduatesContent}}")) {
+      console.log(
+        "🔍 Processing meetOurGraduatesContent, cardData.meetOurGraduatesData:",
+        this.cardData.meetOurGraduatesData
+      );
+
+      if (
+        this.cardData.meetOurGraduatesData &&
+        this.cardData.meetOurGraduatesData.trim()
+      ) {
+        try {
+          const graduatesData = JSON.parse(this.cardData.meetOurGraduatesData);
+          console.log("🔍 Parsed detailed graduates data:", graduatesData);
+
+          if (Array.isArray(graduatesData) && graduatesData.length > 0) {
+            const multiPageContent =
+              this.generateMeetOurGraduatesPages(graduatesData);
+            content = content.replace(
+              "{{meetOurGraduatesContent}}",
+              multiPageContent
+            );
+          } else {
+            content = content.replace(
+              "{{meetOurGraduatesContent}}",
+              "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
+            );
+          }
+        } catch (error) {
+          console.error("❌ Error parsing meet our graduates data:", error);
+          content = content.replace(
+            "{{meetOurGraduatesContent}}",
+            "<div style='text-align: center; font-style: italic; opacity: 0.7; color: #ff6b6b;'>Error loading graduates data</div>"
+          );
+        }
+      } else {
+        console.log("🔍 No meet our graduates data found");
+        content = content.replace(
+          "{{meetOurGraduatesContent}}",
+          "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
+        );
+      }
+    }
+
+    return {
+      ...element,
+      content,
+    };
+  }
+
+  /**
+   * Generate multi-page content for Meet Our Graduates
+   */
+  private generateMeetOurGraduatesPages(
+    graduatesData: Record<string, string | number>[]
+  ): string {
+    const pages: string[] = [];
+
+    // Page 1: Cover Page with Church Information
+    pages.push(this.generateChurchInfoPage());
+
+    // Page 2: Graduation Blessing Page
+    pages.push(this.generateGraduationBlessingPage());
+
+    // Individual pages for each graduate
+    graduatesData.forEach((graduate, index) => {
+      pages.push(this.generateGraduateProfilePage(graduate, index + 1));
+    });
+
+    // Combine all pages
+    return pages.join('<div style="page-break-after: always;"></div>');
+  }
+
+  /**
+   * Generate Church Information Page
+   */
+  private generateChurchInfoPage(): string {
+    return `
+      <div style="width: 595px; height: 842px; padding: 50px; background: linear-gradient(135deg, #1e3a8a 0%, #dc2626 100%); color: white; font-family: Georgia, serif; position: relative; page-break-after: always;">
+        <!-- JICF Logo -->
+        <div style="text-align: center; margin-bottom: 30px;">
+          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 120px; height: 60px; object-fit: contain;" />
+        </div>
+        
+        <!-- Title -->
+        <h1 style="text-align: center; font-size: 36px; margin-bottom: 40px; color: #fbbf24; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+          JINAN INTERNATIONAL<br/>CHRISTIAN FELLOWSHIP
+        </h1>
+        
+        <!-- Church Vision, Mission & Core Values -->
+        <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; margin-bottom: 30px;">
+          <h2 style="color: #fbbf24; font-size: 24px; margin-bottom: 20px; text-align: center;">WHAT WE BELIEVE:</h2>
+          <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+            We are non-denominational, so we welcome all foreigners who believe in Christ to worship with us and become active members of the Fellowship. We believe in the following:
+          </p>
+          <ul style="font-size: 16px; line-height: 1.8; padding-left: 20px;">
+            <li>Christ came to this earth</li>
+            <li>Christ died for our sins</li>
+            <li>Christ rose from the dead</li>
+            <li>Christ is coming back again</li>
+          </ul>
+        </div>
+        
+        <!-- Mission and Vision -->
+        <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px;">
+          <h2 style="color: #fbbf24; font-size: 24px; margin-bottom: 20px; text-align: center;">MISSION AND VISION:</h2>
+          <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+            JICF basic mission is to provide an environment where all Christians can meet and Praise and Worship together. The secondary missions are:
+          </p>
+          <ul style="font-size: 15px; line-height: 1.7; padding-left: 20px;">
+            <li>Develop leaders who can provide leadership at home or in other fellowships in China or wherever they may travel after leaving Jinan.</li>
+            <li>Provide mission support for other areas of the world that may need our assistance. Presently the Fellowship assists in Kenya and Ghana via medical camp and school.</li>
+            <li>Provide support and guidance both spiritually and physically for students who are away from home.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * Generate Graduation Blessing Page
+   */
+  private generateGraduationBlessingPage(): string {
+    return `
+      <div style="width: 595px; height: 842px; padding: 80px 60px; background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; font-family: Georgia, serif; text-align: center; page-break-after: always;">
+        <!-- Decorative header -->
+        <div style="margin-bottom: 60px;">
+          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 100px; height: 50px; object-fit: contain; margin-bottom: 30px;" />
+          <h1 style="font-size: 42px; color: #fbbf24; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+            A Graduation Blessing
+          </h1>
+        </div>
+        
+        <!-- Blessing text -->
+        <div style="background: rgba(255,255,255,0.15); padding: 50px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.3);">
+          <p style="font-size: 24px; line-height: 1.8; margin-bottom: 30px; font-weight: 300;">
+            May the Lord guide your every step<br/>
+            as you enter this exciting new season.<br/>
+            May your gifts make room for you,<br/>
+            your heart remain tender toward truth,<br/>
+            and your mind stay curious and bold.
+          </p>
+          
+          <p style="font-size: 24px; line-height: 1.8; margin-bottom: 30px; font-weight: 300;">
+            Wherever you go, may you carry<br/>
+            Christ's love, peace, and wisdom.
+          </p>
+          
+          <p style="font-size: 26px; line-height: 1.8; margin-bottom: 40px; font-weight: 500; color: #fbbf24;">
+            This graduation is not your finish line—<br/>
+            it is your launching point.<br/>
+            Go forward in faith.
+          </p>
+          
+          <p style="font-size: 28px; line-height: 1.6; font-weight: 600; color: #fbbf24;">
+            We are proud of you.<br/>
+            We are praying for you.
+          </p>
+          
+          <p style="font-size: 32px; margin-top: 40px; font-weight: bold; color: #fbbf24; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+            Congratulations, Graduate!
+          </p>
+        </div>
+      </div>
+    `;
+  }
+  /**
+   * Generate individual graduate profile page
+   */
+  private generateGraduateProfilePage(
+    graduate: Record<string, string | number>,
+    graduateNumber: number
+  ): string {
+    const {
+      Name = "N/A",
+      Country = "N/A",
+      University = "N/A",
+      "Academic Major": academicMajor = "N/A",
+      Email = "N/A",
+      Phone = "N/A",
+      "Position(s) Held at JICF": position = "N/A",
+      "Message from the graduates": message = "",
+      "Number of Pictures": numPictures = 0,
+    } = graduate; // Generate actual image paths based on graduate number and available photos
+    const images = [];
+    const numPics = Math.min(parseInt(String(numPictures)) || 0, 2);
+
+    for (let i = 1; i <= numPics; i++) {
+      // Look for common image extensions
+      const extensions = ["jpg", "jpeg", "png"];
+      let foundImage = false;
+
+      for (const ext of extensions) {
+        const imagePath = `/graduates/${graduateNumber}-${i}`;
+        images.push(`${imagePath}*.${ext}`);
+        foundImage = true;
+        break; // Use the first extension pattern
+      }
+
+      if (!foundImage) {
+        images.push(`/graduates/${graduateNumber}-${i}-photo.jpg`);
+      }
+    }
+
+    return `
+      <div style="width: 595px; height: 842px; padding: 40px; background: linear-gradient(135deg, #1e40af 0%, #dc2626 100%); color: white; font-family: Arial, sans-serif; page-break-after: always;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 30px;">
+          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 80px; height: 40px; object-fit: contain; margin-bottom: 15px;" />
+          <h1 style="font-size: 28px; color: #fbbf24; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+            Meet Our Graduate
+          </h1>
+        </div>
+          <!-- Graduate Photos Section -->
+        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; min-height: 200px;">
+          ${images
+            .map((imagePath, index) => {
+              // Create the actual image paths based on the exact filenames in the graduates folder
+              let primaryImagePath = `/graduates/placeholder-${graduateNumber}-${
+                index + 1
+              }.jpg`;
+
+              // Map to actual image files based on the graduate number and photo index
+              if (graduateNumber === 1 && index === 0) {
+                // No images for graduate 1 based on the folder listing
+                primaryImagePath = "";
+              } else if (graduateNumber === 2 && index === 0) {
+                primaryImagePath = "/graduates/2-1-standing in gown.jpg";
+              } else if (graduateNumber === 3 && index === 0) {
+                primaryImagePath =
+                  "/graduates/3-1-standing in medical gown.png";
+              } else if (graduateNumber === 4) {
+                if (index === 0)
+                  primaryImagePath = "/graduates/4-1-passport size pic.jpeg";
+                else if (index === 1)
+                  primaryImagePath = "/graduates/4-2 standing in gown.jpg";
+              } else if (graduateNumber === 5 && index === 0) {
+                // No images for graduate 5 based on the folder listing
+                primaryImagePath = "";
+              } else if (graduateNumber === 6) {
+                if (index === 0)
+                  primaryImagePath = "/graduates/6-1-standing in gown.jpeg";
+                else if (index === 1)
+                  primaryImagePath = "/graduates/6-2-standing in gown.jpeg";
+              } else if (graduateNumber === 7) {
+                if (index === 0)
+                  primaryImagePath = "/graduates/7-1-potrait.jpg";
+                else if (index === 1)
+                  primaryImagePath = "/graduates/7-2-standing.jpg";
+              } else if (graduateNumber === 8 && index === 0) {
+                primaryImagePath = "/graduates/8-1-standing in gown.jpeg";
+              } else if (graduateNumber === 9) {
+                if (index === 0)
+                  primaryImagePath =
+                    "/graduates/9-1-standing with diploma and cap.jpg";
+                else if (index === 1)
+                  primaryImagePath =
+                    "/graduates/9-2-sitting-with gown and diploma.jpg";
+              } else if (graduateNumber === 10) {
+                if (index === 0)
+                  primaryImagePath = "/graduates/10-1- potrait-standing.jpg";
+                else if (index === 1)
+                  primaryImagePath = "/graduates/10-2- potrait sitting.jpg";
+              }
+
+              return `
+              <div style="flex: 1; max-width: 180px; text-align: center;">
+                <div style="width: 160px; height: 180px; background: rgba(255,255,255,0.1); border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto; overflow: hidden;">
+                  ${
+                    primaryImagePath
+                      ? `
+                    <img 
+                      src="${primaryImagePath}" 
+                      alt="${Name} - Photo ${index + 1}" 
+                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
+                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    />
+                    <div style="color: rgba(255,255,255,0.7); font-size: 12px; text-align: center; display: none;">
+                      Photo ${index + 1}<br/>
+                      Graduate #${graduateNumber}
+                    </div>
+                  `
+                      : `
+                    <div style="color: rgba(255,255,255,0.7); font-size: 12px; text-align: center;">
+                      Photo ${index + 1}<br/>
+                      Graduate #${graduateNumber}<br/>
+                      <small>No photo available</small>
+                    </div>
+                  `
+                  }
+                </div>
+              </div>
+            `;
+            })
+            .join("")}
+        </div>
+        
+        <!-- Graduate Information -->
+        <div style="background: rgba(255,255,255,0.15); padding: 25px; border-radius: 15px; margin-bottom: 25px;">
+          <h2 style="font-size: 24px; color: #fbbf24; margin-bottom: 20px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+            ${Name}
+          </h2>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; line-height: 1.6;">
+            <div><strong style="color: #fbbf24;">Country:</strong> ${Country}</div>
+            <div><strong style="color: #fbbf24;">University:</strong> ${University}</div>
+            <div style="grid-column: 1 / -1;"><strong style="color: #fbbf24;">Academic Major:</strong> ${academicMajor}</div>
+            <div><strong style="color: #fbbf24;">Email:</strong> ${Email}</div>
+            <div><strong style="color: #fbbf24;">Phone:</strong> ${Phone}</div>
+            <div style="grid-column: 1 / -1;"><strong style="color: #fbbf24;">Position at JICF:</strong> ${position}</div>
+          </div>
+        </div>
+        
+        <!-- Graduate Message -->
+        ${
+          message
+            ? `
+          <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #fbbf24;">
+            <h3 style="color: #fbbf24; font-size: 18px; margin-bottom: 15px; text-align: center;">Message from the Graduate</h3>
+            <p style="font-size: 15px; line-height: 1.7; font-style: italic; text-align: center;">
+              "${message}"
+            </p>
+          </div>
+        `
+            : ""
+        }
+      </div>
+    `;
+  }
+
+  /**
+   * Render individual element to HTML
+   */
+  private renderElement(element: CardElement): string {
+    const { id, type, content, position, style } = element;
+
+    if (!content || style?.display === "none") {
+      return "";
+    }
+
+    const styleString = this.buildStyleString(position, style);
+
+    switch (type) {
+      case "text":
+        return `<div id="${id}" class="card-element card-text" style="${styleString}">${content}</div>`;
+
+      case "image":
+        const absoluteImageUrl = this.getAbsoluteUrl(content);
+        return `<img id="${id}" class="card-element card-image" src="${absoluteImageUrl}" alt="Card Image" style="${styleString}" />`;
+      case "decoration":
+        return `<div id="${id}" class="card-element" style="${styleString}">${content}</div>`;
+
+      default:
+        return `<div id="${id}" class="card-element" style="${styleString}">${content}</div>`;
+    }
+  }
+
+  /**
+   * Build CSS style string from position and style
+   */
+  private buildStyleString(
+    position: CardElement["position"],
+    style: CardElement["style"]
+  ): string {
+    const styles: string[] = [
+      `left: ${position.x}px`,
+      `top: ${position.y}px`,
+      `width: ${position.width}px`,
+      `height: ${position.height}px`,
+    ];
+
+    if (style.fontSize) styles.push(`font-size: ${style.fontSize}px`);
+    if (style.fontFamily) styles.push(`font-family: ${style.fontFamily}`);
+    if (style.fontWeight) styles.push(`font-weight: ${style.fontWeight}`);
+    if (style.fontStyle) styles.push(`font-style: ${style.fontStyle}`);
+    if (style.color) styles.push(`color: ${style.color}`);
+    if (style.textAlign) styles.push(`text-align: ${style.textAlign}`);
+    if (style.lineHeight) styles.push(`line-height: ${style.lineHeight}`);
+    if (style.letterSpacing)
+      styles.push(`letter-spacing: ${style.letterSpacing}`);
+    if (style.transform) styles.push(`transform: ${style.transform}`);
+    if (style.opacity !== undefined) styles.push(`opacity: ${style.opacity}`);
+    if (style.zIndex !== undefined) styles.push(`z-index: ${style.zIndex}`);
+    if (style.border) styles.push(`border: ${style.border}`);
+    if (style.borderRadius) styles.push(`border-radius: ${style.borderRadius}`);
+    if (style.padding) styles.push(`padding: ${style.padding}`);
+
+    return styles.join("; ");
+  }
+
+  /**
+   * Generate PNG image of the card
+   */
+  async generatePNG(): Promise<Buffer> {
+    const html = await this.generateHTML();
+
+    let browser;
+    let page;
+
+    try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--disable-web-security",
+          "--allow-running-insecure-content",
+        ],
+      });
+
+      page = await browser.newPage();
+
+      await page.setViewport({
+        width: this.template.settings.width,
+        height: this.template.settings.height,
+        deviceScaleFactor: 2,
+      });
+
+      await page.setContent(html, {
+        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        timeout: 30000,
+      });
+
+      // Wait for any fonts to load
+      await page.evaluate(() => {
+        if ("fonts" in document) {
+          return (document as unknown as { fonts: { ready: Promise<unknown> } })
+            .fonts.ready;
+        }
+        return Promise.resolve();
+      });
+      // Wait a bit more for rendering
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Take screenshot of the exact card dimensions
+      const screenshot = await page.screenshot({
+        type: "png",
+        fullPage: false,
+        clip: {
+          x: 0,
+          y: 0,
+          width: this.template.settings.width,
+          height: this.template.settings.height,
+        },
+        omitBackground: false,
+      });
+
+      return Buffer.from(screenshot);
+    } finally {
+      if (page) await page.close();
+      if (browser) await browser.close();
+    }
+  }
+
+  /**
+   * Generate PDF of the card
+   */
+  async generatePDF(): Promise<Buffer> {
+    const html = await this.generateHTML();
+
+    let browser;
+    let page;
+
+    try {
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--disable-dev-shm-usage",
+          "--disable-gpu",
+          "--disable-web-security",
+          "--allow-running-insecure-content",
+        ],
+      });
+
+      page = await browser.newPage();
+
+      await page.setViewport({
+        width: this.template.settings.width,
+        height: this.template.settings.height,
+        deviceScaleFactor: 2,
+      });
+
+      await page.setContent(html, {
+        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        timeout: 30000,
+      });
+
+      // Wait for fonts and rendering
+      await page.evaluate(() => {
+        if ("fonts" in document) {
+          return (document as unknown as { fonts: { ready: Promise<unknown> } })
+            .fonts.ready;
+        }
+        return Promise.resolve();
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Generate PDF with exact dimensions
+      const pdf = await page.pdf({
+        width: `${this.template.settings.width}px`,
+        height: `${this.template.settings.height}px`,
+        printBackground: true,
+        margin: { top: 0, right: 0, bottom: 0, left: 0 },
+        preferCSSPageSize: true,
+      });
+
+      return Buffer.from(pdf);
+    } finally {
+      if (page) await page.close();
+      if (browser) await browser.close();
+    }
+  }
+}
