@@ -396,16 +396,34 @@ export async function POST(req: Request) {
             validatedData.securityLevel === "HIGH") &&
           !hasDigitalSignature
         ) {
+          // Calculate position based on template type
+          let signaturePosition = { x: 50, y: 545, width: 300, height: 12 }; // Default position
+
+          // Adjust position for JULS award templates to be under certificate ID
+          if (
+            validatedData.templateName === "JULS Outstanding Contribution Award"
+          ) {
+            signaturePosition = { x: 250, y: 550, width: 300, height: 12 }; // Under certificate ID at y:530
+          } else if (
+            validatedData.templateName === "JULS Most Dedicated Award"
+          ) {
+            signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
+          } else if (validatedData.templateName === "JULS Hard Working Award") {
+            signaturePosition = { x: 300, y: 555, width: 200, height: 12 }; // Under certificate reference at y:540
+          } else if (validatedData.templateName === "JULS Most Active Award") {
+            signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
+          }
+
           elements.push({
             id: "digital-signature",
             type: "text",
             content: "Digitally Signed & Verified",
-            position: { x: 50, y: 545, width: 300, height: 12 },
+            position: signaturePosition,
             style: {
               fontSize: 8,
               fontFamily: "serif",
               color: "#7c7c7b",
-              textAlign: "left",
+              textAlign: "center",
             },
           });
         }

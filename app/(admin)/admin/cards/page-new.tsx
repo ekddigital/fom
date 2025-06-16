@@ -5,7 +5,7 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -64,8 +64,7 @@ export default function CardsPage() {
   // Search and filter
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -94,11 +93,10 @@ export default function CardsPage() {
     } finally {
       setLoading(false);
     }
-  };
-
+  }, [toast]);
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   const handleCreateCard = async () => {
     if (!selectedTemplate) {
@@ -411,7 +409,7 @@ export default function CardsPage() {
 
       <Separator />
 
-      {/* User's Created Cards */}
+      {/* User&apos;s Created Cards */}
       <div>
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <Gift className="h-5 w-5 text-blue-500" />
@@ -421,9 +419,9 @@ export default function CardsPage() {
         {userCards.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center">
-              <Gift className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <Gift className="mx-auto h-12 w-12 text-muted-foreground mb-4" />{" "}
               <p className="text-muted-foreground mb-4">
-                You haven't created any cards yet.
+                You haven&apos;t created any cards yet.
               </p>
               <Button
                 onClick={() => setShowCreateForm(true)}
@@ -454,7 +452,9 @@ export default function CardsPage() {
                 <CardContent>
                   {card.customMessage && (
                     <div className="mb-4 p-3 bg-muted rounded-lg">
-                      <p className="text-sm italic">"{card.customMessage}"</p>
+                      <p className="text-sm italic">
+                        &ldquo;{card.customMessage}&rdquo;
+                      </p>
                     </div>
                   )}
 

@@ -71,21 +71,69 @@ export function useAuth() {
         redirect: false,
       });
 
+      console.log("NextAuth sign-in result:", result); // Debug logging
+
       if (result?.error) {
-        // Try to extract the actual error message from NextAuth
-        const errorMessage =
-          result.error === "CredentialsSignin"
-            ? "Invalid email or password"
-            : result.error;
+        // Better error handling with specific messages
+        let errorMessage = "Sign in failed";
+        let fieldErrors: Record<string, string[]> = {};
+
+        switch (result.error) {
+          case "CredentialsSignin":
+            errorMessage =
+              "Invalid email or password. Please check your credentials and try again.";
+            fieldErrors = { credentials: [errorMessage] };
+            break;
+          case "EmailNotVerified":
+            errorMessage =
+              "Please verify your email address before signing in. Check your inbox for a verification link.";
+            fieldErrors = { email: [errorMessage] };
+            break;
+          case "UserNotFound":
+            errorMessage = "No account found with this email address.";
+            fieldErrors = { email: [errorMessage] };
+            break;
+          case "InvalidPassword":
+            errorMessage = "Incorrect password. Please try again.";
+            fieldErrors = { password: [errorMessage] };
+            break;
+          case "AccountNotLinked":
+            errorMessage =
+              "This email is associated with a different sign-in method.";
+            break;
+          case "Signin":
+            errorMessage =
+              "There was a problem signing you in. Please try again.";
+            break;
+          case "OAuthSignin":
+          case "OAuthCallback":
+          case "OAuthCreateAccount":
+          case "EmailCreateAccount":
+          case "Callback":
+            errorMessage = "Authentication service error. Please try again.";
+            break;
+          case "OAuthAccountNotLinked":
+            errorMessage =
+              "To confirm your identity, sign in with the same account you used originally.";
+            break;
+          case "SessionRequired":
+            errorMessage = "Please sign in to access this page.";
+            break;
+          default:
+            errorMessage = `Authentication error: ${result.error}`;
+            console.error("Unknown NextAuth error:", result.error);
+        }
 
         return {
           success: false,
           message: errorMessage,
-          errors: { credentials: [errorMessage] },
+          errors: fieldErrors,
         };
       }
 
       if (result?.ok) {
+        // Add a small delay to ensure session is updated
+        await new Promise((resolve) => setTimeout(resolve, 100));
         router.push("/");
         return {
           success: true,
@@ -95,13 +143,39 @@ export function useAuth() {
 
       return {
         success: false,
-        message: "Sign in failed",
+        message: "Sign in failed for unknown reason",
       };
     } catch (error) {
       console.error("Sign in error:", error);
+
+      // Handle specific error types
+      if (error instanceof Error) {
+        if (error.message.includes("verify your email")) {
+          return {
+            success: false,
+            message: "Please verify your email address before signing in.",
+            errors: { email: ["Email verification required"] },
+          };
+        }
+
+        if (error.message.includes("Invalid credentials")) {
+          return {
+            success: false,
+            message:
+              "Invalid email or password. Please check your credentials.",
+            errors: { credentials: ["Invalid email or password"] },
+          };
+        }
+
+        return {
+          success: false,
+          message: error.message,
+        };
+      }
+
       return {
         success: false,
-        message: "An unexpected error occurred",
+        message: "An unexpected error occurred during sign in",
       };
     } finally {
       setIsLoading(false);

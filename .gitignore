@@ -79,7 +79,6 @@ jspm_packages/
 
 # gatsby files
 .cache/
-public
 
 # vuepress build output
 .vuepress/dist
@@ -179,7 +178,6 @@ logs
 # Certificate files (will be generated)
 # certificates/
 *.pdf
-*.png
 uploads/
 CERTIFICATE_SECURITY_GUIDE.md
 

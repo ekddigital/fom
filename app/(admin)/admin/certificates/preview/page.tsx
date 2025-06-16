@@ -144,7 +144,7 @@ export default function CertificatePreviewPage() {
         <div className="bg-white rounded-lg shadow-lg">
           <CertificatePreviewModal
             isOpen={true}
-            onClose={() => {}} // No close since this is a full page
+            onClose={() => router.push("/admin/certificates")} // Navigate back to certificates page
             template={template}
             recipientName={recipientName}
             issuerName={issuerName}

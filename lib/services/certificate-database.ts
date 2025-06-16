@@ -125,17 +125,22 @@ export class DatabaseCertificateService {
     });
 
     if (!existingOrg) {
-      // Find the existing super admin user for organization creation
-      const superAdminUser = await prisma.user.findUnique({
-        where: { email: "ohetawk@gmail.com" },
+      // Find any super admin user for organization creation
+      const superAdminUser = await prisma.user.findFirst({
+        where: { role: "SUPER_ADMIN" },
+        orderBy: { createdAt: "asc" }, // Use the oldest super admin if multiple exist
       });
 
       if (!superAdminUser) {
         console.error(
-          "❌ Super admin user not found for organization creation"
+          "❌ No super admin user found for organization creation. Please ensure at least one user has SUPER_ADMIN role."
         );
         throw new Error("Super admin user required for organization setup");
       }
+
+      console.log(
+        `✅ Found super admin user: ${superAdminUser.email} for organization creation`
+      );
 
       await prisma.organization.create({
         data: {
@@ -170,17 +175,18 @@ export class DatabaseCertificateService {
    * Uses upsert to override everything during initialization
    */
   private async seedCertificateTemplates(): Promise<void> {
-    // Find the existing super admin user
-    const superAdminUser = await prisma.user.findUnique({
-      where: { email: "ohetawk@gmail.com" },
+    // Find any super admin user for template seeding
+    const superAdminUser = await prisma.user.findFirst({
+      where: { role: "SUPER_ADMIN" },
+      orderBy: { createdAt: "asc" }, // Use the oldest super admin if multiple exist
     });
 
     if (!superAdminUser) {
       console.error(
-        "❌ Super admin user not found with email: ohetawk@gmail.com"
+        "❌ No super admin user found for template seeding. Please ensure at least one user has SUPER_ADMIN role."
       );
       console.log(
-        "Please ensure the super admin user exists before seeding templates"
+        "Please ensure a super admin user exists before seeding templates"
       );
       return;
     }

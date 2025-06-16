@@ -369,7 +369,7 @@ export const CERTIFICATE_OF_APPRECIATION_TEMPLATE: TemplateData = {
 
 /**
  * Certificate of Excellence Template
- * Premium design for outstanding achievements
+ * Premium design for recognizing outstanding achievements
  */
 export const CERTIFICATE_OF_EXCELLENCE_TEMPLATE: TemplateData = {
   name: "Certificate of Excellence",
@@ -856,24 +856,24 @@ export const MINISTRY_LEADERSHIP_CERTIFICATE: TemplateData = {
       id: "date-leadership-combined",
       type: "text",
       content: "Date: {{issueDate}}",
-      position: { x: 90, y: 520, width: 250, height: 20 },
+      position: { x: 100, y: 550, width: 200, height: 20 },
       style: {
-        fontSize: 12,
+        fontSize: 14,
         fontFamily: "serif",
-        color: FOM_COLORS.darkGray,
-        textAlign: "left",
+        color: FOM_COLORS.primary,
+        textAlign: "center",
       },
     },
     {
       id: "signature-leadership-combined",
       type: "text",
       content: "Authorized by: {{issuerName}}",
-      position: { x: 460, y: 520, width: 250, height: 20 },
+      position: { x: 500, y: 550, width: 200, height: 20 },
       style: {
-        fontSize: 12,
+        fontSize: 14,
         fontFamily: "serif",
-        color: FOM_COLORS.darkGray,
-        textAlign: "left",
+        color: FOM_COLORS.primary,
+        textAlign: "center",
       },
     },
 
@@ -2255,6 +2255,7 @@ export const BAPTISM_CERTIFICATE: TemplateData = {
     },
 
     // Digital signature indicator
+
     {
       id: "digital-signature-baptism",
       type: "text",
@@ -2360,7 +2361,7 @@ export const JULS_CERTIFICATE_OF_APPRECIATION_TEMPLATE: TemplateData = {
     {
       id: "parent-organization",
       type: "text",
-      content: "Under Liberian Student Union In China (LSUIC)",
+      content: "Liberian Student Union In China (LSUIC)",
       position: { x: 160, y: 95, width: 480, height: 20 },
       style: {
         fontSize: 12,
@@ -2890,119 +2891,159 @@ export const JULS_OUTSTANDING_CONTRIBUTION_AWARD_TEMPLATE: TemplateData = {
 };
 
 /**
- * JICF Certificate of Service Template
- * Beautiful certificate recognizing service in various church ministries
+ * JULS Most Dedicated Award Template
+ * Classical prestigious design with JICF-inspired layout for recognizing exceptional dedication
  */
-export const JICF_CERTIFICATE_OF_SERVICE_TEMPLATE: TemplateData = {
-  name: "Certificate of Service",
+export const JULS_MOST_DEDICATED_AWARD_TEMPLATE: TemplateData = {
+  name: "JULS Most Dedicated Award",
   description:
-    "Certificate recognizing faithful service in church ministries by JICF.",
+    "Classical prestigious award certificate for recognizing the most dedicated student who has shown exceptional commitment and perseverance in their academic and community activities.",
   elements: [
-    // Background and border
+    // Elegant background with gradient effect
     {
-      id: "outer-border",
+      id: "background-gradient",
       type: "shape",
       content: "",
-      position: { x: 20, y: 20, width: 760, height: 560 },
+      position: { x: 0, y: 0, width: 800, height: 600 },
       style: {
-        color: JICF_COLORS.red,
+        color: JULS_COLORS.lightGray,
+      },
+    },
+    {
+      id: "outer-frame",
+      type: "shape",
+      content: "",
+      position: { x: 30, y: 30, width: 740, height: 540 },
+      style: {
+        color: JULS_COLORS.blue,
+        borderRadius: "12px",
+      },
+    },
+    {
+      id: "inner-frame",
+      type: "shape",
+      content: "",
+      position: { x: 45, y: 45, width: 710, height: 510 },
+      style: {
+        color: JULS_COLORS.white,
         borderRadius: "8px",
       },
     },
-    {
-      id: "inner-border",
-      type: "shape",
-      content: "",
-      position: { x: 40, y: 40, width: 720, height: 520 },
-      style: {
-        color: JICF_COLORS.lightYellow,
-        borderRadius: "4px",
-      },
-    },
-    {
-      id: "inner-content-area",
-      type: "shape",
-      content: "",
-      position: { x: 60, y: 60, width: 680, height: 480 },
-      style: {
-        color: JICF_COLORS.white,
-        borderRadius: "4px",
-      },
-    },
 
-    // Header section with JICF logo
+    // Header with JULS and LSUIC logos only
     {
-      id: "jicf-logo",
+      id: "juls-logo",
       type: "image",
-      content: "/JICF_LOGO1.png",
-      position: { x: 80, y: 80, width: 80, height: 80 },
+      content: "/JULS_LOGO.png",
+      position: { x: 280, y: 60, width: 80, height: 80 },
       style: {},
     },
     {
-      id: "church-name",
+      id: "lsuic-logo",
+      type: "image",
+      content: "/LSUIC_LOGO.png",
+      position: { x: 440, y: 60, width: 80, height: 80 },
+      style: {},
+    },
+
+    // Organizational header - JULS focused
+    {
+      id: "primary-organization",
       type: "text",
-      content: "JINAN INTERNATIONAL CHRISTIAN FELLOWSHIP",
-      position: { x: 150, y: 85, width: 460, height: 30 },
+      content: "JINAN UNION OF LIBERIAN STUDENTS",
+      position: { x: 60, y: 150, width: 680, height: 25 },
       style: {
-        fontSize: 18,
+        fontSize: 20,
         fontFamily: "serif",
         fontWeight: "bold",
-        color: JICF_COLORS.blue,
+        color: JULS_COLORS.red,
         textAlign: "center",
-        lineHeight: "1.2",
       },
     },
     {
-      id: "church-subtitle",
+      id: "secondary-organization",
       type: "text",
-      content: "(JICF)",
-      position: { x: 180, y: 115, width: 480, height: 20 },
+      content: "Liberian Student Union In China (LSUIC)",
+      position: { x: 60, y: 175, width: 680, height: 20 },
       style: {
-        fontSize: 16,
+        fontSize: 14,
         fontFamily: "serif",
-        fontWeight: "bold",
-        color: JICF_COLORS.red,
+        color: JULS_COLORS.blue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "location-subtitle",
+      type: "text",
+      content: "• Jinan City, China •",
+      position: { x: 60, y: 200, width: 680, height: 15 },
+      style: {
+        fontSize: 12,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
 
-    // Certificate title with decorative elements
+    // Certificate title with classic styling
     {
       id: "certificate-title",
       type: "text",
-      content: "CERTIFICATE OF SERVICE",
-      position: { x: 80, y: 180, width: 640, height: 40 },
+      content: "MOST DEDICATED SCHOLAR AWARD",
+      position: { x: 60, y: 245, width: 680, height: 35 },
       style: {
-        fontSize: 32,
+        fontSize: 26,
         fontFamily: "serif",
         fontWeight: "bold",
-        color: JICF_COLORS.blue,
+        color: JULS_COLORS.blue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "award-subtitle",
+      type: "text",
+      content: "∼ Excellence in Commitment ∼",
+      position: { x: 60, y: 280, width: 680, height: 20 },
+      style: {
+        fontSize: 14,
+        fontFamily: "serif",
+        fontWeight: "italic",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    }, // QR Code positioned between title and content
+    {
+      id: "qr-code",
+      type: "image",
+      content: "{{qrCode}}",
+      position: { x: 600, y: 290, width: 80, height: 80 },
+      style: {
+        borderRadius: "0px",
+      },
+    },
+    {
+      id: "qr-label",
+      type: "text",
+      content: "Scan to verify",
+      position: { x: 615, y: 375, width: 50, height: 10 },
+      style: {
+        fontSize: 7,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
 
-    // Decorative line under title
+    // Main content with elegant presentation
     {
-      id: "title-underline",
-      type: "shape",
-      content: "",
-      position: { x: 250, y: 225, width: 300, height: 3 },
-      style: {
-        color: JICF_COLORS.yellow,
-        borderRadius: "2px",
-      },
-    },
-
-    // Main content
-    {
-      id: "presentation-text",
+      id: "presented-to",
       type: "text",
-      content: "This certificate is proudly presented to",
-      position: { x: 80, y: 250, width: 640, height: 25 },
+      content: "This esteemed certificate is presented in honor of",
+      position: { x: 80, y: 320, width: 640, height: 20 },
       style: {
-        fontSize: 16,
+        fontSize: 15,
         fontFamily: "serif",
-        color: JICF_COLORS.darkGray,
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
@@ -3010,204 +3051,167 @@ export const JICF_CERTIFICATE_OF_SERVICE_TEMPLATE: TemplateData = {
       id: "recipient-name",
       type: "text",
       content: "{{recipientName}}",
-      position: { x: 80, y: 285, width: 640, height: 45 },
+      position: { x: 80, y: 350, width: 640, height: 35 },
       style: {
-        fontSize: 36,
+        fontSize: 28,
         fontFamily: "serif",
         fontWeight: "bold",
-        color: JICF_COLORS.red,
-        textAlign: "center",
-      },
-    },
-    {
-      id: "recognition-text",
-      type: "text",
-      content:
-        "in recognition to {{gender}} Stewardship in the Body of Christ as",
-      position: { x: 80, y: 340, width: 640, height: 25 },
-      style: {
-        fontSize: 16,
-        fontFamily: "serif",
-        color: JICF_COLORS.darkGray,
-        textAlign: "center",
-        letterSpacing: "0.5px",
-      },
-    },
-    {
-      id: "position-served",
-      type: "text",
-      content: "{{position}}",
-      position: { x: 80, y: 370, width: 640, height: 30 },
-      style: {
-        fontSize: 22,
-        fontFamily: "serif",
-        fontWeight: "bold",
-        color: JICF_COLORS.blue,
+        color: JULS_COLORS.red,
         textAlign: "center",
       },
     },
 
-    // Bible verse in elegant styling
+    // Recognition text with classical language
     {
-      id: "bible-verse",
+      id: "award-text",
       type: "text",
       content:
-        "God is not unjust; he will not forget your work and\nthe love you have shown him as you have helped\nhis people and continue to help them.",
-      position: { x: 100, y: 420, width: 600, height: 60 },
+        "For demonstrating unwavering dedication and steadfast commitment to academic excellence and student community service. Your perseverance through challenges, consistent devotion to your studies, and loyalty to our student union exemplify the noble virtues of a dedicated scholar and student leader.",
+      position: { x: 100, y: 395, width: 600, height: 55 },
       style: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: "serif",
-        fontStyle: "italic",
-        color: JICF_COLORS.darkGray,
+        color: JULS_COLORS.darkBlue,
         textAlign: "center",
-        lineHeight: "1.4",
       },
-    },
+    }, // Inspirational quote with academic focus
     {
-      id: "verse-reference",
+      id: "academic-quote",
       type: "text",
-      content: "Hebrews 6:10 NIV",
-      position: { x: 100, y: 485, width: 600, height: 20 },
+      content:
+        '"Education is the most powerful weapon which you can use to change the world"',
+      position: { x: 80, y: 465, width: 640, height: 25 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
-        fontWeight: "bold",
-        color: JICF_COLORS.blue,
+        fontWeight: "italic",
+        color: JULS_COLORS.blue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "quote-reference",
+      type: "text",
+      content: "— Nelson Mandela",
+      position: { x: 80, y: 485, width: 640, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
 
-    // Pastor signature area
+    // Signature section with dual signatures
     {
-      id: "pastor-signature",
+      id: "date-issued",
+      type: "text",
+      content: "Date Issued: {{issueDate}}",
+      position: { x: 60, y: 505, width: 680, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // President signature area
+    {
+      id: "president-signature",
       type: "image",
-      content: "{{pastorSignature}}",
-      position: { x: 110, y: 495, width: 120, height: 40 },
+      content: "/juls-signagure-president.png",
+      position: { x: 120, y: 495, width: 120, height: 35 },
       style: {},
     },
     {
-      id: "pastor-name",
-      type: "text",
-      content: "{{pastorName}}",
-      position: { x: 80, y: 525, width: 200, height: 20 },
+      id: "president-line",
+      type: "shape",
+      content: "",
+      position: { x: 120, y: 535, width: 120, height: 1 },
       style: {
-        fontSize: 14,
+        color: JULS_COLORS.darkGray,
+      },
+    },
+    {
+      id: "president-name",
+      type: "text",
+      content: "Ruuphine M. Harmon",
+      position: { x: 120, y: 538, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
         fontFamily: "serif",
         fontWeight: "bold",
-        color: JICF_COLORS.blue,
-        textAlign: "left",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
       },
     },
     {
-      id: "pastor-title",
+      id: "president-title",
       type: "text",
-      content: "JICF Senior Pastor",
-      position: { x: 80, y: 540, width: 200, height: 15 },
+      content: "City President, LSUIC Jinan Chapter",
+      position: { x: 110, y: 548, width: 140, height: 8 },
       style: {
-        fontSize: 12,
+        fontSize: 7,
         fontFamily: "serif",
-        color: JICF_COLORS.darkGray,
-        textAlign: "left",
-      },
-    },
-
-    // Date and certificate info - aligned at same Y position
-    {
-      id: "issue-date",
-      type: "text",
-      content: "Date: {{issueDate}}",
-      position: { x: 520, y: 525, width: 160, height: 20 },
-      style: {
-        fontSize: 12,
-        fontFamily: "serif",
-        color: JICF_COLORS.darkGray,
-        textAlign: "right",
-      },
-    },
-    {
-      id: "certificate-id-service",
-      type: "text",
-      content: "Certificate ID: {{certificateId}}",
-      position: { x: 300, y: 525, width: 200, height: 15 },
-      style: {
-        fontSize: 10,
-        fontFamily: "serif",
-        color: JICF_COLORS.darkGray,
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
 
-    // Digital verification text
+    // Secretary signature area
     {
-      id: "digital-verification",
-      type: "text",
-      content: "Digitally Signed and Verified",
-      position: { x: 300, y: 545, width: 200, height: 15 },
-      style: {
-        fontSize: 10,
-        fontFamily: "serif",
-        color: JICF_COLORS.blue,
-        textAlign: "center",
-        fontWeight: "bold",
-      },
-    },
-
-    // QR Code for verification
-    {
-      id: "qr-code-service",
+      id: "secretary-signature",
       type: "image",
-      content: "{{qrCode}}",
-      position: { x: 630, y: 80, width: 90, height: 90 },
+      content: "/juls-signagure-secretary.png",
+      position: { x: 560, y: 495, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "secretary-line",
+      type: "shape",
+      content: "",
+      position: { x: 560, y: 535, width: 120, height: 1 },
       style: {
-        borderRadius: "0px",
+        color: JULS_COLORS.darkGray,
       },
     },
     {
-      id: "qr-label-service",
+      id: "secretary-name",
       type: "text",
-      content: "Scan to verify",
-      position: { x: 630, y: 175, width: 90, height: 12 },
+      content: "Lawrina N. Varney",
+      position: { x: 560, y: 538, width: 120, height: 12 },
       style: {
-        fontSize: 8,
+        fontSize: 9,
         fontFamily: "serif",
-        color: JICF_COLORS.darkGray,
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "secretary-title",
+      type: "text",
+      content: "City Secretary, LSUIC Jinan Chapter",
+      position: { x: 550, y: 548, width: 140, height: 8 },
+      style: {
+        fontSize: 7,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
 
-    // Decorative elements
+    // Certificate ID in bottom corner
     {
-      id: "left-decoration",
-      type: "shape",
-      content: "",
-      position: { x: 80, y: 250, width: 30, height: 3 },
-      style: {
-        color: JICF_COLORS.yellow,
-        borderRadius: "2px",
-      },
-    },
-    {
-      id: "right-decoration",
-      type: "shape",
-      content: "",
-      position: { x: 690, y: 250, width: 30, height: 3 },
-      style: {
-        color: JICF_COLORS.yellow,
-        borderRadius: "2px",
-      },
-    },
-
-    // Security watermark
-    {
-      id: "security-watermark-service",
+      id: "certificate-id",
       type: "text",
-      content: "AUTHENTIC",
-      position: { x: 300, y: 350, width: 200, height: 80 },
+      content: "ID: {{certificateId}}",
+      position: { x: 300, y: 545, width: 200, height: 12 },
       style: {
-        fontSize: 48,
+        fontSize: 9,
         fontFamily: "serif",
-        fontWeight: "bold",
-        color: "rgba(237, 28, 36, 0.05)", // Very light red, almost transparent
+        color: JULS_COLORS.darkGray,
         textAlign: "center",
       },
     },
@@ -3217,7 +3221,730 @@ export const JICF_CERTIFICATE_OF_SERVICE_TEMPLATE: TemplateData = {
     height: 600,
     margin: { top: 20, right: 20, bottom: 20, left: 20 },
     background: {
-      color: JICF_COLORS.white,
+      color: JULS_COLORS.white,
+    },
+  },
+  fonts: [
+    {
+      family: "serif",
+      variants: ["normal", "bold", "italic"],
+    },
+  ],
+};
+
+/**
+ * JULS Hard Working Award Template
+ * Industrial achievement-focused design for recognizing exceptional work ethic
+ */
+export const JULS_HARD_WORKING_AWARD_TEMPLATE: TemplateData = {
+  name: "JULS Hard Working Award",
+  description:
+    "Industrial achievement-focused award certificate for recognizing the hardest working student who has demonstrated exceptional effort, diligence, and industriousness in their pursuits.",
+  elements: [
+    // Bold industrial background
+    {
+      id: "background-base",
+      type: "shape",
+      content: "",
+      position: { x: 0, y: 0, width: 800, height: 600 },
+      style: {
+        color: JULS_COLORS.lightGray,
+      },
+    },
+    {
+      id: "accent-stripe-top",
+      type: "shape",
+      content: "",
+      position: { x: 0, y: 20, width: 800, height: 15 },
+      style: {
+        color: JULS_COLORS.red,
+      },
+    },
+    {
+      id: "accent-stripe-bottom",
+      type: "shape",
+      content: "",
+      position: { x: 0, y: 565, width: 800, height: 15 },
+      style: {
+        color: JULS_COLORS.red,
+      },
+    },
+    {
+      id: "main-frame",
+      type: "shape",
+      content: "",
+      position: { x: 40, y: 50, width: 720, height: 500 },
+      style: {
+        color: JULS_COLORS.white,
+        borderRadius: "6px",
+      },
+    }, // Header with bold industrial styling
+    {
+      id: "juls-logo",
+      type: "image",
+      content: "/JULS_LOGO.png",
+      position: { x: 80, y: 70, width: 70, height: 70 },
+      style: {},
+    },
+    {
+      id: "lsuic-logo",
+      type: "image",
+      content: "/LSUIC_LOGO.png",
+      position: { x: 650, y: 70, width: 70, height: 70 },
+      style: {},
+    }, // Bold organizational branding
+    {
+      id: "main-title",
+      type: "text",
+      content: "JINAN UNION OF LIBERIAN STUDENTS (JULS)",
+      position: { x: 60, y: 155, width: 680, height: 20 },
+      style: {
+        fontSize: 18,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.blue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "organization-line",
+      type: "text",
+      content: "Liberian Student Union In China (LSUIC)",
+      position: { x: 60, y: 180, width: 680, height: 15 },
+      style: {
+        fontSize: 13,
+        fontFamily: "serif",
+        color: JULS_COLORS.red,
+        textAlign: "center",
+      },
+    },
+
+    // Industrial-style achievement banner
+    {
+      id: "achievement-banner",
+      type: "shape",
+      content: "",
+      position: { x: 100, y: 210, width: 600, height: 55 },
+      style: {
+        color: JULS_COLORS.blue,
+        borderRadius: "4px",
+      },
+    },
+    {
+      id: "award-title",
+      type: "text",
+      content: "HARD WORKING SCHOLAR AWARD ",
+      position: { x: 120, y: 218, width: 560, height: 25 },
+      style: {
+        fontSize: 24,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.white,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "award-subtitle",
+      type: "text",
+      content: "∎ Excellence Through Effort ∎",
+      position: { x: 120, y: 243, width: 560, height: 15 },
+      style: {
+        fontSize: 12,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.white,
+        textAlign: "center",
+      },
+    }, // QR Code positioned between banner and content
+    {
+      id: "qr-code",
+      type: "image",
+      content: "{{qrCode}}",
+      position: { x: 580, y: 280, width: 80, height: 80 },
+      style: {
+        borderRadius: "0px",
+      },
+    },
+    {
+      id: "qr-label",
+      type: "text",
+      content: "Scan to verify",
+      position: { x: 595, y: 365, width: 50, height: 10 },
+      style: {
+        fontSize: 7,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Achievement content
+    {
+      id: "achievement-text",
+      type: "text",
+      content: "This certificate of achievement is awarded to",
+      position: { x: 80, y: 285, width: 640, height: 20 },
+      style: {
+        fontSize: 15,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "recipient-name",
+      type: "text",
+      content: "{{recipientName}}",
+      position: { x: 80, y: 315, width: 640, height: 35 },
+      style: {
+        fontSize: 30,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.red,
+        textAlign: "center",
+      },
+    },
+
+    // Work ethic description with strong language
+    {
+      id: "work-description",
+      type: "text",
+      content:
+        "For demonstrating exceptional work ethic, relentless determination, and outstanding industriousness. Your tireless efforts, consistent productivity, and unwavering commitment to excellence through hard work serve as an inspiration to all students. Your achievements are the direct result of your dedicated labor and persistent effort.",
+      position: { x: 100, y: 365, width: 600, height: 60 },
+      style: {
+        fontSize: 13,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+
+    // Motivational work quote
+    {
+      id: "work-motto",
+      type: "text",
+      content: '"Success is where preparation and opportunity meet hard work"',
+      position: { x: 80, y: 440, width: 640, height: 20 },
+      style: {
+        fontSize: 13,
+        fontFamily: "serif",
+        fontWeight: "italic",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "motto-author",
+      type: "text",
+      content: "— Bobby Unser",
+      position: { x: 80, y: 460, width: 640, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Signature section with dual signatures
+    {
+      id: "date-issued",
+      type: "text",
+      content: "Date Issued: {{issueDate}}",
+      position: { x: 60, y: 480, width: 680, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    }, // President signature area
+    {
+      id: "president-signature",
+      type: "image",
+      content: "/juls-signagure-president.png",
+      position: { x: 120, y: 500, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "president-line",
+      type: "shape",
+      content: "",
+      position: { x: 120, y: 540, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkGray,
+      },
+    },
+    {
+      id: "president-name",
+      type: "text",
+      content: "Ruuphine M. Harmon",
+      position: { x: 120, y: 543, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "president-title",
+      type: "text",
+      content: "City President, LSUIC Jinan Chapter",
+      position: { x: 110, y: 553, width: 140, height: 10 },
+      style: {
+        fontSize: 8,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    }, // Secretary signature area
+    {
+      id: "secretary-signature",
+      type: "image",
+      content: "/juls-signagure-secretary.png",
+      position: { x: 560, y: 500, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "secretary-line",
+      type: "shape",
+      content: "",
+      position: { x: 560, y: 540, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkGray,
+      },
+    },
+    {
+      id: "secretary-name",
+      type: "text",
+      content: "Lawrina N. Varney",
+      position: { x: 560, y: 543, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "secretary-title",
+      type: "text",
+      content: "City Secretary, LSUIC Jinan Chapter",
+      position: { x: 550, y: 553, width: 140, height: 10 },
+      style: {
+        fontSize: 8,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Certificate reference
+    {
+      id: "certificate-reference",
+      type: "text",
+      content: "REF: {{certificateId}}",
+      position: { x: 300, y: 540, width: 200, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+  ],
+  pageSettings: {
+    width: 800,
+    height: 600,
+    margin: { top: 20, right: 20, bottom: 20, left: 20 },
+    background: {
+      color: JULS_COLORS.white,
+    },
+  },
+  fonts: [
+    {
+      family: "serif",
+      variants: ["normal", "bold", "italic"],
+    },
+  ],
+};
+
+/**
+ * JULS Most Active Award Template
+ * Dynamic energetic design for recognizing exceptional engagement and participation
+ */
+export const JULS_MOST_ACTIVE_AWARD_TEMPLATE: TemplateData = {
+  name: "JULS Most Active Award",
+  description:
+    "Dynamic energetic award certificate for recognizing the most active student who has shown exceptional engagement, participation, and leadership in community activities.",
+  elements: [
+    // Vibrant dynamic background
+    {
+      id: "energy-background",
+      type: "shape",
+      content: "",
+      position: { x: 0, y: 0, width: 800, height: 600 },
+      style: {
+        color: JULS_COLORS.lightRed,
+      },
+    },
+    {
+      id: "dynamic-accent-1",
+      type: "shape",
+      content: "",
+      position: { x: 0, y: 0, width: 200, height: 200 },
+      style: {
+        color: JULS_COLORS.gold,
+        borderRadius: "50%",
+      },
+    },
+    {
+      id: "dynamic-accent-2",
+      type: "shape",
+      content: "",
+      position: { x: 600, y: 400, width: 200, height: 200 },
+      style: {
+        color: JULS_COLORS.lightBlue,
+        borderRadius: "50%",
+      },
+    },
+    {
+      id: "main-panel",
+      type: "shape",
+      content: "",
+      position: { x: 50, y: 40, width: 700, height: 520 },
+      style: {
+        color: JULS_COLORS.white,
+        borderRadius: "15px",
+      },
+    }, // Dynamic header with energy symbols
+    {
+      id: "energy-symbol-1",
+      type: "text",
+      content: "⚡",
+      position: { x: 100, y: 60, width: 40, height: 30 },
+      style: {
+        fontSize: 24,
+        color: JULS_COLORS.gold,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "juls-logo",
+      type: "image",
+      content: "/JULS_LOGO.png",
+      position: { x: 280, y: 60, width: 80, height: 80 },
+      style: {},
+    },
+    {
+      id: "lsuic-logo",
+      type: "image",
+      content: "/LSUIC_LOGO.png",
+      position: { x: 440, y: 60, width: 80, height: 80 },
+      style: {},
+    },
+    {
+      id: "energy-symbol-2",
+      type: "text",
+      content: "⚡",
+      position: { x: 660, y: 60, width: 40, height: 30 },
+      style: {
+        fontSize: 24,
+        color: JULS_COLORS.gold,
+        textAlign: "center",
+      },
+    },
+
+    // Dynamic organizational header
+    {
+      id: "dynamic-title",
+      type: "text",
+      content: "JINAN UNION OF LIBERIAN STUDENTS (JULS)",
+      position: { x: 70, y: 145, width: 660, height: 20 },
+      style: {
+        fontSize: 16,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.red,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "partnership-line",
+      type: "text",
+      content: "Liberian Student Union In China (LSUIC)",
+      position: { x: 70, y: 170, width: 660, height: 15 },
+      style: {
+        fontSize: 12,
+        fontFamily: "serif",
+        color: JULS_COLORS.blue,
+        textAlign: "center",
+      },
+    },
+
+    // Dynamic award section with movement
+    {
+      id: "movement-stars-left",
+      type: "text",
+      content: "✦ ✧ ✦",
+      position: { x: 80, y: 200, width: 100, height: 20 },
+      style: {
+        fontSize: 16,
+        color: JULS_COLORS.gold,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "active-title",
+      type: "text",
+      content: "🌟 MOST ACTIVE SCHOLAR AWARD 🌟",
+      position: { x: 180, y: 200, width: 440, height: 25 },
+      style: {
+        fontSize: 22,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.red,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "movement-stars-right",
+      type: "text",
+      content: "✦ ✧ ✦",
+      position: { x: 620, y: 200, width: 100, height: 20 },
+      style: {
+        fontSize: 16,
+        color: JULS_COLORS.gold,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "activity-motto",
+      type: "text",
+      content: "∽ Leadership Through Active Participation ∽",
+      position: { x: 70, y: 230, width: 660, height: 15 },
+      style: {
+        fontSize: 12,
+        fontFamily: "serif",
+        fontWeight: "italic",
+        color: JULS_COLORS.lightBlue,
+        textAlign: "center",
+      },
+    }, // QR Code positioned between motto and content
+    {
+      id: "qr-code",
+      type: "image",
+      content: "{{qrCode}}",
+      position: { x: 590, y: 240, width: 80, height: 80 },
+      style: {
+        borderRadius: "0px",
+      },
+    },
+    {
+      id: "qr-label",
+      type: "text",
+      content: "Scan to verify",
+      position: { x: 605, y: 325, width: 50, height: 10 },
+      style: {
+        fontSize: 7,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Energetic content presentation
+    {
+      id: "celebration-text",
+      type: "text",
+      content: "This dynamic award celebrates the exceptional achievements of",
+      position: { x: 80, y: 270, width: 640, height: 20 },
+      style: {
+        fontSize: 14,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "recipient-name",
+      type: "text",
+      content: "{{recipientName}}",
+      position: { x: 80, y: 300, width: 640, height: 35 },
+      style: {
+        fontSize: 28,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.red,
+        textAlign: "center",
+      },
+    },
+
+    // Activity and engagement description
+    {
+      id: "activity-description",
+      type: "text",
+      content:
+        "For demonstrating outstanding engagement, dynamic participation, and infectious enthusiasm in all community activities. Your vibrant leadership, active involvement in events, and ability to energize others have made a significant positive impact on our student community. Your spirited approach to collaboration and participation serves as an inspiration to all.",
+      position: { x: 100, y: 350, width: 600, height: 65 },
+      style: {
+        fontSize: 13,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+
+    // Dynamic motivational message
+    {
+      id: "activity-inspiration",
+      type: "text",
+      content: '"Energy and persistence conquer all things"',
+      position: { x: 80, y: 430, width: 640, height: 20 },
+      style: {
+        fontSize: 14,
+        fontFamily: "serif",
+        fontWeight: "italic",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "inspiration-author",
+      type: "text",
+      content: "— Benjamin Franklin",
+      position: { x: 80, y: 450, width: 640, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Signature section with dual signatures
+    {
+      id: "date-issued",
+      type: "text",
+      content: "Date Issued: {{issueDate}}",
+      position: { x: 60, y: 470, width: 680, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+    // President signature area
+    {
+      id: "president-signature",
+      type: "image",
+      content: "/juls-signagure-president.png",
+      position: { x: 120, y: 490, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "president-line",
+      type: "shape",
+      content: "",
+      position: { x: 120, y: 530, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkGray,
+      },
+    },
+    {
+      id: "president-name",
+      type: "text",
+      content: "Ruuphine M. Harmon",
+      position: { x: 120, y: 533, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "president-title",
+      type: "text",
+      content: "City President, LSUIC Jinan Chapter",
+      position: { x: 110, y: 543, width: 140, height: 10 },
+      style: {
+        fontSize: 8,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Secretary signature area
+    {
+      id: "secretary-signature",
+      type: "image",
+      content: "/juls-signagure-secretary.png",
+      position: { x: 560, y: 490, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "secretary-line",
+      type: "shape",
+      content: "",
+      position: { x: 560, y: 530, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkGray,
+      },
+    },
+    {
+      id: "secretary-name",
+      type: "text",
+      content: "Lawrina N. Varney",
+      position: { x: 560, y: 533, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "secretary-title",
+      type: "text",
+      content: "City Secretary, LSUIC Jinan Chapter",
+      position: { x: 550, y: 543, width: 140, height: 10 },
+      style: {
+        fontSize: 8,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+
+    // Certificate identifier
+    {
+      id: "activity-certificate-id",
+      type: "text",
+      content: "ACT-{{certificateId}}",
+      position: { x: 300, y: 545, width: 200, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkGray,
+        textAlign: "center",
+      },
+    },
+  ],
+  pageSettings: {
+    width: 800,
+    height: 600,
+    margin: { top: 20, right: 20, bottom: 20, left: 20 },
+    background: {
+      color: JULS_COLORS.white,
     },
   },
   fonts: [
@@ -3241,7 +3968,9 @@ export const CERTIFICATE_TEMPLATES = [
   BAPTISM_CERTIFICATE,
   JULS_CERTIFICATE_OF_APPRECIATION_TEMPLATE,
   JULS_OUTSTANDING_CONTRIBUTION_AWARD_TEMPLATE,
-  JICF_CERTIFICATE_OF_SERVICE_TEMPLATE,
+  JULS_MOST_DEDICATED_AWARD_TEMPLATE,
+  JULS_HARD_WORKING_AWARD_TEMPLATE,
+  JULS_MOST_ACTIVE_AWARD_TEMPLATE,
 ] as const;
 
 /**

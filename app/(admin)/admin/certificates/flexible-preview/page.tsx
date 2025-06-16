@@ -34,12 +34,28 @@ export default function FlexiblePreviewPage() {
       return;
     }
 
+    console.log(
+      "Starting download for certificate:",
+      certificateId,
+      "format:",
+      format
+    );
+
     try {
-      const response = await fetch(
-        `/api/certificates/${certificateId}/download?format=${format}`
+      const downloadUrl = `/api/certificates/${certificateId}/download?format=${format}`;
+      console.log("Download URL:", downloadUrl);
+
+      const response = await fetch(downloadUrl);
+      console.log("Download response status:", response.status);
+      console.log(
+        "Download response headers:",
+        Object.fromEntries(response.headers.entries())
       );
+
       if (response.ok) {
         const blob = await response.blob();
+        console.log("Blob size:", blob.size, "type:", blob.type);
+
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -54,24 +70,42 @@ export default function FlexiblePreviewPage() {
       } else {
         // Try to get error details from response
         try {
-          const errorData = await response.json();
-          console.error("Download error:", errorData);
+          const errorText = await response.text();
+          console.error("Download error response text:", errorText);
+
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = { message: errorText };
+          }
+
+          console.error("Download error data:", errorData);
           toast.error(
             errorData.message ||
-              `Failed to download certificate as ${format.toUpperCase()}. File may not be available yet.`,
+              `Failed to download certificate as ${format.toUpperCase()}. Status: ${
+                response.status
+              }`,
             {
               duration: 5000,
             }
           );
-        } catch {
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
           toast.error(
-            `Failed to download certificate as ${format.toUpperCase()}`
+            `Failed to download certificate as ${format.toUpperCase()}. Status: ${
+              response.status
+            }`
           );
         }
       }
     } catch (error) {
       console.error("Error downloading certificate:", error);
-      toast.error(`Failed to download certificate as ${format.toUpperCase()}`);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      toast.error(
+        `Failed to download certificate as ${format.toUpperCase()}: ${errorMessage}`
+      );
     }
   };
 

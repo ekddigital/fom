@@ -1377,7 +1377,6 @@ const graduatesNameListTemplate: CardTemplate = {
         lineHeight: 1.4, // Tighter line height
         opacity: 0.95,
         zIndex: 4,
-        overflow: "hidden", // Prevent content overflow
       },
     },
 

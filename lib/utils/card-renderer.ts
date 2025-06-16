@@ -569,7 +569,7 @@ export class CardRenderer {
    */
   private generateChurchInfoPage(): string {
     return `
-      <div style="width: 595px; height: 842px; padding: 40px; background: linear-gradient(135deg, #1e3a8a 0%, #dc2626 100%); color: white; font-family: Georgia, serif; position: relative; page-break-after: always; overflow: hidden; box-sizing: border-box;">
+      <div style="width: 595px; height: 842px; padding: 40px; background: linear-gradient(135deg, #0c436a 0%, #2596be 80%, #ccdce3 100%); color: white; font-family: Georgia, serif; position: relative; page-break-after: always; overflow: hidden; box-sizing: border-box;">
         <!-- JICF Logo -->
         <div style="text-align: center; margin-bottom: 25px;">
           <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 100px; height: 50px; object-fit: contain;" />
@@ -581,7 +581,7 @@ export class CardRenderer {
         </h1>
         
         <!-- Church Vision, Mission & Core Values -->
-        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2);">
           <h2 style="color: #fbbf24; font-size: 20px; margin-bottom: 15px; text-align: center;">WHAT WE BELIEVE:</h2>
           <p style="font-size: 14px; line-height: 1.5; margin-bottom: 12px;">
             We are non-denominational, so we welcome all foreigners who believe in Christ to worship with us and become active members of the Fellowship. We believe in the following:
@@ -595,7 +595,7 @@ export class CardRenderer {
         </div>
         
         <!-- Mission and Vision -->
-        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;">
+        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
           <h2 style="color: #fbbf24; font-size: 20px; margin-bottom: 15px; text-align: center;">MISSION AND VISION:</h2>
           <p style="font-size: 14px; line-height: 1.5; margin-bottom: 12px;">
             JICF basic mission is to provide an environment where all Christians can meet and Praise and Worship together. The secondary missions are:
@@ -614,7 +614,7 @@ export class CardRenderer {
    */
   private generateGraduationBlessingPage(): string {
     return `
-      <div style="width: 595px; height: 842px; padding: 60px 50px; background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; font-family: Georgia, serif; text-align: center; page-break-after: always; overflow: hidden; box-sizing: border-box;">
+      <div style="width: 595px; height: 842px; padding: 60px 50px; background: linear-gradient(135deg, #436c87 0%, #0c436a 70%, #2c4a54 100%); color: white; font-family: Georgia, serif; text-align: center; page-break-after: always; overflow: hidden; box-sizing: border-box;">
         <!-- Decorative header -->
         <div style="margin-bottom: 50px;">
           <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 90px; height: 45px; object-fit: contain; margin-bottom: 25px;" />
@@ -624,7 +624,7 @@ export class CardRenderer {
         </div>
         
         <!-- Blessing text -->
-        <div style="background: rgba(255,255,255,0.15); padding: 40px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.3);">
+        <div style="background: rgba(255,255,255,0.15); padding: 40px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.25);">
           <p style="font-size: 20px; line-height: 1.6; margin-bottom: 25px; font-weight: 300;">
             May the Lord guide your every step<br/>
             as you enter this exciting new season.<br/>
@@ -694,7 +694,7 @@ export class CardRenderer {
       }
     }
     return `
-      <div style="width: 595px; height: 842px; padding: 35px; background: linear-gradient(135deg, #1e40af 0%, #dc2626 100%); color: white; font-family: Arial, sans-serif; page-break-after: always; overflow: hidden; box-sizing: border-box;">
+      <div style="width: 595px; height: 842px; padding: 35px; background: linear-gradient(135deg, #2596be 0%, #0c436a 60%, #436c87 100%); color: white; font-family: Arial, sans-serif; page-break-after: always; overflow: hidden; box-sizing: border-box;">
         <!-- Header -->
         <div style="text-align: center; margin-bottom: 25px;">
           <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 70px; height: 35px; object-fit: contain; margin-bottom: 12px;" />
@@ -734,17 +734,16 @@ export class CardRenderer {
 
               // Use the first pattern that might exist
               const primaryImagePath = actualPaths[0];
-
               return `
               <div style="flex: 1; max-width: 150px; text-align: center;">
-                <div style="width: 140px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto; overflow: hidden;">
+                <div style="width: 140px; height: 150px; background: rgba(255,255,255,0.15); border-radius: 10px; border: 2px solid rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
                   <img 
                     src="${primaryImagePath}" 
                     alt="${Name} - Photo ${index + 1}" 
-                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
+                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
                   />
-                  <div style="color: rgba(255,255,255,0.7); font-size: 11px; text-align: center; display: none;">
+                  <div style="color: rgba(255,255,255,0.8); font-size: 11px; text-align: center; display: none; background: rgba(0,0,0,0.6); padding: 8px; border-radius: 6px;">
                     Photo ${index + 1}<br/>
                     Graduate #${graduateNumber}
                   </div>
@@ -754,9 +753,8 @@ export class CardRenderer {
             })
             .join("")}
         </div>
-        
-        <!-- Graduate Information -->
-        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+          <!-- Graduate Information -->
+        <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
           <h2 style="font-size: 20px; color: #fbbf24; margin-bottom: 15px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
             ${Name}
           </h2>
@@ -775,7 +773,7 @@ export class CardRenderer {
         ${
           message
             ? `
-          <div style="background: rgba(255,255,255,0.1); padding: 18px; border-radius: 8px; border-left: 4px solid #fbbf24;">
+          <div style="background: rgba(255,255,255,0.15); padding: 18px; border-radius: 10px; border-left: 4px solid #fbbf24; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(5px);">
             <h3 style="color: #fbbf24; font-size: 16px; margin-bottom: 12px; text-align: center;">Message from the Graduate</h3>
             <p style="font-size: 13px; line-height: 1.5; font-style: italic; text-align: center;">
               "${message}"
@@ -976,3 +974,27 @@ export class CardRenderer {
     }
   }
 }
+
+/**
+ * Enhanced FOM Church Color Scheme for "Meet Our Graduates" Cards
+ *
+ * This implementation uses the official Fishers of Men church color palette:
+ * - Primary: #0c436a (Deep Blue) - Main brand color
+ * - Secondary: #2596be (Light Blue) - Supporting color
+ * - Accent: #436c87 (Medium Blue) - For variety
+ * - Accent-1: #2c4a54 (Darker variant) - For contrast
+ * - Light Blue: #ccdce3 (Very Light Blue) - For highlights
+ * - Gold: #fbbf24 (Yellow/Gold) - For text highlights and accents
+ *
+ * Background Gradients:
+ * - Church Info Page: Deep blue to light blue (#0c436a → #2596be → #ccdce3)
+ * - Blessing Page: Medium blue to deep blue to darker accent (#436c87 → #0c436a → #2c4a54)
+ * - Graduate Profile: Light blue to deep blue to medium blue (#2596be → #0c436a → #436c87)
+ *
+ * Key improvements:
+ * - Better contrast and readability
+ * - More sophisticated glass-morphism effects with backdrop-filter
+ * - Enhanced borders and shadows for elegance
+ * - Gold accents for important text elements
+ * - Consistent FOM branding throughout all pages
+ */
