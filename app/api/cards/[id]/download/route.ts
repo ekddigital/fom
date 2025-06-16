@@ -66,7 +66,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       eventDate: card.eventDate || undefined,
       mcName: card.mcName || undefined,
       graduatesList: card.graduatesList || undefined,
-      meetOurGraduatesData: card.meetOurGraduatesData || undefined,
       createdAt: card.createdAt,
     };
 

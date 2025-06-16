@@ -1,19 +1,9 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "@/components/providers/session-provider";
+import { geistSans, geistMono } from "@/lib/fonts";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Fishers of Men - Bringing Jesus to the World",
@@ -59,11 +49,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Get font classes - fonts are now guaranteed to be initialized at module scope
+  const fontClasses = [
+    geistSans.variable,
+    geistMono.variable,
+    "antialiased",
+  ].join(" ");
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={fontClasses}>
         <SessionProvider>
           <ThemeProvider
             attribute="class"

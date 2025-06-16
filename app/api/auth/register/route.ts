@@ -7,7 +7,9 @@ import {
 } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
+import { v4 as uuidv4 } from "uuid";
 import { isUsernameAvailable } from "@/lib/utils/user";
+import { emailService } from "@/lib/services/email-service";
 
 const prisma = new PrismaClient();
 
@@ -111,62 +113,114 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // Create user
-    const newUser = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        username: username || null,
-        ministryInterests:
-          ministryInterests && ministryInterests.length > 0
-            ? JSON.stringify(ministryInterests)
-            : undefined,
-        role: UserRole.MEMBER, // Default role
-        displayNamePreference: DisplayNamePreference.FULL_NAME,
-        profileVisibility: ProfileVisibility.MEMBERS_ONLY,
-        certificateSharingEnabled: true,
-      },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        role: true,
-        displayNamePreference: true,
-        profileVisibility: true,
-        ministryInterests: true,
-        certificateSharingEnabled: true,
-        joinedDate: true,
-        createdAt: true,
-      },
-    });
+    // Generate verification token first
+    const verificationToken = uuidv4();
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    // Log registration event
-    await prisma.analyticsEvent.create({
-      data: {
-        eventType: "user_registered",
-        userId: newUser.id,
-        metadata: {
-          registrationMethod: "email",
-          hasUsername: !!username,
-          ministryInterestsCount: ministryInterests?.length || 0,
+    // Prepare email template before database operations
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const verificationUrl = `${baseUrl}/api/auth/verify-email?token=${verificationToken}&email=${encodeURIComponent(
+      email
+    )}`;
+
+    const emailTemplate = emailService.generateVerificationEmail(
+      verificationUrl,
+      firstName
+    );
+
+    // Test email sending first (without creating user)
+    const emailSent = await emailService.sendSimpleEmail(
+      email,
+      emailTemplate.subject,
+      emailTemplate.html,
+      emailTemplate.text
+    );
+
+    if (!emailSent) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Failed to send verification email. Please check your email address and try again.",
+          errors: {
+            email: ["Unable to send verification email to this address"],
+          },
         },
-        ipAddress:
-          request.headers.get("x-forwarded-for") ||
-          request.headers.get("x-real-ip") ||
-          request.headers.get("cf-connecting-ip") ||
-          "unknown",
-        userAgent: request.headers.get("user-agent") || null,
-      },
+        { status: 400 }
+      );
+    }
+
+    // Only create user if email was sent successfully
+    const newUser = await prisma.$transaction(async (tx) => {
+      // Create user
+      const user = await tx.user.create({
+        data: {
+          email,
+          password: hashedPassword,
+          firstName,
+          lastName,
+          username: username || null,
+          ministryInterests:
+            ministryInterests && ministryInterests.length > 0
+              ? JSON.stringify(ministryInterests)
+              : undefined,
+          role: UserRole.MEMBER, // Default role
+          displayNamePreference: DisplayNamePreference.FULL_NAME,
+          profileVisibility: ProfileVisibility.MEMBERS_ONLY,
+          certificateSharingEnabled: true,
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          username: true,
+          role: true,
+          displayNamePreference: true,
+          profileVisibility: true,
+          ministryInterests: true,
+          certificateSharingEnabled: true,
+          joinedDate: true,
+          createdAt: true,
+        },
+      });
+
+      // Store verification token
+      await tx.verificationToken.create({
+        data: {
+          identifier: email,
+          token: verificationToken,
+          expires,
+        },
+      });
+
+      // Log registration event
+      await tx.analyticsEvent.create({
+        data: {
+          eventType: "user_registered",
+          userId: user.id,
+          metadata: {
+            registrationMethod: "email",
+            hasUsername: !!username,
+            ministryInterestsCount: ministryInterests?.length || 0,
+          },
+          ipAddress:
+            request.headers.get("x-forwarded-for") ||
+            request.headers.get("x-real-ip") ||
+            request.headers.get("cf-connecting-ip") ||
+            "unknown",
+          userAgent: request.headers.get("user-agent") || null,
+        },
+      });
+
+      return user;
     });
 
     return NextResponse.json(
       {
         success: true,
-        message: "Account created successfully",
+        message:
+          "Account created successfully! Please check your email to verify your account before signing in.",
         user: {
           ...newUser,
           ministryInterests: newUser.ministryInterests

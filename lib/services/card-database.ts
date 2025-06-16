@@ -49,32 +49,14 @@ export class CardDatabaseService {
         });
       }
       if (!adminUser) {
-        console.warn("⚠️ No admin user found for card template creation");
-        console.warn(
-          "⚠️ Creating a temporary admin user for template seeding..."
+        console.error("❌ No admin user found for card template creation");
+        console.error(
+          "❌ Please ensure at least one admin user exists in the database"
         );
-        // Create a temporary admin user for seeding purposes
-        try {
-          adminUser = await prisma.user.create({
-            data: {
-              id: "system-admin-" + Date.now(),
-              email: "system@jicf.org",
-              firstName: "System",
-              lastName: "Admin",
-              username: "systemadmin",
-              role: "SUPER_ADMIN",
-              displayNamePreference: "FULL_NAME",
-              profileVisibility: "MEMBERS_ONLY",
-            },
-          });
-          console.log("✅ Created temporary system admin user for seeding");
-        } catch (createError) {
-          console.error(
-            "❌ Failed to create temporary admin user:",
-            createError
-          );
-          return;
-        }
+        console.error(
+          "❌ Run the user promotion script or create an admin user manually"
+        );
+        return;
       }
 
       console.log(

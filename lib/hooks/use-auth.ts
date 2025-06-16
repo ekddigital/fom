@@ -72,10 +72,16 @@ export function useAuth() {
       });
 
       if (result?.error) {
+        // Try to extract the actual error message from NextAuth
+        const errorMessage =
+          result.error === "CredentialsSignin"
+            ? "Invalid email or password"
+            : result.error;
+
         return {
           success: false,
-          message: "Invalid email or password",
-          errors: { credentials: ["Invalid email or password"] },
+          message: errorMessage,
+          errors: { credentials: [errorMessage] },
         };
       }
 

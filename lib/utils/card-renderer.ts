@@ -36,6 +36,7 @@ export function cardToCardData(card: Card): CardData {
     eventDate: card.eventDate || undefined,
     mcName: card.mcName || undefined,
     graduatesList: card.graduatesList || undefined,
+    meetOurGraduatesData: card.meetOurGraduatesData || undefined,
     createdAt: card.createdAt,
   };
 }
@@ -187,8 +188,7 @@ export class CardRenderer {
 
   /**
    * Generate HTML for preview (optimized for web display)
-   */
-  async generatePreviewHTML(): Promise<string> {
+   */ async generatePreviewHTML(): Promise<string> {
     const { settings, elements } = this.template;
 
     // Process elements and replace placeholders
@@ -200,6 +200,11 @@ export class CardRenderer {
       .map((element) => this.renderElement(element))
       .join("\n");
 
+    // Check if this is a multi-page document (Meet Our Graduates)
+    const isMultiPage =
+      this.template.id === "meet-our-graduates" &&
+      this.cardData.meetOurGraduatesData;
+
     return `
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
@@ -207,7 +212,11 @@ export class CardRenderer {
         .card-preview-container {
           position: relative;
           width: ${settings.width}px;
-          height: ${settings.height}px;
+          ${
+            isMultiPage
+              ? "height: auto; min-height: " + settings.height + "px;"
+              : "height: " + settings.height + "px;"
+          }
           background-color: ${settings.backgroundColor};
           ${
             settings.backgroundImage
@@ -216,9 +225,9 @@ export class CardRenderer {
           }
           background-size: cover;
           background-position: center;
-          border-radius: 20px;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-          overflow: hidden;
+          ${isMultiPage ? "" : "border-radius: 20px;"}
+          ${isMultiPage ? "" : "box-shadow: 0 10px 40px rgba(0,0,0,0.15);"}
+          overflow: visible;
           margin: 0 auto;
         }
         
@@ -242,6 +251,24 @@ export class CardRenderer {
         .card-preview-container svg {
           display: block;
         }
+        
+        /* Multi-page specific styles */
+        ${
+          isMultiPage
+            ? `
+        .card-preview-container {
+          overflow: visible;
+        }
+        
+        /* Page break styles for screen preview */
+        [style*="page-break-after: always"] {
+          margin-bottom: 30px;
+          border-bottom: 2px dashed #ccc;
+          padding-bottom: 20px;
+        }
+        `
+            : ""
+        }
       </style>
       <div class="card-preview-container">
         ${elementsHtml}
@@ -251,8 +278,7 @@ export class CardRenderer {
 
   /**
    * Process element and replace placeholders
-   */
-  private processElement(element: CardElement): CardElement {
+   */ private processElement(element: CardElement): CardElement {
     let content = element.content;
 
     // Replace placeholders
@@ -456,9 +482,7 @@ export class CardRenderer {
           },
         };
       }
-    }
-
-    // Handle Meet Our Graduates - Multi-page content generation
+    } // Handle Meet Our Graduates - Multi-page content generation
     if (content.includes("{{meetOurGraduatesContent}}")) {
       console.log(
         "🔍 Processing meetOurGraduatesContent, cardData.meetOurGraduatesData:",
@@ -476,11 +500,21 @@ export class CardRenderer {
           if (Array.isArray(graduatesData) && graduatesData.length > 0) {
             const multiPageContent =
               this.generateMeetOurGraduatesPages(graduatesData);
+            console.log(
+              "🔍 Generated multi-page content length:",
+              multiPageContent.length
+            );
+            console.log(
+              "🔍 Multi-page content preview:",
+              multiPageContent.substring(0, 500) + "..."
+            );
             content = content.replace(
               "{{meetOurGraduatesContent}}",
               multiPageContent
             );
+            console.log("🔍 Content after replacement length:", content.length);
           } else {
+            console.log("🔍 No graduates data - showing placeholder");
             content = content.replace(
               "{{meetOurGraduatesContent}}",
               "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
@@ -525,35 +559,34 @@ export class CardRenderer {
     // Individual pages for each graduate
     graduatesData.forEach((graduate, index) => {
       pages.push(this.generateGraduateProfilePage(graduate, index + 1));
-    });
-
-    // Combine all pages
-    return pages.join('<div style="page-break-after: always;"></div>');
+    }); // Combine all pages
+    return pages.join(
+      '<div style="page-break-after: always; height: 30px; border-bottom: 2px dashed #ddd; margin: 20px 0;"></div>'
+    );
   }
-
   /**
    * Generate Church Information Page
    */
   private generateChurchInfoPage(): string {
     return `
-      <div style="width: 595px; height: 842px; padding: 50px; background: linear-gradient(135deg, #1e3a8a 0%, #dc2626 100%); color: white; font-family: Georgia, serif; position: relative; page-break-after: always;">
+      <div style="width: 595px; height: 842px; padding: 40px; background: linear-gradient(135deg, #1e3a8a 0%, #dc2626 100%); color: white; font-family: Georgia, serif; position: relative; page-break-after: always; overflow: hidden; box-sizing: border-box;">
         <!-- JICF Logo -->
-        <div style="text-align: center; margin-bottom: 30px;">
-          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 120px; height: 60px; object-fit: contain;" />
+        <div style="text-align: center; margin-bottom: 25px;">
+          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 100px; height: 50px; object-fit: contain;" />
         </div>
         
         <!-- Title -->
-        <h1 style="text-align: center; font-size: 36px; margin-bottom: 40px; color: #fbbf24; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+        <h1 style="text-align: center; font-size: 32px; margin-bottom: 30px; color: #fbbf24; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); line-height: 1.2;">
           JINAN INTERNATIONAL<br/>CHRISTIAN FELLOWSHIP
         </h1>
         
         <!-- Church Vision, Mission & Core Values -->
-        <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; margin-bottom: 30px;">
-          <h2 style="color: #fbbf24; font-size: 24px; margin-bottom: 20px; text-align: center;">WHAT WE BELIEVE:</h2>
-          <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+          <h2 style="color: #fbbf24; font-size: 20px; margin-bottom: 15px; text-align: center;">WHAT WE BELIEVE:</h2>
+          <p style="font-size: 14px; line-height: 1.5; margin-bottom: 12px;">
             We are non-denominational, so we welcome all foreigners who believe in Christ to worship with us and become active members of the Fellowship. We believe in the following:
           </p>
-          <ul style="font-size: 16px; line-height: 1.8; padding-left: 20px;">
+          <ul style="font-size: 14px; line-height: 1.6; padding-left: 18px; margin: 0;">
             <li>Christ came to this earth</li>
             <li>Christ died for our sins</li>
             <li>Christ rose from the dead</li>
@@ -562,12 +595,12 @@ export class CardRenderer {
         </div>
         
         <!-- Mission and Vision -->
-        <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 15px;">
-          <h2 style="color: #fbbf24; font-size: 24px; margin-bottom: 20px; text-align: center;">MISSION AND VISION:</h2>
-          <p style="font-size: 16px; line-height: 1.6; margin-bottom: 15px;">
+        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;">
+          <h2 style="color: #fbbf24; font-size: 20px; margin-bottom: 15px; text-align: center;">MISSION AND VISION:</h2>
+          <p style="font-size: 14px; line-height: 1.5; margin-bottom: 12px;">
             JICF basic mission is to provide an environment where all Christians can meet and Praise and Worship together. The secondary missions are:
           </p>
-          <ul style="font-size: 15px; line-height: 1.7; padding-left: 20px;">
+          <ul style="font-size: 13px; line-height: 1.5; padding-left: 18px; margin: 0;">
             <li>Develop leaders who can provide leadership at home or in other fellowships in China or wherever they may travel after leaving Jinan.</li>
             <li>Provide mission support for other areas of the world that may need our assistance. Presently the Fellowship assists in Kenya and Ghana via medical camp and school.</li>
             <li>Provide support and guidance both spiritually and physically for students who are away from home.</li>
@@ -576,24 +609,23 @@ export class CardRenderer {
       </div>
     `;
   }
-
   /**
    * Generate Graduation Blessing Page
    */
   private generateGraduationBlessingPage(): string {
     return `
-      <div style="width: 595px; height: 842px; padding: 80px 60px; background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; font-family: Georgia, serif; text-align: center; page-break-after: always;">
+      <div style="width: 595px; height: 842px; padding: 60px 50px; background: linear-gradient(135deg, #1e40af 0%, #7c3aed 100%); color: white; font-family: Georgia, serif; text-align: center; page-break-after: always; overflow: hidden; box-sizing: border-box;">
         <!-- Decorative header -->
-        <div style="margin-bottom: 60px;">
-          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 100px; height: 50px; object-fit: contain; margin-bottom: 30px;" />
-          <h1 style="font-size: 42px; color: #fbbf24; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+        <div style="margin-bottom: 50px;">
+          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 90px; height: 45px; object-fit: contain; margin-bottom: 25px;" />
+          <h1 style="font-size: 36px; color: #fbbf24; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); line-height: 1.2;">
             A Graduation Blessing
           </h1>
         </div>
         
         <!-- Blessing text -->
-        <div style="background: rgba(255,255,255,0.15); padding: 50px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.3);">
-          <p style="font-size: 24px; line-height: 1.8; margin-bottom: 30px; font-weight: 300;">
+        <div style="background: rgba(255,255,255,0.15); padding: 40px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.3);">
+          <p style="font-size: 20px; line-height: 1.6; margin-bottom: 25px; font-weight: 300;">
             May the Lord guide your every step<br/>
             as you enter this exciting new season.<br/>
             May your gifts make room for you,<br/>
@@ -601,23 +633,23 @@ export class CardRenderer {
             and your mind stay curious and bold.
           </p>
           
-          <p style="font-size: 24px; line-height: 1.8; margin-bottom: 30px; font-weight: 300;">
+          <p style="font-size: 20px; line-height: 1.6; margin-bottom: 25px; font-weight: 300;">
             Wherever you go, may you carry<br/>
             Christ's love, peace, and wisdom.
           </p>
           
-          <p style="font-size: 26px; line-height: 1.8; margin-bottom: 40px; font-weight: 500; color: #fbbf24;">
+          <p style="font-size: 22px; line-height: 1.6; margin-bottom: 30px; font-weight: 500; color: #fbbf24;">
             This graduation is not your finish line—<br/>
             it is your launching point.<br/>
             Go forward in faith.
           </p>
           
-          <p style="font-size: 28px; line-height: 1.6; font-weight: 600; color: #fbbf24;">
+          <p style="font-size: 24px; line-height: 1.5; font-weight: 600; color: #fbbf24; margin-bottom: 25px;">
             We are proud of you.<br/>
             We are praying for you.
           </p>
           
-          <p style="font-size: 32px; margin-top: 40px; font-weight: bold; color: #fbbf24; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+          <p style="font-size: 28px; margin-top: 30px; font-weight: bold; color: #fbbf24; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
             Congratulations, Graduate!
           </p>
         </div>
@@ -661,93 +693,61 @@ export class CardRenderer {
         images.push(`/graduates/${graduateNumber}-${i}-photo.jpg`);
       }
     }
-
     return `
-      <div style="width: 595px; height: 842px; padding: 40px; background: linear-gradient(135deg, #1e40af 0%, #dc2626 100%); color: white; font-family: Arial, sans-serif; page-break-after: always;">
+      <div style="width: 595px; height: 842px; padding: 35px; background: linear-gradient(135deg, #1e40af 0%, #dc2626 100%); color: white; font-family: Arial, sans-serif; page-break-after: always; overflow: hidden; box-sizing: border-box;">
         <!-- Header -->
-        <div style="text-align: center; margin-bottom: 30px;">
-          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 80px; height: 40px; object-fit: contain; margin-bottom: 15px;" />
-          <h1 style="font-size: 28px; color: #fbbf24; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+        <div style="text-align: center; margin-bottom: 25px;">
+          <img src="/JICF_LOGO1.png" alt="JICF Logo" style="width: 70px; height: 35px; object-fit: contain; margin-bottom: 12px;" />
+          <h1 style="font-size: 24px; color: #fbbf24; margin: 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
             Meet Our Graduate
           </h1>
         </div>
-          <!-- Graduate Photos Section -->
-        <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px; min-height: 200px;">
+        
+        <!-- Graduate Photos Section -->
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; min-height: 160px;">
           ${images
             .map((imagePath, index) => {
-              // Create the actual image paths based on the exact filenames in the graduates folder
-              let primaryImagePath = `/graduates/placeholder-${graduateNumber}-${
-                index + 1
-              }.jpg`;
+              // Create the actual image paths by looking for common patterns
+              const actualPaths = [
+                `/graduates/${graduateNumber}-${
+                  index + 1
+                }-potrait-standing.jpg`,
+                `/graduates/${graduateNumber}-${
+                  index + 1
+                }-standing in gown.jpg`,
+                `/graduates/${graduateNumber}-${
+                  index + 1
+                }-passport size pic.jpeg`,
+                `/graduates/${graduateNumber}-${
+                  index + 1
+                }-standing in medical gown.png`,
+                `/graduates/${graduateNumber}-${index + 1}-standing.jpg`,
+                `/graduates/${graduateNumber}-${index + 1}-potrait.jpg`,
+                `/graduates/${graduateNumber}-${index + 1}-sitting.jpg`,
+                `/graduates/${graduateNumber}-${
+                  index + 1
+                }-standing with diploma and cap.jpg`,
+                `/graduates/${graduateNumber}-${
+                  index + 1
+                }-sitting-with gown and diploma.jpg`,
+              ];
 
-              // Map to actual image files based on the graduate number and photo index
-              if (graduateNumber === 1 && index === 0) {
-                // No images for graduate 1 based on the folder listing
-                primaryImagePath = "";
-              } else if (graduateNumber === 2 && index === 0) {
-                primaryImagePath = "/graduates/2-1-standing in gown.jpg";
-              } else if (graduateNumber === 3 && index === 0) {
-                primaryImagePath =
-                  "/graduates/3-1-standing in medical gown.png";
-              } else if (graduateNumber === 4) {
-                if (index === 0)
-                  primaryImagePath = "/graduates/4-1-passport size pic.jpeg";
-                else if (index === 1)
-                  primaryImagePath = "/graduates/4-2 standing in gown.jpg";
-              } else if (graduateNumber === 5 && index === 0) {
-                // No images for graduate 5 based on the folder listing
-                primaryImagePath = "";
-              } else if (graduateNumber === 6) {
-                if (index === 0)
-                  primaryImagePath = "/graduates/6-1-standing in gown.jpeg";
-                else if (index === 1)
-                  primaryImagePath = "/graduates/6-2-standing in gown.jpeg";
-              } else if (graduateNumber === 7) {
-                if (index === 0)
-                  primaryImagePath = "/graduates/7-1-potrait.jpg";
-                else if (index === 1)
-                  primaryImagePath = "/graduates/7-2-standing.jpg";
-              } else if (graduateNumber === 8 && index === 0) {
-                primaryImagePath = "/graduates/8-1-standing in gown.jpeg";
-              } else if (graduateNumber === 9) {
-                if (index === 0)
-                  primaryImagePath =
-                    "/graduates/9-1-standing with diploma and cap.jpg";
-                else if (index === 1)
-                  primaryImagePath =
-                    "/graduates/9-2-sitting-with gown and diploma.jpg";
-              } else if (graduateNumber === 10) {
-                if (index === 0)
-                  primaryImagePath = "/graduates/10-1- potrait-standing.jpg";
-                else if (index === 1)
-                  primaryImagePath = "/graduates/10-2- potrait sitting.jpg";
-              }
+              // Use the first pattern that might exist
+              const primaryImagePath = actualPaths[0];
 
               return `
-              <div style="flex: 1; max-width: 180px; text-align: center;">
-                <div style="width: 160px; height: 180px; background: rgba(255,255,255,0.1); border-radius: 10px; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto; overflow: hidden;">
-                  ${
-                    primaryImagePath
-                      ? `
-                    <img 
-                      src="${primaryImagePath}" 
-                      alt="${Name} - Photo ${index + 1}" 
-                      style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
-                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                    />
-                    <div style="color: rgba(255,255,255,0.7); font-size: 12px; text-align: center; display: none;">
-                      Photo ${index + 1}<br/>
-                      Graduate #${graduateNumber}
-                    </div>
-                  `
-                      : `
-                    <div style="color: rgba(255,255,255,0.7); font-size: 12px; text-align: center;">
-                      Photo ${index + 1}<br/>
-                      Graduate #${graduateNumber}<br/>
-                      <small>No photo available</small>
-                    </div>
-                  `
-                  }
+              <div style="flex: 1; max-width: 150px; text-align: center;">
+                <div style="width: 140px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto; overflow: hidden;">
+                  <img 
+                    src="${primaryImagePath}" 
+                    alt="${Name} - Photo ${index + 1}" 
+                    style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                  />
+                  <div style="color: rgba(255,255,255,0.7); font-size: 11px; text-align: center; display: none;">
+                    Photo ${index + 1}<br/>
+                    Graduate #${graduateNumber}
+                  </div>
                 </div>
               </div>
             `;
@@ -756,12 +756,12 @@ export class CardRenderer {
         </div>
         
         <!-- Graduate Information -->
-        <div style="background: rgba(255,255,255,0.15); padding: 25px; border-radius: 15px; margin-bottom: 25px;">
-          <h2 style="font-size: 24px; color: #fbbf24; margin-bottom: 20px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+          <h2 style="font-size: 20px; color: #fbbf24; margin-bottom: 15px; text-align: center; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
             ${Name}
           </h2>
           
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 14px; line-height: 1.6;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; line-height: 1.4;">
             <div><strong style="color: #fbbf24;">Country:</strong> ${Country}</div>
             <div><strong style="color: #fbbf24;">University:</strong> ${University}</div>
             <div style="grid-column: 1 / -1;"><strong style="color: #fbbf24;">Academic Major:</strong> ${academicMajor}</div>
@@ -775,9 +775,9 @@ export class CardRenderer {
         ${
           message
             ? `
-          <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #fbbf24;">
-            <h3 style="color: #fbbf24; font-size: 18px; margin-bottom: 15px; text-align: center;">Message from the Graduate</h3>
-            <p style="font-size: 15px; line-height: 1.7; font-style: italic; text-align: center;">
+          <div style="background: rgba(255,255,255,0.1); padding: 18px; border-radius: 8px; border-left: 4px solid #fbbf24;">
+            <h3 style="color: #fbbf24; font-size: 16px; margin-bottom: 12px; text-align: center;">Message from the Graduate</h3>
+            <p style="font-size: 13px; line-height: 1.5; font-style: italic; text-align: center;">
               "${message}"
             </p>
           </div>

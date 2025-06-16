@@ -132,7 +132,19 @@ function SignInForm() {
 
         {generalError && (
           <Alert variant="destructive">
-            <AlertDescription>{generalError}</AlertDescription>
+            <AlertDescription>
+              {generalError}
+              {generalError.includes("verify your email") && (
+                <div className="mt-2">
+                  <Link
+                    href="/auth/resend-verification"
+                    className="text-sm text-blue-600 hover:underline font-medium"
+                  >
+                    Resend verification email
+                  </Link>
+                </div>
+              )}
+            </AlertDescription>
           </Alert>
         )}
 

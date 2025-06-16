@@ -346,38 +346,10 @@ export class DatabaseCertificateService {
             where: { id: request.issuedById },
           });
 
-          // If the user doesn't exist (like with temp backdoor user), create or find a temporary user
-          if (!issuingUser && request.issuedById === "temp-backdoor-user") {
-            const tempEmail =
-              process.env.TEMP_BACKDOOR_EMAIL || "temp@example.com";
-
-            // First try to find user by email in case they exist with different ID
-            const existingUser = await tx.user.findUnique({
-              where: { email: tempEmail },
-            });
-
-            if (!existingUser) {
-              // Create new temp user if none exists
-              await tx.user.create({
-                data: {
-                  id: "temp-backdoor-user",
-                  email: tempEmail,
-                  firstName: "Temp",
-                  lastName: "User",
-                  role: "ADMIN",
-                  displayNamePreference: "FULL_NAME",
-                  profileVisibility: "MEMBERS_ONLY",
-                  certificateSharingEnabled: true,
-                },
-              });
-              console.log("✅ Created temporary backdoor user in database");
-            } else {
-              console.log(
-                "✅ Found existing user with temp email, using that user"
-              );
-              // Update the request to use the existing user's ID
-              request.issuedById = existingUser.id;
-            }
+          if (!issuingUser) {
+            throw new Error(
+              `Issuing user with ID ${request.issuedById} not found`
+            );
           } else if (!issuingUser) {
             throw new Error(
               `Issuing user with ID ${request.issuedById} does not exist`

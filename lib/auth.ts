@@ -43,28 +43,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        // Check for temporary backdoor authentication (development only)
-        if (
-          process.env.NODE_ENV === "development" &&
-          credentials.email === process.env.TEMP_BACKDOOR_EMAIL &&
-          credentials.password === process.env.TEMP_BACKDOOR_PASSWORD
-        ) {
-          // Return temporary user for backdoor access
-          return {
-            id: "temp-backdoor-user",
-            email: process.env.TEMP_BACKDOOR_EMAIL,
-            firstName: "Temp",
-            lastName: "User",
-            username: "tempuser",
-            role: UserRole.ADMIN,
-            avatarUrl: null,
-            displayNamePreference: DisplayNamePreference.FULL_NAME,
-            profileVisibility: ProfileVisibility.MEMBERS_ONLY,
-            ministryInterests: [],
-            certificateSharingEnabled: true,
-          };
-        }
-
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email,
@@ -80,11 +58,17 @@ export const authOptions: NextAuthOptions = {
             displayNamePreference: true,
             profileVisibility: true,
             password: true,
+            emailVerified: true,
           },
         });
 
         if (!user || !user.password) {
           throw new Error("Invalid credentials");
+        }
+
+        // Check if email is verified
+        if (!user.emailVerified) {
+          throw new Error("Please verify your email before signing in");
         }
 
         const isCorrectPassword = await bcrypt.compare(

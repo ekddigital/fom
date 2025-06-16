@@ -210,3 +210,6 @@ dump.rdb
 # Turbo
 .turbo
 /lib/generated/prisma
+
+# Documentation (not tracked)
+lib/docs/

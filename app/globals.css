@@ -3,6 +3,11 @@
 :root {
   --radius: 0.625rem;
   
+  /* ===== FONT SYSTEM WITH FALLBACKS ===== */
+  /* Primary font variables with system fallbacks */
+  --font-sans: var(--font-geist-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif);
+  --font-mono: var(--font-geist-mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+  
   /* ===== FOM COLOR SCHEME ===== */
   /* Primary FOM Brand Colors */
   --fom-primary: #0c436a;        /* Main brand color - Deep Blue */
@@ -423,6 +428,38 @@
   .bg-fom-gradient {
     background: linear-gradient(135deg, var(--fom-primary) 0%, var(--fom-secondary) 100%);
   }
+
+/* ===== ROBUST FONT FALLBACK SYSTEM ===== */
+/* Ensure fonts always work even if Google Fonts fail */
+html {
+  font-family: var(--font-sans);
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+.font-sans {
+  font-family: var(--font-sans) !important;
+}
+
+/* Fallback for any missing font variables */
+@supports not (font-family: var(--font-geist-sans)) {
+  :root {
+    --font-geist-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+}
+
+/* Ensure consistent font rendering across browsers */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
   
   .bg-fom-gradient-subtle {
     background: linear-gradient(135deg, var(--fom-light-blue) 0%, var(--fom-neutral-3) 100%);
