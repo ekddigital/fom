@@ -99,12 +99,27 @@ export function CertificatePreviewModal({
 
     setIsDownloading(true);
     try {
+      // Add safe class before capturing
+      certificateRef.current.classList.add("html2canvas-safe");
+
       const canvas = await html2canvas(certificateRef.current, {
         backgroundColor: template.pageSettings.background?.color || "#ffffff",
         scale: 2, // Higher quality
         useCORS: true,
         allowTaint: true,
+        onclone: (clonedDoc) => {
+          // Ensure the cloned document also has the safe class
+          const clonedElement = clonedDoc.querySelector(
+            "[data-html2canvas-safe]"
+          );
+          if (clonedElement) {
+            clonedElement.classList.add("html2canvas-safe");
+          }
+        },
       });
+
+      // Remove safe class after capturing
+      certificateRef.current.classList.remove("html2canvas-safe");
 
       const link = document.createElement("a");
       link.download = `${
@@ -114,6 +129,8 @@ export function CertificatePreviewModal({
       link.click();
     } catch (error) {
       console.error("Error downloading PNG:", error);
+      // Ensure class is removed even on error
+      certificateRef.current?.classList.remove("html2canvas-safe");
     } finally {
       setIsDownloading(false);
     }
@@ -124,12 +141,27 @@ export function CertificatePreviewModal({
 
     setIsDownloading(true);
     try {
+      // Add safe class before capturing
+      certificateRef.current.classList.add("html2canvas-safe");
+
       const canvas = await html2canvas(certificateRef.current, {
         backgroundColor: template.pageSettings.background?.color || "#ffffff",
         scale: 2, // Higher quality
         useCORS: true,
         allowTaint: true,
+        onclone: (clonedDoc) => {
+          // Ensure the cloned document also has the safe class
+          const clonedElement = clonedDoc.querySelector(
+            "[data-html2canvas-safe]"
+          );
+          if (clonedElement) {
+            clonedElement.classList.add("html2canvas-safe");
+          }
+        },
       });
+
+      // Remove safe class after capturing
+      certificateRef.current.classList.remove("html2canvas-safe");
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
@@ -157,6 +189,8 @@ export function CertificatePreviewModal({
       );
     } catch (error) {
       console.error("Error downloading PDF:", error);
+      // Ensure class is removed even on error
+      certificateRef.current?.classList.remove("html2canvas-safe");
     } finally {
       setIsDownloading(false);
     }
@@ -517,6 +551,7 @@ export function CertificatePreviewModal({
             {/* Certificate Container */}
             <div
               ref={certificateRef}
+              data-html2canvas-safe="true"
               className="relative bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-300"
               style={{
                 width: `${template.pageSettings.width * zoom}px`,

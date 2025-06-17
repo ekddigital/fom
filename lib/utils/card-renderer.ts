@@ -673,25 +673,15 @@ export class CardRenderer {
       "Position(s) Held at JICF": position = "N/A",
       "Message from the graduates": message = "",
       "Number of Pictures": numPictures = 0,
-    } = graduate; // Generate actual image paths based on graduate number and available photos
+    } = graduate;
+
+    // Generate image array based on number of pictures
     const images = [];
-    const numPics = Math.min(parseInt(String(numPictures)) || 0, 2);
+    const numPics = Math.min(parseInt(String(numPictures)) || 0, 3); // Allow up to 3 images
 
-    for (let i = 1; i <= numPics; i++) {
-      // Look for common image extensions
-      const extensions = ["jpg", "jpeg", "png"];
-      let foundImage = false;
-
-      for (const ext of extensions) {
-        const imagePath = `/graduates/${graduateNumber}-${i}`;
-        images.push(`${imagePath}*.${ext}`);
-        foundImage = true;
-        break; // Use the first extension pattern
-      }
-
-      if (!foundImage) {
-        images.push(`/graduates/${graduateNumber}-${i}-photo.jpg`);
-      }
+    // Just create placeholder entries, the actual paths will be determined in the mapping function
+    for (let i = 0; i < numPics; i++) {
+      images.push(`placeholder-${i}`);
     }
     return `
       <div style="width: 595px; height: 842px; padding: 35px; background: linear-gradient(135deg, #2596be 0%, #0c436a 60%, #436c87 100%); color: white; font-family: Arial, sans-serif; page-break-after: always; overflow: hidden; box-sizing: border-box;">
@@ -704,40 +694,89 @@ export class CardRenderer {
         </div>
         
         <!-- Graduate Photos Section -->
-        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; min-height: 160px;">
-          ${images
-            .map((imagePath, index) => {
-              // Create the actual image paths by looking for common patterns
-              const actualPaths = [
-                `/graduates/${graduateNumber}-${
-                  index + 1
-                }-potrait-standing.jpg`,
-                `/graduates/${graduateNumber}-${
-                  index + 1
-                }-standing in gown.jpg`,
-                `/graduates/${graduateNumber}-${
-                  index + 1
-                }-passport size pic.jpeg`,
-                `/graduates/${graduateNumber}-${
-                  index + 1
-                }-standing in medical gown.png`,
-                `/graduates/${graduateNumber}-${index + 1}-standing.jpg`,
-                `/graduates/${graduateNumber}-${index + 1}-potrait.jpg`,
-                `/graduates/${graduateNumber}-${index + 1}-sitting.jpg`,
-                `/graduates/${graduateNumber}-${
-                  index + 1
-                }-standing with diploma and cap.jpg`,
-                `/graduates/${graduateNumber}-${
-                  index + 1
-                }-sitting-with gown and diploma.jpg`,
-              ];
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; min-height: 160px;">          ${images
+          .map((imagePath, index) => {
+            // Map exact file names as they exist in public/graduates/
+            const getActualImagePaths = (
+              graduateNum: number,
+              picIndex: number
+            ): string[] => {
+              const paths = [];
 
-              // Use the first pattern that might exist
-              const primaryImagePath = actualPaths[0];
-              return `
+              // Build exact paths based on the actual file naming patterns
+              switch (graduateNum) {
+                case 1:
+                  if (picIndex === 0)
+                    paths.push("/graduates/1-1-standing with certificate.JPG");
+                  break;
+                case 2:
+                  if (picIndex === 0)
+                    paths.push("/graduates/2-1-standing in gown.jpg");
+                  break;
+                case 3:
+                  if (picIndex === 0)
+                    paths.push("/graduates/3-1-standing in medical gown.png");
+                  break;
+                case 4:
+                  if (picIndex === 0)
+                    paths.push("/graduates/4-1-passport size pic.jpeg");
+                  if (picIndex === 1)
+                    paths.push("/graduates/4-2 standing in gown.jpg");
+                  if (picIndex === 2)
+                    paths.push("/graduates/4-3-standing in gown.jpg");
+                  break;
+                case 5:
+                  if (picIndex === 0)
+                    paths.push("/graduates/5-1- sitting in gown.jpg");
+                  if (picIndex === 1)
+                    paths.push("/graduates/5-2-standing in gown.jpg");
+                  break;
+                case 6:
+                  if (picIndex === 0)
+                    paths.push("/graduates/6-1-standing in gown.jpeg");
+                  if (picIndex === 1)
+                    paths.push("/graduates/6-2-standing in gown.jpeg");
+                  break;
+                case 7:
+                  if (picIndex === 0) paths.push("/graduates/7-1-potrait.jpg");
+                  if (picIndex === 1) paths.push("/graduates/7-2-standing.jpg");
+                  break;
+                case 8:
+                  if (picIndex === 0)
+                    paths.push("/graduates/8-1-standing in gown.jpeg");
+                  break;
+                case 9:
+                  if (picIndex === 0)
+                    paths.push(
+                      "/graduates/9-1-standing with diploma and cap.jpg"
+                    );
+                  if (picIndex === 1)
+                    paths.push(
+                      "/graduates/9-2-sitting-with gown and diploma.jpg"
+                    );
+                  break;
+                case 10:
+                  if (picIndex === 0)
+                    paths.push("/graduates/10-1- potrait-standing.jpg");
+                  if (picIndex === 1)
+                    paths.push("/graduates/10-2- potrait sitting.jpg");
+                  break;
+              }
+
+              return paths;
+            };
+
+            const actualPaths = getActualImagePaths(graduateNumber, index);
+            const primaryImagePath = actualPaths[0];
+
+            if (!primaryImagePath) {
+              // No image for this index, return empty string
+              return "";
+            }
+            return `
               <div style="flex: 1; max-width: 150px; text-align: center;">
                 <div style="width: 140px; height: 150px; background: rgba(255,255,255,0.15); border-radius: 10px; border: 2px solid rgba(251, 191, 36, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                  <img 
+                  <img
                     src="${primaryImagePath}" 
                     alt="${Name} - Photo ${index + 1}" 
                     style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;"
@@ -750,8 +789,8 @@ export class CardRenderer {
                 </div>
               </div>
             `;
-            })
-            .join("")}
+          })
+          .join("")}
         </div>
           <!-- Graduate Information -->
         <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(10px);">
@@ -888,22 +927,35 @@ export class CardRenderer {
             .fonts.ready;
         }
         return Promise.resolve();
-      });
-      // Wait a bit more for rendering
+      }); // Wait a bit more for rendering
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Take screenshot of the exact card dimensions
-      const screenshot = await page.screenshot({
-        type: "png",
-        fullPage: false,
-        clip: {
-          x: 0,
-          y: 0,
-          width: this.template.settings.width,
-          height: this.template.settings.height,
-        },
-        omitBackground: false,
-      });
+      // Check if this is multi-page content and capture accordingly
+      const pageHtml = await page.content();
+      const isMultiPage = pageHtml.includes("page-break-after: always");
+
+      let screenshot;
+      if (isMultiPage) {
+        // For multi-page content, capture the full page
+        screenshot = await page.screenshot({
+          type: "png",
+          fullPage: true,
+          omitBackground: false,
+        });
+      } else {
+        // For single-page content, use exact card dimensions
+        screenshot = await page.screenshot({
+          type: "png",
+          fullPage: false,
+          clip: {
+            x: 0,
+            y: 0,
+            width: this.template.settings.width,
+            height: this.template.settings.height,
+          },
+          omitBackground: false,
+        });
+      }
 
       return Buffer.from(screenshot);
     } finally {
@@ -955,17 +1007,30 @@ export class CardRenderer {
         }
         return Promise.resolve();
       });
-
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Generate PDF with exact dimensions
-      const pdf = await page.pdf({
-        width: `${this.template.settings.width}px`,
-        height: `${this.template.settings.height}px`,
-        printBackground: true,
-        margin: { top: 0, right: 0, bottom: 0, left: 0 },
-        preferCSSPageSize: true,
-      });
+      // Generate PDF with appropriate settings for multi-page content
+      const isMultiPage = html.includes("page-break-after: always");
+
+      let pdf;
+      if (isMultiPage) {
+        // For multi-page content, use A4 size and allow natural page breaks
+        pdf = await page.pdf({
+          format: "A4",
+          printBackground: true,
+          margin: { top: 0, right: 0, bottom: 0, left: 0 },
+          preferCSSPageSize: false,
+        });
+      } else {
+        // For single-page content, use exact template dimensions
+        pdf = await page.pdf({
+          width: `${this.template.settings.width}px`,
+          height: `${this.template.settings.height}px`,
+          printBackground: true,
+          margin: { top: 0, right: 0, bottom: 0, left: 0 },
+          preferCSSPageSize: true,
+        });
+      }
 
       return Buffer.from(pdf);
     } finally {
