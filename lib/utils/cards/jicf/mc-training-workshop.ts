@@ -251,7 +251,7 @@ export const jicfMCTrainingWorkshop: CardTemplate = {
   settings: {
     width: 800,
     height: 800, // Square format for social media
-    backgroundColor: JICF_COLORS.blue,
-    backgroundImage: `linear-gradient(135deg, ${JICF_COLORS.blue} 0%, ${JICF_COLORS.darkBlue} 25%, ${JICF_COLORS.red} 50%, ${JICF_COLORS.darkBlue} 75%, ${JICF_COLORS.blue} 100%)`,
+    backgroundColor: JICF_COLORS.darkBlue,
+    backgroundImage: `linear-gradient(45deg, ${JICF_COLORS.darkBlue} 0%, ${JICF_COLORS.blue} 50%, ${JICF_COLORS.darkBlue} 100%)`,
   },
 };

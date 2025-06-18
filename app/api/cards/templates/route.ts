@@ -19,10 +19,13 @@ export async function GET() {
       );
     }
 
-    console.log("📋 Fetching card templates...");
+    console.log("📋 Fetching card templates..."); // Get templates without auto-seeding to prevent infinite loops
+    const templates = await CardDatabaseService.getCardTemplates();
 
-    // Get templates without auto-seeding to prevent infinite loops
-    const templates = await CardDatabaseService.getCardTemplates(); // Only seed if no templates exist
+    // Temporarily disable auto-seeding to fix loading issue
+    // TODO: Re-enable after fixing seeding issues
+    /* 
+    // Only seed if no templates exist
     if (templates.length === 0) {
       console.log("📋 No templates found, seeding...");
       try {
@@ -54,6 +57,7 @@ export async function GET() {
         });
       }
     }
+    */
 
     console.log(`✅ Found ${templates.length} card templates`);
 
