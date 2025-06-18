@@ -32,7 +32,9 @@ export const getCertificateTemplate = (templateId: string) => {
 };
 
 export const getCertificateTemplatesByCategory = (category: string) => {
-  return CERTIFICATE_TEMPLATES.filter((template) => template.category === category);
+  return CERTIFICATE_TEMPLATES.filter(
+    (template) => template.category === category
+  );
 };
 
 export const getCertificateTemplatesByOrganization = (org: string) => {

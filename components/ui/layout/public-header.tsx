@@ -211,6 +211,16 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                           </div>
                           {Object.entries(FOM_FEATURES).map(
                             ([key, feature]) => {
+                              // Map feature keys to actual routes
+                              const routeMap: Record<string, string> = {
+                                ministry: "/ministry",
+                                community: "/community",
+                                missions: "/missions",
+                                study: "/study",
+                                events: "/events",
+                                prayer: "/prayer",
+                              };
+
                               const IconComponent =
                                 featuresIcons[
                                   key as keyof typeof featuresIcons
@@ -218,7 +228,7 @@ export function PublicHeader({ className = "" }: PublicHeaderProps) {
                               return (
                                 <NavigationMenuLink
                                   key={key}
-                                  href={`/${key}`}
+                                  href={routeMap[key] || `/${key}`}
                                   className="group flex items-start space-x-3 rounded-lg p-3 hover:bg-blue-50 transition-all duration-200 hover:shadow-sm border border-transparent hover:border-blue-100"
                                 >
                                   <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">

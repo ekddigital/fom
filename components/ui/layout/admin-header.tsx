@@ -57,7 +57,10 @@ export function AdminHeader({ className = "", onMenuClick }: AdminHeaderProps) {
           </Button>
 
           {/* Logo and Title */}
-          <div className="flex items-center space-x-3">
+          <Link
+            href="/"
+            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+          >
             <FomLogo size="sm" />
             <div className="hidden sm:block">
               <h1 className="text-lg font-semibold text-red-950">
@@ -66,7 +69,7 @@ export function AdminHeader({ className = "", onMenuClick }: AdminHeaderProps) {
               </h1>
               <p className="text-xs text-red-700">Platform Administration</p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Center Section - Search (hidden on mobile) */}
