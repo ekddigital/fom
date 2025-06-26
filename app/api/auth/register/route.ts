@@ -1,17 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  PrismaClient,
-  UserRole,
-  DisplayNamePreference,
-  ProfileVisibility,
-} from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { isUsernameAvailable } from "@/lib/utils/user";
 import { emailService } from "@/lib/services/email-service";
+import { prisma } from "@/lib/prisma";
 
-const prisma = new PrismaClient();
+// Define enums locally to match your Prisma schema
+enum UserRole {
+  VISITOR = "VISITOR",
+  MEMBER = "MEMBER",
+  MINISTRY_LEADER = "MINISTRY_LEADER",
+  ADMIN = "ADMIN",
+  SUPER_ADMIN = "SUPER_ADMIN",
+}
+enum DisplayNamePreference {
+  FULL_NAME = "FULL_NAME",
+  FIRST_NAME = "FIRST_NAME",
+  USERNAME = "USERNAME",
+}
+enum ProfileVisibility {
+  PUBLIC = "PUBLIC",
+  MEMBERS_ONLY = "MEMBERS_ONLY",
+  PRIVATE = "PRIVATE",
+}
 
 // Validation schema for user registration
 const registerSchema = z.object({
@@ -128,7 +140,82 @@ export async function POST(request: NextRequest) {
       firstName
     );
 
-    // Test email sending first (without creating user)
+    // All DB operations in a transaction
+    let user;
+    try {
+      user = await prisma.$transaction(async (tx) => {
+        const createdUser = await tx.user.create({
+          data: {
+            email,
+            password: hashedPassword,
+            firstName,
+            lastName,
+            username: username || null,
+            ministryInterests:
+              ministryInterests && ministryInterests.length > 0
+                ? JSON.stringify(ministryInterests)
+                : undefined,
+            role: UserRole.MEMBER, // Default role
+            displayNamePreference: DisplayNamePreference.FULL_NAME,
+            profileVisibility: ProfileVisibility.MEMBERS_ONLY,
+            certificateSharingEnabled: true,
+          },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            username: true,
+            role: true,
+            displayNamePreference: true,
+            profileVisibility: true,
+            ministryInterests: true,
+            certificateSharingEnabled: true,
+            joinedDate: true,
+            createdAt: true,
+          },
+        });
+
+        await tx.verificationToken.create({
+          data: {
+            identifier: email,
+            token: verificationToken,
+            expires,
+          },
+        });
+
+        await tx.analyticsEvent.create({
+          data: {
+            eventType: "user_registered",
+            userId: createdUser.id,
+            metadata: {
+              registrationMethod: "email",
+              hasUsername: !!username,
+              ministryInterestsCount: ministryInterests?.length || 0,
+            },
+            ipAddress:
+              request.headers.get("x-forwarded-for") ||
+              request.headers.get("x-real-ip") ||
+              request.headers.get("cf-connecting-ip") ||
+              "unknown",
+            userAgent: request.headers.get("user-agent") || null,
+          },
+        });
+
+        return createdUser;
+      });
+    } catch {
+      // If transaction fails, do not send email, just return error
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Registration failed. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Only send verification email after DB transaction is successful
     const emailSent = await emailService.sendSimpleEmail(
       email,
       emailTemplate.subject,
@@ -137,6 +224,15 @@ export async function POST(request: NextRequest) {
     );
 
     if (!emailSent) {
+      // Clean up: delete user and related records if email fails
+      await prisma.user.delete({ where: { email } });
+      await prisma.verificationToken.deleteMany({
+        where: { identifier: email },
+      });
+      await prisma.analyticsEvent.deleteMany({
+        where: { userId: user.id, eventType: "user_registered" },
+      });
+
       return NextResponse.json(
         {
           success: false,
@@ -150,81 +246,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only create user if email was sent successfully
-    const newUser = await prisma.$transaction(async (tx) => {
-      // Create user
-      const user = await tx.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          firstName,
-          lastName,
-          username: username || null,
-          ministryInterests:
-            ministryInterests && ministryInterests.length > 0
-              ? JSON.stringify(ministryInterests)
-              : undefined,
-          role: UserRole.MEMBER, // Default role
-          displayNamePreference: DisplayNamePreference.FULL_NAME,
-          profileVisibility: ProfileVisibility.MEMBERS_ONLY,
-          certificateSharingEnabled: true,
-        },
-        select: {
-          id: true,
-          email: true,
-          firstName: true,
-          lastName: true,
-          username: true,
-          role: true,
-          displayNamePreference: true,
-          profileVisibility: true,
-          ministryInterests: true,
-          certificateSharingEnabled: true,
-          joinedDate: true,
-          createdAt: true,
-        },
-      });
-
-      // Store verification token
-      await tx.verificationToken.create({
-        data: {
-          identifier: email,
-          token: verificationToken,
-          expires,
-        },
-      });
-
-      // Log registration event
-      await tx.analyticsEvent.create({
-        data: {
-          eventType: "user_registered",
-          userId: user.id,
-          metadata: {
-            registrationMethod: "email",
-            hasUsername: !!username,
-            ministryInterestsCount: ministryInterests?.length || 0,
-          },
-          ipAddress:
-            request.headers.get("x-forwarded-for") ||
-            request.headers.get("x-real-ip") ||
-            request.headers.get("cf-connecting-ip") ||
-            "unknown",
-          userAgent: request.headers.get("user-agent") || null,
-        },
-      });
-
-      return user;
-    });
-
     return NextResponse.json(
       {
         success: true,
         message:
           "Account created successfully! Please check your email to verify your account before signing in.",
         user: {
-          ...newUser,
-          ministryInterests: newUser.ministryInterests
-            ? JSON.parse(newUser.ministryInterests as string)
+          ...user,
+          ministryInterests: user.ministryInterests
+            ? JSON.parse(user.ministryInterests as string)
             : [],
         },
       },
@@ -232,10 +262,42 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("Registration error:", error);
+
+    // Improved error handling
+    if (error instanceof ZodError) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Validation failed",
+          errors: error.errors.reduce((acc, curr) => {
+            acc[curr.path[0]] = curr.message;
+            return acc;
+          }, {} as Record<string, string>),
+        },
+        { status: 400 }
+      );
+    }
+    // Handle unique constraint errors (e.g., duplicate email/username)
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2002"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "A user with this email or username already exists.",
+          errors: { email: "Email or username already taken" },
+        },
+        { status: 400 }
+      );
+    }
+    // Fallback
     return NextResponse.json(
       {
         success: false,
-        message: "Internal server error",
+        message: error instanceof Error ? error.message : "Registration failed",
       },
       { status: 500 }
     );

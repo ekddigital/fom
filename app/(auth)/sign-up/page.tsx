@@ -94,6 +94,7 @@ export default function SignUpPage() {
     ministryInterests: [] as string[],
   });
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -188,6 +189,8 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
+    setErrors({});
 
     if (!validateForm()) return;
 
@@ -199,16 +202,13 @@ export default function SignUpPage() {
       return;
     }
 
-    const result = await signUp({
-      email: formData.email,
-      password: formData.password,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      username: formData.username || undefined,
-      ministryInterests: formData.ministryInterests,
-    });
-
-    if (!result.success) {
+    const result = await signUp(formData);
+    if (result.success) {
+      // Show success message or redirect to sign-in
+      // Example:
+      router.push("/sign-in?registered=1");
+    } else {
+      setErrorMessage(result.message ?? "Registration failed");
       if (result.errors) {
         // Convert string[] to string by taking the first error message
         const convertedErrors: Record<string, string> = {};
@@ -216,8 +216,6 @@ export default function SignUpPage() {
           convertedErrors[key] = Array.isArray(value) ? value[0] : value;
         });
         setErrors(convertedErrors);
-      } else {
-        setGeneralError(result.message || "Registration failed");
       }
     }
   };
@@ -258,6 +256,9 @@ export default function SignUpPage() {
           <Alert variant="destructive">
             <AlertDescription>{generalError}</AlertDescription>
           </Alert>
+        )}
+        {errorMessage && (
+          <div className="text-red-600 mb-4">{errorMessage}</div>
         )}
 
         {/* Google Sign Up */}

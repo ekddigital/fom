@@ -463,7 +463,7 @@ export async function POST(req: Request) {
     });
 
     // Generate enhanced QR code data for localhost environments BEFORE issuing certificate
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
     // For JICF Certificate of Service, use pastor name; otherwise use authorizing official
     let issuerDisplayName =

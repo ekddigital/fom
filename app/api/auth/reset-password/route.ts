@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { emailService } from "@/lib/services/email-service";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 // Request password reset
 export async function POST(request: NextRequest) {
@@ -158,6 +156,8 @@ export async function POST(request: NextRequest) {
         where: { id: user.id },
         data: {
           password: hashedPassword,
+          // Mark email as verified if not already
+          emailVerified: user.emailVerified ? user.emailVerified : new Date(),
         },
       });
 
