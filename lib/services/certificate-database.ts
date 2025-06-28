@@ -270,7 +270,7 @@ export class DatabaseCertificateService {
    */
   async issueCertificate(
     request: CertificateRequest & {
-      recipientEmail: string;
+      recipientEmail?: string;
       issuedById: string;
     },
     fullTemplateDesignData: Prisma.JsonObject, // For storing in Certificate.certificateData
@@ -343,9 +343,11 @@ export class DatabaseCertificateService {
             request.recipientName.split(" ");
           const lastName = lastNameParts.join(" ") || "";
 
-          const recipientUser = await tx.user.findUnique({
-            where: { email: request.recipientEmail },
-          });
+          const recipientUser = request.recipientEmail
+            ? await tx.user.findUnique({
+                where: { email: request.recipientEmail },
+              })
+            : null;
 
           // Ensure the issuing user exists in the database
           const issuingUser = await tx.user.findUnique({
@@ -390,7 +392,8 @@ export class DatabaseCertificateService {
               templateId: template.id,
               recipientFirstName: firstName,
               recipientLastName: lastName,
-              recipientEmail: request.recipientEmail,
+              recipientEmail:
+                request.recipientEmail || "no-email@placeholder.com",
               issuedTo: recipientUser?.id,
               issuedBy: request.issuedById,
               verificationId: certificate.id,
@@ -1120,7 +1123,7 @@ export const dbCertificateService = new DatabaseCertificateService();
 
 // Helper functions for easy access
 export async function issueCertificateToDatabase(
-  request: CertificateRequest & { recipientEmail: string; issuedById: string },
+  request: CertificateRequest & { recipientEmail?: string; issuedById: string },
   fullTemplateDesignData: Prisma.JsonObject
 ): Promise<CompleteCertificate> {
   return dbCertificateService.issueCertificate(request, fullTemplateDesignData);

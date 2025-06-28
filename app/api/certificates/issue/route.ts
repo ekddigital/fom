@@ -10,7 +10,13 @@ import { Prisma } from "@prisma/client";
 const IssueCertificateSchema = z.object({
   templateName: z.string().min(1, "Template name is required"),
   recipientName: z.string().min(1, "Recipient name is required"),
-  recipientEmail: z.string().email("Valid email is required"),
+  recipientEmail: z
+    .string()
+    .optional()
+    .refine((email) => {
+      // Allow empty/null emails or valid emails
+      return !email || z.string().email().safeParse(email).success;
+    }, "Email must be valid if provided"),
   authorizingOfficial: z.string().optional(), // Optional authorizing official field (like "Hetawk", "Executive Director", etc.)
   issueDate: z.string().optional(), // Optional custom issue date in YYYY-MM-DD format
   customFields: z.record(z.unknown()).optional(),
@@ -495,7 +501,8 @@ export async function POST(req: Request) {
       {
         certificateId: certificateId,
         recipientName: validatedData.recipientName,
-        recipientEmail: validatedData.recipientEmail,
+        recipientEmail:
+          validatedData.recipientEmail || "no-email@placeholder.com",
         templateName: template.name,
         issueDate: issueDate,
         issuerName: issuerDisplayName,
@@ -520,6 +527,8 @@ export async function POST(req: Request) {
         ...validatedData,
         id: certificateId, // Pass the pre-generated certificate ID
         issuedById: session.user.id,
+        recipientEmail:
+          validatedData.recipientEmail || "no-email@placeholder.com", // Provide default email if none
       },
       fullTemplateDesignData,
       enhancedQRCode // Pass enhanced QR code as third parameter

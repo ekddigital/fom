@@ -310,7 +310,7 @@ export default function IssueCertificatePage() {
             ) || headers[1];
 
           setSelectedNameColumn(nameCol || "");
-          setSelectedEmailColumn(emailCol || "");
+          setSelectedEmailColumn(emailCol || "none");
 
           toast.success(
             `File uploaded successfully! Found ${parsedData.length - 1} rows.`
@@ -326,8 +326,8 @@ export default function IssueCertificatePage() {
   };
 
   const handleBulkCreateCertificates = async () => {
-    if (!fileData.length || !selectedNameColumn || !selectedEmailColumn) {
-      toast.error("Please upload a file and select the name and email columns");
+    if (!fileData.length || !selectedNameColumn) {
+      toast.error("Please upload a file and select the name column");
       return;
     }
 
@@ -342,12 +342,13 @@ export default function IssueCertificatePage() {
       const nameColumnIndex = fileColumns.findIndex(
         (col) => col === selectedNameColumn
       );
-      const emailColumnIndex = fileColumns.findIndex(
-        (col) => col === selectedEmailColumn
-      );
+      const emailColumnIndex =
+        selectedEmailColumn && selectedEmailColumn !== "none"
+          ? fileColumns.findIndex((col) => col === selectedEmailColumn)
+          : -1;
 
-      if (nameColumnIndex === -1 || emailColumnIndex === -1) {
-        toast.error("Selected columns not found in the data");
+      if (nameColumnIndex === -1) {
+        toast.error("Selected name column not found in the data");
         return;
       }
       let successCount = 0;
@@ -355,7 +356,8 @@ export default function IssueCertificatePage() {
       for (let i = 0; i < fileData.length; i++) {
         const row = fileData[i];
         const recipientName = row[nameColumnIndex]?.trim();
-        const recipientEmail = row[emailColumnIndex]?.trim();
+        const recipientEmail =
+          emailColumnIndex >= 0 ? row[emailColumnIndex]?.trim() : undefined;
 
         // Extract JICF Certificate of Service specific data if template matches
         let genderValue, positionValue;
@@ -377,8 +379,9 @@ export default function IssueCertificatePage() {
               : undefined;
         }
 
-        if (!recipientName || !recipientEmail) {
-          console.warn(`Skipping row ${i + 1}: Missing name or email`);
+        // Only require recipientName - email is optional
+        if (!recipientName) {
+          console.warn(`Skipping row ${i + 1}: Missing name`);
           errorCount++;
           continue;
         }
@@ -395,7 +398,8 @@ export default function IssueCertificatePage() {
           const certificateData = {
             templateName: template.name,
             recipientName,
-            recipientEmail,
+            // Only include email if it exists and is not empty
+            ...(recipientEmail && { recipientEmail }),
             authorizingOfficial: authorizingOfficial,
             issueDate: bulkIssueDate,
             customFields: {},
@@ -465,7 +469,7 @@ export default function IssueCertificatePage() {
         setFileColumns([]);
         setUploadedFile(null);
         setSelectedNameColumn("");
-        setSelectedEmailColumn("");
+        setSelectedEmailColumn("none");
       }
 
       setTimeout(() => {
@@ -1132,15 +1136,26 @@ export default function IssueCertificatePage() {
                           </Select>
                         </div>{" "}
                         <div>
-                          <Label htmlFor="emailColumn">Email Column</Label>
+                          <Label htmlFor="emailColumn">
+                            Email Column (Optional)
+                          </Label>
                           <Select
                             value={selectedEmailColumn}
                             onValueChange={setSelectedEmailColumn}
                           >
                             <SelectTrigger className="mt-1 bg-white border-gray-300">
-                              <SelectValue placeholder="Select email column" />
+                              <SelectValue placeholder="Select email column (optional)" />
                             </SelectTrigger>
                             <SelectContent className="bg-white border border-gray-200 shadow-lg max-h-60 z-50">
+                              <SelectItem
+                                key="none"
+                                value="none"
+                                className="hover:bg-blue-50 focus:bg-blue-50 cursor-pointer bg-white"
+                              >
+                                <span className="text-gray-900">
+                                  None (No Email)
+                                </span>
+                              </SelectItem>
                               {fileColumns.map((col) => (
                                 <SelectItem
                                   key={col}
