@@ -350,7 +350,13 @@ export async function POST(req: Request) {
         }
 
         // Add security features based on security level if not already present
-        const hasQrCode = elements.some((el) => el.id.includes("qr-code"));
+        const hasQrCode = elements.some(
+          (el) =>
+            el.id.includes("qr-code") ||
+            el.id.includes("qr-verification") ||
+            el.id.includes("verification-qr") ||
+            el.content === "{{qrCode}}"
+        );
         const hasSecurityWatermark = elements.some((el) =>
           el.id.includes("security-watermark")
         );
@@ -403,7 +409,11 @@ export async function POST(req: Request) {
           if (
             validatedData.templateName === "JULS Outstanding Contribution Award"
           ) {
-            signaturePosition = { x: 250, y: 550, width: 300, height: 12 }; // Under certificate ID at y:530
+            signaturePosition = { x: 300, y: 575, width: 200, height: 12 }; // Below certificate ID at y:555
+          } else if (
+            validatedData.templateName === "JULS Certificate of Appreciation"
+          ) {
+            signaturePosition = { x: 300, y: 550, width: 200, height: 12 }; // Below certificate ID at y:530
           } else if (
             validatedData.templateName === "JULS Most Dedicated Award"
           ) {

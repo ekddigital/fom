@@ -143,15 +143,15 @@ export const julsOutstandingAward: CertificateTemplate = {
       },
     },
 
-    // Achievement description
+    // Achievement description with updated content
     {
       id: "achievement-description",
       type: "text",
       content:
-        "In recognition of your outstanding contributions, exceptional leadership, and unwavering commitment to advancing the mission of the Jinan Union of Liberian Students. Your dedication to excellence and service to the community embodies the highest ideals of our organization.",
+        "In recognition of your exceptional leadership, outstanding contributions to work in Jinan city and beyond, and unwavering commitment to advancing the welfare of Liberian students. Your exemplary service, dedication to community development, and remarkable achievements have significantly impacted both our local union and the broader student community.",
       position: { x: 80, y: 350, width: 640, height: 70 },
       style: {
-        fontSize: 14,
+        fontSize: 13,
         fontFamily: "serif",
         color: JULS_COLORS.darkBlue,
         textAlign: "center",
@@ -159,53 +159,182 @@ export const julsOutstandingAward: CertificateTemplate = {
       },
     },
 
-    // Signature section
+    // QR Code positioned above the quote, similar to appreciation certificate
     {
-      id: "award-date",
-      type: "text",
-      content: "Awarded: {{issueDate}}",
-      position: { x: 80, y: 470, width: 200, height: 20 },
+      id: "verification-qr",
+      type: "image",
+      content: "{{qrCode}}",
+      position: { x: 650, y: 250, width: 70, height: 70 },
       style: {
-        fontSize: 12,
-        fontFamily: "serif",
-        color: JULS_COLORS.darkBlue,
-        textAlign: "left",
+        borderRadius: "0px",
       },
     },
-
     {
-      id: "certificate-id-award",
+      id: "qr-label",
       type: "text",
-      content: "Certificate ID: {{certificateId}}",
-      position: { x: 300, y: 470, width: 200, height: 20 },
+      content: "Scan to verify",
+      position: { x: 660, y: 325, width: 50, height: 10 },
       style: {
-        fontSize: 10,
+        fontSize: 7,
         fontFamily: "serif",
         color: JULS_COLORS.darkBlue,
         textAlign: "center",
       },
     },
 
+    // Inspirational quote with extended blue background
     {
-      id: "official-signature",
+      id: "quote-background",
+      type: "shape",
+      content: "",
+      position: { x: 150, y: 435, width: 500, height: 60 },
+      style: {
+        color: JULS_COLORS.blue,
+        borderRadius: "4px",
+      },
+    },
+    {
+      id: "inspirational-quote",
       type: "text",
-      content: "Authorized by: {{issuerName}}",
-      position: { x: 520, y: 470, width: 200, height: 20 },
+      content:
+        '"The best way to find yourself is to lose yourself in the service of others"',
+      position: { x: 170, y: 445, width: 460, height: 15 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
-        color: JULS_COLORS.darkBlue,
-        textAlign: "right",
+        fontWeight: "italic",
+        color: JULS_COLORS.white,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "quote-author",
+      type: "text",
+      content: "— Mahatma Gandhi",
+      position: { x: 170, y: 465, width: 460, height: 12 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.white,
+        textAlign: "center",
       },
     },
 
-    // QR Code for verification
+    // Footer section with date issued moved down and dual signatures
     {
-      id: "verification-qr",
+      id: "award-date",
+      type: "text",
+      content: "Date Awarded: {{issueDate}}",
+      position: { x: 80, y: 515, width: 640, height: 15 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+
+    // President signature area
+    {
+      id: "president-signature",
       type: "image",
-      content: "{{qrCode}}",
-      position: { x: 350, y: 500, width: 100, height: 100 },
+      content: "/juls-signagure-president.png",
+      position: { x: 120, y: 515, width: 120, height: 35 },
       style: {},
+    },
+    {
+      id: "president-line",
+      type: "shape",
+      content: "",
+      position: { x: 120, y: 555, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkBlue,
+      },
+    },
+    {
+      id: "president-name",
+      type: "text",
+      content: "Ruphine M. Harmon",
+      position: { x: 120, y: 565, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "president-title",
+      type: "text",
+      content: "City President, LSUIC Jinan Chapter",
+      position: { x: 100, y: 575, width: 160, height: 15 },
+      style: {
+        fontSize: 6,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+        lineHeight: "1.2",
+      },
+    },
+
+    // Secretary signature area
+    {
+      id: "secretary-signature",
+      type: "image",
+      content: "/juls-signagure-secretary.png",
+      position: { x: 560, y: 515, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "secretary-line",
+      type: "shape",
+      content: "",
+      position: { x: 560, y: 555, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkBlue,
+      },
+    },
+    {
+      id: "secretary-name",
+      type: "text",
+      content: "Lawrina N. Varney",
+      position: { x: 560, y: 565, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "secretary-title",
+      type: "text",
+      content: "City Secretary, LSUIC Jinan Chapter",
+      position: { x: 540, y: 575, width: 160, height: 15 },
+      style: {
+        fontSize: 6,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+        lineHeight: "1.2",
+      },
+    },
+
+    // Certificate ID aligned with signature lines
+    {
+      id: "certificate-id-award",
+      type: "text",
+      content: "ID: {{certificateId}}",
+      position: { x: 300, y: 555, width: 200, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
     },
 
     // Decorative elements

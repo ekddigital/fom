@@ -63,7 +63,7 @@ export function verifyCertificateSignature(
 export function generateSecureVerificationUrl(
   certificateId: string,
   signature: string,
-  baseUrl: string = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+  baseUrl: string = process.env.NEXTAUTH_URL || "http://localhost:3000"
 ): string {
   const params = new URLSearchParams({
     id: certificateId,

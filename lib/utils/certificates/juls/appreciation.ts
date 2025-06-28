@@ -132,13 +132,36 @@ export const julsAppreciationCert: CertificateTemplate = {
       },
     },
 
-    // Description
+    // QR Code positioned above description text
+    {
+      id: "qr-verification",
+      type: "image",
+      content: "{{qrCode}}",
+      position: { x: 650, y: 240, width: 70, height: 70 },
+      style: {
+        borderRadius: "0px",
+      },
+    },
+    {
+      id: "qr-label",
+      type: "text",
+      content: "Scan to verify",
+      position: { x: 660, y: 315, width: 50, height: 10 },
+      style: {
+        fontSize: 7,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+
+    // Description with updated content
     {
       id: "description",
       type: "text",
       content:
-        "In grateful recognition of your outstanding dedication, active participation, and valuable contributions to the Jinan Union of Liberian Students. Your commitment to excellence and service to the Liberian student community exemplifies the spirit of unity and academic achievement.",
-      position: { x: 100, y: 340, width: 600, height: 70 },
+        "In recognition of your outstanding contribution to the Jinan Union of Liberian Student community activities. Your involvement has contributed meaningfully to our shared goals of unity, academic growth, and cultural enrichment.",
+      position: { x: 100, y: 340, width: 600, height: 60 },
       style: {
         fontSize: 14,
         fontFamily: "serif",
@@ -148,53 +171,159 @@ export const julsAppreciationCert: CertificateTemplate = {
       },
     },
 
+    // Inspirational quote with background
+    {
+      id: "quote-background",
+      type: "shape",
+      content: "",
+      position: { x: 150, y: 415, width: 500, height: 50 },
+      style: {
+        color: JULS_COLORS.blue,
+        borderRadius: "4px",
+      },
+    },
+    {
+      id: "inspirational-quote",
+      type: "text",
+      content:
+        '"Education is the most powerful weapon which you can use to change the world"',
+      position: { x: 170, y: 425, width: 460, height: 15 },
+      style: {
+        fontSize: 12,
+        fontFamily: "serif",
+        fontWeight: "italic",
+        color: JULS_COLORS.white,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "quote-author",
+      type: "text",
+      content: "— Nelson Mandela",
+      position: { x: 170, y: 445, width: 460, height: 12 },
+      style: {
+        fontSize: 11,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.white,
+        textAlign: "center",
+      },
+    },
+
     // Footer section
     {
       id: "date-issued",
       type: "text",
-      content: "Date: {{issueDate}}",
-      position: { x: 80, y: 460, width: 200, height: 20 },
+      content: "Date Issued: {{issueDate}}",
+      position: { x: 60, y: 475, width: 680, height: 15 },
       style: {
-        fontSize: 12,
-        fontFamily: "serif",
-        color: JULS_COLORS.darkBlue,
-        textAlign: "left",
-      },
-    },
-
-    {
-      id: "certificate-id",
-      type: "text",
-      content: "Certificate ID: {{certificateId}}",
-      position: { x: 300, y: 460, width: 200, height: 20 },
-      style: {
-        fontSize: 10,
+        fontSize: 11,
         fontFamily: "serif",
         color: JULS_COLORS.darkBlue,
         textAlign: "center",
       },
     },
 
+    // President signature area (moved up by 5px)
     {
-      id: "authorized-signature",
-      type: "text",
-      content: "Authorized by: {{issuerName}}",
-      position: { x: 520, y: 460, width: 200, height: 20 },
+      id: "president-signature",
+      type: "image",
+      content: "/juls-signagure-president.png",
+      position: { x: 120, y: 490, width: 120, height: 35 },
+      style: {},
+    },
+    {
+      id: "president-line",
+      type: "shape",
+      content: "",
+      position: { x: 120, y: 530, width: 120, height: 1 },
       style: {
-        fontSize: 12,
+        color: JULS_COLORS.darkBlue,
+      },
+    },
+    {
+      id: "president-name",
+      type: "text",
+      content: "Ruphine M. Harmon",
+      position: { x: 120, y: 535, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "president-title",
+      type: "text",
+      content: "City President, LSUIC Jinan Chapter",
+      position: { x: 100, y: 545, width: 160, height: 15 },
+      style: {
+        fontSize: 6,
         fontFamily: "serif",
         color: JULS_COLORS.darkBlue,
-        textAlign: "right",
+        textAlign: "center",
+        lineHeight: "1.2",
       },
     },
 
-    // QR Code
+    // Secretary signature area (moved up by 5px)
     {
-      id: "qr-verification",
+      id: "secretary-signature",
       type: "image",
-      content: "{{qrCode}}",
-      position: { x: 350, y: 490, width: 100, height: 100 },
+      content: "/juls-signagure-secretary.png",
+      position: { x: 560, y: 490, width: 120, height: 35 },
       style: {},
+    },
+    {
+      id: "secretary-line",
+      type: "shape",
+      content: "",
+      position: { x: 560, y: 530, width: 120, height: 1 },
+      style: {
+        color: JULS_COLORS.darkBlue,
+      },
+    },
+    {
+      id: "secretary-name",
+      type: "text",
+      content: "Lawrina N. Varney",
+      position: { x: 560, y: 535, width: 120, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        fontWeight: "bold",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
+    },
+    {
+      id: "secretary-title",
+      type: "text",
+      content: "City Secretary, LSUIC Jinan Chapter",
+      position: { x: 540, y: 545, width: 160, height: 15 },
+      style: {
+        fontSize: 6,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+        lineHeight: "1.2",
+      },
+    },
+
+    // Certificate ID aligned with signatures (moved up by 5px)
+    {
+      id: "certificate-id",
+      type: "text",
+      content: "ID: {{certificateId}}",
+      position: { x: 300, y: 530, width: 200, height: 12 },
+      style: {
+        fontSize: 9,
+        fontFamily: "serif",
+        color: JULS_COLORS.darkBlue,
+        textAlign: "center",
+      },
     },
 
     // Decorative elements

@@ -21,11 +21,33 @@ import {
 } from "@/lib/types/auth";
 import { formatUserName } from "@/lib/utils/user";
 
-import {
-  UserRole,
-  DisplayNamePreference,
-  ProfileVisibility,
-} from "@prisma/client";
+// Remove this import:
+// import {
+//   UserRole,
+//   DisplayNamePreference,
+//   ProfileVisibility,
+// } from "@prisma/client";
+
+// Add local enum/type definitions matching your Prisma schema:
+export enum UserRole {
+  VISITOR = "VISITOR",
+  MEMBER = "MEMBER",
+  MINISTRY_LEADER = "MINISTRY_LEADER",
+  ADMIN = "ADMIN",
+  SUPER_ADMIN = "SUPER_ADMIN",
+}
+
+export enum DisplayNamePreference {
+  FULL_NAME = "FULL_NAME",
+  FIRST_NAME = "FIRST_NAME",
+  USERNAME = "USERNAME",
+}
+
+export enum ProfileVisibility {
+  PUBLIC = "PUBLIC",
+  MEMBERS_ONLY = "MEMBERS_ONLY",
+  PRIVATE = "PRIVATE",
+}
 
 export function useAuth() {
   const { data: session, status, update } = useSession();
@@ -120,7 +142,12 @@ export function useAuth() {
             errorMessage = "Please sign in to access this page.";
             break;
           default:
-            errorMessage = `Authentication error: ${result.error}`;
+            if (result.error === "Invalid credentials") {
+              errorMessage =
+                "The email or password you entered is incorrect. Please try again.";
+            } else {
+              errorMessage = `Authentication error: ${result.error}`;
+            }
             console.error("Unknown NextAuth error:", result.error);
         }
 
@@ -334,7 +361,8 @@ export function useAuth() {
       [UserRole.SUPER_ADMIN]: 4,
     };
 
-    const userLevel = roleHierarchy[user?.role || UserRole.VISITOR];
+    const userRole = (user?.role ?? UserRole.VISITOR) as UserRole;
+    const userLevel = roleHierarchy[userRole];
     const requiredLevel = roleHierarchy[minimumRole];
 
     return userLevel >= requiredLevel;

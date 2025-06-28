@@ -83,7 +83,7 @@ export function generateCertificateId(
 
 // Generate a QR code verification URL
 export function generateVerificationUrl(certificateId: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://fom.org";
+  const baseUrl = process.env.NEXTAUTH_URL || "https://fomjesus.org";
   return `${baseUrl}/verify-certificate?id=${certificateId}`;
 }
 
@@ -585,7 +585,7 @@ export function createSecureCertificate(data: SecureCertificateData) {
   const verificationUrl = generateSecureVerificationUrl(
     data.certificateId,
     security.signature || "",
-    process.env.NEXT_PUBLIC_APP_URL
+    process.env.NEXTAUTH_URL
   );
 
   return {

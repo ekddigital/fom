@@ -966,7 +966,7 @@ export class DatabaseCertificateService {
    * Helper methods
    */
   private generateVerificationUrl(certificateId: string): string {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
     return `${baseUrl}/verify-certificate?id=${certificateId}`;
   }
 

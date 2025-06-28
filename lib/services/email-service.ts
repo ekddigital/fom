@@ -103,10 +103,6 @@ export class EmailService {
           text_body: text || html?.replace(/<[^>]*>?/gm, ""),
           custom_headers: [
             {
-              header: "X-Priority",
-              value: "1",
-            },
-            {
               header: "X-Mailer",
               value: "Fishers of Men Mailer",
             },
