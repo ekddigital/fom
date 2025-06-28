@@ -62,6 +62,18 @@ export const PUPPETEER_CONFIG = {
     "--password-store=basic",
     "--use-mock-keychain",
     "--disable-blink-features=AutomationControlled",
+    "--force-color-profile=srgb",
+    "--memory-pressure-off",
+    "--max_old_space_size=4096",
+    "--ignore-certificate-errors-spki-list",
+    "--ignore-certificate-errors",
+    "--ignore-ssl-errors",
+    "--allow-cross-origin-auth-prompt",
+    "--disable-3d-apis",
+    "--disable-accelerated-mjpeg-decode",
+    "--disable-accelerated-video-decode",
+    "--disable-app-list-dismiss-on-blur",
+    "--disable-background-mode",
   ],
 
   // Memory and performance settings
@@ -136,17 +148,8 @@ export function shouldDisableCertificateGeneration(): boolean {
     return true;
   }
 
-  // Disable if no Chrome executable found in production
-  if (process.env.NODE_ENV === "production") {
-    const chromePath = getChromeExecutablePath();
-    if (!chromePath) {
-      console.warn(
-        "No Chrome executable found for certificate generation in production"
-      );
-      return true;
-    }
-  }
-
+  // In production, try to use bundled Chromium if no system Chrome is found
+  // Only disable if Puppeteer itself is not available
   return false;
 }
 

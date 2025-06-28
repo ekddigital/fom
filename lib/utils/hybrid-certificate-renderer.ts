@@ -1293,34 +1293,84 @@ export class HybridCertificateRenderer {
       );
     }
 
-    const launchOptions: Record<string, unknown> = {
+    let launchOptions: Record<string, unknown> = {
       headless: true,
       args: config.puppeteerArgs,
       timeout: config.timeout,
+      ignoreDefaultArgs: ["--disable-extensions"],
     };
 
-    // Add executable path if available
+    // Add executable path if available, otherwise use Puppeteer's bundled Chromium
     if (config.chromeExecutable) {
       launchOptions.executablePath = config.chromeExecutable;
+      console.log(`🚀 Using Chrome executable: ${config.chromeExecutable}`);
+    } else {
+      console.log("🚀 Using Puppeteer's bundled Chromium");
+      // Use more conservative settings for bundled Chromium
+      launchOptions.args = [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu",
+        "--no-first-run",
+        "--disable-background-timer-throttling",
+        "--disable-backgrounding-occluded-windows",
+        "--disable-renderer-backgrounding",
+      ];
     }
 
-    const browser = await puppeteer.launch(launchOptions);
+    let browser;
+    try {
+      console.log("🔄 Launching browser for PNG generation...");
+      browser = await puppeteer.launch(launchOptions);
+      console.log("✅ Browser launched successfully");
+    } catch (launchError) {
+      console.error("❌ Browser launch failed:", launchError);
+
+      // Try fallback with minimal args
+      console.log("🔄 Trying fallback browser launch...");
+      try {
+        launchOptions = {
+          headless: true,
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          timeout: 30000,
+        };
+        browser = await puppeteer.launch(launchOptions);
+        console.log("✅ Fallback browser launched successfully");
+      } catch (fallbackError) {
+        console.error("❌ Fallback browser launch failed:", fallbackError);
+        throw new Error(
+          `Browser launch failed: ${
+            launchError instanceof Error
+              ? launchError.message
+              : String(launchError)
+          }. Fallback also failed: ${
+            fallbackError instanceof Error
+              ? fallbackError.message
+              : String(fallbackError)
+          }`
+        );
+      }
+    }
 
     try {
       const page = await browser.newPage();
+      console.log("📄 New page created");
 
       // Set very high-resolution viewport for crisp PNG rendering
       await page.setViewport({
         width: this.pageSettings.width + 100,
         height: this.pageSettings.height + 100,
-        deviceScaleFactor: config.viewport.deviceScaleFactor * 1.5, // Higher for PNG quality
+        deviceScaleFactor: Math.min(config.viewport.deviceScaleFactor * 1.5, 3), // Cap at 3 to prevent memory issues
       });
+      console.log("🖥️ Viewport set");
 
       // Set content and wait for all resources to load with increased timeout
       await page.setContent(html, {
         waitUntil: ["networkidle0", "domcontentloaded"],
         timeout: config.timeout,
       });
+      console.log("📝 Content set");
 
       // Ensure fonts are fully loaded
       await page.evaluateOnNewDocument(() => {
@@ -1334,6 +1384,7 @@ export class HybridCertificateRenderer {
       });
 
       // Wait for images to load
+      console.log("⏳ Waiting for images to load...");
       await page.evaluate(() => {
         return Promise.all(
           Array.from(document.images, (img) => {
@@ -1346,6 +1397,7 @@ export class HybridCertificateRenderer {
           })
         );
       });
+      console.log("🖼️ Images loaded");
 
       // Wait for fonts to load and render
       await page.evaluate(() => {
@@ -1357,11 +1409,13 @@ export class HybridCertificateRenderer {
       });
 
       // Add extra delay to ensure fonts and styles are fully loaded
+      console.log("⏳ Final render delay...");
       await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 4000))
+        () => new Promise((resolve) => setTimeout(resolve, 2000)) // Reduced from 4000ms to 2000ms
       );
 
       // Take high-quality screenshot of the certificate container
+      console.log("📸 Taking screenshot...");
       const element = await page.$(".certificate-container");
       if (!element) {
         throw new Error("Certificate container not found");
@@ -1375,9 +1429,18 @@ export class HybridCertificateRenderer {
         clip: undefined, // Use element's natural bounds
       });
 
+      console.log(
+        `✅ PNG generated successfully, size: ${screenshot.length} bytes`
+      );
       return screenshot as Buffer;
+    } catch (pageError) {
+      console.error("❌ Page operation failed:", pageError);
+      throw pageError;
     } finally {
-      await browser.close();
+      if (browser) {
+        await browser.close();
+        console.log("🔒 Browser closed");
+      }
     }
   }
 

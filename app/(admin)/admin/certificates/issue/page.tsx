@@ -497,20 +497,21 @@ export default function IssueCertificatePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Button
               variant="outline"
               size="sm"
               onClick={() => router.push("/admin/certificates")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-fit"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Certificates
+              <span className="hidden sm:inline">Back to Certificates</span>
+              <span className="sm:hidden">Back</span>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                 Issue Certificate
               </h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -518,13 +519,13 @@ export default function IssueCertificatePage() {
               </p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-blue-50 text-blue-700">
+          <Badge variant="secondary" className="bg-blue-50 text-blue-700 w-fit">
             {template.category}
           </Badge>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto p-6">
+      <div className="max-w-6xl mx-auto p-4 sm:p-6">
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as "single" | "bulk")}
@@ -532,19 +533,21 @@ export default function IssueCertificatePage() {
           <TabsList className="grid w-full grid-cols-2 mb-6">
             <TabsTrigger value="single" className="flex items-center gap-2">
               <User className="h-4 w-4" />
-              Single Certificate
+              <span className="hidden sm:inline">Single Certificate</span>
+              <span className="sm:hidden">Single</span>
             </TabsTrigger>
             <TabsTrigger value="bulk" className="flex items-center gap-2">
               <Upload className="h-4 w-4" />
-              Bulk Upload
+              <span className="hidden sm:inline">Bulk Upload</span>
+              <span className="sm:hidden">Bulk</span>
             </TabsTrigger>
           </TabsList>
 
           {/* Single Certificate Tab */}
           <TabsContent value="single">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {/* Left Column - Form */}
-              <div className="space-y-6">
+              <div className="space-y-6 order-2 xl:order-1">
                 {/* Template Info */}
                 <Card>
                   <CardHeader>
@@ -885,7 +888,7 @@ export default function IssueCertificatePage() {
               </div>
 
               {/* Right Column - Custom Fields & Actions */}
-              <div className="space-y-6">
+              <div className="space-y-6 order-1 xl:order-2">
                 {/* Custom Fields */}
                 <Card>
                   <CardHeader>
@@ -1042,9 +1045,9 @@ export default function IssueCertificatePage() {
 
           {/* Bulk Upload Tab */}
           <TabsContent value="bulk">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {/* Left Column - Bulk Upload Form */}
-              <div className="space-y-6">
+              <div className="space-y-6 order-2 xl:order-1">
                 {/* Template Info */}
                 <Card>
                   <CardHeader>
@@ -1462,7 +1465,7 @@ export default function IssueCertificatePage() {
               </div>
 
               {/* Right Column - Summary & Actions */}
-              <div className="space-y-6">
+              <div className="space-y-6 order-1 xl:order-2">
                 {/* Bulk Summary */}
                 <Card>
                   <CardHeader>

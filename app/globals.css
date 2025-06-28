@@ -1,5 +1,120 @@
 @import "tailwindcss";
 
+/* ===== MOBILE RESPONSIVENESS FIXES ===== */
+/* Ensure proper viewport handling on mobile devices */
+html {
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+  /* Improve text rendering on mobile */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  /* Prevent horizontal scroll on mobile */
+  overflow-x: hidden;
+  /* Improve scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix mobile touch and scroll issues */
+* {
+  /* Prevent horizontal overflow */
+  max-width: 100%;
+}
+
+/* Improve mobile touch targets */
+button, 
+a, 
+input, 
+select, 
+textarea {
+  /* Ensure minimum touch target size */
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Fix mobile input zoom issue on iOS */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+input[type="search"],
+textarea,
+select {
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+/* Improve mobile navigation */
+@media (max-width: 768px) {
+  /* Ensure dropdowns and modals work properly on mobile */
+  .mobile-friendly-dropdown {
+    position: fixed !important;
+    top: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    max-height: 50vh !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
+  
+  /* Fix table responsiveness */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  /* Improve form layouts on mobile */
+  .form-container {
+    padding: 1rem !important;
+  }
+  
+  /* Fix card layouts on mobile */
+  .card-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  
+  /* Mobile-friendly select dropdowns */
+  [role="combobox"] {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+  
+  /* Improve mobile button layouts */
+  .mobile-button-stack {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+  }
+  
+  .mobile-button-stack > * {
+    width: 100% !important;
+  }
+  
+  /* Better spacing for mobile cards */
+  .mobile-card-spacing {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Mobile-friendly tabs */
+  [role="tablist"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Mobile data table fixes */
+  .mobile-table-wrapper {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .mobile-table-wrapper table {
+    min-width: 600px !important;
+  }
+}
+
 /* ===== FIX FOR HTML2CANVAS OKLCH COMPATIBILITY ===== */
 /* html2canvas doesn't support oklch color function, so we provide fallbacks */
 .html2canvas-safe {

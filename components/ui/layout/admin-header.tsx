@@ -44,12 +44,12 @@ export function AdminHeader({ className = "", onMenuClick }: AdminHeaderProps) {
     >
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         {/* Left Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           {/* Mobile menu button */}
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-red-700 hover:bg-red-100"
+            className="lg:hidden text-red-700 hover:bg-red-100 shrink-0"
             onClick={onMenuClick}
           >
             <Menu className="h-5 w-5" />
@@ -59,15 +59,24 @@ export function AdminHeader({ className = "", onMenuClick }: AdminHeaderProps) {
           {/* Logo and Title */}
           <Link
             href="/"
-            className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
+            className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity min-w-0"
           >
-            <FomLogo size="sm" />
-            <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold text-red-950">
+            <FomLogo size="sm" className="shrink-0" />
+            <div className="hidden sm:block min-w-0">
+              <h1 className="text-lg font-semibold text-red-950 truncate">
                 <Shield className="w-4 h-4 inline mr-2" />
                 Admin Dashboard
               </h1>
-              <p className="text-xs text-red-700">Platform Administration</p>
+              <p className="text-xs text-red-700 truncate">
+                Platform Administration
+              </p>
+            </div>
+            {/* Mobile title - shorter version */}
+            <div className="block sm:hidden min-w-0">
+              <h1 className="text-sm font-semibold text-red-950 truncate">
+                <Shield className="w-3 h-3 inline mr-1" />
+                Admin
+              </h1>
             </div>
           </Link>
         </div>
@@ -85,28 +94,39 @@ export function AdminHeader({ className = "", onMenuClick }: AdminHeaderProps) {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+          {/* Mobile Search Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden text-red-700 hover:bg-red-100"
+          >
+            <Search className="h-4 w-4" />
+            <span className="sr-only">Search</span>
+          </Button>
+
           {/* Notifications */}
           <Button
             variant="ghost"
             size="icon"
             className="text-red-700 hover:bg-red-100 relative"
           >
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-600 rounded-full text-xs"></span>
+            <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
+            <span className="absolute -top-1 -right-1 h-2 w-2 sm:h-3 sm:w-3 bg-red-600 rounded-full text-xs"></span>
             <span className="sr-only">Notifications</span>
           </Button>
 
-          {/* Quick Actions */}
+          {/* Quick Actions - Hidden on small screens */}
           <Button
             variant="outline"
             size="sm"
-            className="hidden sm:flex text-red-700 border-red-200 hover:bg-red-100"
+            className="hidden md:flex text-red-700 border-red-200 hover:bg-red-100"
             asChild
           >
             <a href="/admin/users">
               <User className="w-4 h-4 mr-2" />
-              Manage Users
+              <span className="hidden lg:inline">Manage Users</span>
+              <span className="lg:hidden">Users</span>
             </a>
           </Button>
 
