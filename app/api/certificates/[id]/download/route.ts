@@ -11,10 +11,10 @@ import {
   CertificateData,
 } from "@/lib/utils/hybrid-certificate-renderer";
 import { EKDAssetService } from "@/lib/services/ekd-asset-service";
+import { getCertificateConfig } from "@/lib/config/certificate-config";
 
 /**
- * Simplified PDF generation function based on working card renderer approach
- * Enhanced with PDF-optimized QR code handling
+ * Enhanced PDF generation function with production-ready configuration
  */
 async function generateSimplifiedPDF(
   renderer: HybridCertificateRenderer,
@@ -23,22 +23,33 @@ async function generateSimplifiedPDF(
   // Use PDF-optimized HTML generation with format-specific QR codes
   const html = await renderer.generateHTMLWithFormat("pdf");
 
+  // Get production configuration
+  const config = getCertificateConfig();
+
+  // Check if certificate generation is disabled
+  if (config.disabled) {
+    throw new Error(
+      "Certificate generation is disabled in this environment. Please use the HTML fallback."
+    );
+  }
+
   let browser;
   let page;
 
   try {
-    browser = await puppeteer.launch({
+    // Production-ready Puppeteer configuration
+    const launchOptions: Record<string, unknown> = {
       headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu",
-        "--disable-web-security",
-        "--allow-running-insecure-content",
-        "--force-device-scale-factor=2", // Higher resolution for better QR code rendering
-      ],
-    });
+      args: config.puppeteerArgs,
+      timeout: config.timeout,
+    };
+
+    // Add executable path if available
+    if (config.chromeExecutable) {
+      launchOptions.executablePath = config.chromeExecutable;
+    }
+
+    browser = await puppeteer.launch(launchOptions);
 
     page = await browser.newPage();
 
@@ -52,13 +63,13 @@ async function generateSimplifiedPDF(
     await page.setViewport({
       width: pageSettings.width,
       height: pageSettings.height,
-      deviceScaleFactor: 3, // Higher scale factor for better QR code quality
+      deviceScaleFactor: config.viewport.deviceScaleFactor,
     });
 
-    // Set content with enhanced QR code handling
+    // Set content with enhanced QR code handling and increased timeout
     await page.setContent(html, {
       waitUntil: ["load", "domcontentloaded", "networkidle0"],
-      timeout: 30000,
+      timeout: config.timeout,
     });
 
     // Wait for fonts and images (especially QR codes) to load completely
@@ -89,7 +100,7 @@ async function generateSimplifiedPDF(
     });
 
     // Additional wait to ensure QR codes are fully rendered
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, config.waitTime));
 
     // Generate PDF with exact dimensions and enhanced settings for QR codes
     const pdf = await page.pdf({
@@ -346,12 +357,61 @@ export async function GET(
       });
     } catch (error) {
       console.error(`Error generating ${format.toUpperCase()}:`, error);
+
+      // Enhanced error response with more helpful information
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+
+      console.log(`📊 Certificate generation failed for ${certificate.id}:`, {
+        format,
+        error: errorMessage,
+        certificateId: certificate.id,
+        templateName: certificate.template?.name,
+        environment: process.env.NODE_ENV,
+      });
+
       return NextResponse.json(
         {
           error: `${format.toUpperCase()} generation failed`,
-          message: `Unable to generate ${format.toUpperCase()}. Please use the preview page and print to ${format.toUpperCase()} using your browser.`,
+          message: `Unable to generate ${format.toUpperCase()} due to server constraints. Please try the following alternatives:\n\n1. Use the preview page and print/save as ${format.toUpperCase()}\n2. Try generating a different format\n3. Contact support if this persists`,
           certificateId: certificate.id,
           viewUrl: `/admin/certificates/flexible-preview?certificateId=${certificate.id}`,
+          alternatives: [
+            {
+              method: "preview",
+              url: `/admin/certificates/flexible-preview?certificateId=${certificate.id}`,
+              description:
+                "View certificate in browser and use browser print/save function",
+            },
+            {
+              method: "alternative_format",
+              url:
+                format === "pdf"
+                  ? `/api/certificates/${certificate.id}/download?format=png`
+                  : `/api/certificates/${certificate.id}/download?format=pdf`,
+              description: `Try downloading as ${
+                format === "pdf" ? "PNG" : "PDF"
+              } instead`,
+            },
+            {
+              method: "html_fallback",
+              url: `/api/certificates/${certificate.id}/download-html`,
+              description:
+                "Download as HTML page (can be printed to PDF manually)",
+            },
+          ],
+          troubleshooting: {
+            commonCauses: [
+              "Server resource constraints",
+              "Browser engine initialization failure",
+              "Memory limitations",
+            ],
+            suggestedActions: [
+              "Use the preview page for manual download",
+              "Try again in a few minutes",
+              "Contact administrator if problem persists",
+            ],
+          },
         },
         { status: 500 }
       );

@@ -8,6 +8,7 @@ import fs from "fs/promises";
 import path from "path";
 import { getVerificationUrl } from "./url";
 import { generateSmartQRCode } from "./qr-code-generator";
+import { getCertificateConfig } from "@/lib/config/certificate-config";
 
 export interface CertificateData {
   id: string;
@@ -1274,6 +1275,7 @@ export class HybridCertificateRenderer {
 
   /**
    * Generate PNG using hybrid approach with format-optimized QR codes
+   * Enhanced for production environments
    */
   async generatePNG(): Promise<Buffer> {
     // Force regeneration of elements with PNG-optimized QR codes
@@ -1281,25 +1283,28 @@ export class HybridCertificateRenderer {
 
     const html = await this.generateHTMLWithFormat("png"); // Use PNG-optimized QR codes
 
-    const browser = await puppeteer.launch({
+    // Production-ready Puppeteer configuration
+    const config = getCertificateConfig();
+
+    // Check if certificate generation is disabled
+    if (config.disabled) {
+      throw new Error(
+        "Certificate generation is disabled in this environment. Please use the HTML fallback."
+      );
+    }
+
+    const launchOptions: Record<string, unknown> = {
       headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--single-process",
-        "--disable-gpu",
-        "--disable-web-security",
-        "--disable-features=VizDisplayCompositor",
-        "--allow-running-insecure-content",
-        "--force-color-profile=srgb",
-        "--enable-font-antialiasing",
-        "--disable-lcd-text",
-      ],
-    });
+      args: config.puppeteerArgs,
+      timeout: config.timeout,
+    };
+
+    // Add executable path if available
+    if (config.chromeExecutable) {
+      launchOptions.executablePath = config.chromeExecutable;
+    }
+
+    const browser = await puppeteer.launch(launchOptions);
 
     try {
       const page = await browser.newPage();
@@ -1308,12 +1313,13 @@ export class HybridCertificateRenderer {
       await page.setViewport({
         width: this.pageSettings.width + 100,
         height: this.pageSettings.height + 100,
-        deviceScaleFactor: 3.5, // Very high DPI for PNG with better font rendering
+        deviceScaleFactor: config.viewport.deviceScaleFactor * 1.5, // Higher for PNG quality
       });
 
-      // Set content and wait for all resources to load
+      // Set content and wait for all resources to load with increased timeout
       await page.setContent(html, {
         waitUntil: ["networkidle0", "domcontentloaded"],
+        timeout: config.timeout,
       });
 
       // Ensure fonts are fully loaded
