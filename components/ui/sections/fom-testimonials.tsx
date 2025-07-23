@@ -88,46 +88,60 @@ export function FomTestimonials({ className = "" }: FomTestimonialsProps) {
     {
       quote:
         "Joining Fishers of Men changed my entire perspective on life. The community here is genuinely caring, and the Bible studies have deepened my relationship with Christ immeasurably.",
-      author: "Sarah Johnson",
+      author: "Enoch Kwateh Dongbo",
       role: "Small Group Leader",
-      location: "Atlanta, GA",
+      location: "Jinan, Shandong Province",
       featured: true,
     },
     {
       quote:
         "The mission trip to Guatemala opened my eyes to God's heart for the nations. I've never felt more purpose in my life than when serving others in Jesus' name.",
-      author: "Michael Chen",
+      author: "Gerald Canaan Sohn",
       role: "Mission Team Member",
-      location: "Seattle, WA",
+      location: "Hangzhou City, Zhejiang Province",
     },
     {
       quote:
         "After years of struggling with my faith, the prayer support and discipleship program here helped me find my way back to God. I'm now leading others in their journey too.",
-      author: "David Rodriguez",
+      author: "Patience Fero",
       role: "Discipleship Coordinator",
-      location: "Phoenix, AZ",
+      location: "Hangzhou City, Zhejiang Province",
       featured: true,
     },
     {
       quote:
         "The online sermons and Bible studies kept me connected to God during difficult times. The pastors here truly care about each person's spiritual growth.",
-      author: "Emily Thompson",
+      author: "Eric Wulu Glay Jr.",
       role: "Youth Ministry Volunteer",
-      location: "Nashville, TN",
+      location: "Hangzhou City, Zhejiang Province",
     },
     {
       quote:
         "Being part of the worship team has allowed me to use my gifts for God's glory. The fellowship and spiritual growth I've experienced here is incredible.",
-      author: "James Wilson",
+      author: "Marcus Sepo Jensen",
       role: "Worship Team Leader",
-      location: "Denver, CO",
+      location: "Xuzhou City, Jiangsu Province",
     },
     {
       quote:
         "The community outreach programs showed me practical ways to live out my faith. Serving the homeless and elderly has become a passion of mine.",
-      author: "Maria Garcia",
+      author: "John Nagbe Kofa",
       role: "Outreach Coordinator",
-      location: "Los Angeles, CA",
+      location: "Wuhan City, Hubei",
+    },
+    {
+      quote:
+        "The fellowship and spiritual mentorship I received here transformed my walk with Christ. I'm grateful for the community that embraces everyone with love.",
+      author: "Philip Bargin",
+      role: "Ministry Leader",
+      location: "Liberia",
+    },
+    {
+      quote:
+        "Through the women's ministry and prayer groups, I found my calling to serve God and support others in their faith journey. The love here is unmatched.",
+      author: "Biira Liminya Jesca",
+      role: "Women's Ministry Coordinator",
+      location: "Uganda",
     },
   ];
 

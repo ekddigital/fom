@@ -20,7 +20,7 @@ export default function DevotionalsPage() {
         "To this you were called, because Christ suffered for you, leaving you an example, that you should follow in his steps.",
       excerpt:
         "Today we explore what it means to follow Christ's example in our daily lives, especially when facing difficulties and challenges...",
-      author: "Pastor Sarah Johnson",
+      author: "Pastor Eric Wulu Glay Jr.",
       readTime: "3 min read",
       category: "Daily Walk",
       featured: true,

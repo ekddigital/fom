@@ -63,6 +63,7 @@ const resourceIcons = {
   Sermons: Video,
   "Bible Studies": Book,
   Devotionals: BookOpen,
+  "Monthly Prayer & Fasting": HandHeart,
   Testimonies: MessageCircle,
   "Mission Reports": FileText,
   "Resources Library": BookOpen,
@@ -84,12 +85,12 @@ const adminIcons = {
 };
 
 export function PublicHeader({ className = "" }: PublicHeaderProps) {
-  const { isAuthenticated, signOut, user } = useAuth();
+  const { user, isAuthenticated, signOut } = useAuth();
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-gray-200/60 bg-white/90 backdrop-blur-xl",
+        "sticky top-0 z-[100] w-full bg-white/95 backdrop-blur-xl border-b border-gray-200/60 transition-all duration-300",
         className
       )}
     >

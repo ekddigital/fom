@@ -27,7 +27,7 @@ export default function SermonsPage() {
     {
       id: 2,
       title: "The Great Commission: Our Calling",
-      speaker: "Pastor Sarah Johnson",
+      speaker: "Pastor Enoch Kwateh Dongbo",
       date: "2025-06-01",
       duration: "38 min",
       thumbnail: "/api/placeholder/300/200",

@@ -58,7 +58,7 @@ export default function MinistryContentPage() {
       id: 4,
       title: "Prayer Network Training",
       type: "Training",
-      author: "Pastor Sarah Johnson",
+      author: "Pastor John Nagbe Kofa",
       date: "2025-05-28",
       status: "Published",
       views: 156,

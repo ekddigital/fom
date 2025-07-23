@@ -399,7 +399,7 @@ export default function MinistryCertificatesPage() {
               <Award className="h-5 w-5 text-green-600" />
               <div className="flex-1">
                 <p className="text-sm font-medium">
-                  Sarah Johnson completed Bible Study Leadership
+                  Philip Bargin completed Bible Study Leadership
                 </p>
                 <p className="text-xs text-gray-600">2 hours ago</p>
               </div>

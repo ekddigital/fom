@@ -19,7 +19,7 @@ export default function BibleStudiesPage() {
       weeks: 12,
       startDate: "2025-07-01",
       level: "Intermediate",
-      instructor: "Pastor Sarah Johnson",
+      instructor: "Pastor Gerald Canaan Sohn",
       participants: 24,
       materials: ["Study Guide", "Audio Commentary", "Workbook"],
       status: "Open for Registration",

@@ -3,24 +3,124 @@
 /* ===== MOBILE RESPONSIVENESS FIXES ===== */
 /* Ensure proper viewport handling on mobile devices */
 html {
-  /* Prevent horizontal scroll on mobile */
-  overflow-x: hidden;
   /* Improve text rendering on mobile */
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
 
 body {
-  /* Prevent horizontal scroll on mobile */
-  overflow-x: hidden;
   /* Improve scrolling on iOS */
   -webkit-overflow-scrolling: touch;
 }
 
 /* Fix mobile touch and scroll issues */
 * {
-  /* Prevent horizontal overflow */
-  max-width: 100%;
+  /* Prevent horizontal overflow on content, but allow dropdowns */
+  box-sizing: border-box;
+}
+
+/* Ensure dropdowns and popovers are always visible */
+[data-radix-popper-content-wrapper],
+[data-radix-portal],
+.dropdown-content,
+.popover-content,
+[role="menu"],
+[role="listbox"],
+[role="dialog"] {
+  z-index: 9999 !important;
+}
+
+/* ===== NAVIGATION FIXES ===== */
+/* Ensure sticky header works properly */
+.sticky {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 0 !important;
+}
+
+/* Ensure navigation containers don't clip dropdowns */
+header,
+nav,
+[data-slot="navigation-menu"],
+[data-slot="navigation-menu-list"] {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Fix navigation menu viewport positioning */
+[data-slot="navigation-menu-viewport"] {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  z-index: 9999 !important;
+  overflow: visible !important;
+}
+
+/* Fix navigation menu content positioning */
+[data-slot="navigation-menu-content"] {
+  z-index: 9999 !important;
+  overflow: visible !important;
+}
+
+/* Ensure dropdown menus appear above everything */
+[data-slot="dropdown-menu-content"] {
+  z-index: 9999 !important;
+}
+
+/* Fix navigation menu dropdowns */
+.navigation-menu-content,
+[data-radix-navigation-menu-content] {
+  z-index: 9999 !important;
+  position: absolute !important;
+  background: white !important;
+  border: 1px solid rgb(229 231 235) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+  min-width: 200px !important;
+}
+
+/* Fix user dropdown menu */
+.user-dropdown-content,
+[data-radix-dropdown-menu-content] {
+  z-index: 9999 !important;
+  position: fixed !important;
+  background: white !important;
+  border: 1px solid rgb(229 231 235) !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1) !important;
+  min-width: 160px !important;
+  padding: 0.25rem !important;
+}
+
+/* Ensure proper stacking context for headers */
+header {
+  z-index: 50 !important;
+  position: relative !important;
+}
+
+/* Prevent clipping of dropdowns */
+.container,
+.navigation-container {
+  overflow: visible !important;
+}
+
+/* Ensure navigation menus don't get clipped */
+[data-slot="navigation-menu"],
+[data-slot="navigation-menu-list"],
+[data-slot="navigation-menu-item"] {
+  overflow: visible !important;
+}
+
+/* Fix Radix UI portal positioning */
+[data-radix-portal] {
+  z-index: 9999 !important;
+}
+
+/* Ensure all Radix dropdown content is visible */
+[data-radix-dropdown-menu-content],
+[data-radix-navigation-menu-content],
+[data-radix-navigation-menu-viewport] {
+  z-index: 9999 !important;
 }
 
 /* Improve mobile touch targets */

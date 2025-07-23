@@ -7,19 +7,12 @@ import {
   BarChart3,
   Settings,
   FileText,
-  Calendar,
-  MessageSquare,
   Globe,
   ChevronLeft,
   ChevronRight,
-  UserCog,
-  Database,
-  Mail,
-  Bell,
-  Lock,
-  Activity,
   Award,
   Heart,
+  HandHeart,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -57,13 +50,7 @@ const adminMenuItems = [
         label: "Users",
         href: "/admin/users",
         icon: Users,
-        description: "Manage all users",
-      },
-      {
-        label: "Roles & Permissions",
-        href: "/admin/roles",
-        icon: UserCog,
-        description: "User roles and access",
+        description: "Manage all users and roles",
       },
     ],
   },
@@ -77,10 +64,10 @@ const adminMenuItems = [
         description: "Manage all content",
       },
       {
-        label: "Events",
-        href: "/admin/events",
-        icon: Calendar,
-        description: "Platform events",
+        label: "Prayer & Fasting",
+        href: "/admin/prayer-fasting",
+        icon: HandHeart,
+        description: "Monthly prayer & fasting posts",
       },
       {
         label: "Certificates",
@@ -94,12 +81,6 @@ const adminMenuItems = [
         icon: Heart,
         description: "Beautiful graduation and appreciation cards",
       },
-      {
-        label: "Messages",
-        href: "/admin/messages",
-        icon: MessageSquare,
-        description: "Platform messages",
-      },
     ],
   },
   {
@@ -111,41 +92,11 @@ const adminMenuItems = [
         icon: Settings,
         description: "Platform settings",
       },
-      {
-        label: "Database",
-        href: "/admin/database",
-        icon: Database,
-        description: "Database management",
-      },
-      {
-        label: "Email",
-        href: "/admin/email",
-        icon: Mail,
-        description: "Email configuration",
-      },
-      {
-        label: "Security",
-        href: "/admin/security",
-        icon: Lock,
-        description: "Security settings",
-      },
-      {
-        label: "Activity Logs",
-        href: "/admin/logs",
-        icon: Activity,
-        description: "System activity logs",
-      },
     ],
   },
   {
     section: "Quick Actions",
     items: [
-      {
-        label: "Notifications",
-        href: "/admin/notifications",
-        icon: Bell,
-        description: "Send notifications",
-      },
       {
         label: "Back to Site",
         href: "/",

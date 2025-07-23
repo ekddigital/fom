@@ -68,7 +68,7 @@ export default function ResourcesLibraryPage() {
       downloads: 743,
       description:
         "Biblical principles for building strong marriages and families with practical exercises.",
-      author: "Pastor Sarah Johnson",
+      author: "Pastor Marcus Sepo Jensen",
       featured: false,
     },
     {

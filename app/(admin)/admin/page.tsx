@@ -1,11 +1,18 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/use-auth";
+import {
+  useAdminDashboard,
+  type AdminStats,
+  type AdminActivity,
+  type AdminQuickStats,
+} from "@/lib/hooks/use-admin-dashboard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 import {
   Users,
   Activity,
@@ -16,99 +23,114 @@ import {
   BarChart3,
   PieChart,
   AlertTriangle,
-  Shield,
   Database,
   Bell,
   Plus,
   Heart,
+  RefreshCw,
+  HandHeart,
+  FileText,
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
   const { user } = useAuth();
+  const { loading, getAdminStats, getRecentActivity, getQuickStats } =
+    useAdminDashboard();
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [activity, setActivity] = useState<AdminActivity[]>([]);
+  const [quickStats, setQuickStats] = useState<AdminQuickStats | null>(null);
 
-  const dashboardStats = [
-    {
-      title: "Total Users",
-      value: "1,247",
-      change: "+12%",
-      changeType: "positive",
-      icon: Users,
-      description: "Active members",
-    },
-    {
-      title: "Monthly Growth",
-      value: "89",
-      change: "+23%",
-      changeType: "positive",
-      icon: TrendingUp,
-      description: "New members this month",
-    },
-    {
-      title: "Events This Month",
-      value: "24",
-      change: "+8%",
-      changeType: "positive",
-      icon: Calendar,
-      description: "Scheduled events",
-    },
-    {
-      title: "Prayer Requests",
-      value: "156",
-      change: "-5%",
-      changeType: "negative",
-      icon: MessageSquare,
-      description: "Active requests",
-    },
-    {
-      title: "System Health",
-      value: "99.9%",
-      change: "Stable",
-      changeType: "neutral",
-      icon: Activity,
-      description: "Uptime this month",
-    },
-    {
-      title: "Storage Used",
-      value: "67%",
-      change: "+2GB",
-      changeType: "neutral",
-      icon: Database,
-      description: "Of available space",
-    },
-  ];
+  const loadDashboardData = async () => {
+    try {
+      const [statsData, activityData, quickStatsData] = await Promise.all([
+        getAdminStats(),
+        getRecentActivity(),
+        getQuickStats(),
+      ]);
+      setStats(statsData);
+      setActivity(activityData);
+      setQuickStats(quickStatsData);
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+    }
+  };
 
-  const recentActivity = [
-    {
-      type: "user_registration",
-      message: "5 new users registered",
-      time: "2 hours ago",
-      severity: "info",
-    },
-    {
-      type: "event_created",
-      message: "Youth retreat event created",
-      time: "4 hours ago",
-      severity: "info",
-    },
-    {
-      type: "system_alert",
-      message: "Database backup completed",
-      time: "6 hours ago",
-      severity: "success",
-    },
-    {
-      type: "security",
-      message: "Failed login attempts detected",
-      time: "8 hours ago",
-      severity: "warning",
-    },
-    {
-      type: "content",
-      message: "New sermon uploaded",
-      time: "1 day ago",
-      severity: "info",
-    },
-  ];
+  useEffect(() => {
+    loadDashboardData();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const dashboardStats = stats
+    ? [
+        {
+          title: "Total Users",
+          value: stats.totalUsers.toLocaleString(),
+          change: stats.userGrowthChange,
+          changeType: stats.userGrowthChange.startsWith("+")
+            ? "positive"
+            : stats.userGrowthChange.startsWith("-")
+            ? "negative"
+            : "neutral",
+          icon: Users,
+          description: "Registered members",
+        },
+        {
+          title: "Active Users",
+          value: stats.activeUsers.toLocaleString(),
+          change: stats.activeUsersChange,
+          changeType: stats.activeUsersChange.startsWith("+")
+            ? "positive"
+            : stats.activeUsersChange.startsWith("-")
+            ? "negative"
+            : "neutral",
+          icon: TrendingUp,
+          description: "Active in last 30 days",
+        },
+        {
+          title: "New This Month",
+          value: stats.newUsersThisMonth.toLocaleString(),
+          change: stats.userGrowthChange,
+          changeType: stats.userGrowthChange.startsWith("+")
+            ? "positive"
+            : stats.userGrowthChange.startsWith("-")
+            ? "negative"
+            : "neutral",
+          icon: Calendar,
+          description: "New registrations",
+        },
+        {
+          title: "Events This Month",
+          value: stats.eventsThisMonth.toString(),
+          change: stats.eventsChange,
+          changeType: "neutral",
+          icon: Calendar,
+          description: "Scheduled events",
+        },
+        {
+          title: "Prayer Requests",
+          value: stats.prayerRequests.toString(),
+          change: stats.prayerRequestsChange,
+          changeType: "neutral",
+          icon: MessageSquare,
+          description: "Active requests",
+        },
+        {
+          title: "System Health",
+          value: stats.systemHealth,
+          change: "Stable",
+          changeType: "neutral",
+          icon: Activity,
+          description: "Uptime this month",
+        },
+        {
+          title: "Storage Used",
+          value: stats.storageUsed,
+          change: "+2GB",
+          changeType: "neutral",
+          icon: Database,
+          description: "Of available space",
+        },
+      ]
+    : [];
 
   const quickActions = [
     {
@@ -117,6 +139,13 @@ export default function AdminDashboardPage() {
       icon: Users,
       href: "/admin/users",
       color: "bg-blue-500",
+    },
+    {
+      title: "Prayer & Fasting",
+      description: "Manage monthly prayer posts",
+      icon: HandHeart,
+      href: "/admin/prayer-fasting",
+      color: "bg-purple-500",
     },
     {
       title: "Create Cards",
@@ -133,18 +162,18 @@ export default function AdminDashboardPage() {
       color: "bg-green-500",
     },
     {
+      title: "Content Hub",
+      description: "Manage all content types",
+      icon: FileText,
+      href: "/admin/content",
+      color: "bg-indigo-500",
+    },
+    {
       title: "System Settings",
       description: "Configure platform settings",
       icon: Settings,
       href: "/admin/settings",
-      color: "bg-purple-500",
-    },
-    {
-      title: "Security Center",
-      description: "Monitor security events",
-      icon: Shield,
-      href: "/admin/security",
-      color: "bg-red-500",
+      color: "bg-gray-500",
     },
   ];
 
@@ -185,6 +214,17 @@ export default function AdminDashboardPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadDashboardData}
+            disabled={loading}
+          >
+            <RefreshCw
+              className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
+            />
+            Refresh
+          </Button>
           <Button variant="outline" size="sm">
             <Plus className="h-4 w-4 mr-2" />
             Quick Action
@@ -379,20 +419,25 @@ export default function AdminDashboardPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-start gap-3 p-2">
+              {activity.map((item, index) => (
+                <div
+                  key={item.id || index}
+                  className="flex items-start gap-3 p-2"
+                >
                   <div
                     className={`w-2 h-2 rounded-full mt-2 ${
-                      activity.severity === "warning"
+                      item.severity === "warning"
                         ? "bg-yellow-500"
-                        : activity.severity === "success"
+                        : item.severity === "success"
                         ? "bg-green-500"
+                        : item.severity === "error"
+                        ? "bg-red-500"
                         : "bg-blue-500"
                     }`}
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-medium">{activity.message}</p>
-                    <p className="text-xs text-gray-600">{activity.time}</p>
+                    <p className="text-sm font-medium">{item.message}</p>
+                    <p className="text-xs text-gray-600">{item.time}</p>
                   </div>
                 </div>
               ))}
@@ -410,19 +455,25 @@ export default function AdminDashboardPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Online Users</span>
-                <Badge variant="default">47</Badge>
+                <Badge variant="default">{quickStats?.onlineUsers || 0}</Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Active Sessions</span>
-                <Badge variant="secondary">234</Badge>
+                <Badge variant="secondary">
+                  {quickStats?.activeSessions || 0}
+                </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Pending Approvals</span>
-                <Badge variant="destructive">8</Badge>
+                <Badge variant="destructive">
+                  {quickStats?.pendingApprovals || 0}
+                </Badge>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Server Load</span>
-                <Badge variant="outline">23%</Badge>
+                <Badge variant="outline">
+                  {quickStats?.serverLoad || "0%"}
+                </Badge>
               </div>
             </CardContent>
           </Card>

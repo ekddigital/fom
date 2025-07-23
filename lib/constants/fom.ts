@@ -43,6 +43,7 @@ export const FOM_NAVIGATION = {
     { label: "Sermons", href: "/sermons" },
     { label: "Bible Studies", href: "/bible-studies" },
     { label: "Devotionals", href: "/devotionals" },
+    { label: "Monthly Prayer & Fasting", href: "/prayer-fasting" },
     { label: "Testimonies", href: "/testimonies" },
     { label: "Mission Reports", href: "/mission-reports" },
     { label: "Resources Library", href: "/resources" },

@@ -23,7 +23,7 @@ export default function SmallGroupsPage() {
       id: 1,
       name: "Young Adults (20s-30s)",
       category: "Age Group",
-      leader: "Pastor Sarah Johnson",
+      leader: "Pastor Patience Fero",
       members: 12,
       maxMembers: 15,
       meetingDay: "Thursday",

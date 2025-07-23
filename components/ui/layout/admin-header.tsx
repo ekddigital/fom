@@ -38,7 +38,7 @@ export function AdminHeader({ className = "", onMenuClick }: AdminHeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full border-b border-red-200/60 bg-red-50/90 backdrop-blur-xl",
+        "sticky top-0 z-[100] w-full border-b border-red-200/60 bg-red-50/90 backdrop-blur-xl",
         className
       )}
     >
