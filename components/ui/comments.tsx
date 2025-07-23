@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { MessageCircle, Reply } from "lucide-react";
+import { MessageCircle, Reply, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { Reactions, useReactions } from "./reactions";
 
@@ -25,7 +25,6 @@ interface Comment {
   parentId?: string;
   replies?: Comment[];
   _count?: {
-    reactions: number;
     replies: number;
   };
 }
@@ -53,6 +52,7 @@ const CommentItem = ({
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAllReplies, setShowAllReplies] = useState(false);
 
   const { reactions, addReaction } = useReactions("comment", comment.id);
 
@@ -72,42 +72,45 @@ const CommentItem = ({
   }, [replyContent, onReply, comment.id, isSubmitting]);
 
   const canReply = depth < maxDepth;
+  const replies = comment.replies || [];
+  const visibleReplies = showAllReplies ? replies : replies.slice(0, 3);
+  const hiddenRepliesCount = replies.length - visibleReplies.length;
 
   return (
-    <Card className={cn("border-l-2 border-blue-100", depth > 0 && "ml-6")}>
-      <CardContent className="p-4">
-        <div className="flex items-start gap-3">
-          <Avatar className="h-8 w-8">
+    <div className={cn("border-l-2 border-gray-100", depth > 0 && "ml-4 pl-3")}>
+      <div className="py-2">
+        <div className="flex items-start gap-2">
+          <Avatar className="h-7 w-7 flex-shrink-0">
             <AvatarImage
               src={comment.user.avatarUrl}
               alt={`${comment.user.firstName} ${comment.user.lastName}`}
             />
-            <AvatarFallback>
+            <AvatarFallback className="text-xs">
               {comment.user.firstName[0]}
               {comment.user.lastName[0]}
             </AvatarFallback>
           </Avatar>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-1">
               <span className="font-medium text-sm">
                 {comment.user.firstName} {comment.user.lastName}
               </span>
               {comment.user.role !== "MEMBER" && (
-                <Badge variant="secondary" className="text-xs">
+                <Badge variant="secondary" className="text-xs px-1 py-0">
                   {comment.user.role.replace("_", " ").toLowerCase()}
                 </Badge>
               )}
               <span className="text-xs text-gray-500">
-                {format(new Date(comment.createdAt), "MMM d, yyyy 'at' h:mm a")}
+                {format(new Date(comment.createdAt), "MMM d, h:mm a")}
               </span>
             </div>
 
-            <p className="text-sm text-gray-700 mb-3 whitespace-pre-wrap">
+            <p className="text-sm text-gray-700 mb-2 whitespace-pre-wrap">
               {comment.content}
             </p>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 mb-2">
               <Reactions
                 reactions={reactions}
                 onReact={addReaction}
@@ -119,7 +122,7 @@ const CommentItem = ({
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsReplying(!isReplying)}
-                  className="h-7 px-2 text-xs"
+                  className="h-6 px-2 text-xs hover:bg-gray-100"
                 >
                   <Reply className="h-3 w-3 mr-1" />
                   Reply
@@ -128,12 +131,12 @@ const CommentItem = ({
             </div>
 
             {isReplying && (
-              <div className="mt-3 space-y-2">
+              <div className="mb-3 space-y-2">
                 <Textarea
                   placeholder="Write a reply..."
                   value={replyContent}
                   onChange={(e) => setReplyContent(e.target.value)}
-                  className="text-sm resize-none"
+                  className="text-sm resize-none min-h-[60px]"
                   rows={2}
                 />
                 <div className="flex gap-2">
@@ -141,7 +144,7 @@ const CommentItem = ({
                     size="sm"
                     onClick={handleReply}
                     disabled={!replyContent.trim() || isSubmitting}
-                    className="h-7 px-3 text-xs"
+                    className="h-6 px-3 text-xs"
                   >
                     {isSubmitting ? "Replying..." : "Reply"}
                   </Button>
@@ -152,7 +155,7 @@ const CommentItem = ({
                       setIsReplying(false);
                       setReplyContent("");
                     }}
-                    className="h-7 px-3 text-xs"
+                    className="h-6 px-3 text-xs hover:bg-gray-100"
                   >
                     Cancel
                   </Button>
@@ -160,9 +163,9 @@ const CommentItem = ({
               </div>
             )}
 
-            {comment.replies && comment.replies.length > 0 && (
-              <div className="mt-4 space-y-3">
-                {comment.replies.map((reply) => (
+            {replies.length > 0 && (
+              <div className="space-y-1">
+                {visibleReplies.map((reply) => (
                   <CommentItem
                     key={reply.id}
                     comment={reply}
@@ -171,12 +174,25 @@ const CommentItem = ({
                     maxDepth={maxDepth}
                   />
                 ))}
+
+                {hiddenRepliesCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAllReplies(true)}
+                    className="h-6 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 ml-9"
+                  >
+                    <ChevronDown className="h-3 w-3 mr-1" />
+                    Show {hiddenRepliesCount} more{" "}
+                    {hiddenRepliesCount === 1 ? "reply" : "replies"}
+                  </Button>
+                )}
               </div>
             )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
@@ -188,6 +204,7 @@ export const Comments = ({
 }: CommentsProps) => {
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAllComments, setShowAllComments] = useState(false);
 
   const handleAddComment = useCallback(async () => {
     if (!newComment.trim() || isSubmitting) return;
@@ -211,33 +228,37 @@ export const Comments = ({
   );
 
   const topLevelComments = comments.filter((comment) => !comment.parentId);
+  const visibleComments = showAllComments
+    ? topLevelComments
+    : topLevelComments.slice(0, 5);
+  const hiddenCommentsCount = topLevelComments.length - visibleComments.length;
 
   return (
-    <div className={cn("space-y-6", className)}>
+    <div className={cn("space-y-4", className)}>
       {/* Comments Header */}
       <div className="flex items-center gap-2">
         <MessageCircle className="h-5 w-5 text-gray-600" />
         <h3 className="font-semibold text-gray-900">
-          Comments ({comments.length})
+          Comments ({topLevelComments.length})
         </h3>
       </div>
 
       {/* Add New Comment */}
-      <Card>
-        <CardContent className="p-4">
+      <Card className="shadow-sm">
+        <CardContent className="p-3">
           <div className="space-y-3">
             <Textarea
               placeholder="Share your thoughts..."
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              className="resize-none"
+              className="resize-none min-h-[80px] text-sm"
               rows={3}
             />
             <div className="flex justify-end">
               <Button
                 onClick={handleAddComment}
                 disabled={!newComment.trim() || isSubmitting}
-                className="bg-blue-950 hover:bg-blue-800"
+                className="bg-blue-950 hover:bg-blue-800 text-gray-100 h-8 px-4 text-sm"
               >
                 {isSubmitting ? "Posting..." : "Post Comment"}
               </Button>
@@ -247,20 +268,48 @@ export const Comments = ({
       </Card>
 
       {/* Comments List */}
-      <div className="space-y-4">
+      <div className="space-y-2">
         {topLevelComments.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-6 text-gray-500 text-sm">
             No comments yet. Be the first to share your thoughts!
           </div>
         ) : (
-          topLevelComments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              onReply={handleReply}
-              maxDepth={maxDepth}
-            />
-          ))
+          <>
+            <div className="bg-white rounded-lg border shadow-sm">
+              <div className="divide-y divide-gray-100">
+                {visibleComments.map((comment, index) => (
+                  <div
+                    key={comment.id}
+                    className={cn(
+                      "px-3",
+                      index === 0 && "pt-3",
+                      index === visibleComments.length - 1 && "pb-3"
+                    )}
+                  >
+                    <CommentItem
+                      comment={comment}
+                      onReply={handleReply}
+                      maxDepth={maxDepth}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {hiddenCommentsCount > 0 && (
+              <div className="text-center">
+                <Button
+                  variant="ghost"
+                  onClick={() => setShowAllComments(true)}
+                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 h-8 px-4 text-sm"
+                >
+                  <ChevronDown className="h-4 w-4 mr-1" />
+                  Show {hiddenCommentsCount} more{" "}
+                  {hiddenCommentsCount === 1 ? "comment" : "comments"}
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -273,6 +322,13 @@ export const useComments = (targetType: string, targetId: string) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchComments = useCallback(async () => {
+    // Don't fetch if targetId is empty
+    if (!targetId || targetId.trim() === "") {
+      setComments([]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -291,6 +347,12 @@ export const useComments = (targetType: string, targetId: string) => {
 
   const addComment = useCallback(
     async (content: string, parentId?: string) => {
+      // Don't add comment if targetId is empty
+      if (!targetId || targetId.trim() === "") {
+        console.error("Cannot add comment: targetId is empty");
+        throw new Error("Target ID is required");
+      }
+
       try {
         const response = await fetch("/api/comments", {
           method: "POST",
@@ -308,6 +370,8 @@ export const useComments = (targetType: string, targetId: string) => {
         if (response.ok) {
           const data = await response.json();
           setComments(data.comments || []);
+        } else {
+          throw new Error("Failed to add comment");
         }
       } catch (error) {
         console.error("Failed to add comment:", error);

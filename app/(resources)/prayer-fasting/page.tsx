@@ -2,24 +2,38 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Calendar,
-  Clock,
-  Users,
   Play,
   Heart,
-  MessageCircle,
   Share2,
+  Facebook,
+  Twitter,
+  Copy,
+  MessageCircle,
 } from "lucide-react";
 import {
   usePrayerFasting,
   type PrayerFastingSession,
 } from "@/lib/hooks/use-prayer-fasting";
 import { YouTubePlayer } from "@/components/ui/youtube-player";
-import { RichTextViewer } from "@/components/ui/rich-text-viewer";
 import { format } from "date-fns";
+import Link from "next/link";
 
 export default function PrayerFastingPage() {
   const {
@@ -28,58 +42,211 @@ export default function PrayerFastingPage() {
     getUpcomingSessions,
     getArchiveSessions,
   } = usePrayerFasting();
-  const [currentSession, setCurrentSession] =
-    useState<PrayerFastingSession | null>(null);
-  const [upcomingSessions, setUpcomingSessions] = useState<
-    PrayerFastingSession[]
-  >([]);
-  const [archiveSessions, setArchiveSessions] = useState<
-    PrayerFastingSession[]
-  >([]);
 
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [current, upcoming, archive] = await Promise.all([
-          getCurrentSession(),
-          getUpcomingSessions(),
-          getArchiveSessions(6), // Get last 6 sessions
-        ]);
-        setCurrentSession(current);
-        setUpcomingSessions(upcoming);
-        setArchiveSessions(archive);
-      } catch (error) {
-        console.error("Error loading prayer & fasting data:", error);
+  const [allSessions, setAllSessions] = useState<PrayerFastingSession[]>([]);
+  const [filteredSessions, setFilteredSessions] = useState<
+    PrayerFastingSession[]
+  >([]);
+  const [selectedMonth, setSelectedMonth] = useState<string>("all");
+  const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+
+  // Get all sessions and organize them
+  const loadAllSessions = async () => {
+    try {
+      const [current, upcoming, archive] = await Promise.all([
+        getCurrentSession(),
+        getUpcomingSessions(),
+        getArchiveSessions(50), // Get more archive sessions
+      ]);
+
+      const allSessionsData: PrayerFastingSession[] = [];
+
+      // Add current session
+      if (current) allSessionsData.push(current);
+
+      // Add upcoming sessions
+      if (upcoming && upcoming.length > 0) {
+        allSessionsData.push(...upcoming);
       }
-    };
 
-    loadData();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+      // Add archive sessions
+      if (archive && archive.length > 0) {
+        allSessionsData.push(...archive);
+      }
 
-  const getNextSessionDate = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth();
+      // Sort by date (newest first)
+      allSessionsData.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
 
-    // Get last week of current month
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    const lastWeekStart = lastDay - 6;
-    const sessionDate = new Date(year, month, lastWeekStart);
-
-    // If we're past this month's session, get next month's
-    if (now.getDate() > lastDay - 3) {
-      const nextMonth = month + 1;
-      const nextYear = nextMonth > 11 ? year + 1 : year;
-      const actualNextMonth = nextMonth > 11 ? 0 : nextMonth;
-      const nextLastDay = new Date(nextYear, actualNextMonth + 1, 0).getDate();
-      const nextLastWeekStart = nextLastDay - 6;
-      return new Date(nextYear, actualNextMonth, nextLastWeekStart);
+      setAllSessions(allSessionsData);
+      setFilteredSessions(allSessionsData);
+    } catch (error) {
+      console.error("Error loading all sessions:", error);
     }
-
-    return sessionDate;
   };
 
-  const nextSession = getNextSessionDate();
+  // Filter sessions based on selected criteria
+  const filterSessions = () => {
+    let filtered = [...allSessions];
+
+    // Filter by month
+    if (selectedMonth !== "all") {
+      filtered = filtered.filter((session) => {
+        const sessionDate = new Date(session.date);
+        return sessionDate.getMonth() === parseInt(selectedMonth);
+      });
+    }
+
+    // Filter by year
+    if (selectedYear !== "all") {
+      filtered = filtered.filter((session) => {
+        const sessionDate = new Date(session.date);
+        return sessionDate.getFullYear() === parseInt(selectedYear);
+      });
+    }
+
+    // Filter by status
+    if (selectedStatus !== "all") {
+      if (selectedStatus === "current") {
+        filtered = filtered.filter((session) => session.status === "current");
+      } else if (selectedStatus === "upcoming") {
+        filtered = filtered.filter((session) => session.status === "upcoming");
+      } else if (selectedStatus === "archived") {
+        filtered = filtered.filter((session) => session.status === "archived");
+      }
+    }
+
+    setFilteredSessions(filtered);
+  };
+
+  // Get unique months and years for filter options
+  const getFilterOptions = () => {
+    const months: { value: string; label: string }[] = [];
+    const years: { value: string; label: string }[] = [];
+
+    allSessions.forEach((session) => {
+      const sessionDate = new Date(session.date);
+      const month = sessionDate.getMonth();
+      const year = sessionDate.getFullYear();
+
+      const monthLabel = format(sessionDate, "MMMM");
+      const monthOption = { value: month.toString(), label: monthLabel };
+      if (!months.find((m) => m.value === monthOption.value)) {
+        months.push(monthOption);
+      }
+
+      const yearOption = { value: year.toString(), label: year.toString() };
+      if (!years.find((y) => y.value === yearOption.value)) {
+        years.push(yearOption);
+      }
+    });
+
+    return { months, years };
+  };
+
+  const { months, years } = getFilterOptions();
+
+  // Sharing functions
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "info" = "info"
+  ) => {
+    const toast = document.createElement("div");
+    const bgColor =
+      type === "success"
+        ? "bg-green-600"
+        : type === "error"
+        ? "bg-red-600"
+        : "bg-blue-600";
+    toast.className = `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => document.body.removeChild(toast), 3000);
+  };
+
+  const handleShare = async (
+    platform: string,
+    session: PrayerFastingSession
+  ) => {
+    const sessionUrl = `${window.location.origin}/prayer-fasting/${
+      session.slug || session.id
+    }`;
+    const shareText = `🙏 Join us for ${session.title} - Monthly Prayer & Fasting Session\n\n${session.description}`;
+
+    try {
+      switch (platform) {
+        case "whatsapp":
+          window.open(
+            `https://wa.me/?text=${encodeURIComponent(
+              `${shareText}\n\n🔗 ${sessionUrl}`
+            )}`
+          );
+          break;
+        case "facebook":
+          window.open(
+            `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+              sessionUrl
+            )}&quote=${encodeURIComponent(shareText)}`
+          );
+          break;
+        case "twitter":
+          const twitterText =
+            shareText.length > 240
+              ? shareText.substring(0, 240) + "..."
+              : shareText;
+          window.open(
+            `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+              twitterText
+            )}&url=${encodeURIComponent(
+              sessionUrl
+            )}&hashtags=PrayerAndFasting,FishersOfMen`
+          );
+          break;
+        case "copy":
+          await navigator.clipboard.writeText(`${shareText}\n\n${sessionUrl}`);
+          showToast("Link copied to clipboard!", "success");
+          break;
+        case "native":
+          if (navigator.share) {
+            await navigator.share({
+              title: session.title,
+              text: shareText,
+              url: sessionUrl,
+            });
+          } else {
+            // Fallback to copy
+            await navigator.clipboard.writeText(
+              `${shareText}\n\n${sessionUrl}`
+            );
+            showToast("Link copied to clipboard!", "info");
+          }
+          break;
+        default:
+          await navigator.clipboard.writeText(`${shareText}\n\n${sessionUrl}`);
+          showToast("Link copied to clipboard!", "info");
+      }
+
+      // Track share event (optional)
+      if (session.id) {
+        fetch(`/api/prayer-fasting/${session.id}/share`, {
+          method: "POST",
+        }).catch(console.error);
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+      showToast("Failed to share. Please try again.", "error");
+    }
+  };
+
+  useEffect(() => {
+    loadAllSessions();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    filterSessions();
+  }, [selectedMonth, selectedYear, selectedStatus, allSessions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -89,7 +256,7 @@ export default function PrayerFastingPage() {
             <Heart className="h-12 w-12 text-blue-950 animate-pulse" />
           </div>
           <p className="text-blue-950 text-lg">
-            Loading Prayer & Fasting content...
+            Loading Prayer & Fasting sessions...
           </p>
         </div>
       </div>
@@ -108,278 +275,217 @@ export default function PrayerFastingPage() {
               </div>
             </div>
             <h1 className="text-5xl font-bold text-blue-950 mb-6">
-              Monthly Prayer & Fasting
+              Monthly Prayer & Fasting Sessions
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Join us for our monthly prayer and fasting during the last week of
-              every month. Experience powerful times of worship, word sharing,
-              and unified prayer as we seek God&apos;s heart together.
+              every month. Browse through all our sessions, watch previous
+              recordings, and be blessed by God&apos;s Word shared by our
+              community.
             </p>
           </div>
 
-          {/* Next Session Countdown */}
-          <div className="max-w-2xl mx-auto">
-            <Card className="bg-gradient-to-r from-blue-950 to-blue-800 text-white border-0 shadow-xl">
-              <CardContent className="p-8 text-center">
-                <h3 className="text-2xl font-bold mb-4">
-                  Next Prayer & Fasting
-                </h3>
-                <div className="flex items-center justify-center gap-4 mb-4">
-                  <Calendar className="h-6 w-6" />
-                  <span className="text-xl">
-                    {format(nextSession, "MMMM d, yyyy")}
-                  </span>
-                </div>
-                <p className="text-blue-100">
-                  Last week of {format(nextSession, "MMMM")} • 7 Days of Prayer
-                  & Fasting
-                </p>
-              </CardContent>
-            </Card>
+          {/* Filters */}
+          <div className="flex flex-wrap gap-4 justify-center mb-8">
+            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+              <SelectTrigger className="w-48 bg-white border-gray-200">
+                <SelectValue placeholder="Filter by Status" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border-gray-200 shadow-lg">
+                <SelectItem value="all">All Sessions</SelectItem>
+                <SelectItem value="current">Current</SelectItem>
+                <SelectItem value="upcoming">Upcoming</SelectItem>
+                <SelectItem value="archived">Archived</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedYear} onValueChange={setSelectedYear}>
+              <SelectTrigger className="w-32 bg-white border-gray-200">
+                <SelectValue placeholder="Year" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border-gray-200 shadow-lg">
+                <SelectItem value="all">All Years</SelectItem>
+                {years.map((year) => (
+                  <SelectItem key={year.value} value={year.value}>
+                    {year.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+              <SelectTrigger className="w-40 bg-white border-gray-200">
+                <SelectValue placeholder="Month" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border-gray-200 shadow-lg">
+                <SelectItem value="all">All Months</SelectItem>
+                {months.map((month) => (
+                  <SelectItem key={month.value} value={month.value}>
+                    {month.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Results Count */}
+          <div className="text-center mb-8">
+            <p className="text-gray-600">
+              Showing {filteredSessions.length} of {allSessions.length} sessions
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Current Session */}
-      {currentSession && (
-        <section className="py-16 px-4">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <Badge className="bg-green-100 text-green-800 text-sm font-medium px-3 py-1 mb-4">
-                Current Session
-              </Badge>
-              <h2 className="text-3xl font-bold text-blue-950 mb-4">
-                {currentSession.title}
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                {currentSession.description}
-              </p>
-            </div>
-
-            <div className="grid lg:grid-cols-2 gap-12 items-start">
-              {/* Video Player */}
-              <div>
-                <YouTubePlayer
-                  videoId={currentSession.youtubeVideoId}
-                  title={currentSession.title}
-                  className="mb-6"
-                />
-                <div className="flex flex-wrap gap-3 mb-6">
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Users className="h-4 w-4" />
-                    Speaker: {currentSession.speaker}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Calendar className="h-4 w-4" />
-                    {format(new Date(currentSession.date), "MMMM d, yyyy")}
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Clock className="h-4 w-4" />
-                    {currentSession.duration}
-                  </div>
-                </div>
-                <Button className="w-full bg-blue-950 hover:bg-blue-800">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share This Session
-                </Button>
+      {/* All Sessions Grid */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          {filteredSessions.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="text-gray-400 mb-4">
+                <Heart className="h-16 w-16 mx-auto" />
               </div>
-
-              {/* Content */}
-              <div>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <MessageCircle className="h-5 w-5" />
-                      Word Shared
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <RichTextViewer content={currentSession.content} />
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Upcoming Sessions */}
-      {upcomingSessions.length > 0 && (
-        <section className="py-16 px-4 bg-blue-50">
-          <div className="container mx-auto max-w-6xl">
-            <div className="text-center mb-12">
-              <Badge className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 mb-4">
-                Coming Soon
-              </Badge>
-              <h2 className="text-3xl font-bold text-blue-950 mb-4">
-                Upcoming Sessions
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Mark your calendar for these upcoming prayer and fasting
-                sessions.
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                No sessions found
+              </h3>
+              <p className="text-gray-500 mb-6">
+                Try adjusting your filters to see more sessions.
               </p>
+              <Button
+                onClick={() => {
+                  setSelectedMonth("all");
+                  setSelectedYear("all");
+                  setSelectedStatus("all");
+                }}
+                variant="outline"
+              >
+                Clear Filters
+              </Button>
             </div>
-
+          ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {upcomingSessions.map((session) => (
+              {filteredSessions.map((session) => (
                 <Card
                   key={session.id}
-                  className="group hover:shadow-lg transition-shadow"
+                  className="group hover:shadow-lg transition-shadow cursor-pointer"
                 >
+                  <Link href={`/prayer-fasting/${session.slug || session.id}`}>
+                    <div className="aspect-video bg-gray-100 rounded-t-lg relative overflow-hidden">
+                      <YouTubePlayer
+                        videoId={session.youtubeVideoId}
+                        title={session.title}
+                        thumbnail={true}
+                        className="w-full h-full rounded-t-lg"
+                      />
+                      <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                          <Play className="h-6 w-6 text-blue-950 ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+
                   <CardContent className="p-6">
-                    <Badge className="mb-3 text-xs bg-blue-100 text-blue-800">
-                      {format(new Date(session.date), "MMM d, yyyy")}
-                    </Badge>
-                    <h3 className="font-semibold text-blue-950 mb-2 line-clamp-2">
-                      {session.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-3">
-                      {session.description}
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge
+                        className={
+                          session.status === "current"
+                            ? "bg-green-100 text-green-800"
+                            : session.status === "upcoming"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }
+                      >
+                        {format(new Date(session.date), "MMM d, yyyy")}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {session.status.toLowerCase()}
+                      </Badge>
+                    </div>
+
+                    <Link
+                      href={`/prayer-fasting/${session.slug || session.id}`}
+                    >
+                      <h3 className="font-semibold text-blue-950 mb-2 line-clamp-2 hover:text-blue-700 transition-colors">
+                        {session.title}
+                      </h3>
+                    </Link>
+
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                      {session.excerpt || session.description}
                     </p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>Speaker: {session.speaker}</span>
-                      <span>{session.duration}</span>
+
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-gray-500">
+                        Speaker: {session.speaker} • {session.duration}
+                      </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Share2 className="h-3 w-3" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare("whatsapp", session);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <div className="flex items-center">
+                              <div className="w-4 h-4 mr-2 bg-green-500 rounded-sm flex items-center justify-center">
+                                <span className="text-white text-xs font-bold">
+                                  W
+                                </span>
+                              </div>
+                              WhatsApp
+                            </div>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare("facebook", session);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Facebook className="h-4 w-4 mr-2 text-blue-600" />
+                            Facebook
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare("twitter", session);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Twitter className="h-4 w-4 mr-2 text-blue-400" />
+                            Twitter
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShare("copy", session);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy Link
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* About Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-blue-950 mb-6">
-                What is Monthly Prayer & Fasting?
-              </h2>
-              <div className="space-y-4 text-gray-600">
-                <p>
-                  Every month during the last 7 days, Fishers of Men comes
-                  together for intensive prayer and fasting. This is a time
-                  where we seek God&apos;s face collectively and individually.
-                </p>
-                <p>
-                  Each session features a different member or leader sharing a
-                  word from the Lord, followed by corporate prayer where
-                  everyone can participate and lift up their hearts to God.
-                </p>
-                <p>
-                  These sessions are recorded and shared so that members who
-                  cannot attend live can still be blessed by the word shared and
-                  join in prayer from wherever they are.
-                </p>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <Card className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <Calendar className="h-6 w-6 text-blue-950" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-blue-950 mb-2">When</h3>
-                    <p className="text-gray-600 text-sm">
-                      Last 7 days of every month
-                    </p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Users className="h-6 w-6 text-green-700" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-blue-950 mb-2">Who</h3>
-                    <p className="text-gray-600 text-sm">
-                      All FOM members and friends are welcome
-                    </p>
-                  </div>
-                </div>
-              </Card>
-              <Card className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="p-2 bg-purple-100 rounded-lg">
-                    <Heart className="h-6 w-6 text-purple-700" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-blue-950 mb-2">
-                      Purpose
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      Seek God&apos;s face through prayer, fasting, and His Word
-                    </p>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Archive Sessions */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-blue-950 mb-4">
-              Previous Sessions
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Browse through our archive of prayer and fasting sessions to be
-              blessed by the words shared by our community.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {archiveSessions.map((session) => (
-              <Card
-                key={session.id}
-                className="group hover:shadow-lg transition-shadow"
-              >
-                <div className="aspect-video bg-gray-100 rounded-t-lg relative overflow-hidden">
-                  <YouTubePlayer
-                    videoId={session.youtubeVideoId}
-                    title={session.title}
-                    thumbnail={true}
-                    className="h-full"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                    <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="h-6 w-6 text-blue-950 ml-0.5" />
-                    </div>
-                  </div>
-                </div>
-                <CardContent className="p-6">
-                  <Badge className="mb-3 text-xs">
-                    {format(new Date(session.date), "MMM yyyy")}
-                  </Badge>
-                  <h3 className="font-semibold text-blue-950 mb-2 line-clamp-2">
-                    {session.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {session.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>Speaker: {session.speaker}</span>
-                    <span>{session.duration}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Button
-              variant="outline"
-              className="border-blue-950 text-blue-950 hover:bg-blue-950 hover:text-white"
-            >
-              View All Sessions
-            </Button>
-          </div>
+          )}
         </div>
       </section>
 

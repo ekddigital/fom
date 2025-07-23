@@ -240,9 +240,7 @@ model Post {
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
   // Relationships
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  reactions Reaction[] @relation("PostReactions")
-  comments  Comment[]  @relation("PostComments")
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("posts")
 }
@@ -284,9 +282,7 @@ model Sermon {
   updatedAt          DateTime @updatedAt @map("updated_at")
 
   // Relationships
-  creator   User       @relation(fields: [createdBy], references: [id], onDelete: Cascade)
-  reactions Reaction[] @relation("SermonReactions")
-  comments  Comment[]  @relation("SermonComments")
+  creator User @relation(fields: [createdBy], references: [id], onDelete: Cascade)
 
   @@map("sermons")
 }
@@ -371,8 +367,6 @@ model Event {
   // Relationships
   creator       User                @relation(fields: [createdBy], references: [id], onDelete: Cascade)
   registrations EventRegistration[]
-  reactions     Reaction[]          @relation("EventReactions")
-  comments      Comment[]           @relation("EventComments")
 
   @@map("events")
 }
@@ -466,19 +460,13 @@ model Message {
 model Reaction {
   id         String   @id @default(cuid())
   userId     String   @map("user_id")
-  targetType String   @map("target_type") // "post" | "prayer" | "comment" | "sermon" | "event"
+  targetType String   @map("target_type") // "post" | "prayer" | "comment" | "sermon" | "event" | "prayer-fasting"
   targetId   String   @map("target_id")
   emoji      String // "like" | "love" | "pray" | "amen" | "fire" | "smile" | "sad"
   createdAt  DateTime @default(now()) @map("created_at")
 
-  // Relationships with proper relation names to avoid conflicts
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post          Post?          @relation("PostReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_post_fkey")
-  sermon        Sermon?        @relation("SermonReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_sermon_fkey")
-  event         Event?         @relation("EventReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_event_fkey")
-  prayerRequest PrayerRequest? @relation("PrayerReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_prayer_fkey")
-  comment       Comment?       @relation("CommentReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_comment_fkey")
-  prayerFasting PrayerFasting? @relation("PrayerFastingReactions", fields: [targetId], references: [id], onDelete: Cascade, map: "reactions_prayer_fasting_fkey")
+  // Only maintain the user relationship as foreign key
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, targetType, targetId, emoji])
   @@map("reactions")
@@ -499,9 +487,7 @@ model PrayerRequest {
   updatedAt           DateTime       @updatedAt @map("updated_at")
 
   // Relationships
-  requester User       @relation(fields: [requesterId], references: [id], onDelete: Cascade)
-  reactions Reaction[] @relation("PrayerReactions")
-  comments  Comment[]  @relation("PrayerComments")
+  requester User @relation(fields: [requesterId], references: [id], onDelete: Cascade)
 
   @@map("prayer_requests")
 }
@@ -509,23 +495,17 @@ model PrayerRequest {
 model Comment {
   id            String   @id @default(cuid())
   userId        String   @map("user_id")
-  targetType    String   @map("target_type") // "post" | "prayer" | "event" | "sermon"
+  targetType    String   @map("target_type") // "post" | "prayer" | "event" | "sermon" | "prayer-fasting"
   targetId      String   @map("target_id")
   content       String   @db.Text
   parentId      String?  @map("parent_id") // For nested comments
   reactionCount Json?    @map("reaction_count") // Count of different reactions
   createdAt     DateTime @default(now()) @map("created_at")
 
-  // Relationships
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  parent        Comment?       @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies       Comment[]      @relation("CommentReplies")
-  reactions     Reaction[]     @relation("CommentReactions")
-  post          Post?          @relation("PostComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_post_fkey")
-  sermon        Sermon?        @relation("SermonComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_sermon_fkey")
-  event         Event?         @relation("EventComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_event_fkey")
-  prayerRequest PrayerRequest? @relation("PrayerComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_prayer_fkey")
-  prayerFasting PrayerFasting? @relation("PrayerFastingComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_prayer_fasting_fkey")
+  // Only maintain user and parent/child relationships as foreign keys
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
 
   @@map("comments")
 }
@@ -813,10 +793,6 @@ model PrayerFasting {
   // Relationships
   createdBy String @map("created_by")
   creator   User   @relation("PrayerFastingCreator", fields: [createdBy], references: [id], onDelete: Cascade)
-
-  // Social features
-  reactions Reaction[] @relation("PrayerFastingReactions")
-  comments  Comment[]  @relation("PrayerFastingComments")
 
   // Metadata
   createdAt DateTime @default(now()) @map("created_at")

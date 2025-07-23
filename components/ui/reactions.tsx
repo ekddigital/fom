@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Heart, Flame, Smile, Hand, Check } from "lucide-react";
@@ -165,6 +165,13 @@ export const useReactions = (targetType: string, targetId: string) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchReactions = useCallback(async () => {
+    // Don't fetch if targetId is empty
+    if (!targetId || targetId.trim() === "") {
+      setReactions([]);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -183,6 +190,12 @@ export const useReactions = (targetType: string, targetId: string) => {
 
   const addReaction = useCallback(
     async (emoji: string) => {
+      // Don't add reaction if targetId is empty
+      if (!targetId || targetId.trim() === "") {
+        console.error("Cannot add reaction: targetId is empty");
+        throw new Error("Target ID is required");
+      }
+
       try {
         const response = await fetch("/api/reactions", {
           method: "POST",
@@ -199,6 +212,8 @@ export const useReactions = (targetType: string, targetId: string) => {
         if (response.ok) {
           const data = await response.json();
           setReactions(data.reactions || []);
+        } else {
+          throw new Error("Failed to add reaction");
         }
       } catch (error) {
         console.error("Failed to add reaction:", error);
@@ -207,6 +222,10 @@ export const useReactions = (targetType: string, targetId: string) => {
     },
     [targetType, targetId]
   );
+
+  useEffect(() => {
+    fetchReactions();
+  }, [fetchReactions]);
 
   return {
     reactions,

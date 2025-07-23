@@ -33,7 +33,6 @@ export async function GET(request: NextRequest) {
         },
         _count: {
           select: {
-            reactions: true,
             replies: true,
           },
         },
@@ -130,7 +129,6 @@ export async function POST(request: NextRequest) {
         },
         _count: {
           select: {
-            reactions: true,
             replies: true,
           },
         },

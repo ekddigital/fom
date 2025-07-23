@@ -107,7 +107,7 @@ export const YouTubePlayer = ({
       <div
         className={cn(
           aspectRatioClass,
-          "relative bg-gray-900 rounded-lg overflow-hidden cursor-pointer group",
+          "relative bg-gray-900 overflow-hidden cursor-pointer group w-full h-full",
           className
         )}
         onClick={handleThumbnailClick}

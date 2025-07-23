@@ -41,6 +41,7 @@ export default function PrayerFastingPostPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Only initialize reactions and comments hooks when session is loaded
   const { reactions, addReaction } = useReactions(
     "prayer-fasting",
     session?.id || ""
