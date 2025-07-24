@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/use-auth";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -49,29 +49,41 @@ export default function DashProfilePage() {
   const [loading, setLoading] = useState(true);
   const [isEditingInterests, setIsEditingInterests] = useState(false);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchProfileData = useCallback(async () => {
+  const refreshProfile = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
       const response = await fetch("/api/profile");
       if (response.ok) {
         const data = await response.json();
         setProfileData(data.profile);
         setSelectedInterests(data.profile.ministryInterests || []);
+      } else {
+        console.error(
+          "Profile API error:",
+          response.status,
+          response.statusText
+        );
+        setError("Failed to load profile data");
+        toast.error("Failed to load profile data");
       }
     } catch (error) {
       console.error("Failed to fetch profile data:", error);
+      setError("Failed to load profile data");
       toast.error("Failed to load profile data");
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    if (user) {
-      fetchProfileData();
+    if (user?.id) {
+      refreshProfile();
     }
-  }, [user, fetchProfileData]);
+  }, [user?.id]);
 
   const handleInterestToggle = (interest: string) => {
     setSelectedInterests((prev) =>
@@ -96,7 +108,7 @@ export default function DashProfilePage() {
       if (response.ok) {
         toast.success("Ministry interests updated successfully");
         setIsEditingInterests(false);
-        fetchProfileData();
+        refreshProfile();
       } else {
         toast.error("Failed to update interests");
       }
@@ -132,18 +144,24 @@ export default function DashProfilePage() {
     );
   }
 
-  if (!profileData) {
+  if (error || (!loading && !profileData)) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <h2 className="text-xl font-semibold text-red-600">Error</h2>
-          <p className="text-gray-600">Failed to load profile data.</p>
-          <Button onClick={fetchProfileData} className="mt-4">
+          <p className="text-gray-600">
+            {error || "Failed to load profile data."}
+          </p>
+          <Button onClick={refreshProfile} className="mt-4">
             Try Again
           </Button>
         </div>
       </div>
     );
+  }
+
+  if (!profileData) {
+    return null; // Should not happen due to loading check above
   }
 
   return (
