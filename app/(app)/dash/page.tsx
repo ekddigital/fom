@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@/lib/hooks/use-auth";
+import { useEffect, useState, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -23,8 +24,83 @@ import {
   Shield,
 } from "lucide-react";
 
+interface DashboardStats {
+  prayerRequests: {
+    value: string;
+    subtitle: string;
+    trend: string;
+  };
+  certificates: {
+    value: string;
+    subtitle: string;
+    trend: string;
+  };
+  community: {
+    value: string;
+    subtitle: string;
+    trend: string;
+  };
+  engagement: {
+    value: string;
+    subtitle: string;
+    trend: string;
+  };
+}
+
+interface RecentActivity {
+  prayerRequests: Array<{
+    title: string;
+    time: string;
+    prayers: number;
+  }>;
+  events: Array<{
+    title: string;
+    date: string;
+    location: string;
+  }>;
+}
+
 export default function DashboardPage() {
   const { user, displayName, initials, role } = useAuth();
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats | null>(
+    null
+  );
+  const [recentActivity, setRecentActivity] = useState<RecentActivity | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      // Fetch stats and recent activities in parallel
+      const [statsResponse, activitiesResponse] = await Promise.all([
+        fetch("/api/dashboard/stats"),
+        fetch("/api/dashboard/recent-activities"),
+      ]);
+
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setDashboardStats(statsData.stats);
+      }
+
+      if (activitiesResponse.ok) {
+        const activitiesData = await activitiesResponse.json();
+        setRecentActivity(activitiesData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user, fetchDashboardData]);
 
   if (!user) {
     return (
@@ -85,36 +161,69 @@ export default function DashboardPage() {
         ]
       : baseQuickActions;
 
-  const stats = [
-    {
-      title: "Prayer Requests",
-      value: "12",
-      subtitle: "Active requests",
-      icon: Heart,
-      trend: "+2 this week",
-    },
-    {
-      title: "Certificates",
-      value: user.certificateSharingEnabled ? "3" : "Private",
-      subtitle: "Earned achievements",
-      icon: Award,
-      trend: "1 recent",
-    },
-    {
-      title: "Community",
-      value: "247",
-      subtitle: "Connected members",
-      icon: Users,
-      trend: "+15 this month",
-    },
-    {
-      title: "Growth",
-      value: "8.2%",
-      subtitle: "Ministry engagement",
-      icon: TrendingUp,
-      trend: "↗ Increasing",
-    },
-  ];
+  // Create displayable stats array from API data or fallback
+  const statsArray = dashboardStats
+    ? [
+        {
+          title: "Prayer Requests",
+          value: dashboardStats.prayerRequests.value,
+          subtitle: dashboardStats.prayerRequests.subtitle,
+          icon: Heart,
+          trend: dashboardStats.prayerRequests.trend,
+        },
+        {
+          title: "Certificates",
+          value: dashboardStats.certificates.value,
+          subtitle: dashboardStats.certificates.subtitle,
+          icon: Award,
+          trend: dashboardStats.certificates.trend,
+        },
+        {
+          title: "Community",
+          value: dashboardStats.community.value,
+          subtitle: dashboardStats.community.subtitle,
+          icon: Users,
+          trend: dashboardStats.community.trend,
+        },
+        {
+          title: "Growth",
+          value: dashboardStats.engagement.value,
+          subtitle: dashboardStats.engagement.subtitle,
+          icon: TrendingUp,
+          trend: dashboardStats.engagement.trend,
+        },
+      ]
+    : [
+        // Fallback stats while loading
+        {
+          title: "Prayer Requests",
+          value: "...",
+          subtitle: "Loading...",
+          icon: Heart,
+          trend: "...",
+        },
+        {
+          title: "Certificates",
+          value: "...",
+          subtitle: "Loading...",
+          icon: Award,
+          trend: "...",
+        },
+        {
+          title: "Community",
+          value: "...",
+          subtitle: "Loading...",
+          icon: Users,
+          trend: "...",
+        },
+        {
+          title: "Growth",
+          value: "...",
+          subtitle: "Loading...",
+          icon: TrendingUp,
+          trend: "...",
+        },
+      ];
 
   return (
     <div className="space-y-6">
@@ -157,7 +266,7 @@ export default function DashboardPage() {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
+        {statsArray.map((stat, index) => (
           <Card key={index}>
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -221,34 +330,41 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[
-                {
-                  title: "Healing for Sarah's mother",
-                  time: "2 hours ago",
-                  prayers: 12,
-                },
-                {
-                  title: "Safe travels for mission trip",
-                  time: "5 hours ago",
-                  prayers: 8,
-                },
-                {
-                  title: "Wisdom for church leadership",
-                  time: "1 day ago",
-                  prayers: 15,
-                },
-              ].map((request, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between py-2 border-b last:border-b-0"
-                >
-                  <div>
-                    <p className="font-medium text-sm">{request.title}</p>
-                    <p className="text-xs text-gray-500">{request.time}</p>
+              {loading ? (
+                // Loading skeleton
+                [1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between py-2 border-b last:border-b-0"
+                  >
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
+                      <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2"></div>
+                    </div>
+                    <div className="h-6 w-16 bg-gray-200 rounded animate-pulse"></div>
                   </div>
-                  <Badge variant="secondary">{request.prayers} prayers</Badge>
+                ))
+              ) : recentActivity?.prayerRequests?.length ? (
+                recentActivity.prayerRequests.map((request, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between py-2 border-b last:border-b-0"
+                  >
+                    <div>
+                      <p className="font-medium text-sm">{request.title}</p>
+                      <p className="text-xs text-gray-500">{request.time}</p>
+                    </div>
+                    <Badge variant="secondary">{request.prayers} prayers</Badge>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500">
+                  <p className="text-sm">No recent prayer requests</p>
+                  <p className="text-xs">
+                    Be the first to share a prayer request
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
             <Button variant="outline" className="w-full mt-4">
               View All Prayer Requests
@@ -265,35 +381,43 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {[
-                {
-                  title: "Sunday Service",
-                  date: "This Sunday, 10:00 AM",
-                  location: "Main Sanctuary",
-                },
-                {
-                  title: "Bible Study",
-                  date: "Wednesday, 7:00 PM",
-                  location: "Fellowship Hall",
-                },
-                {
-                  title: "Youth Meeting",
-                  date: "Friday, 6:30 PM",
-                  location: "Youth Center",
-                },
-              ].map((event, index) => (
-                <div
-                  key={index}
-                  className="flex items-center space-x-3 py-2 border-b last:border-b-0"
-                >
-                  <div className="w-2 h-2 bg-fom-primary rounded-full"></div>
-                  <div className="flex-1">
-                    <p className="font-medium text-sm">{event.title}</p>
-                    <p className="text-xs text-gray-500">{event.date}</p>
-                    <p className="text-xs text-gray-400">{event.location}</p>
+              {loading ? (
+                // Loading skeleton
+                [1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="flex items-center space-x-3 py-2 border-b last:border-b-0"
+                  >
+                    <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse"></div>
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
+                      <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2 mt-1"></div>
+                    </div>
                   </div>
+                ))
+              ) : recentActivity?.events?.length ? (
+                recentActivity.events.map((event, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center space-x-3 py-2 border-b last:border-b-0"
+                  >
+                    <div className="w-2 h-2 bg-fom-primary rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="font-medium text-sm">{event.title}</p>
+                      <p className="text-xs text-gray-500">{event.date}</p>
+                      <p className="text-xs text-gray-400">{event.location}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-4 text-gray-500">
+                  <p className="text-sm">No upcoming events</p>
+                  <p className="text-xs">
+                    Check back later for ministry events
+                  </p>
                 </div>
-              ))}
+              )}
             </div>
             <Button variant="outline" className="w-full mt-4">
               View All Events

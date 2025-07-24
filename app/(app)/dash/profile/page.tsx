@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useAuth } from "@/lib/hooks/use-auth";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,46 +11,67 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  User,
-  Settings,
-  BookOpen,
-  Award,
-  Edit,
-  Camera,
-  MapPin,
-  Calendar,
-  Save,
-  X,
-} from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User, BookOpen, Edit, Camera, Calendar, Save, X } from "lucide-react";
 import { MINISTRY_INTERESTS } from "@/lib/types/auth";
+import { toast } from "sonner";
+
+interface ProfileData {
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  avatarUrl?: string;
+  role: string;
+  displayNamePreference: string;
+  profileVisibility: string;
+  ministryInterests: string[];
+  certificateSharingEnabled: boolean;
+  joinedDate: string;
+  stats: {
+    completedCourses: number;
+    upcomingEvents: number;
+    prayerRequests: number;
+    posts: number;
+  };
+  recentActivity: Array<{
+    id: string;
+    type: string;
+    title: string;
+    date: string;
+    icon: string;
+  }>;
+}
 
 export default function DashProfilePage() {
+  const { user } = useAuth();
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [isEditingInterests, setIsEditingInterests] = useState(false);
-  const [selectedInterests, setSelectedInterests] = useState([
-    "Youth Ministry",
-    "Worship Team",
-    "Community Outreach",
-  ]);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
-  const userProfile = {
-    firstName: "John",
-    lastName: "Smith",
-    username: "john.smith",
-    email: "john.smith@email.com",
-    phone: "+1 (555) 123-4567",
-    location: "Seattle, WA",
-    joinedDate: "January 2024",
-    role: "Member",
-    displayNamePreference: "Full Name",
-    profileVisibility: "Members Only",
-    bio: "Passionate about serving God and growing in faith. Love hiking, reading theology, and volunteering with youth ministry.",
-    ministryInterests: selectedInterests,
-    spiritualGifts: ["Teaching", "Encouragement", "Leadership"],
-    completedCourses: 5,
-    upcomingEvents: 3,
-    prayerRequests: 2,
-  };
+  const fetchProfileData = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/profile");
+      if (response.ok) {
+        const data = await response.json();
+        setProfileData(data.profile);
+        setSelectedInterests(data.profile.ministryInterests || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile data:", error);
+      toast.error("Failed to load profile data");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchProfileData();
+    }
+  }, [user, fetchProfileData]);
 
   const handleInterestToggle = (interest: string) => {
     setSelectedInterests((prev) =>
@@ -59,35 +81,70 @@ export default function DashProfilePage() {
     );
   };
 
-  const handleSaveInterests = () => {
-    setIsEditingInterests(false);
-    // Here you would typically save to the backend
-    console.log("Saving interests:", selectedInterests);
+  const handleSaveInterests = async () => {
+    try {
+      const response = await fetch("/api/profile/interests", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ministryInterests: selectedInterests,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Ministry interests updated successfully");
+        setIsEditingInterests(false);
+        fetchProfileData();
+      } else {
+        toast.error("Failed to update interests");
+      }
+    } catch (error) {
+      console.error("Failed to save interests:", error);
+      toast.error("Failed to update interests");
+    }
   };
 
-  const recentActivity = [
-    {
-      id: 1,
-      type: "course",
-      title: "Completed 'Introduction to Theology'",
-      date: "2 days ago",
-      icon: BookOpen,
-    },
-    {
-      id: 2,
-      type: "event",
-      title: "Registered for Community Picnic",
-      date: "5 days ago",
-      icon: Calendar,
-    },
-    {
-      id: 3,
-      type: "ministry",
-      title: "Joined Youth Ministry Team",
-      date: "1 week ago",
-      icon: User,
-    },
-  ];
+  const getActivityIcon = (iconName: string) => {
+    switch (iconName) {
+      case "BookOpen":
+        return BookOpen;
+      case "Calendar":
+        return Calendar;
+      case "User":
+        return User;
+      default:
+        return BookOpen;
+    }
+  };
+
+  if (!user || loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900">Loading...</h2>
+          <p className="text-gray-600">
+            Please wait while we load your profile.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profileData) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-red-600">Error</h2>
+          <p className="text-gray-600">Failed to load profile data.</p>
+          <Button onClick={fetchProfileData} className="mt-4">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -111,9 +168,16 @@ export default function DashProfilePage() {
           <Card>
             <CardHeader className="text-center">
               <div className="relative mx-auto mb-4">
-                <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                  <User className="w-12 h-12 text-blue-950" />
-                </div>
+                <Avatar className="w-24 h-24 mx-auto">
+                  <AvatarImage
+                    src={profileData.avatarUrl}
+                    alt={profileData.username}
+                  />
+                  <AvatarFallback className="bg-blue-100 text-blue-950 text-2xl">
+                    {profileData.firstName.charAt(0)}
+                    {profileData.lastName.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
                 <Button
                   size="sm"
                   className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0"
@@ -122,278 +186,227 @@ export default function DashProfilePage() {
                 </Button>
               </div>
               <CardTitle className="text-xl">
-                {userProfile.firstName} {userProfile.lastName}
+                {profileData.firstName} {profileData.lastName}
               </CardTitle>
-              <CardDescription>@{userProfile.username}</CardDescription>
+              <CardDescription>@{profileData.username}</CardDescription>
               <Badge className="mt-2 bg-blue-100 text-blue-800">
-                {userProfile.role}
+                {profileData.role}
               </Badge>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-sm">
-                <div className="flex items-center text-gray-600 mb-2">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  {userProfile.location}
-                </div>
                 <div className="flex items-center text-gray-600">
                   <Calendar className="w-4 h-4 mr-2" />
-                  Member since {userProfile.joinedDate}
+                  Member since {profileData.joinedDate}
                 </div>
               </div>
 
-              {userProfile.bio && (
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">About</h4>
-                  <p className="text-sm text-gray-600">{userProfile.bio}</p>
-                </div>
-              )}
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-gray-900">
-                    Ministry Interests
-                  </h4>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsEditingInterests(!isEditingInterests)}
-                    className="text-xs"
-                  >
-                    {isEditingInterests ? (
-                      <>
-                        <X className="w-3 h-3 mr-1" />
-                        Cancel
-                      </>
-                    ) : (
-                      <>
-                        <Edit className="w-3 h-3 mr-1" />
-                        Edit
-                      </>
-                    )}
-                  </Button>
-                </div>
-
-                {isEditingInterests ? (
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-gray-50 max-h-32 overflow-y-auto">
-                      {MINISTRY_INTERESTS.map((interest) => (
-                        <Badge
-                          key={interest}
-                          variant={
-                            selectedInterests.includes(interest)
-                              ? "default"
-                              : "outline"
-                          }
-                          className={`
-                            cursor-pointer transition-all duration-200 select-none text-xs
-                            ${
-                              selectedInterests.includes(interest)
-                                ? "bg-blue-950 text-white hover:bg-blue-800 border-blue-950 shadow-sm"
-                                : "bg-white text-gray-700 hover:bg-blue-950/10 hover:border-blue-950/50 border-gray-300"
-                            }
-                          `}
-                          onClick={() => handleInterestToggle(interest)}
-                        >
-                          {interest}
-                        </Badge>
-                      ))}
-                    </div>
-                    <div className="flex justify-end">
-                      <Button
-                        size="sm"
-                        onClick={handleSaveInterests}
-                        className="bg-blue-950 hover:bg-blue-800 text-gray-100"
-                      >
-                        <Save className="w-3 h-3 mr-1" />
-                        Save Changes
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {userProfile.ministryInterests.map((interest, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {interest}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <h4 className="font-medium text-gray-900 mb-2">
-                  Spiritual Gifts
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {userProfile.spiritualGifts.map((gift, index) => (
-                    <Badge
-                      key={index}
-                      variant="outline"
-                      className="text-xs bg-green-50 text-green-700"
-                    >
-                      {gift}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Stats */}
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="text-lg">My Stats</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 text-center">
-                <div>
+              {/* Stats */}
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="text-center">
                   <div className="text-2xl font-bold text-blue-950">
-                    {userProfile.completedCourses}
+                    {profileData.stats.completedCourses}
                   </div>
                   <div className="text-xs text-gray-600">Courses</div>
                 </div>
-                <div>
+                <div className="text-center">
                   <div className="text-2xl font-bold text-blue-950">
-                    {userProfile.upcomingEvents}
+                    {profileData.stats.prayerRequests}
+                  </div>
+                  <div className="text-xs text-gray-600">Prayers</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-950">
+                    {profileData.stats.upcomingEvents}
                   </div>
                   <div className="text-xs text-gray-600">Events</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-950">
+                    {profileData.stats.posts}
+                  </div>
+                  <div className="text-xs text-gray-600">Posts</div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Profile Details & Settings */}
+        {/* Main Profile Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Contact Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <User className="w-5 h-5 mr-2" />
-                Contact Information
-              </CardTitle>
+              <CardTitle>Contact Information</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-gray-700">
-                    Email Address
+                    Email
                   </label>
-                  <p className="text-gray-900">{userProfile.email}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Phone Number
-                  </label>
-                  <p className="text-gray-900">{userProfile.phone}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Location
-                  </label>
-                  <p className="text-gray-900">{userProfile.location}</p>
+                  <p className="text-gray-900">{profileData.email}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-gray-700">
                     Username
                   </label>
-                  <p className="text-gray-900">@{userProfile.username}</p>
+                  <p className="text-gray-900">@{profileData.username}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Privacy Settings */}
+          {/* Ministry Interests */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <Settings className="w-5 h-5 mr-2" />
-                Privacy & Display Settings
-              </CardTitle>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <div>
+                <CardTitle>Ministry Interests</CardTitle>
+                <CardDescription>
+                  Select areas where you&apos;d like to serve or grow
+                </CardDescription>
+              </div>
+              {!isEditingInterests ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditingInterests(true)}
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button size="sm" onClick={handleSaveInterests}>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setIsEditingInterests(false);
+                      setSelectedInterests(profileData.ministryInterests);
+                    }}
+                  >
+                    <X className="w-4 h-4 mr-2" />
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Display Name Preference
-                  </label>
-                  <p className="text-gray-900 mb-2">
-                    {userProfile.displayNamePreference}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    How your name appears to other members
-                  </p>
+              {isEditingInterests ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {MINISTRY_INTERESTS.map((interest) => (
+                    <label
+                      key={interest}
+                      className="flex items-center space-x-2 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedInterests.includes(interest)}
+                        onChange={() => handleInterestToggle(interest)}
+                        className="rounded border-gray-300"
+                      />
+                      <span className="text-sm">{interest}</span>
+                    </label>
+                  ))}
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">
-                    Profile Visibility
-                  </label>
-                  <p className="text-gray-900 mb-2">
-                    {userProfile.profileVisibility}
-                  </p>
-                  <p className="text-xs text-gray-500">
-                    Who can see your profile information
-                  </p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {profileData.ministryInterests.length > 0 ? (
+                    profileData.ministryInterests.map((interest) => (
+                      <Badge key={interest} variant="secondary">
+                        {interest}
+                      </Badge>
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-sm">
+                      No ministry interests selected yet.
+                    </p>
+                  )}
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 
           {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Award className="w-5 h-5 mr-2" />
-                Recent Activity
-              </CardTitle>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>
+                Your latest actions on the platform
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {recentActivity.map((activity) => {
-                  const IconComponent = activity.icon;
-                  return (
-                    <div
-                      key={activity.id}
-                      className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50"
-                    >
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="w-4 h-4 text-blue-950" />
+              {profileData.recentActivity.length > 0 ? (
+                <div className="space-y-4">
+                  {profileData.recentActivity.map((activity) => {
+                    const IconComponent = getActivityIcon(activity.icon);
+                    return (
+                      <div
+                        key={activity.id}
+                        className="flex items-start space-x-3 p-3 border border-gray-100 rounded-lg"
+                      >
+                        <div className="p-2 bg-blue-50 rounded-lg">
+                          <IconComponent className="w-4 h-4 text-blue-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900">
+                            {activity.title}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {activity.date}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">
-                          {activity.title}
-                        </p>
-                        <p className="text-xs text-gray-500">{activity.date}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <Button variant="outline" className="w-full mt-4">
-                View All Activity
-              </Button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">No recent activity yet.</p>
+              )}
             </CardContent>
           </Card>
 
-          {/* Account Actions */}
+          {/* Settings */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Management</CardTitle>
+              <CardTitle>Privacy Settings</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <Button variant="outline" className="w-full justify-start">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Account Settings
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Learning History
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <Award className="w-4 h-4 mr-2" />
-                  Certificates & Achievements
-                </Button>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium">
+                    Profile Visibility
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    Control who can see your profile
+                  </p>
+                </div>
+                <Badge variant="outline">{profileData.profileVisibility}</Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-sm font-medium">
+                    Certificate Sharing
+                  </label>
+                  <p className="text-xs text-gray-500">
+                    Allow others to see your earned certificates
+                  </p>
+                </div>
+                <Badge
+                  variant={
+                    profileData.certificateSharingEnabled
+                      ? "default"
+                      : "secondary"
+                  }
+                >
+                  {profileData.certificateSharingEnabled
+                    ? "Enabled"
+                    : "Disabled"}
+                </Badge>
               </div>
             </CardContent>
           </Card>
