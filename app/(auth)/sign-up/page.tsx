@@ -501,7 +501,7 @@ export default function SignUpPage() {
             <p className="text-xs text-gray-600">
               Select areas where you&apos;d like to serve or learn more about:
             </p>
-            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto">
+            <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-3 border rounded-md bg-gray-50">
               {MINISTRY_INTERESTS.map((interest) => (
                 <Badge
                   key={interest}
@@ -510,7 +510,14 @@ export default function SignUpPage() {
                       ? "default"
                       : "outline"
                   }
-                  className="cursor-pointer hover:bg-fom-primary/10 transition-colors"
+                  className={`
+                    cursor-pointer transition-all duration-200 select-none
+                    ${
+                      formData.ministryInterests.includes(interest)
+                        ? "bg-fom-primary text-white hover:bg-fom-primary/90 border-fom-primary shadow-sm"
+                        : "bg-white text-gray-700 hover:bg-fom-primary/10 hover:border-fom-primary/50 border-gray-300"
+                    }
+                  `}
                   onClick={() => handleMinistryInterestToggle(interest)}
                 >
                   {interest}
@@ -521,7 +528,7 @@ export default function SignUpPage() {
 
           <Button
             type="submit"
-            className="w-full h-11 text-base bg-fom-primary hover:bg-fom-primary/90"
+            className="w-full h-11 text-base bg-fom-primary text-gray-100 hover:bg-fom-primary/90"
             disabled={
               isLoading ||
               Boolean(formData.username && usernameStatus === "taken")

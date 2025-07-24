@@ -51,6 +51,7 @@ function SignInForm() {
   }
 
   const error = searchParams?.get("error");
+  const registered = searchParams?.get("registered");
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -122,6 +123,33 @@ function SignInForm() {
       </CardHeader>
 
       <CardContent className="space-y-6">
+        {/* Registration Success Message */}
+        {registered && (
+          <Alert className="border-green-200 bg-green-50">
+            <Mail className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              <div className="space-y-2">
+                <p className="font-medium">
+                  Onboarding, account creation initiated!
+                </p>
+                <p className="text-sm">
+                  Please check your email for a verification link. You&apos;ll
+                  need to verify your email address before you can sign in.
+                </p>
+                <p className="text-sm">
+                  Don&apos;t see the email? Check your spam folder or{" "}
+                  <Link
+                    href="/auth/resend-verification"
+                    className="text-green-700 hover:underline font-medium"
+                  >
+                    resend verification email
+                  </Link>
+                </p>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Error Display */}
         {error && (
           <Alert variant="destructive">
@@ -270,7 +298,7 @@ function SignInForm() {
 
           <Button
             type="submit"
-            className="w-full h-11 text-base bg-fom-primary hover:bg-fom-primary/90"
+            className="w-full h-11 text-base bg-fom-primary text-gray-100 hover:bg-fom-primary/90"
             disabled={isLoading}
           >
             {isLoading ? (

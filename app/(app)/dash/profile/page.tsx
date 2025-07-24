@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,9 +19,19 @@ import {
   Camera,
   MapPin,
   Calendar,
+  Save,
+  X,
 } from "lucide-react";
+import { MINISTRY_INTERESTS } from "@/lib/types/auth";
 
 export default function DashProfilePage() {
+  const [isEditingInterests, setIsEditingInterests] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState([
+    "Youth Ministry",
+    "Worship Team",
+    "Community Outreach",
+  ]);
+
   const userProfile = {
     firstName: "John",
     lastName: "Smith",
@@ -31,11 +44,25 @@ export default function DashProfilePage() {
     displayNamePreference: "Full Name",
     profileVisibility: "Members Only",
     bio: "Passionate about serving God and growing in faith. Love hiking, reading theology, and volunteering with youth ministry.",
-    ministryInterests: ["Youth Ministry", "Worship Team", "Community Outreach"],
+    ministryInterests: selectedInterests,
     spiritualGifts: ["Teaching", "Encouragement", "Leadership"],
     completedCourses: 5,
     upcomingEvents: 3,
     prayerRequests: 2,
+  };
+
+  const handleInterestToggle = (interest: string) => {
+    setSelectedInterests((prev) =>
+      prev.includes(interest)
+        ? prev.filter((i) => i !== interest)
+        : [...prev, interest]
+    );
+  };
+
+  const handleSaveInterests = () => {
+    setIsEditingInterests(false);
+    // Here you would typically save to the backend
+    console.log("Saving interests:", selectedInterests);
   };
 
   const recentActivity = [
@@ -72,7 +99,7 @@ export default function DashProfilePage() {
             Manage your personal information and preferences
           </p>
         </div>
-        <Button className="bg-blue-950 hover:bg-blue-800">
+        <Button className="bg-blue-950 hover:bg-blue-800 text-gray-100">
           <Edit className="w-4 h-4 mr-2" />
           Edit Profile
         </Button>
@@ -122,16 +149,75 @@ export default function DashProfilePage() {
               )}
 
               <div>
-                <h4 className="font-medium text-gray-900 mb-2">
-                  Ministry Interests
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {userProfile.ministryInterests.map((interest, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      {interest}
-                    </Badge>
-                  ))}
+                <div className="flex items-center justify-between mb-2">
+                  <h4 className="font-medium text-gray-900">
+                    Ministry Interests
+                  </h4>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsEditingInterests(!isEditingInterests)}
+                    className="text-xs"
+                  >
+                    {isEditingInterests ? (
+                      <>
+                        <X className="w-3 h-3 mr-1" />
+                        Cancel
+                      </>
+                    ) : (
+                      <>
+                        <Edit className="w-3 h-3 mr-1" />
+                        Edit
+                      </>
+                    )}
+                  </Button>
                 </div>
+
+                {isEditingInterests ? (
+                  <div className="space-y-3">
+                    <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-gray-50 max-h-32 overflow-y-auto">
+                      {MINISTRY_INTERESTS.map((interest) => (
+                        <Badge
+                          key={interest}
+                          variant={
+                            selectedInterests.includes(interest)
+                              ? "default"
+                              : "outline"
+                          }
+                          className={`
+                            cursor-pointer transition-all duration-200 select-none text-xs
+                            ${
+                              selectedInterests.includes(interest)
+                                ? "bg-blue-950 text-white hover:bg-blue-800 border-blue-950 shadow-sm"
+                                : "bg-white text-gray-700 hover:bg-blue-950/10 hover:border-blue-950/50 border-gray-300"
+                            }
+                          `}
+                          onClick={() => handleInterestToggle(interest)}
+                        >
+                          {interest}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="flex justify-end">
+                      <Button
+                        size="sm"
+                        onClick={handleSaveInterests}
+                        className="bg-blue-950 hover:bg-blue-800 text-gray-100"
+                      >
+                        <Save className="w-3 h-3 mr-1" />
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {userProfile.ministryInterests.map((interest, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {interest}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
