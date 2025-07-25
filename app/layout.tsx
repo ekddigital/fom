@@ -23,20 +23,43 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Fishers of Men" }],
   creator: "Fishers of Men",
+  metadataBase: new URL("https://www.fomjesus.org"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://fishersofmen.org",
+    url: "https://www.fomjesus.org",
     title: "Fishers of Men - Bringing Jesus to the World",
     description:
       "Join us in spreading the love of Jesus Christ through ministry, missions, and community engagement.",
     siteName: "Fishers of Men",
+    images: [
+      {
+        url: "/banner.png",
+        width: 1200,
+        height: 630,
+        alt: "Fishers of Men - Bringing Jesus to the World",
+      },
+      {
+        url: "/Logo.png",
+        width: 400,
+        height: 400,
+        alt: "Fishers of Men Logo",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Fishers of Men - Bringing Jesus to the World",
     description:
       "Join us in spreading the love of Jesus Christ through ministry, missions, and community engagement.",
+    images: ["/banner.png"],
+    creator: "@fomjesus",
+    site: "@fomjesus",
+  },
+  icons: {
+    icon: "/Logo.png",
+    shortcut: "/favicon.ico",
+    apple: "/Logo.png",
   },
   robots: {
     index: true,
