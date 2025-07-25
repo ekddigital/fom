@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -24,6 +25,8 @@ import {
   Plus,
   Edit,
   Trash2,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -41,6 +44,7 @@ interface PrayerFastingSession {
   status: "UPCOMING" | "CURRENT" | "ARCHIVED";
   slug: string;
   supportingVerses?: string; // Optional field for supporting verses
+  isPublished?: boolean; // Visibility toggle field
   createdAt: string;
   updatedAt: string;
 }
@@ -64,6 +68,7 @@ export default function AdminPrayerFastingPage() {
     status: "UPCOMING" as "UPCOMING" | "CURRENT" | "ARCHIVED",
     slug: "",
     supportingVerses: "", // New field for supporting verses
+    isPublished: true, // New field for visibility toggle
   });
 
   const fetchSessions = async () => {
@@ -181,11 +186,11 @@ export default function AdminPrayerFastingPage() {
     fetchSessions();
   }, []);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     // Auto-generate slug from title
-    if (field === "title") {
+    if (field === "title" && typeof value === "string") {
       const slug = value
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, "")
@@ -202,7 +207,7 @@ export default function AdminPrayerFastingPage() {
     }
 
     // Auto-generate excerpt when supporting verses change
-    if (field === "supportingVerses") {
+    if (field === "supportingVerses" && typeof value === "string") {
       const excerpt = generateExcerptFromTheme(formData.title, value);
       setFormData((prev) => ({ ...prev, excerpt }));
     }
@@ -221,6 +226,7 @@ export default function AdminPrayerFastingPage() {
       status: "UPCOMING" as "UPCOMING" | "CURRENT" | "ARCHIVED",
       slug: "",
       supportingVerses: "",
+      isPublished: true,
     });
     setEditingSession(null);
     setIsCreating(false);
@@ -239,6 +245,7 @@ export default function AdminPrayerFastingPage() {
       status: session.status,
       slug: session.slug,
       supportingVerses: session.supportingVerses || "",
+      isPublished: session.isPublished ?? true,
     });
     setEditingSession(session);
     setIsCreating(true);
@@ -304,6 +311,42 @@ export default function AdminPrayerFastingPage() {
       }
     } catch (error) {
       console.error("Error deleting session:", error);
+    }
+  };
+
+  const handleTogglePublish = async (id: string, currentStatus: boolean) => {
+    try {
+      const session = sessions.find((s) => s.id === id);
+      if (!session) return;
+
+      const response = await fetch(`/api/admin/prayer-fasting/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...session,
+          isPublished: !currentStatus,
+          sessionDate: session.sessionDate,
+        }),
+      });
+
+      if (response.ok) {
+        await fetchSessions();
+        alert(
+          `Session ${
+            !currentStatus ? "published" : "unpublished"
+          } successfully!`
+        );
+      } else {
+        const errorData = await response.json();
+        alert(
+          `Failed to update session: ${errorData.error || "Unknown error"}`
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling publish status:", error);
+      alert("An error occurred while updating the session. Please try again.");
     }
   };
 
@@ -422,6 +465,28 @@ export default function AdminPrayerFastingPage() {
                       </SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="isPublished"
+                      checked={formData.isPublished}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("isPublished", checked)
+                      }
+                    />
+                    <Label
+                      htmlFor="isPublished"
+                      className="text-sm font-medium"
+                    >
+                      Publish Session (Make Visible to Users)
+                    </Label>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Toggle this to control whether the session is visible to
+                    users on the website
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -575,18 +640,56 @@ export default function AdminPrayerFastingPage() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div className="flex items-start justify-between">
-                  <Badge
-                    variant={
-                      session.status === "CURRENT"
-                        ? "default"
-                        : session.status === "UPCOMING"
-                        ? "secondary"
-                        : "outline"
-                    }
-                  >
-                    {session.status.toLowerCase()}
-                  </Badge>
                   <div className="flex gap-2">
+                    <Badge
+                      variant={
+                        session.status === "CURRENT"
+                          ? "default"
+                          : session.status === "UPCOMING"
+                          ? "secondary"
+                          : "outline"
+                      }
+                    >
+                      {session.status.toLowerCase()}
+                    </Badge>
+                    <Badge
+                      variant={session.isPublished ? "default" : "destructive"}
+                      className={
+                        session.isPublished
+                          ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-800"
+                      }
+                    >
+                      {session.isPublished ? "Published" : "Draft"}
+                    </Badge>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        handleTogglePublish(
+                          session.id,
+                          session.isPublished ?? true
+                        )
+                      }
+                      className={
+                        session.isPublished
+                          ? "text-green-600 hover:text-green-700"
+                          : "text-gray-500 hover:text-gray-700"
+                      }
+                      title={
+                        session.isPublished
+                          ? "Unpublish session"
+                          : "Publish session"
+                      }
+                    >
+                      {session.isPublished ? (
+                        <Eye className="h-4 w-4" />
+                      ) : (
+                        <EyeOff className="h-4 w-4" />
+                      )}
+                    </Button>
                     <Button
                       size="sm"
                       variant="ghost"

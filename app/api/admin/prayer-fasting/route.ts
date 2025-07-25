@@ -46,6 +46,7 @@ export async function GET() {
         duration: true,
         status: true,
         slug: true,
+        isPublished: true,
         viewCount: true,
         shareCount: true,
         createdAt: true,
@@ -73,6 +74,7 @@ export async function GET() {
       duration: session.duration,
       status: session.status,
       slug: session.slug,
+      isPublished: session.isPublished,
       viewCount: session.viewCount,
       shareCount: session.shareCount,
       createdAt: session.createdAt.toISOString(),
@@ -128,6 +130,7 @@ export async function POST(request: NextRequest) {
       duration,
       status,
       slug,
+      isPublished,
     } = await request.json();
 
     // Validate required fields
@@ -171,6 +174,7 @@ export async function POST(request: NextRequest) {
         duration: duration || "",
         status: status || "UPCOMING",
         slug,
+        isPublished: isPublished ?? true,
         createdBy: session.user.id,
       },
     });

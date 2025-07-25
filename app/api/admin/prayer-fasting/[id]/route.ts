@@ -45,6 +45,7 @@ export async function PUT(
       duration,
       status,
       slug,
+      isPublished,
     } = await request.json();
 
     // Validate required fields
@@ -101,6 +102,7 @@ export async function PUT(
         duration: duration || "",
         status: status || "UPCOMING",
         slug,
+        isPublished: isPublished ?? true,
       },
     });
 

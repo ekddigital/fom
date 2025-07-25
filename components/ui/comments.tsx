@@ -6,10 +6,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  ModernReactions,
+  useReactions,
+} from "@/components/ui/modern-reactions";
 import { cn } from "@/lib/utils";
 import { MessageCircle, Reply, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
-import { Reactions, useReactions } from "./reactions";
 
 interface Comment {
   id: string;
@@ -34,6 +37,8 @@ interface CommentsProps {
   onAddComment: (content: string, parentId?: string) => Promise<void>;
   className?: string;
   maxDepth?: number;
+  contentType: string;
+  contentId: string;
 }
 
 interface CommentItemProps {
@@ -41,6 +46,8 @@ interface CommentItemProps {
   onReply: (content: string, parentId: string) => Promise<void>;
   depth?: number;
   maxDepth?: number;
+  contentType: string;
+  contentId: string;
 }
 
 const CommentItem = ({
@@ -48,13 +55,19 @@ const CommentItem = ({
   onReply,
   depth = 0,
   maxDepth = 3,
+  contentType,
+  contentId,
 }: CommentItemProps) => {
   const [isReplying, setIsReplying] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAllReplies, setShowAllReplies] = useState(false);
 
-  const { reactions, addReaction } = useReactions("comment", comment.id);
+  // Use reactions for this specific comment
+  const { reactions, addReaction } = useReactions(
+    `${contentType}-comment`,
+    comment.id
+  );
 
   const handleReply = useCallback(async () => {
     if (!replyContent.trim() || isSubmitting) return;
@@ -110,13 +123,15 @@ const CommentItem = ({
               {comment.content}
             </p>
 
-            <div className="flex items-center gap-3 mb-2">
-              <Reactions
+            <div className="mb-2">
+              <ModernReactions
                 reactions={reactions}
                 onReact={addReaction}
-                className="flex-1"
+                className="scale-90 origin-left"
               />
+            </div>
 
+            <div className="flex items-center gap-3 mb-2">
               {canReply && (
                 <Button
                   variant="ghost"
@@ -172,6 +187,8 @@ const CommentItem = ({
                     onReply={onReply}
                     depth={depth + 1}
                     maxDepth={maxDepth}
+                    contentType={contentType}
+                    contentId={contentId}
                   />
                 ))}
 
@@ -201,10 +218,15 @@ export const Comments = ({
   onAddComment,
   className,
   maxDepth = 3,
+  contentType,
+  contentId,
 }: CommentsProps) => {
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAllComments, setShowAllComments] = useState(false);
+
+  // Use reactions for the main content
+  const { reactions, addReaction } = useReactions(contentType, contentId);
 
   const handleAddComment = useCallback(async () => {
     if (!newComment.trim() || isSubmitting) return;
@@ -241,6 +263,11 @@ export const Comments = ({
         <h3 className="font-semibold text-gray-900">
           Comments ({topLevelComments.length})
         </h3>
+      </div>
+
+      {/* Main Content Reactions */}
+      <div className="pb-2">
+        <ModernReactions reactions={reactions} onReact={addReaction} />
       </div>
 
       {/* Add New Comment */}
@@ -290,6 +317,8 @@ export const Comments = ({
                       comment={comment}
                       onReply={handleReply}
                       maxDepth={maxDepth}
+                      contentType={contentType}
+                      contentId={contentId}
                     />
                   </div>
                 ))}

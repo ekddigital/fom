@@ -2,6 +2,7 @@ import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
 import { HeroSection } from "@/components/ui/sections/hero-section";
 import { FeatureGrid } from "@/components/ui/features/feature-grid";
+import { FeaturedPrayerFasting } from "@/components/ui/sections/featured-prayer-fasting";
 import { CallToActionSection } from "@/components/ui/sections/cta-section";
 import { FomStats } from "@/components/ui/sections/fom-stats";
 import { FomTestimonials } from "@/components/ui/sections/fom-testimonials";
@@ -57,6 +58,8 @@ export default function Home() {
           <FeatureGrid />
         </div>
       </section>
+
+      <FeaturedPrayerFasting />
 
       <FomStats />
 

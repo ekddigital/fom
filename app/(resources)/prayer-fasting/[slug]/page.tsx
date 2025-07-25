@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { RichTextViewer } from "@/components/ui/rich-text-viewer";
-import { Reactions, useReactions } from "@/components/ui/reactions";
+import {
+  ModernReactions,
+  useReactions,
+} from "@/components/ui/modern-reactions";
 import { Comments, useComments } from "@/components/ui/comments";
 import { Calendar, Clock, Users, Share2, Eye, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
@@ -214,25 +217,20 @@ export default function PrayerFastingPostPage() {
             videoId={session.youtubeVideoId}
             title={session.title}
           />
-        </div>
 
-        {/* Reactions */}
-        <div className="mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <Reactions reactions={reactions} onReact={addReaction} />
-                <Button
-                  variant="outline"
-                  onClick={handleShare}
-                  className="border-blue-950 text-blue-950 hover:bg-blue-950 hover:text-white"
-                >
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Reactions and Share - Compact inline */}
+          <div className="flex items-center justify-between mt-4 px-2">
+            <ModernReactions reactions={reactions} onReact={addReaction} />
+            <Button
+              variant="outline"
+              onClick={handleShare}
+              size="sm"
+              className="border-blue-950 text-blue-950 hover:bg-blue-950 hover:text-white"
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              Share
+            </Button>
+          </div>
         </div>
 
         {/* Content */}
@@ -294,7 +292,12 @@ export default function PrayerFastingPostPage() {
         <div className="mb-8">
           <Card>
             <CardContent className="p-6">
-              <Comments comments={comments} onAddComment={addComment} />
+              <Comments
+                comments={comments}
+                onAddComment={addComment}
+                contentType="prayer-fasting"
+                contentId={session.id}
+              />
             </CardContent>
           </Card>
         </div>

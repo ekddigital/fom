@@ -780,6 +780,7 @@ model PrayerFasting {
   sessionDate DateTime            @map("session_date")
   duration    String              @db.VarChar(50) // e.g., "45 minutes"
   status      PrayerFastingStatus @default(UPCOMING)
+  isPublished Boolean             @default(true) @map("is_published") // Visibility toggle
 
   // SEO
   slug            String  @unique @db.VarChar(100)

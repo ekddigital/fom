@@ -36,12 +36,7 @@ import { format } from "date-fns";
 import Link from "next/link";
 
 export default function PrayerFastingPage() {
-  const {
-    loading,
-    getCurrentSession,
-    getUpcomingSessions,
-    getArchiveSessions,
-  } = usePrayerFasting();
+  const { loading } = usePrayerFasting();
 
   const [allSessions, setAllSessions] = useState<PrayerFastingSession[]>([]);
   const [filteredSessions, setFilteredSessions] = useState<
@@ -54,34 +49,14 @@ export default function PrayerFastingPage() {
   // Get all sessions and organize them
   const loadAllSessions = async () => {
     try {
-      const [current, upcoming, archive] = await Promise.all([
-        getCurrentSession(),
-        getUpcomingSessions(),
-        getArchiveSessions(50), // Get more archive sessions
-      ]);
-
-      const allSessionsData: PrayerFastingSession[] = [];
-
-      // Add current session
-      if (current) allSessionsData.push(current);
-
-      // Add upcoming sessions
-      if (upcoming && upcoming.length > 0) {
-        allSessionsData.push(...upcoming);
+      const response = await fetch("/api/prayer-fasting/all");
+      if (!response.ok) {
+        throw new Error("Failed to fetch sessions");
       }
+      const data = await response.json();
 
-      // Add archive sessions
-      if (archive && archive.length > 0) {
-        allSessionsData.push(...archive);
-      }
-
-      // Sort by date (newest first)
-      allSessionsData.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-      );
-
-      setAllSessions(allSessionsData);
-      setFilteredSessions(allSessionsData);
+      setAllSessions(data.sessions || []);
+      setFilteredSessions(data.sessions || []);
     } catch (error) {
       console.error("Error loading all sessions:", error);
     }
@@ -242,7 +217,7 @@ export default function PrayerFastingPage() {
 
   useEffect(() => {
     loadAllSessions();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     filterSessions();

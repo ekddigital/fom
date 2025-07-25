@@ -3,19 +3,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const upcomingSessions = await prisma.prayerFasting.findMany({
+    const allSessions = await prisma.prayerFasting.findMany({
       where: {
-        status: "UPCOMING",
         isPublished: true, // Only return published sessions
       },
       orderBy: {
-        sessionDate: "asc",
+        sessionDate: "desc",
       },
-      take: 10,
     });
 
     // Transform the data to match the frontend interface
-    const sessions = upcomingSessions.map((session) => ({
+    const sessions = allSessions.map((session) => ({
       id: session.id,
       title: session.title,
       description: session.description,
@@ -25,7 +23,10 @@ export async function GET() {
       speaker: session.speaker,
       date: session.sessionDate.toISOString(),
       duration: session.duration,
-      status: "upcoming" as const,
+      status: session.status.toLowerCase() as
+        | "current"
+        | "upcoming"
+        | "archived",
       slug: session.slug,
       createdAt: session.createdAt.toISOString(),
       updatedAt: session.updatedAt.toISOString(),
@@ -33,9 +34,9 @@ export async function GET() {
 
     return NextResponse.json({ sessions });
   } catch (error) {
-    console.error("Error fetching upcoming prayer fasting sessions:", error);
+    console.error("Error fetching all prayer fasting sessions:", error);
     return NextResponse.json(
-      { error: "Failed to fetch upcoming sessions" },
+      { error: "Failed to fetch sessions" },
       { status: 500 }
     );
   }

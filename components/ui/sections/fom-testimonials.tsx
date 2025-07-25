@@ -143,6 +143,13 @@ export function FomTestimonials({ className = "" }: FomTestimonialsProps) {
       role: "Women's Ministry Coordinator",
       location: "Uganda",
     },
+    {
+      quote:
+        "The discipleship program and prayer ministry at FOM has strengthened my faith foundation. I've learned to trust God's plan and find peace in His presence during challenging times.",
+      author: "Thompson Hailsm Chukwuhenry",
+      role: "Prayer Ministry Coordinator",
+      location: "Hangzhou, Zhejiang Province",
+    },
   ];
 
   return (
