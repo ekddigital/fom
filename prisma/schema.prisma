@@ -777,10 +777,11 @@ model PrayerFasting {
   speakerImageUrl String? @map("speaker_image_url") @db.VarChar(500)
 
   // Session details
-  sessionDate DateTime            @map("session_date")
-  duration    String              @db.VarChar(50) // e.g., "45 minutes"
-  status      PrayerFastingStatus @default(UPCOMING)
-  isPublished Boolean             @default(true) @map("is_published") // Visibility toggle
+  sessionDate      DateTime            @map("session_date")
+  duration         String              @db.VarChar(50) // e.g., "45 minutes"
+  status           PrayerFastingStatus @default(UPCOMING)
+  isPublished      Boolean             @default(true) @map("is_published") // Visibility toggle
+  supportingVerses String?             @map("supporting_verses") @db.Text // Supporting Bible verses
 
   // SEO
   slug            String  @unique @db.VarChar(100)

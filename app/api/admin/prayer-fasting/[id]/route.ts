@@ -45,6 +45,7 @@ export async function PUT(
       duration,
       status,
       slug,
+      supportingVerses,
       isPublished,
     } = await request.json();
 
@@ -102,6 +103,7 @@ export async function PUT(
         duration: duration || "",
         status: status || "UPCOMING",
         slug,
+        supportingVerses: supportingVerses || "",
         isPublished: isPublished ?? true,
       },
     });

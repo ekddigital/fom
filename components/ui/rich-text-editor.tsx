@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,8 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  Save,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -40,21 +42,134 @@ interface RichTextEditorProps {
   className?: string;
   disabled?: boolean;
   minHeight?: string;
+  onSave?: () => void;
+  onSaveAsDraft?: () => void;
+  isSaving?: boolean;
+  isDraft?: boolean;
 }
 
-export const RichTextEditor = ({
+export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   value,
   onChange,
   placeholder = "Start typing...",
   className,
   disabled = false,
   minHeight = "200px",
-}: RichTextEditorProps) => {
+  onSave,
+  onSaveAsDraft,
+  isSaving = false,
+  isDraft = false,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const lastCursorPosition = useRef<number>(0);
 
-  const executeCommand = useCallback((command: string, value?: string) => {
-    document.execCommand(command, false, value);
+  // Save cursor position
+  const saveCursorPosition = useCallback(() => {
+    if (!editorRef.current) return;
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const preCaretRange = range.cloneRange();
+    preCaretRange.selectNodeContents(editorRef.current);
+    preCaretRange.setEnd(range.endContainer, range.endOffset);
+
+    // Store both text offset and node-based position for better accuracy
+    lastCursorPosition.current = preCaretRange.toString().length;
   }, []);
+
+  // Restore cursor position with better handling
+  const restoreCursorPosition = useCallback(() => {
+    if (!editorRef.current) return;
+
+    try {
+      const walker = document.createTreeWalker(
+        editorRef.current,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+
+      let currentOffset = 0;
+      let node: Node | null;
+
+      while ((node = walker.nextNode())) {
+        const textLength = node.textContent?.length || 0;
+        if (currentOffset + textLength >= lastCursorPosition.current) {
+          const range = document.createRange();
+          const selection = window.getSelection();
+
+          const offset = Math.min(
+            Math.max(0, lastCursorPosition.current - currentOffset),
+            textLength
+          );
+
+          range.setStart(node, offset);
+          range.setEnd(node, offset);
+
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+          return;
+        }
+        currentOffset += textLength;
+      }
+
+      // Fallback: place cursor at the end
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.selectNodeContents(editorRef.current);
+      range.collapse(false);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    } catch (error) {
+      console.warn("Failed to restore cursor position:", error);
+    }
+  }, []);
+
+  const executeCommand = useCallback(
+    (command: string, value?: string) => {
+      if (!editorRef.current) return;
+
+      // Focus the editor first to ensure commands work properly
+      editorRef.current.focus();
+
+      // Save position before command
+      saveCursorPosition();
+
+      // Execute the command
+      document.execCommand(command, false, value);
+
+      // Trigger content change to update state
+      const event = new Event("input", { bubbles: true });
+      editorRef.current.dispatchEvent(event);
+    },
+    [saveCursorPosition]
+  );
+
+  // Keyboard shortcuts handler
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
+      const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+
+      if (cmdOrCtrl && e.key === "s") {
+        e.preventDefault();
+        if (e.shiftKey && onSaveAsDraft) {
+          onSaveAsDraft();
+        } else if (onSave) {
+          onSave();
+        }
+      }
+    },
+    [onSave, onSaveAsDraft]
+  );
+
+  // Add/remove keyboard event listener
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   const toolbarButtons: (ToolbarButton | ToolbarSeparator)[] = useMemo(
     () => [
@@ -142,9 +257,9 @@ export const RichTextEditor = ({
   const handleToolbarClick = useCallback(
     (button: ToolbarButton) => {
       if (button.requiresInput) {
-        const url = prompt("Enter URL:");
-        if (url) {
-          executeCommand(button.command, url);
+        const userInput = prompt(`Enter ${button.label.toLowerCase()}:`);
+        if (userInput) {
+          executeCommand(button.command, userInput);
         }
       } else {
         executeCommand(button.command, button.value);
@@ -155,11 +270,50 @@ export const RichTextEditor = ({
 
   const handleContentChange = useCallback(
     (e: React.FormEvent<HTMLDivElement>) => {
+      saveCursorPosition();
       const content = e.currentTarget.innerHTML;
       onChange(content);
     },
-    [onChange]
+    [onChange, saveCursorPosition]
   );
+
+  // Handle keyboard events within the editor
+  const handleEditorKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      // Save cursor position on any key press
+      saveCursorPosition();
+
+      // Handle backspace and delete more gracefully
+      if (e.key === "Backspace" || e.key === "Delete") {
+        // Let the default behavior happen, but save position
+        setTimeout(() => {
+          if (editorRef.current) {
+            const content = editorRef.current.innerHTML;
+            onChange(content);
+          }
+        }, 0);
+      }
+    },
+    [saveCursorPosition, onChange]
+  );
+
+  // Update editor content while preserving cursor position
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    // Only update if the content is different to avoid infinite loops
+    if (editorRef.current.innerHTML !== value) {
+      const wasActive = document.activeElement === editorRef.current;
+      editorRef.current.innerHTML = value;
+
+      // Restore cursor position if the editor was active
+      if (wasActive) {
+        requestAnimationFrame(() => {
+          restoreCursorPosition();
+        });
+      }
+    }
+  }, [value, restoreCursorPosition]);
 
   return (
     <div className={cn("border rounded-lg overflow-hidden", className)}>
@@ -177,8 +331,13 @@ export const RichTextEditor = ({
               key={toolbarButton.label}
               variant="ghost"
               size="sm"
+              type="button"
               className="h-8 w-8 p-0"
-              onClick={() => handleToolbarClick(toolbarButton)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleToolbarClick(toolbarButton);
+              }}
               disabled={disabled}
               title={`${toolbarButton.label}${
                 toolbarButton.shortcut ? ` (${toolbarButton.shortcut})` : ""
@@ -189,11 +348,62 @@ export const RichTextEditor = ({
           );
         })}
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
+          {/* Save Buttons */}
+          {onSave && (
+            <Button
+              variant="outline"
+              size="sm"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSave();
+              }}
+              disabled={disabled || isSaving}
+              className="h-8 px-3 text-xs"
+              title="Save (Ctrl+S / Cmd+S)"
+            >
+              <Save className="h-3 w-3 mr-1" />
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
+          )}
+
+          {onSaveAsDraft && (
+            <Button
+              variant="ghost"
+              size="sm"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onSaveAsDraft();
+              }}
+              disabled={disabled || isSaving}
+              className="h-8 px-3 text-xs"
+              title="Save as Draft (Ctrl+Shift+S / Cmd+Shift+S)"
+            >
+              <FileText className="h-3 w-3 mr-1" />
+              Draft
+            </Button>
+          )}
+
+          {/* Draft Indicator */}
+          {isDraft && (
+            <span className="text-xs text-orange-600 font-medium">• Draft</span>
+          )}
+
+          <div className="w-px h-6 bg-gray-300 mx-1" />
+
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setIsExpanded(!isExpanded)}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsExpanded(!isExpanded);
+            }}
             disabled={disabled}
           >
             {isExpanded ? "Collapse" : "Expand"}
@@ -203,6 +413,7 @@ export const RichTextEditor = ({
 
       {/* Editor Content */}
       <div
+        ref={editorRef}
         contentEditable={!disabled}
         className={cn(
           "p-4 focus:outline-none",
@@ -226,9 +437,13 @@ export const RichTextEditor = ({
           maxHeight: isExpanded ? "600px" : "300px",
           overflowY: "auto",
         }}
-        dangerouslySetInnerHTML={{ __html: value }}
         onInput={handleContentChange}
+        onKeyDown={handleEditorKeyDown}
+        onKeyUp={saveCursorPosition}
+        onMouseUp={saveCursorPosition}
+        onFocus={saveCursorPosition}
         data-placeholder={placeholder}
+        suppressContentEditableWarning={true}
       />
 
       {/* Character count and help text */}

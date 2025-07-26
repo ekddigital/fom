@@ -52,6 +52,7 @@ interface PrayerFastingSession {
 export default function AdminPrayerFastingPage() {
   const [sessions, setSessions] = useState<PrayerFastingSession[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [editingSession, setEditingSession] =
     useState<PrayerFastingSession | null>(null);
@@ -137,51 +138,6 @@ export default function AdminPrayerFastingPage() {
     }
   };
 
-  // Auto-generate excerpt from title (theme) and supporting verses
-  const generateExcerptFromTheme = (
-    title: string,
-    supportingVerses: string
-  ): string => {
-    let excerpt = "";
-
-    // Use the title as the main theme
-    if (title.trim()) {
-      // Clean up the title to extract the core theme
-      const theme = title
-        .replace(/monthly\s+prayer\s+(&|and)\s+fasting\s*[-:]?\s*/i, "")
-        .replace(/^\s*[-:]?\s*/, "")
-        .trim();
-
-      if (theme) {
-        excerpt += `Theme: ${theme}. `;
-      }
-    }
-
-    // Add supporting verses if provided
-    if (supportingVerses.trim()) {
-      // Clean and format the verses
-      const verses = supportingVerses
-        .split(/[,;]/)
-        .map((v) => v.trim())
-        .filter((v) => v.length > 0)
-        .slice(0, 3); // Limit to 3 verses
-
-      if (verses.length > 0) {
-        excerpt += `Scripture: ${verses.join(", ")}. `;
-      }
-    }
-
-    // Add a general statement about prayer and fasting
-    if (excerpt) {
-      excerpt +=
-        "Join us for this powerful time of seeking God through prayer and fasting.";
-    } else {
-      excerpt = "A monthly prayer and fasting session to draw closer to God.";
-    }
-
-    return excerpt.trim();
-  };
-
   useEffect(() => {
     fetchSessions();
   }, []);
@@ -197,19 +153,6 @@ export default function AdminPrayerFastingPage() {
         .replace(/\s+/g, "-")
         .slice(0, 100);
       setFormData((prev) => ({ ...prev, slug }));
-
-      // Auto-generate excerpt when title changes
-      const excerpt = generateExcerptFromTheme(
-        value,
-        formData.supportingVerses
-      );
-      setFormData((prev) => ({ ...prev, excerpt }));
-    }
-
-    // Auto-generate excerpt when supporting verses change
-    if (field === "supportingVerses" && typeof value === "string") {
-      const excerpt = generateExcerptFromTheme(formData.title, value);
-      setFormData((prev) => ({ ...prev, excerpt }));
     }
   };
 
@@ -251,8 +194,89 @@ export default function AdminPrayerFastingPage() {
     setIsCreating(true);
   };
 
+  // Save functions for RichTextEditor
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const url = editingSession
+        ? `/api/admin/prayer-fasting/${editingSession.id}`
+        : "/api/admin/prayer-fasting";
+
+      const method = editingSession ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          sessionDate: new Date(formData.sessionDate).toISOString(),
+        }),
+      });
+
+      if (response.ok) {
+        await fetchSessions();
+        alert("Session saved successfully!");
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to save session:", errorData);
+        alert(`Failed to save session: ${errorData.error || "Unknown error"}`);
+      }
+    } catch (error) {
+      console.error("Error saving session:", error);
+      alert("An error occurred while saving the session. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSaveAsDraft = async () => {
+    setIsSaving(true);
+    try {
+      const url = editingSession
+        ? `/api/admin/prayer-fasting/${editingSession.id}`
+        : "/api/admin/prayer-fasting";
+
+      const method = editingSession ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          isPublished: false, // Force draft status
+          sessionDate: new Date(formData.sessionDate).toISOString(),
+        }),
+      });
+
+      if (response.ok) {
+        await fetchSessions();
+        alert("Session saved as draft successfully!");
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to save session as draft:", errorData);
+        alert(
+          `Failed to save session as draft: ${
+            errorData.error || "Unknown error"
+          }`
+        );
+      }
+    } catch (error) {
+      console.error("Error saving session as draft:", error);
+      alert(
+        "An error occurred while saving the session as draft. Please try again."
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
 
     try {
       const url = editingSession
@@ -295,6 +319,8 @@ export default function AdminPrayerFastingPage() {
     } catch (error) {
       console.error("Error saving session:", error);
       alert("An error occurred while saving the session. Please try again.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -468,7 +494,7 @@ export default function AdminPrayerFastingPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ">
                     <Switch
                       id="isPublished"
                       checked={formData.isPublished}
@@ -576,29 +602,15 @@ export default function AdminPrayerFastingPage() {
               </div>
 
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Content *</Label>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const excerpt = generateExcerptFromTheme(
-                        formData.title,
-                        formData.supportingVerses
-                      );
-                      setFormData((prev) => ({ ...prev, excerpt }));
-                    }}
-                    className="text-xs"
-                  >
-                    Generate Excerpt
-                  </Button>
-                </div>
+                <Label>Content *</Label>
                 <RichTextEditor
                   value={formData.content}
                   onChange={(value) => handleInputChange("content", value)}
                   placeholder="Write the full content for this session..."
                   minHeight="300px"
+                  onSave={handleSave}
+                  onSaveAsDraft={handleSaveAsDraft}
+                  isSaving={isSaving}
                 />
                 <p className="text-xs text-gray-500">
                   The excerpt is generated from your title (theme) and

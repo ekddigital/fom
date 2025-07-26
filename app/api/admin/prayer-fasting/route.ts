@@ -46,6 +46,7 @@ export async function GET() {
         duration: true,
         status: true,
         slug: true,
+        supportingVerses: true,
         isPublished: true,
         viewCount: true,
         shareCount: true,
@@ -74,6 +75,7 @@ export async function GET() {
       duration: session.duration,
       status: session.status,
       slug: session.slug,
+      supportingVerses: session.supportingVerses,
       isPublished: session.isPublished,
       viewCount: session.viewCount,
       shareCount: session.shareCount,
@@ -130,6 +132,7 @@ export async function POST(request: NextRequest) {
       duration,
       status,
       slug,
+      supportingVerses,
       isPublished,
     } = await request.json();
 
@@ -174,6 +177,7 @@ export async function POST(request: NextRequest) {
         duration: duration || "",
         status: status || "UPCOMING",
         slug,
+        supportingVerses: supportingVerses || "",
         isPublished: isPublished ?? true,
         createdBy: session.user.id,
       },
