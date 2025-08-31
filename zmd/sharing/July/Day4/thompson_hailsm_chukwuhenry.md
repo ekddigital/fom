@@ -36,7 +36,11 @@ Theme: Obedience Is Better Than Sacrifice - Day 4 Focus: The Roots of Rebellion 
 
  Speaker Bio
 
-Bro. Thompson Hailsm Chukwuhenry is a prophetic voice and discerning teacher within the Fishers of Men (FOM) organization. Known for his deep spiritual insight and ability to expose hidden roots of spiritual problems, he specializes in identifying the subtle forms of idolatry that infiltrate the hearts of believers. His medium of teaching focuses on spiritual warfare, deliverance, and helping believers recognize and overcome spiritual strongholds. With a keen understanding of the progressive nature of rebellion, Bro. Thompson brings clarity to the often-overlooked connections between pride, position, and spiritual downfall.
+I am Hailsm Chukwuhenry Thompson, and I am glad to share something simple and very little about myself when it comes to my BELIEVED, FAITH, and the Journey of ENTERNITY with GOD ALMIGHTY. This is what I live for—especially for all humanity to know that Our LORD JESUS CHRIST is the FOUNDATION, MESSAGE, LIFE, and TRUTH that we all need to take hold of.
+
+But the world today has taken RELIGION as the image of the BODY OF CHRIST, which is DECEPTION in disguise by the DEVIL and his AGENT. Paul the Apostle warned us in FIRST and SECOND TIMOTHY about the LAST DAY, and it seems that many are gambling their LIFE through RELIGION, TRADITIONS, and SCIENCE to fill that spiritual VACUUM within their SOUL.
+
+JESUS IS THE ONLY WAY, TRUTH, AND LIFE. MAKE A DECISION NOW BEFORE IT'S TOO LATE. NOW IS YOUR SALVATION… NOT TOMORROW.
 
 ---
 
