@@ -185,6 +185,7 @@ Prayer Focus
 
 ---
 
+
 Scripture Foundation: _"It is the spirit that quickeneth; the flesh profiteth nothing: the words that I speak unto you, they are spirit, and they are life." - John 6:63_
 
 _"But ye shall receive power, after that the Holy Ghost is come upon you." - Acts 1:8_
