@@ -1936,7 +1936,7 @@ export default function CardsPage() {
                     </CardHeader>
                     <CardContent>
                       {/* Placeholder for template preview */}
-                      <div className="aspect-[3/2] bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center">
+                      <div className="aspect-3/2 bg-linear-to-br from-pink-100 to-purple-100 rounded-lg mb-4 flex items-center justify-center">
                         <div className="text-center">
                           {template.category === "graduation" && (
                             <Star className="mx-auto h-8 w-8 text-yellow-500 mb-2" />

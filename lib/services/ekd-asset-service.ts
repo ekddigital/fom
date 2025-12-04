@@ -107,7 +107,7 @@ export class EKDAssetService {
       const formData = new FormData();
 
       // Convert buffer to blob for upload
-      const blob = new Blob([fileBuffer], {
+      const blob = new Blob([new Uint8Array(fileBuffer)], {
         type: filename.endsWith(".pdf") ? "application/pdf" : "image/png",
       });
 

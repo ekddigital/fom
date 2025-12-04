@@ -67,7 +67,7 @@ export async function GET(
     } else if (format === "pdf") {
       // Generate and return PDF
       const pdfBuffer = await renderer.generatePDF();
-      return new NextResponse(pdfBuffer, {
+      return new NextResponse(new Uint8Array(pdfBuffer), {
         status: 200,
         headers: {
           "Content-Type": "application/pdf",
@@ -77,7 +77,7 @@ export async function GET(
     } else if (format === "png") {
       // Generate and return PNG
       const pngBuffer = await renderer.generatePNG();
-      return new NextResponse(pngBuffer, {
+      return new NextResponse(new Uint8Array(pngBuffer), {
         status: 200,
         headers: {
           "Content-Type": "image/png",

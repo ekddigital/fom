@@ -212,7 +212,7 @@ export async function GET(
             );
           }
 
-          return new NextResponse(fileBuffer, {
+          return new NextResponse(new Uint8Array(fileBuffer), {
             status: 200,
             headers,
           });
@@ -351,7 +351,7 @@ export async function GET(
         }
       }
 
-      return new NextResponse(fileBuffer, {
+      return new NextResponse(new Uint8Array(fileBuffer), {
         status: 200,
         headers,
       });

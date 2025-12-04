@@ -115,7 +115,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       headers.set("X-Content-Type-Options", "nosniff");
       headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
 
-      return new NextResponse(fileBuffer, {
+      return new NextResponse(new Uint8Array(fileBuffer), {
         status: 200,
         headers,
       });

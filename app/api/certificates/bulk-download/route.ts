@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
       }, Failed: ${failedCertificates.length}`
     );
 
-    return new NextResponse(Buffer.from(zipBuffer), {
+    return new NextResponse(new Uint8Array(zipBuffer), {
       status: 200,
       headers,
     });
