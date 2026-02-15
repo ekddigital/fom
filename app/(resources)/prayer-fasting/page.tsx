@@ -126,15 +126,15 @@ export default function PrayerFastingPage() {
   // Sharing functions
   const showToast = (
     message: string,
-    type: "success" | "error" | "info" = "info"
+    type: "success" | "error" | "info" = "info",
   ) => {
     const toast = document.createElement("div");
     const bgColor =
       type === "success"
         ? "bg-green-600"
         : type === "error"
-        ? "bg-red-600"
-        : "bg-blue-600";
+          ? "bg-red-600"
+          : "bg-blue-600";
     toast.className = `fixed bottom-4 right-4 ${bgColor} text-white px-4 py-2 rounded-lg shadow-lg z-50`;
     toast.textContent = message;
     document.body.appendChild(toast);
@@ -143,7 +143,7 @@ export default function PrayerFastingPage() {
 
   const handleShare = async (
     platform: string,
-    session: PrayerFastingSession
+    session: PrayerFastingSession,
   ) => {
     const sessionUrl = `${window.location.origin}/prayer-fasting/${
       session.slug || session.id
@@ -155,15 +155,15 @@ export default function PrayerFastingPage() {
         case "whatsapp":
           window.open(
             `https://wa.me/?text=${encodeURIComponent(
-              `${shareText}\n\n🔗 ${sessionUrl}`
-            )}`
+              `${shareText}\n\n🔗 ${sessionUrl}`,
+            )}`,
           );
           break;
         case "facebook":
           window.open(
             `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-              sessionUrl
-            )}&quote=${encodeURIComponent(shareText)}`
+              sessionUrl,
+            )}&quote=${encodeURIComponent(shareText)}`,
           );
           break;
         case "twitter":
@@ -173,10 +173,10 @@ export default function PrayerFastingPage() {
               : shareText;
           window.open(
             `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-              twitterText
+              twitterText,
             )}&url=${encodeURIComponent(
-              sessionUrl
-            )}&hashtags=PrayerAndFasting,FishersOfMen`
+              sessionUrl,
+            )}&hashtags=PrayerAndFasting,FishersOfMen`,
           );
           break;
         case "copy":
@@ -193,7 +193,7 @@ export default function PrayerFastingPage() {
           } else {
             // Fallback to copy
             await navigator.clipboard.writeText(
-              `${shareText}\n\n${sessionUrl}`
+              `${shareText}\n\n${sessionUrl}`,
             );
             showToast("Link copied to clipboard!", "info");
           }
@@ -241,15 +241,15 @@ export default function PrayerFastingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
       {/* Hero Section */}
-      <section className="relative py-20 px-4">
+      <section className="relative py-12 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-blue-100 rounded-full">
-                <Heart className="h-12 w-12 text-blue-950" />
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-blue-100 rounded-full">
+                <Heart className="h-10 w-10 text-blue-950" />
               </div>
             </div>
-            <h1 className="text-5xl font-bold text-blue-950 mb-6">
+            <h1 className="text-4xl font-bold text-blue-950 mb-4">
               Monthly Prayer & Fasting Sessions
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
@@ -261,7 +261,7 @@ export default function PrayerFastingPage() {
           </div>
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 justify-center mb-8">
+          <div className="flex flex-wrap gap-4 justify-center mb-6">
             <Select value={selectedStatus} onValueChange={setSelectedStatus}>
               <SelectTrigger className="w-48 bg-white border-gray-200">
                 <SelectValue placeholder="Filter by Status" />
@@ -304,7 +304,7 @@ export default function PrayerFastingPage() {
           </div>
 
           {/* Results Count */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <p className="text-gray-600">
               Showing {filteredSessions.length} of {allSessions.length} sessions
             </p>
@@ -313,7 +313,7 @@ export default function PrayerFastingPage() {
       </section>
 
       {/* All Sessions Grid */}
-      <section className="py-16 px-4">
+      <section className="py-8 px-4">
         <div className="container mx-auto max-w-6xl">
           {filteredSessions.length === 0 ? (
             <div className="text-center py-12">
@@ -367,8 +367,8 @@ export default function PrayerFastingPage() {
                           session.status === "current"
                             ? "bg-green-100 text-green-800"
                             : session.status === "upcoming"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-gray-100 text-gray-800"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-gray-100 text-gray-800"
                         }
                       >
                         {format(new Date(session.date), "MMM d, yyyy")}
@@ -465,7 +465,7 @@ export default function PrayerFastingPage() {
       </section>
 
       {/* Call to Action */}
-      <section className="py-16 px-4 bg-gradient-to-r from-blue-950 to-blue-800 text-white">
+      <section className="py-12 px-4 bg-gradient-to-r from-blue-950 to-blue-800 text-white">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-6">
             Join Us in Prayer & Fasting

@@ -51,9 +51,9 @@ export default function SermonsPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6">
       {/* Header Section */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <div className="flex items-center justify-center mb-4">
           <Video className="w-8 h-8 text-blue-950 mr-3" />
           <h1 className="text-4xl font-bold text-blue-950">Sermons</h1>
@@ -65,7 +65,7 @@ export default function SermonsPage() {
       </div>
 
       {/* Filter Section */}
-      <div className="flex flex-wrap gap-2 mb-8 justify-center">
+      <div className="flex flex-wrap gap-2 mb-6 justify-center">
         <Button variant="default" size="sm">
           All Sermons
         </Button>
@@ -84,7 +84,7 @@ export default function SermonsPage() {
       </div>
 
       {/* Sermons Grid */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-12">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
         {sermons.map((sermon) => (
           <Card
             key={sermon.id}

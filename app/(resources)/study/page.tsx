@@ -240,7 +240,7 @@ export default function StudyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50/30">
       {/* Hero Section */}
-      <section className="relative py-20 px-4">
+      <section className="relative py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <Badge variant="secondary" className="mb-4">
             2 Timothy 2:15 - Study to show yourself approved
@@ -294,9 +294,9 @@ export default function StudyPage() {
       </section>
 
       {/* Study Programs */}
-      <section className="py-16 px-4">
+      <section className="py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-10">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Bible Study Programs
             </h2>
@@ -363,10 +363,10 @@ export default function StudyPage() {
                     {program.status === "Enrolling Now"
                       ? "Enroll Now"
                       : program.status === "Starting Soon"
-                      ? "Join Waitlist"
-                      : program.status === "In Progress"
-                      ? "View Progress"
-                      : "View Details"}
+                        ? "Join Waitlist"
+                        : program.status === "In Progress"
+                          ? "View Progress"
+                          : "View Details"}
                   </Button>
                 </CardContent>
               </Card>

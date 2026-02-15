@@ -212,3 +212,8 @@ dump.rdb
 
 # Documentation (not tracked)
 lib/docs/
+# macOS files
+.DS_Store
+._*
+**/.DS_Store
+**/._*

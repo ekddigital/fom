@@ -55,7 +55,7 @@ export const FeaturedPrayerFasting = () => {
           const additionalSessions = allData.sessions
             .filter(
               (session: PrayerFastingSession) =>
-                !sessions.find((s) => s.id === session.id)
+                !sessions.find((s) => s.id === session.id),
             )
             .slice(0, remainingSlots);
 
@@ -99,10 +99,10 @@ export const FeaturedPrayerFasting = () => {
   }
 
   return (
-    <section className="py-16 bg-gradient-to-br from-purple-50 to-blue-50">
+    <section className="py-12 bg-gradient-to-br from-purple-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-10">
           <div className="flex justify-center mb-6">
             <div className="p-4 bg-purple-100 rounded-full">
               <Heart className="h-12 w-12 text-purple-600" />
@@ -119,7 +119,7 @@ export const FeaturedPrayerFasting = () => {
         </div>
 
         {/* Featured Sessions Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {featuredSessions.map((session, index) => (
             <Card
               key={session.id}
@@ -166,15 +166,15 @@ export const FeaturedPrayerFasting = () => {
                         session.status === "current"
                           ? "default"
                           : session.status === "upcoming"
-                          ? "secondary"
-                          : "outline"
+                            ? "secondary"
+                            : "outline"
                       }
                       className={
                         session.status === "current"
                           ? "bg-green-100 text-green-800"
                           : session.status === "upcoming"
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-gray-100 text-gray-800"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
                       }
                     >
                       {format(new Date(session.date), "MMM d, yyyy")}
