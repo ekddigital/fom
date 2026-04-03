@@ -302,6 +302,12 @@ export class CardRenderer {
       }
     }
 
+    if (content.includes("{{cardId}}")) {
+      // Show a short readable card number derived from the card id
+      const shortId = this.cardData.id.slice(-6).toUpperCase();
+      content = content.replace("{{cardId}}", shortId);
+    }
+
     if (content.includes("{{customMessage}}")) {
       if (this.cardData.customMessage && this.cardData.customMessage.trim()) {
         content = content.replace(
