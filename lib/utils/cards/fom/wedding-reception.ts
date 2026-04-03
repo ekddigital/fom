@@ -163,35 +163,39 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       style: { zIndex: 10 },
     },
 
-    // ─── Monogram medallion — Great Vibes "E & P" ─────────────────────────
+    // ─── Monogram medallion — SVG (reliable, no font-race) ────────────────
     {
-      id: "monogram-ring",
+      id: "monogram-svg",
       type: "decoration",
-      content: `<div style="
-        width:76px; height:76px; border-radius:50%;
-        background: ${KINGDOM_WEDDING_COLORS.emerald};
-        border: 2.5px solid ${KINGDOM_WEDDING_COLORS.gold};
-        box-shadow: 0 0 0 1.5px ${KINGDOM_WEDDING_COLORS.goldLight};
-        display:flex; align-items:center; justify-content:center;
-      "></div>`,
-      position: { x: W / 2 - 38, y: 68, width: 76, height: 76 },
+      content: `<svg xmlns="http://www.w3.org/2000/svg" width="84" height="84" viewBox="0 0 84 84">
+        <defs>
+          <radialGradient id="mg" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#005040"/>
+            <stop offset="100%" stop-color="#002E20"/>
+          </radialGradient>
+        </defs>
+        <!-- Emerald circle -->
+        <circle cx="42" cy="42" r="39" fill="url(#mg)"/>
+        <!-- Gold outer ring -->
+        <circle cx="42" cy="42" r="39" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="2.5"/>
+        <!-- Gold inner hairline -->
+        <circle cx="42" cy="42" r="36" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.6" opacity="0.45"/>
+        <!-- Thin horizontal gold bar -->
+        <line x1="14" y1="42" x2="70" y2="42" stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="0.5" opacity="0.3"/>
+        <!-- "E" initial — left -->
+        <text x="24" y="54" font-family="Georgia, serif" font-style="italic" font-weight="bold"
+              font-size="36" fill="${KINGDOM_WEDDING_COLORS.goldLight}"
+              text-anchor="middle" opacity="0.95">E</text>
+        <!-- centre diamond ornament -->
+        <text x="42" y="47" font-family="serif" font-size="9"
+              fill="${KINGDOM_WEDDING_COLORS.gold}" text-anchor="middle" opacity="0.85">&#x25C6;</text>
+        <!-- "P" initial — right -->
+        <text x="60" y="54" font-family="Georgia, serif" font-style="italic" font-weight="bold"
+              font-size="36" fill="${KINGDOM_WEDDING_COLORS.goldLight}"
+              text-anchor="middle" opacity="0.95">P</text>
+      </svg>`,
+      position: { x: W / 2 - 42, y: 66, width: 84, height: 84 },
       style: { zIndex: 12 },
-    },
-    {
-      id: "monogram-letters",
-      type: "decoration",
-      content: `<div style="
-        font-family: 'Great Vibes', cursive;
-        font-size: 32px;
-        color: ${KINGDOM_WEDDING_COLORS.goldLight};
-        text-align: center;
-        line-height: 76px;
-        width: 76px;
-        text-shadow: 0 1px 3px rgba(0,0,0,0.35);
-        letter-spacing: 1px;
-      ">E &amp; P</div>`,
-      position: { x: W / 2 - 38, y: 68, width: 76, height: 76 },
-      style: { zIndex: 13 },
     },
 
     // ─── Gold ornamental divider ───────────────────────────────────────────
