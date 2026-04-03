@@ -251,7 +251,7 @@ export class CardDatabaseService {
         `✨ Created new card: ${card.id} using template: ${template.name}`
       );
       return card;
-    });
+    }, { timeout: 30000 });
   }
 
   /**
