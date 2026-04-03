@@ -34,18 +34,6 @@ declare module "next-auth" {
   }
 }
 
-// JWT token fields (augment @auth/core/jwt since next-auth/jwt re-exports from it)
-declare module "@auth/core/jwt" {
-  interface JWT {
-    id: string;
-    role: string;
-    firstName: string;
-    lastName: string;
-    username?: string;
-    displayNamePreference: string;
-  }
-}
-
 // Enhanced User interface matching Prisma schema
 export interface FOMUser {
   id: string;

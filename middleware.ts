@@ -1,7 +1,8 @@
 import { auth } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import type { Session } from "next-auth";
 
-export default auth((req) => {
+export default auth((req: NextRequest & { auth: Session | null }) => {
   // req.auth is the Session object (null if unauthenticated)
   const session = req.auth;
   const isAuthPage =
@@ -32,7 +33,8 @@ export default auth((req) => {
 
   // Role-based protection
   if (session) {
-    const userRole = ((session.user as unknown) as Record<string, unknown>)?.role as string;
+    const userRole = (session.user as unknown as Record<string, unknown>)
+      ?.role as string;
 
     // Ministry leader routes
     if (req.nextUrl.pathname.startsWith("/mgmt")) {

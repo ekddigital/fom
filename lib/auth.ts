@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthConfig, type User } from "next-auth";
+import NextAuth, { type User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
@@ -12,7 +12,7 @@ import { formatUserName } from "@/lib/utils/user";
 
 const prisma = new PrismaClient();
 
-const config: NextAuthConfig = {
+const config = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -74,10 +74,7 @@ const config: NextAuthConfig = {
           throw new Error("Please verify your email before signing in");
         }
 
-        const isCorrectPassword = await bcrypt.compare(
-          password,
-          user.password
-        );
+        const isCorrectPassword = await bcrypt.compare(password, user.password);
 
         if (!isCorrectPassword) {
           throw new Error("Invalid credentials");
@@ -185,7 +182,7 @@ const config: NextAuthConfig = {
             lastName: token.lastName as string,
             username: token.username as string | undefined,
           },
-          token.displayNamePreference as DisplayNamePreference
+          token.displayNamePreference as DisplayNamePreference,
         );
       }
       return session;
@@ -241,7 +238,7 @@ const config: NextAuthConfig = {
     },
   },
   debug: process.env.NODE_ENV === "development",
-};
+} satisfies Parameters<typeof NextAuth>[0];
 
 // ── next-auth v5 exports ──────────────────────────────────────────────────────
 export const { auth, handlers, signIn, signOut } = NextAuth(config);
