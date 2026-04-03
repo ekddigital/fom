@@ -3,22 +3,21 @@
  * Dongbo Enoch Kwateh & Fero Patience
  * Sat. 30th May, 2026 — Hangzhou City, 2PM
  *
+ * Fonts: Great Vibes (calligraphy script), Playfair Display (elegant serif headings),
+ *        Cormorant Garamond (refined old-style body/scripture)
+ *
  * Color Palette (KINGDOM Wedding):
- *   Sandstone   #D2B48C  — primary neutral / background
- *   Deep Emerald #00402E — primary accent / border / headers
- *   Coffee Bean  #3E2723 — depth / contrast details
- *   Crisp White  #FFFFFF — plates, floral highlights
- *   Gold Accent  #C9A84C — ornamental highlights
+ *   Deep Emerald #00402E — used ONLY at: header bar, monogram, date bar
+ *   Gold Accent  #C9A84C — ornamental dividers, borders, labels
+ *   Coffee Bean  #3E2723 — primary text (names, scripture)
+ *   Cream        #FAF3E8 — warm parchment background
  */
 
 import { CardTemplate } from "../types";
 
 export const KINGDOM_WEDDING_COLORS = {
-  sandstone: "#D2B48C",
-  sandstoneDark: "#C4A882",
   sandstoneLight: "#EDD9B8",
   emerald: "#00402E",
-  emeraldLight: "#005C40",
   coffee: "#3E2723",
   coffeeMid: "#5D3A32",
   white: "#FFFFFF",
@@ -34,7 +33,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
   id: "kingdom-wedding-reception-2026",
   name: "KINGDOM Wedding — Reception Card",
   description:
-    "Luxury square reception admission card for the Dongbo–Fero Royal Kingdom Wedding, 30th May 2026. Deep Emerald, Sandstone & Gold palette.",
+    "Luxury square reception admission card for the Dongbo–Fero Kingdom Wedding, 30th May 2026. Deep Emerald, Gold & Cream parchment palette.",
   category: "invitation",
   settings: {
     width: W,
@@ -42,13 +41,13 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
     backgroundColor: KINGDOM_WEDDING_COLORS.cream,
   },
   elements: [
-    // ─── Full cream-parchment background ───────────────────────────────────
+    // ─── Warm parchment gradient background ────────────────────────────────
     {
       id: "bg-parchment",
       type: "decoration",
       content: `<div style="
         width:${W}px; height:${H}px;
-        background: radial-gradient(ellipse at 50% 0%, #FDF6E9 0%, #F4E8CE 45%, #EDD9B8 100%);
+        background: radial-gradient(ellipse at 50% 25%, #FEFAF1 0%, #F8EEDD 45%, #F0DEC0 100%);
       "></div>`,
       position: { x: 0, y: 0, width: W, height: H },
       style: { zIndex: 1 },
@@ -60,25 +59,25 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       type: "decoration",
       content: `<div style="
         width:${W - 12}px; height:${H - 12}px;
-        border: 3px solid ${KINGDOM_WEDDING_COLORS.gold};
-        border-radius: 4px;
+        border: 2.5px solid ${KINGDOM_WEDDING_COLORS.gold};
+        border-radius: 3px;
       "></div>`,
       position: { x: 6, y: 6, width: W - 12, height: H - 12 },
       style: { zIndex: 5 },
     },
 
-    // ─── Inner emerald border ──────────────────────────────────────────────
+    // ─── Subtle inner gold frame line ──────────────────────────────────────
     {
-      id: "border-inner",
+      id: "border-inner-thin",
       type: "decoration",
       content: `<div style="
-        width:${W - 28}px; height:${H - 28}px;
-        border: 1.5px solid ${KINGDOM_WEDDING_COLORS.emerald};
+        width:${W - 26}px; height:${H - 26}px;
+        border: 0.75px solid ${KINGDOM_WEDDING_COLORS.gold};
         border-radius: 2px;
-        opacity: 0.7;
+        opacity: 0.45;
       "></div>`,
-      position: { x: 14, y: 14, width: W - 28, height: H - 28 },
-      style: { zIndex: 6 },
+      position: { x: 13, y: 13, width: W - 26, height: H - 26 },
+      style: { zIndex: 5 },
     },
 
     // ─── Top emerald header bar ────────────────────────────────────────────
@@ -86,23 +85,23 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "header-bar",
       type: "decoration",
       content: `<div style="
-        width: ${W - 40}px; height: 38px;
+        width: ${W - 36}px; height: 36px;
         background: ${KINGDOM_WEDDING_COLORS.emerald};
         border-radius: 2px;
         display: flex; align-items: center; justify-content: center;
       "></div>`,
-      position: { x: 20, y: 20, width: W - 40, height: 38 },
+      position: { x: 18, y: 22, width: W - 36, height: 36 },
       style: { zIndex: 8 },
     },
     {
       id: "header-text",
       type: "text",
-      content: "✦  ADMISSION  ✦  CARD  ✦  RECEPTION  ✦",
-      position: { x: 20, y: 20, width: W - 40, height: 38 },
+      content: "✦  ADMISSION  ·  CARD  ·  RECEPTION  ✦",
+      position: { x: 18, y: 22, width: W - 36, height: 36 },
       style: {
-        fontSize: 11,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
+        fontSize: 10,
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "600",
         color: KINGDOM_WEDDING_COLORS.goldLight,
         textAlign: "center",
         letterSpacing: "3px",
@@ -110,223 +109,240 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       },
     },
 
-    // ─── Corner ornamental rosettes ────────────────────────────────────────
+    // ─── Corner ornamental rosettes (gold, no emerald fill) ───────────────
     {
       id: "corner-tl",
       type: "decoration",
       content: `<div style="
-        width:28px; height:28px; border-radius:50%;
-        border: 2px solid ${KINGDOM_WEDDING_COLORS.gold};
+        width:26px; height:26px; border-radius:50%;
+        border: 1.5px solid ${KINGDOM_WEDDING_COLORS.gold};
         display:flex; align-items:center; justify-content:center;
-        background: ${KINGDOM_WEDDING_COLORS.emerald};
-        color: ${KINGDOM_WEDDING_COLORS.goldLight}; font-size:13px;
+        background: #FAF3E8;
+        color: ${KINGDOM_WEDDING_COLORS.gold}; font-size:11px;
       ">✦</div>`,
-      position: { x: 5, y: 5, width: 28, height: 28 },
+      position: { x: 5, y: 5, width: 26, height: 26 },
       style: { zIndex: 10 },
     },
     {
       id: "corner-tr",
       type: "decoration",
       content: `<div style="
-        width:28px; height:28px; border-radius:50%;
-        border: 2px solid ${KINGDOM_WEDDING_COLORS.gold};
+        width:26px; height:26px; border-radius:50%;
+        border: 1.5px solid ${KINGDOM_WEDDING_COLORS.gold};
         display:flex; align-items:center; justify-content:center;
-        background: ${KINGDOM_WEDDING_COLORS.emerald};
-        color: ${KINGDOM_WEDDING_COLORS.goldLight}; font-size:13px;
+        background: #FAF3E8;
+        color: ${KINGDOM_WEDDING_COLORS.gold}; font-size:11px;
       ">✦</div>`,
-      position: { x: W - 33, y: 5, width: 28, height: 28 },
+      position: { x: W - 31, y: 5, width: 26, height: 26 },
       style: { zIndex: 10 },
     },
     {
       id: "corner-bl",
       type: "decoration",
       content: `<div style="
-        width:28px; height:28px; border-radius:50%;
-        border: 2px solid ${KINGDOM_WEDDING_COLORS.gold};
+        width:26px; height:26px; border-radius:50%;
+        border: 1.5px solid ${KINGDOM_WEDDING_COLORS.gold};
         display:flex; align-items:center; justify-content:center;
-        background: ${KINGDOM_WEDDING_COLORS.emerald};
-        color: ${KINGDOM_WEDDING_COLORS.goldLight}; font-size:13px;
+        background: #FAF3E8;
+        color: ${KINGDOM_WEDDING_COLORS.gold}; font-size:11px;
       ">✦</div>`,
-      position: { x: 5, y: H - 33, width: 28, height: 28 },
+      position: { x: 5, y: H - 31, width: 26, height: 26 },
       style: { zIndex: 10 },
     },
     {
       id: "corner-br",
       type: "decoration",
       content: `<div style="
-        width:28px; height:28px; border-radius:50%;
-        border: 2px solid ${KINGDOM_WEDDING_COLORS.gold};
+        width:26px; height:26px; border-radius:50%;
+        border: 1.5px solid ${KINGDOM_WEDDING_COLORS.gold};
         display:flex; align-items:center; justify-content:center;
-        background: ${KINGDOM_WEDDING_COLORS.emerald};
-        color: ${KINGDOM_WEDDING_COLORS.goldLight}; font-size:13px;
+        background: #FAF3E8;
+        color: ${KINGDOM_WEDDING_COLORS.gold}; font-size:11px;
       ">✦</div>`,
-      position: { x: W - 33, y: H - 33, width: 28, height: 28 },
+      position: { x: W - 31, y: H - 31, width: 26, height: 26 },
       style: { zIndex: 10 },
     },
 
-    // ─── Monogram medallion ────────────────────────────────────────────────
+    // ─── Monogram medallion — Great Vibes "E & P" ─────────────────────────
     {
       id: "monogram-ring",
       type: "decoration",
       content: `<div style="
-        width:64px; height:64px; border-radius:50%;
+        width:76px; height:76px; border-radius:50%;
         background: ${KINGDOM_WEDDING_COLORS.emerald};
-        border: 3px solid ${KINGDOM_WEDDING_COLORS.gold};
-        box-shadow: 0 0 0 2px ${KINGDOM_WEDDING_COLORS.goldLight};
+        border: 2.5px solid ${KINGDOM_WEDDING_COLORS.gold};
+        box-shadow: 0 0 0 1.5px ${KINGDOM_WEDDING_COLORS.goldLight};
         display:flex; align-items:center; justify-content:center;
       "></div>`,
-      position: { x: W / 2 - 32, y: 70, width: 64, height: 64 },
+      position: { x: W / 2 - 38, y: 68, width: 76, height: 76 },
       style: { zIndex: 12 },
     },
     {
       id: "monogram-letters",
-      type: "text",
-      content: "E & P",
-      position: { x: W / 2 - 32, y: 70, width: 64, height: 64 },
-      style: {
-        fontSize: 15,
-        fontFamily: "Georgia, serif",
-        fontStyle: "italic",
-        fontWeight: "bold",
-        color: KINGDOM_WEDDING_COLORS.goldLight,
-        textAlign: "center",
-        zIndex: 13,
-      },
+      type: "decoration",
+      content: `<div style="
+        font-family: 'Great Vibes', cursive;
+        font-size: 32px;
+        color: ${KINGDOM_WEDDING_COLORS.goldLight};
+        text-align: center;
+        line-height: 76px;
+        width: 76px;
+        text-shadow: 0 1px 3px rgba(0,0,0,0.35);
+        letter-spacing: 1px;
+      ">E &amp; P</div>`,
+      position: { x: W / 2 - 38, y: 68, width: 76, height: 76 },
+      style: { zIndex: 13 },
     },
 
-    // ─── Gold divider line ─────────────────────────────────────────────────
+    // ─── Gold ornamental divider ───────────────────────────────────────────
     {
       id: "divider-1",
       type: "decoration",
       content: `<div style="
-        width: 440px; height: 1px;
-        background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold}, ${KINGDOM_WEDDING_COLORS.gold}, transparent);
+        width: 460px; height: 1px;
+        background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 20%, ${KINGDOM_WEDDING_COLORS.gold} 80%, transparent);
       "></div>`,
-      position: { x: 80, y: 144, width: 440, height: 1 },
+      position: { x: 70, y: 152, width: 460, height: 1 },
       style: { zIndex: 8 },
     },
 
-    // ─── "The Royal Kingdom Wedding" ──────────────────────────────────────
+    // ─── "KINGDOM WEDDING" ─────────────────────────────────────────────────
     {
       id: "label-kingdom",
       type: "text",
-      content: "THE ROYAL KINGDOM WEDDING",
-      position: { x: 40, y: 150, width: W - 80, height: 22 },
+      content: "KINGDOM  WEDDING",
+      position: { x: 40, y: 158, width: W - 80, height: 20 },
       style: {
-        fontSize: 10,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
-        color: KINGDOM_WEDDING_COLORS.emerald,
-        textAlign: "center",
-        letterSpacing: "4px",
-        zIndex: 9,
-      },
-    },
-
-    // ─── Calligraphic script "Wedding" ────────────────────────────────────
-    {
-      id: "script-wedding",
-      type: "decoration",
-      content: `<div style="
-        font-family: 'Georgia', serif;
-        font-size: 52px;
-        font-style: italic;
-        font-weight: bold;
-        color: ${KINGDOM_WEDDING_COLORS.coffee};
-        text-align: center;
-        line-height: 1;
-        text-shadow: 1px 1px 0 ${KINGDOM_WEDDING_COLORS.gold};
-        width: 100%;
-      ">Wedding</div>`,
-      position: { x: 40, y: 174, width: W - 80, height: 64 },
-      style: { zIndex: 9 },
-    },
-
-    // ─── "RECEPTION" subtitle ─────────────────────────────────────────────
-    {
-      id: "label-reception",
-      type: "text",
-      content: "— RECEPTION —",
-      position: { x: 40, y: 240, width: W - 80, height: 22 },
-      style: {
-        fontSize: 12,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
-        color: KINGDOM_WEDDING_COLORS.emerald,
+        fontSize: 11,
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "600",
+        color: KINGDOM_WEDDING_COLORS.gold,
         textAlign: "center",
         letterSpacing: "6px",
         zIndex: 9,
       },
     },
 
-    // ─── Gold divider + rings ornament ────────────────────────────────────
+    // ─── "Wedding" calligraphic script — Great Vibes ───────────────────────
+    {
+      id: "script-wedding",
+      type: "decoration",
+      content: `<div style="
+        font-family: 'Great Vibes', cursive;
+        font-size: 62px;
+        color: ${KINGDOM_WEDDING_COLORS.coffee};
+        text-align: center;
+        line-height: 1;
+        text-shadow: 1px 1px 0 ${KINGDOM_WEDDING_COLORS.goldLight}, 2px 2px 6px rgba(62,39,35,0.12);
+        width: 100%;
+      ">Wedding</div>`,
+      position: { x: 40, y: 180, width: W - 80, height: 70 },
+      style: { zIndex: 9 },
+    },
+
+    // ─── "RECEPTION" subtitle ──────────────────────────────────────────────
+    {
+      id: "label-reception",
+      type: "text",
+      content: "—  R · E · C · E · P · T · I · O · N  —",
+      position: { x: 40, y: 258, width: W - 80, height: 18 },
+      style: {
+        fontSize: 9,
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "400",
+        color: KINGDOM_WEDDING_COLORS.coffeeMid,
+        textAlign: "center",
+        letterSpacing: "4px",
+        zIndex: 9,
+      },
+    },
+
+    // ─── Gold + rings ornament divider ────────────────────────────────────
     {
       id: "divider-rings",
       type: "decoration",
       content: `<div style="
-        display:flex; align-items:center; justify-content:center; gap:8px;
+        display:flex; align-items:center; justify-content:center; gap:10px;
         width:100%;
       ">
-        <div style="flex:1; height:1px; background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold});"></div>
-        <div style="font-size:20px; letter-spacing:-4px; color:${KINGDOM_WEDDING_COLORS.gold};">💍</div>
-        <div style="flex:1; height:1px; background: linear-gradient(to left, transparent, ${KINGDOM_WEDDING_COLORS.gold});"></div>
+        <div style="flex:1; height:0.75px; background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold});"></div>
+        <div style="font-size:17px; color:${KINGDOM_WEDDING_COLORS.gold}; opacity:0.8;">💍</div>
+        <div style="flex:1; height:0.75px; background: linear-gradient(to left, transparent, ${KINGDOM_WEDDING_COLORS.gold});"></div>
       </div>`,
-      position: { x: 80, y: 268, width: 440, height: 24 },
+      position: { x: 80, y: 282, width: 440, height: 22 },
       style: { zIndex: 9 },
     },
 
-    // ─── Groom name ────────────────────────────────────────────────────────
+    // ─── Top names rule ────────────────────────────────────────────────────
+    {
+      id: "divider-names-top",
+      type: "decoration",
+      content: `<div style="width:100%; height:1px; background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 25%, ${KINGDOM_WEDDING_COLORS.gold} 75%, transparent);"></div>`,
+      position: { x: W / 2 - 155, y: 308, width: 310, height: 1 },
+      style: { zIndex: 8 },
+    },
+
+    // ─── Groom name (stacked, centered) ───────────────────────────────────
     {
       id: "groom-name",
       type: "text",
       content: "DONGBO ENOCH KWATEH",
-      position: { x: 40, y: 298, width: W / 2 - 48, height: 36 },
+      position: { x: 40, y: 318, width: W - 80, height: 28 },
       style: {
-        fontSize: 13,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
+        fontSize: 14,
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "700",
         color: KINGDOM_WEDDING_COLORS.coffee,
-        textAlign: "right",
-        letterSpacing: "1px",
+        textAlign: "center",
+        letterSpacing: "2px",
         zIndex: 9,
       },
     },
 
-    // ─── "& " connector ───────────────────────────────────────────────────
+    // ─── "&" connector — Great Vibes (large, gold, centered) ──────────────
     {
       id: "connector-and",
       type: "decoration",
       content: `<div style="
-        font-family: Georgia, serif;
-        font-style: italic;
-        font-size: 30px;
+        font-family: 'Great Vibes', cursive;
+        font-size: 48px;
         color: ${KINGDOM_WEDDING_COLORS.gold};
         text-align: center;
         line-height: 1;
         width: 100%;
-      ">&</div>`,
-      position: { x: W / 2 - 18, y: 295, width: 36, height: 42 },
+        text-shadow: 1px 1px 4px rgba(62,39,35,0.18);
+      ">&amp;</div>`,
+      position: { x: 40, y: 350, width: W - 80, height: 54 },
       style: { zIndex: 9 },
     },
 
-    // ─── Bride name ────────────────────────────────────────────────────────
+    // ─── Bride name (stacked, centered) ───────────────────────────────────
     {
       id: "bride-name",
       type: "text",
       content: "FERO PATIENCE",
-      position: { x: W / 2 + 8, y: 298, width: W / 2 - 48, height: 36 },
+      position: { x: 40, y: 408, width: W - 80, height: 28 },
       style: {
-        fontSize: 13,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
+        fontSize: 14,
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "700",
         color: KINGDOM_WEDDING_COLORS.coffee,
-        textAlign: "left",
-        letterSpacing: "1px",
+        textAlign: "center",
+        letterSpacing: "2px",
         zIndex: 9,
       },
     },
 
-    // ─── Emerald detail bar (date section) ────────────────────────────────
+    // ─── Bottom names rule ─────────────────────────────────────────────────
+    {
+      id: "divider-names-bottom",
+      type: "decoration",
+      content: `<div style="width:100%; height:1px; background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 25%, ${KINGDOM_WEDDING_COLORS.gold} 75%, transparent);"></div>`,
+      position: { x: W / 2 - 155, y: 441, width: 310, height: 1 },
+      style: { zIndex: 8 },
+    },
+
+    // ─── Emerald date bar ──────────────────────────────────────────────────
     {
       id: "date-bar-bg",
       type: "decoration",
@@ -334,21 +350,21 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         width:${W - 80}px; height:52px;
         background: ${KINGDOM_WEDDING_COLORS.emerald};
         border-radius: 3px;
-        border-top: 2px solid ${KINGDOM_WEDDING_COLORS.goldLight};
-        border-bottom: 2px solid ${KINGDOM_WEDDING_COLORS.goldLight};
+        border-top: 1.5px solid ${KINGDOM_WEDDING_COLORS.goldLight};
+        border-bottom: 1.5px solid ${KINGDOM_WEDDING_COLORS.goldLight};
       "></div>`,
-      position: { x: 40, y: 344, width: W - 80, height: 52 },
+      position: { x: 40, y: 452, width: W - 80, height: 52 },
       style: { zIndex: 8 },
     },
     {
       id: "date-text",
       type: "text",
       content: "Saturday · 30th May, 2026",
-      position: { x: 40, y: 349, width: W - 80, height: 24 },
+      position: { x: 40, y: 457, width: W - 80, height: 26 },
       style: {
         fontSize: 14,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "600",
         color: KINGDOM_WEDDING_COLORS.goldLight,
         textAlign: "center",
         letterSpacing: "1px",
@@ -359,10 +375,11 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "venue-time-text",
       type: "text",
       content: "Hangzhou City  ·  2:00 PM",
-      position: { x: 40, y: 373, width: W - 80, height: 20 },
+      position: { x: 40, y: 480, width: W - 80, height: 20 },
       style: {
-        fontSize: 11,
-        fontFamily: "Georgia, serif",
+        fontSize: 10.5,
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
+        fontStyle: "italic",
         color: KINGDOM_WEDDING_COLORS.sandstoneLight,
         textAlign: "center",
         letterSpacing: "2px",
@@ -370,138 +387,73 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       },
     },
 
-    // ─── Scripture verse ───────────────────────────────────────────────────
+    // ─── Scripture verse — Cormorant Garamond italic ───────────────────────
     {
       id: "verse",
       type: "text",
       content:
-        '"Therefore a man shall leave his father and his mother\nand hold fast to his wife, and they shall become one flesh."\n— Genesis 2:24',
-      position: { x: 60, y: 408, width: W - 120, height: 60 },
+        '"Therefore a man shall leave his father and his mother and hold fast\nto his wife, and they shall become one flesh."\n— Genesis 2:24',
+      position: { x: 55, y: 514, width: W - 110, height: 52 },
       style: {
         fontSize: 9.5,
-        fontFamily: "Georgia, serif",
+        fontFamily: "'Cormorant Garamond', Georgia, serif",
         fontStyle: "italic",
         color: KINGDOM_WEDDING_COLORS.coffeeMid,
         textAlign: "center",
-        lineHeight: 1.7,
+        lineHeight: 1.75,
         zIndex: 9,
       },
     },
 
-    // ─── Gold divider ──────────────────────────────────────────────────────
+    // ─── Gold divider above guest section ─────────────────────────────────
     {
-      id: "divider-2",
+      id: "divider-guest",
       type: "decoration",
       content: `<div style="
-        width: 320px; height: 1px;
-        background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold}, transparent);
+        width: 360px; height: 1px;
+        background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 20%, ${KINGDOM_WEDDING_COLORS.gold} 80%, transparent);
       "></div>`,
-      position: { x: W / 2 - 160, y: 472, width: 320, height: 1 },
+      position: { x: W / 2 - 180, y: 569, width: 360, height: 1 },
       style: { zIndex: 8 },
     },
 
-    // ─── Blessing contribution line ────────────────────────────────────────
-    {
-      id: "contribution-label",
-      type: "text",
-      content: "✦  KINGDOM BLESSING  ✦",
-      position: { x: 40, y: 478, width: W - 80, height: 18 },
-      style: {
-        fontSize: 9,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
-        color: KINGDOM_WEDDING_COLORS.emerald,
-        textAlign: "center",
-        letterSpacing: "3px",
-        zIndex: 9,
-      },
-    },
-    {
-      id: "contribution-text",
-      type: "text",
-      content:
-        "All invitees are invited to bless the couple with a minimum gift\nof ¥100 at the reception. Your presence is our greatest gift.",
-      position: { x: 50, y: 497, width: W - 100, height: 36 },
-      style: {
-        fontSize: 9,
-        fontFamily: "Georgia, serif",
-        fontStyle: "italic",
-        color: KINGDOM_WEDDING_COLORS.coffeeMid,
-        textAlign: "center",
-        lineHeight: 1.65,
-        zIndex: 9,
-      },
-    },
-
-    // ─── Bottom emerald footer bar ─────────────────────────────────────────
-    {
-      id: "footer-bar",
-      type: "decoration",
-      content: `<div style="
-        width:${W - 40}px; height:34px;
-        background: ${KINGDOM_WEDDING_COLORS.emerald};
-        border-radius: 2px;
-      "></div>`,
-      position: { x: 20, y: H - 54, width: W - 40, height: 34 },
-      style: { zIndex: 8 },
-    },
-
-    // ─── Recipient name slot ───────────────────────────────────────────────
+    // ─── "GUEST" label ─────────────────────────────────────────────────────
     {
       id: "recipient-label",
       type: "text",
-      content: "GUEST:",
-      position: { x: 40, y: H - 50, width: 70, height: 26 },
-      style: {
-        fontSize: 9,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
-        color: KINGDOM_WEDDING_COLORS.goldLight,
-        textAlign: "left",
-        letterSpacing: "2px",
-        zIndex: 10,
-      },
-    },
-    {
-      id: "recipient-name",
-      type: "text",
-      content: "{{recipientName}}",
-      position: { x: 110, y: H - 50, width: 270, height: 26 },
-      style: {
-        fontSize: 11,
-        fontFamily: "Georgia, serif",
-        fontStyle: "italic",
-        color: KINGDOM_WEDDING_COLORS.white,
-        textAlign: "left",
-        zIndex: 10,
-      },
-    },
-    {
-      id: "card-id-label",
-      type: "text",
-      content: "No.",
-      position: { x: W - 110, y: H - 50, width: 28, height: 26 },
+      content: "GUEST",
+      position: { x: 40, y: 576, width: 58, height: 18 },
       style: {
         fontSize: 8,
-        fontFamily: "Georgia, serif",
-        color: KINGDOM_WEDDING_COLORS.goldLight,
-        textAlign: "right",
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontWeight: "600",
+        color: KINGDOM_WEDDING_COLORS.coffeeMid,
+        textAlign: "left",
+        letterSpacing: "3px",
         zIndex: 10,
       },
     },
+
+    // ─── Blank handwriting line for guest name ─────────────────────────────
     {
-      id: "card-id",
-      type: "text",
-      content: "{{cardId}}",
-      position: { x: W - 80, y: H - 50, width: 60, height: 26 },
-      style: {
-        fontSize: 8,
-        fontFamily: "Georgia, serif",
-        color: KINGDOM_WEDDING_COLORS.sandstoneLight,
-        textAlign: "right",
-        letterSpacing: "1px",
-        zIndex: 10,
-      },
+      id: "guest-writing-line",
+      type: "decoration",
+      content: `<div style="
+        display: flex;
+        align-items: flex-end;
+        height: 18px;
+        width: 100%;
+        padding-bottom: 1px;
+      ">
+        <div style="
+          flex: 1;
+          height: 1px;
+          background: ${KINGDOM_WEDDING_COLORS.coffeeMid};
+          opacity: 0.4;
+        "></div>
+      </div>`,
+      position: { x: 106, y: 576, width: W - 146, height: 18 },
+      style: { zIndex: 10 },
     },
   ],
 };

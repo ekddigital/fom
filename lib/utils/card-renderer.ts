@@ -70,7 +70,7 @@ export class CardRenderer {
 
     // Process elements and replace placeholders
     const processedElements = elements.map((element) =>
-      this.processElement(element)
+      this.processElement(element),
     );
 
     const elementsHtml = processedElements
@@ -85,7 +85,7 @@ export class CardRenderer {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>JICF Graduation Card - ${this.cardData.id}</title>
         <style>
-          @import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap');
           
           * {
             margin: 0;
@@ -111,7 +111,7 @@ export class CardRenderer {
             ${
               settings.backgroundImage
                 ? `background-image: url(${this.getAbsoluteUrl(
-                    settings.backgroundImage
+                    settings.backgroundImage,
                   )});`
                 : ""
             }
@@ -193,7 +193,7 @@ export class CardRenderer {
 
     // Process elements and replace placeholders
     const processedElements = elements.map((element) =>
-      this.processElement(element)
+      this.processElement(element),
     );
 
     const elementsHtml = processedElements
@@ -207,7 +207,7 @@ export class CardRenderer {
 
     return `
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Georgia:ital,wght@0,400;0,700;1,400&family=Times+New+Roman:ital,wght@0,400;0,700;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&display=swap');
         
         .card-preview-container {
           position: relative;
@@ -287,7 +287,7 @@ export class CardRenderer {
       if (this.cardData.recipientName && this.cardData.recipientName.trim()) {
         content = content.replace(
           "{{recipientName}}",
-          this.cardData.recipientName
+          this.cardData.recipientName,
         );
       } else {
         // If no recipient name, hide this element by making it transparent
@@ -312,7 +312,7 @@ export class CardRenderer {
       if (this.cardData.customMessage && this.cardData.customMessage.trim()) {
         content = content.replace(
           "{{customMessage}}",
-          this.cardData.customMessage
+          this.cardData.customMessage,
         );
       } else {
         return {
@@ -333,14 +333,14 @@ export class CardRenderer {
           year: "numeric",
           month: "long",
           day: "numeric",
-        }
+        },
       );
       content = content.replace("{{date}}", formattedDate);
     } // Handle service outline - split into individual lines
     if (content.includes("{{serviceOutlineItems}}")) {
       console.log(
         "🔍 Processing serviceOutlineItems, cardData.serviceOutline:",
-        this.cardData.serviceOutline
+        this.cardData.serviceOutline,
       );
       if (this.cardData.serviceOutline && this.cardData.serviceOutline.trim()) {
         const serviceItems = this.cardData.serviceOutline
@@ -350,7 +350,7 @@ export class CardRenderer {
         const itemsHtml = serviceItems
           .map(
             (item) =>
-              `<div style="margin-bottom: 3px; padding: 4px 6px; background: rgba(255,255,255,0.08); border-radius: 3px; font-size: 12px; line-height: 1.1; border-left: 2px solid rgba(255,255,255,0.3);">${item.trim()}</div>`
+              `<div style="margin-bottom: 3px; padding: 4px 6px; background: rgba(255,255,255,0.08); border-radius: 3px; font-size: 12px; line-height: 1.1; border-left: 2px solid rgba(255,255,255,0.3);">${item.trim()}</div>`,
           )
           .join("");
         console.log("🔍 Generated items HTML:", itemsHtml);
@@ -371,14 +371,14 @@ export class CardRenderer {
     if (content.includes("{{eventName}}")) {
       content = content.replace(
         "{{eventName}}",
-        this.cardData.eventName || "SERVICE OUTLINE"
+        this.cardData.eventName || "SERVICE OUTLINE",
       );
     }
 
     if (content.includes("{{eventDate}}")) {
       content = content.replace(
         "{{eventDate}}",
-        this.cardData.eventDate || new Date().toLocaleDateString()
+        this.cardData.eventDate || new Date().toLocaleDateString(),
       );
     }
     if (content.includes("{{mcName}}")) {
@@ -398,7 +398,7 @@ export class CardRenderer {
     if (content.includes("{{graduatesList}}")) {
       console.log(
         "🔍 Processing graduatesList, cardData.graduatesList:",
-        this.cardData.graduatesList
+        this.cardData.graduatesList,
       );
       if (this.cardData.graduatesList && this.cardData.graduatesList.trim()) {
         try {
@@ -415,7 +415,7 @@ export class CardRenderer {
               .map((line) => {
                 // Parse format: "1. Name • Country • University • Major"
                 const match = line.match(
-                  /^\d+\.\s*(.+?)\s*•\s*(.+?)\s*•\s*(.+?)\s*•\s*(.+)$/
+                  /^\d+\.\s*(.+?)\s*•\s*(.+?)\s*•\s*(.+?)\s*•\s*(.+)$/,
                 );
                 if (match) {
                   return {
@@ -463,18 +463,18 @@ export class CardRenderer {
             console.log("🔍 No graduates data found, showing placeholder");
             content = content.replace(
               "{{graduatesList}}",
-              "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
+              "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>",
             );
           }
         } catch (error) {
           console.error("❌ Error parsing graduates list:", error);
           console.log(
             "🔍 Raw graduatesList data:",
-            this.cardData.graduatesList
+            this.cardData.graduatesList,
           );
           content = content.replace(
             "{{graduatesList}}",
-            "<div style='text-align: center; font-style: italic; opacity: 0.7; color: #ff6b6b;'>Error loading graduates data</div>"
+            "<div style='text-align: center; font-style: italic; opacity: 0.7; color: #ff6b6b;'>Error loading graduates data</div>",
           );
         }
       } else {
@@ -492,7 +492,7 @@ export class CardRenderer {
     if (content.includes("{{meetOurGraduatesContent}}")) {
       console.log(
         "🔍 Processing meetOurGraduatesContent, cardData.meetOurGraduatesData:",
-        this.cardData.meetOurGraduatesData
+        this.cardData.meetOurGraduatesData,
       );
 
       if (
@@ -508,36 +508,36 @@ export class CardRenderer {
               this.generateMeetOurGraduatesPages(graduatesData);
             console.log(
               "🔍 Generated multi-page content length:",
-              multiPageContent.length
+              multiPageContent.length,
             );
             console.log(
               "🔍 Multi-page content preview:",
-              multiPageContent.substring(0, 500) + "..."
+              multiPageContent.substring(0, 500) + "...",
             );
             content = content.replace(
               "{{meetOurGraduatesContent}}",
-              multiPageContent
+              multiPageContent,
             );
             console.log("🔍 Content after replacement length:", content.length);
           } else {
             console.log("🔍 No graduates data - showing placeholder");
             content = content.replace(
               "{{meetOurGraduatesContent}}",
-              "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
+              "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>",
             );
           }
         } catch (error) {
           console.error("❌ Error parsing meet our graduates data:", error);
           content = content.replace(
             "{{meetOurGraduatesContent}}",
-            "<div style='text-align: center; font-style: italic; opacity: 0.7; color: #ff6b6b;'>Error loading graduates data</div>"
+            "<div style='text-align: center; font-style: italic; opacity: 0.7; color: #ff6b6b;'>Error loading graduates data</div>",
           );
         }
       } else {
         console.log("🔍 No meet our graduates data found");
         content = content.replace(
           "{{meetOurGraduatesContent}}",
-          "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>"
+          "<div style='text-align: center; font-style: italic; opacity: 0.7;'>No graduates data available</div>",
         );
       }
     }
@@ -552,7 +552,7 @@ export class CardRenderer {
    * Generate multi-page content for Meet Our Graduates
    */
   private generateMeetOurGraduatesPages(
-    graduatesData: Record<string, string | number>[]
+    graduatesData: Record<string, string | number>[],
   ): string {
     const pages: string[] = [];
 
@@ -567,7 +567,7 @@ export class CardRenderer {
       pages.push(this.generateGraduateProfilePage(graduate, index + 1));
     }); // Combine all pages
     return pages.join(
-      '<div style="page-break-after: always; height: 30px; border-bottom: 2px dashed #ddd; margin: 20px 0;"></div>'
+      '<div style="page-break-after: always; height: 30px; border-bottom: 2px dashed #ddd; margin: 20px 0;"></div>',
     );
   }
   /**
@@ -667,7 +667,7 @@ export class CardRenderer {
    */
   private generateGraduateProfilePage(
     graduate: Record<string, string | number>,
-    graduateNumber: number
+    graduateNumber: number,
   ): string {
     const {
       Name = "N/A",
@@ -705,7 +705,7 @@ export class CardRenderer {
             // Map exact file names as they exist in public/graduates/
             const getActualImagePaths = (
               graduateNum: number,
-              picIndex: number
+              picIndex: number,
             ): string[] => {
               const paths = [];
 
@@ -754,11 +754,11 @@ export class CardRenderer {
                 case 9:
                   if (picIndex === 0)
                     paths.push(
-                      "/graduates/9-1-standing with diploma and cap.jpg"
+                      "/graduates/9-1-standing with diploma and cap.jpg",
                     );
                   if (picIndex === 1)
                     paths.push(
-                      "/graduates/9-2-sitting-with gown and diploma.jpg"
+                      "/graduates/9-2-sitting-with gown and diploma.jpg",
                     );
                   break;
                 case 10:
@@ -863,7 +863,7 @@ export class CardRenderer {
    */
   private buildStyleString(
     position: CardElement["position"],
-    style: CardElement["style"]
+    style: CardElement["style"],
   ): string {
     const styles: string[] = [
       `left: ${position.x}px`,
