@@ -1,14 +1,14 @@
 // Enhanced authentication types for FOM platform
 // Following Prisma camelCase naming and NextAuth integration
 
-import { DefaultSession, DefaultUser } from "next-auth";
+import { DefaultSession } from "next-auth";
 import {
   UserRole,
   DisplayNamePreference,
   ProfileVisibility,
 } from "@prisma/client";
 
-// Extend the built-in NextAuth types
+// Extend the built-in NextAuth v5 types
 declare module "next-auth" {
   interface Session {
     user: {
@@ -22,7 +22,7 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 
-  interface User extends DefaultUser {
+  interface User {
     role: string;
     firstName: string;
     lastName: string;
@@ -34,7 +34,8 @@ declare module "next-auth" {
   }
 }
 
-declare module "next-auth/jwt" {
+// JWT token fields (augment @auth/core/jwt since next-auth/jwt re-exports from it)
+declare module "@auth/core/jwt" {
   interface JWT {
     id: string;
     role: string;

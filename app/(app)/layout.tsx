@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { DashboardHeader } from "@/components/ui/layout/dashboard-header";
 import { DashboardSidebar } from "@/components/ui/layout/dashboard-sidebar";

@@ -1,4 +1,4 @@
-import { NextAuthOptions } from "next-auth";
+import NextAuth, { type NextAuthConfig, type User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
@@ -12,7 +12,7 @@ import { formatUserName } from "@/lib/utils/user";
 
 const prisma = new PrismaClient();
 
-export const authOptions: NextAuthOptions = {
+const config: NextAuthConfig = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -39,13 +39,16 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        const email = (credentials?.email as string | undefined) ?? "";
+        const password = (credentials?.password as string | undefined) ?? "";
+
+        if (!email || !password) {
           throw new Error("Invalid credentials");
         }
 
         const user = await prisma.user.findUnique({
           where: {
-            email: credentials.email,
+            email,
           },
           select: {
             id: true,
@@ -72,7 +75,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const isCorrectPassword = await bcrypt.compare(
-          credentials.password,
+          password,
           user.password
         );
 
@@ -115,12 +118,13 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       // If user is signing in for the first time, set initial token data
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.firstName = user.firstName;
-        token.lastName = user.lastName;
-        token.username = user.username;
-        token.displayNamePreference = user.displayNamePreference;
+        const u = user as User & Record<string, unknown>;
+        token.id = user.id ?? "";
+        token.role = u.role as string;
+        token.firstName = u.firstName as string;
+        token.lastName = u.lastName as string;
+        token.username = u.username as string | undefined;
+        token.displayNamePreference = u.displayNamePreference as string;
       }
 
       // Always fetch fresh user data from database to ensure latest role/info
@@ -167,15 +171,15 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      const u = session.user as typeof session.user & Record<string, unknown>;
       if (token) {
-        session.user.id = token.id as string;
-        session.user.role = token.role as string;
-        session.user.firstName = token.firstName as string;
-        session.user.lastName = token.lastName as string;
-        session.user.username = token.username as string | undefined;
-        session.user.displayNamePreference =
-          token.displayNamePreference as string;
-        session.user.displayName = formatUserName(
+        u.id = token.id as string;
+        u.role = token.role as string;
+        u.firstName = token.firstName as string;
+        u.lastName = token.lastName as string;
+        u.username = token.username as string | undefined;
+        u.displayNamePreference = token.displayNamePreference as string;
+        u.displayName = formatUserName(
           {
             firstName: token.firstName as string,
             lastName: token.lastName as string,
@@ -187,6 +191,7 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ user, account }) {
+      const u = user as User & Record<string, unknown>;
       if (account?.provider === "google") {
         try {
           // Check if user already exists
@@ -199,8 +204,8 @@ export const authOptions: NextAuthOptions = {
             const newUser = await prisma.user.create({
               data: {
                 email: user.email!,
-                firstName: user.firstName || "",
-                lastName: user.lastName || "",
+                firstName: (u.firstName as string) || "",
+                lastName: (u.lastName as string) || "",
                 role: UserRole.MEMBER,
                 displayNamePreference: DisplayNamePreference.FULL_NAME,
                 profileVisibility: ProfileVisibility.MEMBERS_ONLY,
@@ -237,3 +242,12 @@ export const authOptions: NextAuthOptions = {
   },
   debug: process.env.NODE_ENV === "development",
 };
+
+// ── next-auth v5 exports ──────────────────────────────────────────────────────
+export const { auth, handlers, signIn, signOut } = NextAuth(config);
+
+// Backward-compat shim: routes calling getServerSession(authOptions) still work.
+// The authOptions argument is intentionally ignored — auth() reads context itself.
+export const authOptions = config;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getServerSession = async (..._args: unknown[]) => auth();

@@ -4,7 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { CardDatabaseService } from "../../../../lib/services/card-database";
 import { CardRenderer } from "../../../../lib/utils/card-renderer";
