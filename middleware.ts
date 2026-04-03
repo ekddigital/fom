@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
-import { NextResponse, type NextRequest } from "next/server";
-import type { Session } from "next-auth";
+import { NextResponse } from "next/server";
+import type { NextAuthRequest } from "next-auth";
 
-export default auth((req: NextRequest & { auth: Session | null }) => {
+export default auth((req: NextAuthRequest) => {
   // req.auth is the Session object (null if unauthenticated)
   const session = req.auth;
   const isAuthPage =

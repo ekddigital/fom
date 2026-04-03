@@ -1,4 +1,4 @@
-import NextAuth, { type User } from "next-auth";
+import NextAuth, { type NextAuthConfig, type User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
@@ -12,7 +12,7 @@ import { formatUserName } from "@/lib/utils/user";
 
 const prisma = new PrismaClient();
 
-const config = {
+const config: NextAuthConfig = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -238,7 +238,7 @@ const config = {
     },
   },
   debug: process.env.NODE_ENV === "development",
-} satisfies Parameters<typeof NextAuth>[0];
+};
 
 // ── next-auth v5 exports ──────────────────────────────────────────────────────
 export const { auth, handlers, signIn, signOut } = NextAuth(config);
