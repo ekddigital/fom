@@ -24,7 +24,7 @@ export async function generateVerificationId(): Promise<string> {
 // Generate a comprehensive certificate ID with year, type, and unique number
 export function generateCertificateId(
   templateName: string,
-  sequenceNumber?: number
+  sequenceNumber?: number,
 ): string {
   const currentYear = new Date().getFullYear();
 
@@ -231,7 +231,7 @@ export function isCertificateExpired(expiryDate: Date | null): boolean {
 // Generate QR code data for certificate verification
 export function generateQRCodeData(
   verificationId: string,
-  baseUrl: string
+  baseUrl: string,
 ): string {
   return `${baseUrl}/community/verify-certificate?id=${verificationId}`;
 }
@@ -247,7 +247,7 @@ export function generateEnhancedQRCodeData(
     issuerName: string;
     organizationName?: string;
   },
-  baseUrl: string
+  baseUrl: string,
 ): string {
   // Check if running on localhost or local network
   const isLocalhost =
@@ -315,7 +315,7 @@ export function generateEnhancedQRCodeData(
           simplifiedLength: JSON.stringify(qrData).length,
           reduction:
             "Certificate of Service - simplified to only include certificate ID, recipient name, date, and pastor name",
-        }
+        },
       );
 
       // Return simplified JSON string for localhost Certificate of Service
@@ -365,7 +365,7 @@ export function generateEnhancedQRCodeData(
 // Format certificate display name
 export function formatCertificateDisplayName(
   firstName: string,
-  lastName: string
+  lastName: string,
 ): string {
   return `${firstName.trim()} ${lastName.trim()}`;
 }
@@ -588,7 +588,7 @@ export function createSecureCertificate(data: SecureCertificateData) {
   const verificationUrl = generateSecureVerificationUrl(
     data.certificateId,
     security.signature || "",
-    process.env.NEXTAUTH_URL
+    process.env.NEXTAUTH_URL,
   );
 
   return {
@@ -610,7 +610,7 @@ export function createSecureCertificate(data: SecureCertificateData) {
  */
 export function verifyCertificateIntegrity(
   certificateData: SecureCertificateData,
-  providedSignature: string
+  providedSignature: string,
 ): boolean {
   const expectedSecurity = generateCertificateSecurity(certificateData);
   return expectedSecurity.signature === providedSignature;
@@ -666,7 +666,7 @@ ${parsed.verificationUrl}
 
 // Format certificate information for display
 export function formatCertificateInfo(
-  certInfo: Record<string, unknown>
+  certInfo: Record<string, unknown>,
 ): string {
   if (!certInfo || typeof certInfo !== "object") {
     return "Invalid certificate information";
