@@ -95,18 +95,17 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
     },
     {
       id: "header-text",
-      type: "text",
-      content: "✦  ADMISSION  ·  CARD  ·  RECEPTION  ✦",
+      type: "decoration",
+      content: `<div style="
+        width:100%; height:100%;
+        display:flex; align-items:center; justify-content:center;
+        font-family:'Playfair Display', Georgia, serif;
+        font-size:10px; font-weight:600;
+        color:${KINGDOM_WEDDING_COLORS.goldLight};
+        letter-spacing:3px; white-space:nowrap;
+      ">✦  ADMISSION  ·  CARD  ·  RECEPTION  ✦</div>`,
       position: { x: 18, y: 22, width: W - 36, height: 36 },
-      style: {
-        fontSize: 10,
-        fontFamily: "'Playfair Display', Georgia, serif",
-        fontWeight: "600",
-        color: KINGDOM_WEDDING_COLORS.goldLight,
-        textAlign: "center",
-        letterSpacing: "3px",
-        zIndex: 9,
-      },
+      style: { zIndex: 9 },
     },
 
     // ─── Corner ornamental rosettes (gold, no emerald fill) ───────────────
@@ -399,7 +398,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         '"Therefore a man shall leave his father and his mother\nand hold fast to his wife, and they shall become one flesh."\n— Genesis 2:24',
       position: { x: 45, y: 510, width: W - 90, height: 62 },
       style: {
-        fontSize: 12.5,
+        fontSize: 14,
         fontFamily: "'Cormorant Garamond', Georgia, serif",
         fontStyle: "italic",
         color: KINGDOM_WEDDING_COLORS.coffeeMid,
@@ -426,13 +425,13 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "recipient-label",
       type: "text",
       content: "GUEST",
-      position: { x: 40, y: 576, width: 58, height: 18 },
+      position: { x: 40, y: 576, width: W - 80, height: 18 },
       style: {
-        fontSize: 8,
+        fontSize: 9,
         fontFamily: "'Playfair Display', Georgia, serif",
         fontWeight: "600",
         color: KINGDOM_WEDDING_COLORS.coffeeMid,
-        textAlign: "left",
+        textAlign: "center",
         letterSpacing: "3px",
         zIndex: 10,
       },
@@ -456,7 +455,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
           opacity: 0.4;
         "></div>
       </div>`,
-      position: { x: 106, y: 576, width: W - 146, height: 18 },
+      position: { x: W / 2 - 100, y: 576, width: 200, height: 18 },
       style: { zIndex: 10 },
     },
   ],
