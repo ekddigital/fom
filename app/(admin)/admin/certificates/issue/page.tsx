@@ -899,6 +899,21 @@ export default function IssueCertificatePage() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
+                      <Label htmlFor="placement">Placement / Award Rank</Label>
+                      <Input
+                        id="placement"
+                        value={
+                          (formData.customFields.placement as string) || ""
+                        }
+                        onChange={(e) =>
+                          handleCustomFieldChange("placement", e.target.value)
+                        }
+                        placeholder="e.g., 1st Place Winner"
+                        className="mt-1 bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    <div>
                       <Label htmlFor="achievement">Achievement/Course</Label>
                       <Input
                         id="achievement"
