@@ -162,75 +162,73 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       style: { zIndex: 10 },
     },
 
-    // ─── Monogram medallion — luxury medal redesign ──────────────────────
+    // ─── Monogram medallion — Great Vibes cursive script ────────────────
     {
       id: "monogram-svg",
       type: "decoration",
-      content: `<svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 100 100">
+      content: `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 100 100">
         <defs>
-          <!-- Deep convex emerald gradient: bright highlight top-left, very dark bottom -->
-          <radialGradient id="mg" cx="40%" cy="30%" r="70%">
+          <!-- Deep convex emerald gradient -->
+          <radialGradient id="mg" cx="38%" cy="28%" r="72%">
             <stop offset="0%"   stop-color="#007A58"/>
-            <stop offset="45%"  stop-color="#003D2A"/>
-            <stop offset="100%" stop-color="#001712"/>
+            <stop offset="50%"  stop-color="#003D2A"/>
+            <stop offset="100%" stop-color="#001510"/>
           </radialGradient>
-          <!-- Subtle inner glow for letter depth -->
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="1.2" result="blur"/>
-            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          <!-- Gold shimmer on the letters -->
+          <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%"   stop-color="#F5DFA0"/>
+            <stop offset="50%"  stop-color="${KINGDOM_WEDDING_COLORS.gold}"/>
+            <stop offset="100%" stop-color="#A07820"/>
+          </linearGradient>
+          <!-- Soft drop-shadow for letters -->
+          <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
+            <feDropShadow dx="0.5" dy="1" stdDeviation="1.2"
+                          flood-color="#001510" flood-opacity="0.7"/>
           </filter>
         </defs>
 
-        <!-- ① Deep emerald fill -->
+        <!-- ① Emerald fill -->
         <circle cx="50" cy="50" r="47" fill="url(#mg)"/>
 
-        <!-- ② Bold outer gold bezel ring -->
-        <circle cx="50" cy="50" r="47" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="2.2"/>
+        <!-- ② Bold outer gold bezel -->
+        <circle cx="50" cy="50" r="47"  fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"      stroke-width="2.4"/>
+        <!-- ③ Inner bright ring -->
+        <circle cx="50" cy="50" r="43.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.7" opacity="0.8"/>
+        <!-- ④ Dashed ornamental ring -->
+        <circle cx="50" cy="50" r="40"   fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"
+                stroke-width="0.45" stroke-dasharray="2 3.5" opacity="0.45"/>
 
-        <!-- ③ Thin bright inner ring -->
-        <circle cx="50" cy="50" r="43.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.7" opacity="0.75"/>
+        <!-- ⑤ Cardinal dots -->
+        <circle cx="50" cy="5"  r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
+        <circle cx="50" cy="95" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
+        <circle cx="5"  cy="50" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
+        <circle cx="95" cy="50" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
 
-        <!-- ④ Ornamental dashed innermost ring -->
-        <circle cx="50" cy="50" r="39.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"
-                stroke-width="0.5" stroke-dasharray="2.2 3.2" opacity="0.5"/>
-
-        <!-- ⑤ Four cardinal dots on the bezel (luxury watch detail) -->
-        <circle cx="50" cy="5"  r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
-        <circle cx="50" cy="95" r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
-        <circle cx="5"  cy="50" r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
-        <circle cx="95" cy="50" r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
-
-        <!-- ⑥ Subtle horizontal hairline across centre -->
-        <line x1="12" y1="50" x2="88" y2="50"
-              stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="0.35" opacity="0.3"/>
-
-        <!-- ⑦ "E" — large italic bold, slightly left of centre -->
-        <text x="29" y="65"
-              font-family="Georgia, 'Times New Roman', serif"
-              font-style="italic" font-weight="bold"
-              font-size="46"
-              fill="${KINGDOM_WEDDING_COLORS.goldLight}"
+        <!-- ⑥ "E" — Great Vibes cursive, gold shimmer, drop-shadow -->
+        <text x="27" y="66"
+              font-family="'Great Vibes', cursive"
+              font-size="50"
+              fill="url(#goldGrad)"
               text-anchor="middle"
-              filter="url(#glow)">E</text>
+              filter="url(#shadow)">E</text>
 
-        <!-- ⑧ Centre ✦ ornament -->
-        <text x="50" y="53"
+        <!-- ⑦ "·" centre dot separator -->
+        <text x="50" y="55"
               font-family="serif"
-              font-size="12"
-              fill="${KINGDOM_WEDDING_COLORS.gold}"
-              text-anchor="middle"
-              opacity="0.95">✦</text>
-
-        <!-- ⑨ "P" — large italic bold, slightly right of centre -->
-        <text x="71" y="65"
-              font-family="Georgia, 'Times New Roman', serif"
-              font-style="italic" font-weight="bold"
-              font-size="46"
+              font-size="10"
               fill="${KINGDOM_WEDDING_COLORS.goldLight}"
               text-anchor="middle"
-              filter="url(#glow)">P</text>
+              opacity="0.9">·</text>
+
+        <!-- ⑧ "P" — Great Vibes cursive, gold shimmer, drop-shadow -->
+        <text x="73" y="66"
+              font-family="'Great Vibes', cursive"
+              font-size="50"
+              fill="url(#goldGrad)"
+              text-anchor="middle"
+              filter="url(#shadow)">P</text>
       </svg>`,
-      position: { x: W / 2 - 45, y: 54, width: 90, height: 90 },
+      position: { x: W / 2 - 48, y: 52, width: 96, height: 96 },
       style: { zIndex: 12 },
     },
 
