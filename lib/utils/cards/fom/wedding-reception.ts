@@ -269,7 +269,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         text-shadow: 1px 1px 0 ${KINGDOM_WEDDING_COLORS.goldLight}, 2px 2px 6px rgba(62,39,35,0.12);
         width: 100%;
       ">Wedding</div>`,
-      position: { x: 40, y: 160, width: W - 80, height: 54 },
+      position: { x: 40, y: 166, width: W - 80, height: 54 },
       style: { zIndex: 9 },
     },
 
@@ -278,7 +278,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "label-reception",
       type: "text",
       content: "—  R · E · C · E · P · T · I · O · N  —",
-      position: { x: 40, y: 217, width: W - 80, height: 16 },
+      position: { x: 40, y: 223, width: W - 80, height: 16 },
       style: {
         fontSize: 11,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -302,7 +302,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         <div style="font-size:14px; color:${KINGDOM_WEDDING_COLORS.gold}; opacity:0.8;">💍</div>
         <div style="flex:1; height:0.75px; background: linear-gradient(to left, transparent, ${KINGDOM_WEDDING_COLORS.gold});"></div>
       </div>`,
-      position: { x: 80, y: 236, width: 440, height: 16 },
+      position: { x: 80, y: 242, width: 440, height: 16 },
       style: { zIndex: 9 },
     },
 
@@ -311,7 +311,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "divider-names-top",
       type: "decoration",
       content: `<div style="width:100%; height:1px; background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 25%, ${KINGDOM_WEDDING_COLORS.gold} 75%, transparent);"></div>`,
-      position: { x: W / 2 - 155, y: 256, width: 310, height: 1 },
+      position: { x: W / 2 - 155, y: 262, width: 310, height: 1 },
       style: { zIndex: 8 },
     },
 
@@ -320,7 +320,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "groom-name",
       type: "text",
       content: "DONGBO ENOCH KWATEH",
-      position: { x: 40, y: 260, width: W - 80, height: 22 },
+      position: { x: 40, y: 266, width: W - 80, height: 22 },
       style: {
         fontSize: 13,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -345,7 +345,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         width: 100%;
         text-shadow: 1px 1px 4px rgba(62,39,35,0.18);
       ">&amp;</div>`,
-      position: { x: 40, y: 284, width: W - 80, height: 40 },
+      position: { x: 40, y: 290, width: W - 80, height: 40 },
       style: { zIndex: 9 },
     },
 
@@ -354,7 +354,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "bride-name",
       type: "text",
       content: "FERO PATIENCE",
-      position: { x: 40, y: 326, width: W - 80, height: 22 },
+      position: { x: 40, y: 332, width: W - 80, height: 22 },
       style: {
         fontSize: 13,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -371,7 +371,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "divider-names-bottom",
       type: "decoration",
       content: `<div style="width:100%; height:1px; background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 25%, ${KINGDOM_WEDDING_COLORS.gold} 75%, transparent);"></div>`,
-      position: { x: W / 2 - 155, y: 351, width: 310, height: 1 },
+      position: { x: W / 2 - 155, y: 357, width: 310, height: 1 },
       style: { zIndex: 8 },
     },
 
@@ -386,14 +386,14 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         border-top: 1.5px solid ${KINGDOM_WEDDING_COLORS.goldLight};
         border-bottom: 1.5px solid ${KINGDOM_WEDDING_COLORS.goldLight};
       "></div>`,
-      position: { x: 40, y: 358, width: W - 80, height: 42 },
+      position: { x: 40, y: 364, width: W - 80, height: 42 },
       style: { zIndex: 8 },
     },
     {
       id: "date-text",
       type: "text",
       content: "Saturday · 30th May, 2026",
-      position: { x: 40, y: 363, width: W - 80, height: 20 },
+      position: { x: 40, y: 369, width: W - 80, height: 20 },
       style: {
         fontSize: 13,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -408,7 +408,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "venue-time-text",
       type: "text",
       content: "Hangzhou City  ·  2:00 PM",
-      position: { x: 40, y: 382, width: W - 80, height: 16 },
+      position: { x: 40, y: 388, width: W - 80, height: 16 },
       style: {
         fontSize: 11,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -426,7 +426,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       type: "text",
       content:
         '"Therefore a man shall leave his father and his mother\nand hold fast to his wife, and they shall become one flesh."\n— Genesis 2:24',
-      position: { x: 45, y: 402, width: W - 90, height: 62 },
+      position: { x: 45, y: 408, width: W - 90, height: 62 },
       style: {
         fontSize: 13.5,
         fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -450,7 +450,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         letter-spacing: 0.8px;
         width: 100%;
       ">浙江省杭州市西湖区紫萱路18号</div>`,
-      position: { x: 40, y: 466, width: W - 80, height: 18 },
+      position: { x: 40, y: 472, width: W - 80, height: 18 },
       style: { zIndex: 9 },
     },
 
@@ -465,7 +465,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         <div style="font-family:'Playfair Display',Georgia,serif; font-size:10px; font-weight:700; color:${KINGDOM_WEDDING_COLORS.gold}; letter-spacing:4px; margin-bottom:5px;">R · S · V · P</div>
         <div style="font-family:'Playfair Display',Georgia,serif; font-size:11px; color:${KINGDOM_WEDDING_COLORS.coffeeMid}; letter-spacing:0.5px;">+86 185 0683 2159  &nbsp;·&nbsp;  +86 195 5811 1273</div>
       </div>`,
-      position: { x: 40, y: 487, width: W - 80, height: 34 },
+      position: { x: 40, y: 493, width: W - 80, height: 34 },
       style: { zIndex: 9 },
     },
 
@@ -477,7 +477,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         width: 360px; height: 1px;
         background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 20%, ${KINGDOM_WEDDING_COLORS.gold} 80%, transparent);
       "></div>`,
-      position: { x: W / 2 - 180, y: 527, width: 360, height: 1 },
+      position: { x: W / 2 - 180, y: 533, width: 360, height: 1 },
       style: { zIndex: 8 },
     },
 
@@ -486,7 +486,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "recipient-label",
       type: "text",
       content: "GUEST",
-      position: { x: 40, y: 535, width: W - 80, height: 14 },
+      position: { x: 40, y: 541, width: W - 80, height: 14 },
       style: {
         fontSize: 8,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -516,7 +516,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
           opacity: 0.4;
         "></div>
       </div>`,
-      position: { x: W / 2 - 100, y: 535, width: 200, height: 14 },
+      position: { x: W / 2 - 100, y: 541, width: 200, height: 14 },
       style: { zIndex: 10 },
     },
   ],
