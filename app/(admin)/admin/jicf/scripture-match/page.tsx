@@ -191,6 +191,42 @@ const VERSES: Verse[] = [
     category: "harder",
     text: "Remember Jesus Christ, raised from the dead, descended from David. This is my gospel.",
   },
+
+  // ── Extra Easter ───────────────────────────────────────────────────────────
+  {
+    id: 26,
+    ref: "John 19:30",
+    category: "easter",
+    text: "When he had received the drink, Jesus said, \u2018It is finished.\u2019 With that, he bowed his head and gave up his spirit.",
+  },
+  {
+    id: 27,
+    ref: "Luke 23:34",
+    category: "easter",
+    text: "Jesus said, \u2018Father, forgive them, for they do not know what they are doing.\u2019",
+  },
+
+  // ── Extra Popular ──────────────────────────────────────────────────────────
+  {
+    id: 28,
+    ref: "John 14:6",
+    category: "popular",
+    text: "Jesus answered, \u2018I am the way and the truth and the life. No one comes to the Father except through me.\u2019",
+  },
+  {
+    id: 29,
+    ref: "Isaiah 25:8",
+    category: "popular",
+    text: "He will swallow up death forever. The Sovereign Lord will wipe away the tears from all faces; he will remove his people\u2019s disgrace from all the earth.",
+  },
+
+  // ── Extra Harder ───────────────────────────────────────────────────────────
+  {
+    id: 30,
+    ref: "1 Thessalonians 4:14",
+    category: "harder",
+    text: "For we believe that Jesus died and rose again, and so we believe that God will bring with Jesus those who have fallen asleep in him.",
+  },
 ];
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -214,7 +250,7 @@ export default function ScriptureMatchPage() {
         @media print {
           body * { visibility: hidden; }
           #scripture-printable, #scripture-printable * { visibility: visible; }
-          #scripture-printable { position: fixed; inset: 0; overflow: visible; }
+          #scripture-printable { position: absolute; top: 0; left: 0; width: 100%; }
           .no-print { display: none !important; }
         }
         @page { size: A4 portrait; margin: 8mm; }
@@ -238,7 +274,7 @@ export default function ScriptureMatchPage() {
             </span>
           </div>
           <p className="text-sm text-gray-500">
-            25 verse pairs · 50 slips · up to 50 players
+            30 verse pairs · 60 slips · up to 60 players
           </p>
           <p className="text-xs text-amber-600 font-medium mt-1">
             ⚠ In the print dialog, enable{" "}
@@ -319,7 +355,7 @@ export default function ScriptureMatchPage() {
         {/* Verse list by category */}
         <div>
           <h2 className="font-bold text-base mb-3" style={{ color: C.dark }}>
-            All 25 Verse Pairs
+            All 30 Verse Pairs
           </h2>
           <div className="space-y-1">
             {(["easter", "popular", "harder"] as Category[]).map((cat) => (
@@ -394,7 +430,7 @@ export default function ScriptureMatchPage() {
                 color: C.dark,
               }}
             >
-              <strong>Keep this sheet with you during the game.</strong> Use pair numbers (#01–#25) to verify matches instantly.
+              <strong>Keep this sheet with you during the game.</strong> Use pair numbers (#01–#30) to verify matches instantly.
               First 3 pairs to match correctly win a prize. After all match, have each pair read their verse aloud.
             </div>
 
@@ -498,7 +534,7 @@ export default function ScriptureMatchPage() {
                     letterSpacing: 1,
                   }}
                 >
-                  ✂ SECTION A &nbsp;·&nbsp; REFERENCE SLIPS (navy) &nbsp;·&nbsp; 25 SLIPS
+                  ✂ SECTION A &nbsp;·&nbsp; REFERENCE SLIPS (navy) &nbsp;·&nbsp; 30 SLIPS
                 </div>
                 <div style={{ color: C.yellow, fontSize: 8, marginTop: 6, opacity: 0.8 }}>
                   Cut along dashed lines · Fold · Place in basket
@@ -564,7 +600,7 @@ export default function ScriptureMatchPage() {
                     letterSpacing: 1,
                   }}
                 >
-                  ✂ SECTION B &nbsp;·&nbsp; VERSE SLIPS (cream) &nbsp;·&nbsp; 25 SLIPS
+                  ✂ SECTION B &nbsp;·&nbsp; VERSE SLIPS (cream) &nbsp;·&nbsp; 30 SLIPS
                 </div>
                 <div style={{ color: C.dark, fontSize: 8, marginTop: 6, opacity: 0.7 }}>
                   Cut along dashed lines · Fold · Place in basket
@@ -623,7 +659,7 @@ function RefSlip({ verse }: { verse: Verse }) {
         borderRadius: 6,
         backgroundColor: C.navy,
         padding: "6px 9px",
-        minHeight: "62mm",
+        minHeight: "78mm",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -747,7 +783,7 @@ function VerseSlip({ verse }: { verse: Verse }) {
         borderRadius: 6,
         backgroundColor: C.cream,
         padding: "6px 9px",
-        minHeight: "62mm",
+        minHeight: "78mm",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -815,7 +851,7 @@ function VerseSlip({ verse }: { verse: Verse }) {
         <div
           style={{
             color: C.dark,
-            fontSize: verse.text.length > 120 ? 8 : verse.text.length > 80 ? 9 : 10,
+            fontSize: verse.text.length > 150 ? 12 : verse.text.length > 100 ? 13 : 15,
             fontStyle: "italic",
             textAlign: "center",
             lineHeight: 1.55,
