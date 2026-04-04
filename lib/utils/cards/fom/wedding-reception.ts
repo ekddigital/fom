@@ -396,14 +396,14 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       type: "text",
       content:
         '"Therefore a man shall leave his father and his mother\nand hold fast to his wife, and they shall become one flesh."\n— Genesis 2:24',
-      position: { x: 45, y: 396, width: W - 90, height: 52 },
+      position: { x: 45, y: 396, width: W - 90, height: 62 },
       style: {
-        fontSize: 11.5,
+        fontSize: 13.5,
         fontFamily: "'Cormorant Garamond', Georgia, serif",
         fontStyle: "italic",
         color: KINGDOM_WEDDING_COLORS.coffeeMid,
         textAlign: "center",
-        lineHeight: 1.5,
+        lineHeight: 1.55,
         zIndex: 9,
       },
     },
@@ -420,7 +420,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         letter-spacing: 0.8px;
         width: 100%;
       ">浙江省杭州市西湖区紫萱路18号</div>`,
-      position: { x: 40, y: 450, width: W - 80, height: 18 },
+      position: { x: 40, y: 460, width: W - 80, height: 18 },
       style: { zIndex: 9 },
     },
 
@@ -435,7 +435,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         <div style="font-family:'Playfair Display',Georgia,serif; font-size:8.5px; font-weight:600; color:${KINGDOM_WEDDING_COLORS.gold}; letter-spacing:3px; margin-bottom:5px;">R · S · V · P</div>
         <div style="font-family:'Playfair Display',Georgia,serif; font-size:11px; color:${KINGDOM_WEDDING_COLORS.coffeeMid}; letter-spacing:0.5px;">+86 185 0683 2159  &nbsp;·&nbsp;  +86 195 5811 1273</div>
       </div>`,
-      position: { x: 40, y: 471, width: W - 80, height: 34 },
+      position: { x: 40, y: 481, width: W - 80, height: 34 },
       style: { zIndex: 9 },
     },
 
@@ -447,7 +447,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         width: 360px; height: 1px;
         background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 20%, ${KINGDOM_WEDDING_COLORS.gold} 80%, transparent);
       "></div>`,
-      position: { x: W / 2 - 180, y: 510, width: 360, height: 1 },
+      position: { x: W / 2 - 180, y: 521, width: 360, height: 1 },
       style: { zIndex: 8 },
     },
 
@@ -456,7 +456,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "recipient-label",
       type: "text",
       content: "GUEST",
-      position: { x: 40, y: 518, width: W - 80, height: 14 },
+      position: { x: 40, y: 529, width: W - 80, height: 14 },
       style: {
         fontSize: 8,
         fontFamily: "'Playfair Display', Georgia, serif",
@@ -486,7 +486,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
           opacity: 0.4;
         "></div>
       </div>`,
-      position: { x: W / 2 - 100, y: 518, width: 200, height: 14 },
+      position: { x: W / 2 - 100, y: 529, width: 200, height: 14 },
       style: { zIndex: 10 },
     },
   ],
