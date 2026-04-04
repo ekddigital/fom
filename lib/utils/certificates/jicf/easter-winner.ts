@@ -168,15 +168,15 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "award-badge-text",
       type: "text",
-      content: "✦  EASTER VIDEO CONTEST  ✦",
+      content: "✦  {{custom.placement}}  ✦",
       position: { x: 295, y: 191, width: 210, height: 16 },
       style: {
-        fontSize: 9,
+        fontSize: 10,
         fontFamily: "Georgia, serif",
         fontWeight: "bold",
         color: C.yellow,
         textAlign: "center",
-        letterSpacing: "1.5px",
+        letterSpacing: "1px",
       },
     },
 

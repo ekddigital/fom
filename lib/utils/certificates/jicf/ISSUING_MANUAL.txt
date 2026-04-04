@@ -26,6 +26,9 @@ Select: "JICF Easter Winner Certificate 2026"
     UJN Cell Group
        (Full: UJN Cell Group — University of Jinan)
 
+  Custom Fields:
+    - Placement:         1st Place Winner
+
   Description note (for your records):
     1st Place · 20 reactions · University of Jinan
 
@@ -39,6 +42,9 @@ Select: "JICF Easter Winner Certificate 2026"
   Recipient Name (Cell Group):
     SDUFE Cell Group
        (Full: SDUFE Cell Group — Shandong University of Finance & Economics)
+
+  Custom Fields:
+    - Placement:         2nd Place Winner
 
   Description note (for your records):
     2nd Place · 13 reactions · Shandong University of Finance & Economics
