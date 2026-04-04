@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { dbCertificateService } from "@/lib/services/certificate-database";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     // Smart initialization - only if templates don't exist

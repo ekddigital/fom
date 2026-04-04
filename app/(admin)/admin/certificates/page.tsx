@@ -208,7 +208,9 @@ export default function AdminCertificatesPage() {
   const loadTemplates = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/certificates/template-options");
+      const response = await fetch("/api/certificates/template-options", {
+        cache: "no-store",
+      });
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
