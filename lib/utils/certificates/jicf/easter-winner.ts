@@ -200,7 +200,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "recipient-name",
       type: "text",
       content: "{{recipientName}}",
-      position: { x: 100, y: 255, width: 600, height: 50 },
+      position: { x: 80, y: 250, width: 640, height: 50 },
       style: {
         fontSize: 34,
         fontFamily: "Georgia, serif",
@@ -215,29 +215,8 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "name-underline",
       type: "shape",
       content: "",
-      position: { x: 200, y: 308, width: 400, height: 1.5 },
+      position: { x: 200, y: 303, width: 400, height: 1.5 },
       style: { color: C.navy },
-    },
-
-    // ── QR code (right side) ──────────────────────────────────────────────
-    {
-      id: "qr-verification",
-      type: "image",
-      content: "{{qrCode}}",
-      position: { x: 660, y: 250, width: 65, height: 65 },
-      style: { borderRadius: "0px" },
-    },
-    {
-      id: "qr-label",
-      type: "text",
-      content: "Scan to verify",
-      position: { x: 657, y: 319, width: 70, height: 10 },
-      style: {
-        fontSize: 6.5,
-        fontFamily: "Georgia, serif",
-        color: C.dark,
-        textAlign: "center",
-      },
     },
 
     // ── Description ───────────────────────────────────────────────────────
@@ -246,7 +225,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       type: "text",
       content:
         "In recognition of outstanding dedication and creativity in the JICF Easter Video Contest,\ntheme: \"The Resurrected King\" — 1 Corinthians 15:20. Your cell group's video inspired faith,\nspread the joy of Resurrection, and brought glory to our Lord Jesus Christ.",
-      position: { x: 70, y: 320, width: 660, height: 58 },
+      position: { x: 70, y: 314, width: 660, height: 58 },
       style: {
         fontSize: 12.5,
         fontFamily: "Georgia, serif",
@@ -261,7 +240,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "scripture-bg",
       type: "shape",
       content: "",
-      position: { x: 120, y: 385, width: 560, height: 42 },
+      position: { x: 120, y: 380, width: 560, height: 42 },
       style: { color: C.navy, borderRadius: "4px" },
     },
     {
@@ -269,7 +248,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       type: "text",
       content:
         '"But now is Christ risen from the dead, and become the firstfruits of them that slept."',
-      position: { x: 130, y: 391, width: 540, height: 16 },
+      position: { x: 130, y: 386, width: 540, height: 16 },
       style: {
         fontSize: 11,
         fontFamily: "Georgia, serif",
@@ -282,7 +261,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "scripture-ref",
       type: "text",
       content: "— 1 Corinthians 15:20 (KJV)   ·   He is risen indeed! ✝",
-      position: { x: 130, y: 409, width: 540, height: 13 },
+      position: { x: 130, y: 404, width: 540, height: 13 },
       style: {
         fontSize: 10,
         fontFamily: "Georgia, serif",
@@ -297,7 +276,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "date-issued",
       type: "text",
       content: "Date Issued: {{issueDate}}",
-      position: { x: 60, y: 440, width: 680, height: 14 },
+      position: { x: 60, y: 436, width: 680, height: 14 },
       style: {
         fontSize: 10,
         fontFamily: "Georgia, serif",
@@ -306,28 +285,28 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       },
     },
 
-    // ── Pastor signature (left) ───────────────────────────────────────────
+    // ── Pastor signature (centred) ─────────────────────────────────────────
     {
       id: "pastor-signature",
       type: "image",
       content: "/pastor_Joe_signaturepng.png",
-      position: { x: 80, y: 455, width: 130, height: 38 },
+      position: { x: 310, y: 454, width: 180, height: 44 },
       style: {},
     },
     {
       id: "pastor-sig-line",
       type: "shape",
       content: "",
-      position: { x: 80, y: 496, width: 130, height: 1 },
+      position: { x: 290, y: 500, width: 220, height: 1 },
       style: { color: C.dark },
     },
     {
       id: "pastor-name",
       type: "text",
       content: "Pst. Joseph G. Summers",
-      position: { x: 65, y: 500, width: 160, height: 13 },
+      position: { x: 270, y: 505, width: 260, height: 14 },
       style: {
-        fontSize: 9,
+        fontSize: 10,
         fontFamily: "Georgia, serif",
         fontWeight: "bold",
         color: C.dark,
@@ -338,57 +317,23 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "pastor-title",
       type: "text",
       content: "Senior Pastor, JICF",
-      position: { x: 65, y: 513, width: 160, height: 12 },
+      position: { x: 270, y: 519, width: 260, height: 12 },
       style: {
-        fontSize: 7.5,
+        fontSize: 8,
         fontFamily: "Georgia, serif",
         color: C.dark,
         textAlign: "center",
       },
     },
 
-    // ── Certificate ID (centre) ────────────────────────────────────────────
+    // ── Certificate ID (below pastor block) ───────────────────────────────
     {
       id: "certificate-id",
       type: "text",
       content: "ID: {{certificateId}}",
-      position: { x: 300, y: 502, width: 200, height: 12 },
+      position: { x: 270, y: 534, width: 260, height: 12 },
       style: {
-        fontSize: 8.5,
-        fontFamily: "Georgia, serif",
-        color: C.dark,
-        textAlign: "center",
-      },
-    },
-
-    // ── Placeholder for second official / coordinator (right) ─────────────
-    {
-      id: "coord-sig-line",
-      type: "shape",
-      content: "",
-      position: { x: 590, y: 496, width: 130, height: 1 },
-      style: { color: C.dark },
-    },
-    {
-      id: "coord-name",
-      type: "text",
-      content: "Cell Group Coordinator",
-      position: { x: 575, y: 500, width: 160, height: 13 },
-      style: {
-        fontSize: 9,
-        fontFamily: "Georgia, serif",
-        fontWeight: "bold",
-        color: C.dark,
-        textAlign: "center",
-      },
-    },
-    {
-      id: "coord-title",
-      type: "text",
-      content: "JICF Cell Ministry",
-      position: { x: 575, y: 513, width: 160, height: 12 },
-      style: {
-        fontSize: 7.5,
+        fontSize: 8,
         fontFamily: "Georgia, serif",
         color: C.dark,
         textAlign: "center",
@@ -414,14 +359,14 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "dot-bl",
       type: "shape",
       content: "",
-      position: { x: 36, y: 455, width: 10, height: 10 },
+      position: { x: 36, y: 450, width: 10, height: 10 },
       style: { color: C.red, borderRadius: "50%" },
     },
     {
       id: "dot-br",
       type: "shape",
       content: "",
-      position: { x: 754, y: 455, width: 10, height: 10 },
+      position: { x: 754, y: 450, width: 10, height: 10 },
       style: { color: C.red, borderRadius: "50%" },
     },
   ],
