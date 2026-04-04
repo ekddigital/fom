@@ -205,30 +205,30 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         <circle cx="95" cy="50" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
 
         <!-- ⑥ "E" — Great Vibes cursive, gold shimmer, drop-shadow -->
-        <text x="27" y="66"
+        <text x="30" y="62"
               font-family="'Great Vibes', cursive"
-              font-size="50"
+              font-size="38"
               fill="url(#goldGrad)"
               text-anchor="middle"
               filter="url(#shadow)">E</text>
 
         <!-- ⑦ "·" centre dot separator -->
-        <text x="50" y="55"
+        <text x="50" y="53"
               font-family="serif"
-              font-size="10"
+              font-size="9"
               fill="${KINGDOM_WEDDING_COLORS.goldLight}"
               text-anchor="middle"
               opacity="0.9">·</text>
 
         <!-- ⑧ "P" — Great Vibes cursive, gold shimmer, drop-shadow -->
-        <text x="73" y="66"
+        <text x="70" y="62"
               font-family="'Great Vibes', cursive"
-              font-size="50"
+              font-size="38"
               fill="url(#goldGrad)"
               text-anchor="middle"
               filter="url(#shadow)">P</text>
       </svg>`,
-      position: { x: W / 2 - 48, y: 52, width: 96, height: 96 },
+      position: { x: W / 2 - 40, y: 48, width: 80, height: 80 },
       style: { zIndex: 12 },
     },
 
