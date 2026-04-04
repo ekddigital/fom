@@ -222,18 +222,20 @@ export default function EasterBingoPage() {
         >
           <span style={{ color: C.yellow, fontSize: "9px", lineHeight: "1.5" }}>
             <strong style={{ color: "#fff" }}>HOW TO PLAY: </strong>
-            You have <strong style={{ color: C.yellow }}>15 minutes</strong> —
+            You have <strong style={{ color: C.yellow }}>10 minutes</strong> —
             walk around and find someone who matches each square. Ask them to{" "}
             <strong style={{ color: C.gold }}>sign their name</strong> in that
             box. Each person may sign your card{" "}
-            <strong style={{ color: C.gold }}>only once</strong>. When time is
-            called, the player with the{" "}
+            <strong style={{ color: C.gold }}>only once</strong>.{" "}
+            If you complete <strong style={{ color: C.yellow }}>all your squares</strong> before
+            time is up, shout{" "}
+            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong>{" "}
+            immediately and you win! Otherwise, when time is called, the player
+            with the{" "}
             <strong style={{ color: C.gold }}>
               most completed rows, columns, or diagonals
             </strong>{" "}
-            shouts{" "}
-            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong>{" "}
-            and wins!
+            wins.
           </span>
         </div>
 
