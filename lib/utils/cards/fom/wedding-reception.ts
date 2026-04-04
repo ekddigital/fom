@@ -60,7 +60,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       content: `<div style="
         width:${W - 12}px; height:${H - 12}px;
         border: 2.5px solid ${KINGDOM_WEDDING_COLORS.gold};
-        border-radius: 3px;
+        border-radius: 0;
       "></div>`,
       position: { x: 6, y: 6, width: W - 12, height: H - 12 },
       style: { zIndex: 5 },
@@ -73,7 +73,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       content: `<div style="
         width:${W - 26}px; height:${H - 26}px;
         border: 0.75px solid ${KINGDOM_WEDDING_COLORS.gold};
-        border-radius: 2px;
+        border-radius: 0;
         opacity: 0.45;
       "></div>`,
       position: { x: 13, y: 13, width: W - 26, height: H - 26 },
@@ -87,7 +87,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       content: `<div style="
         width: ${W - 36}px; height: 36px;
         background: ${KINGDOM_WEDDING_COLORS.emerald};
-        border-radius: 2px;
+        border-radius: 0;
         display: flex; align-items: center; justify-content: center;
       "></div>`,
       position: { x: 18, y: 22, width: W - 36, height: 36 },
@@ -387,7 +387,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       content: `<div style="
         width:${W - 80}px; height:42px;
         background: ${KINGDOM_WEDDING_COLORS.emerald};
-        border-radius: 3px;
+        border-radius: 0;
         border-top: 1.5px solid ${KINGDOM_WEDDING_COLORS.goldLight};
         border-bottom: 1.5px solid ${KINGDOM_WEDDING_COLORS.goldLight};
       "></div>`,

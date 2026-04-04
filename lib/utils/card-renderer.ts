@@ -117,7 +117,7 @@ export class CardRenderer {
             }
             background-size: cover;
             background-position: center;
-            border-radius: 20px;
+            border-radius: 0;
             box-shadow: 0 10px 40px rgba(0,0,0,0.15);
             overflow: hidden;
             margin: 0;
@@ -225,7 +225,7 @@ export class CardRenderer {
           }
           background-size: cover;
           background-position: center;
-          ${isMultiPage ? "" : "border-radius: 20px;"}
+          ${isMultiPage ? "" : "border-radius: 0;"}
           ${isMultiPage ? "" : "box-shadow: 0 10px 40px rgba(0,0,0,0.15);"}
           overflow: visible;
           margin: 0 auto;
