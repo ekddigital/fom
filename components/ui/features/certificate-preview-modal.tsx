@@ -73,11 +73,11 @@ export function CertificatePreviewModal({
         console.log("Generating QR code for URL:", sampleVerificationUrl);
         // Use the same ultra-scannable QR code logic as downloads (DRY principle)
         const qrDataUrl = await generateCertificateQRCode(
-          sampleVerificationUrl
+          sampleVerificationUrl,
         );
         console.log(
           "QR code generated successfully:",
-          qrDataUrl.substring(0, 50) + "..."
+          qrDataUrl.substring(0, 50) + "...",
         );
         setQrCodeDataUrl(qrDataUrl);
       } catch (error) {
@@ -112,7 +112,7 @@ export function CertificatePreviewModal({
         onclone: (clonedDoc) => {
           // Ensure the cloned document also has the safe class
           const clonedElement = clonedDoc.querySelector(
-            "[data-html2canvas-safe]"
+            "[data-html2canvas-safe]",
           );
           if (clonedElement) {
             clonedElement.classList.add("html2canvas-safe");
@@ -154,7 +154,7 @@ export function CertificatePreviewModal({
         onclone: (clonedDoc) => {
           // Ensure the cloned document also has the safe class
           const clonedElement = clonedDoc.querySelector(
-            "[data-html2canvas-safe]"
+            "[data-html2canvas-safe]",
           );
           if (clonedElement) {
             clonedElement.classList.add("html2canvas-safe");
@@ -181,13 +181,13 @@ export function CertificatePreviewModal({
         0,
         0,
         template.pageSettings.width,
-        template.pageSettings.height
+        template.pageSettings.height,
       );
       pdf.save(
         `${template.name || "certificate"}-${recipientName.replace(
           /\s+/g,
-          "-"
-        )}.pdf`
+          "-",
+        )}.pdf`,
       );
     } catch (error) {
       console.error("Error downloading PDF:", error);
@@ -219,8 +219,8 @@ export function CertificatePreviewModal({
       console.log(
         "QR elements:",
         template.elements.filter(
-          (el) => el.id.includes("qr") || el.content.includes("qr")
-        )
+          (el) => el.id.includes("qr") || el.content.includes("qr"),
+        ),
       );
       console.log(
         "Security elements:",
@@ -229,8 +229,8 @@ export function CertificatePreviewModal({
             el.content.includes("{{qrCode}}") ||
             el.content.includes("{{verificationUrl}}") ||
             el.id.includes("security") ||
-            el.id.includes("watermark")
-        )
+            el.id.includes("watermark"),
+        ),
       );
     }
   }, [isOpen, template]);
@@ -238,7 +238,7 @@ export function CertificatePreviewModal({
   // Function to calculate dynamic sizing for JICF certificate fields
   const applyDynamicSizing = (
     element: TemplateElement,
-    formData: { position?: string; recipientName?: string }
+    formData: { position?: string; recipientName?: string },
   ) => {
     let fontSize = element.style.fontSize;
     let height = element.position.height;
@@ -276,15 +276,20 @@ export function CertificatePreviewModal({
       const nameLength = formData.recipientName.length;
 
       if (nameLength > 50) {
-        fontSize = 20; height = 65;
+        fontSize = 20;
+        height = 65;
       } else if (nameLength > 40) {
-        fontSize = 22; height = 62;
+        fontSize = 22;
+        height = 62;
       } else if (nameLength > 30) {
-        fontSize = 26; height = 58;
+        fontSize = 26;
+        height = 58;
       } else if (nameLength > 20) {
-        fontSize = 30; height = 52;
+        fontSize = 30;
+        height = 52;
       } else {
-        fontSize = 34; height = 50;
+        fontSize = 34;
+        height = 50;
       }
     }
 
@@ -298,43 +303,43 @@ export function CertificatePreviewModal({
         // Handle double brace format (template builder)
         .replace(
           /\{\{recipientName\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
         )
         .replace(
           /\{\{issuerName\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`,
         )
         .replace(
           /\{\{issueDate\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
         )
         .replace(
           /\{\{baptismDate\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
         )
         .replace(
           /\{\{serviceYears\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">5</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">5</span>`,
         )
         .replace(
           /\{\{volunteerHours\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">120</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">120</span>`,
         )
         .replace(
           /\{\{missionLocation\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Tanzania</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Tanzania</span>`,
         )
         .replace(
           /\{\{achievementArea\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Bible Study</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Bible Study</span>`,
         )
         .replace(
           /\{\{certificateId\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`,
         )
         .replace(
           /\{\{verificationUrl\}\}/g,
-          `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`
+          `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`,
         )
 
         // JICF Certificate of Service specific variables
@@ -342,37 +347,37 @@ export function CertificatePreviewModal({
           /\{\{gender\}\}/g,
           `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${
             gender === "Male" ? "his" : gender === "Female" ? "her" : "his/her"
-          }</span>`
+          }</span>`,
         )
         .replace(
           /\{\{position\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${position}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${position}</span>`,
         )
         .replace(
           /\{\{pastorName\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${pastorName}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${pastorName}</span>`,
         )
 
         // Handle single brace format (issued certificates)
         .replace(
           /\{recipientName\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
         )
         .replace(
           /\{issuerName\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`,
         )
         .replace(
           /\{issueDate\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
         )
         .replace(
           /\{certificateId\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`
+          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`,
         )
         .replace(
           /\{verificationUrl\}/g,
-          `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`
+          `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`,
         )
 
         // Clean up any remaining empty braces
@@ -406,12 +411,12 @@ export function CertificatePreviewModal({
       .replace(
         /\{\{qrCode\}\}/g,
         qrCodeDataUrl ||
-          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+"
+          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+",
       )
       .replace(
         /\{qrCode\}/g,
         qrCodeDataUrl ||
-          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+"
+          "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2Y0ZjRmNCIvPjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0iY2VudHJhbCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM2NjYiPlFSIENvZGU8L3RleHQ+PC9zdmc+",
       )
       // JICF Certificate of Service pastor signature
       .replace(/\{\{pastorSignature\}\}/g, "/pastor_Joe_signaturepng.png")
@@ -608,8 +613,8 @@ export function CertificatePreviewModal({
                     element.style.textAlign === "center"
                       ? "center"
                       : element.style.textAlign === "right"
-                      ? "flex-end"
-                      : "flex-start",
+                        ? "flex-end"
+                        : "flex-start",
                   overflow: "hidden",
                   lineHeight: dynamicSizing.lineHeight,
                 };
@@ -620,7 +625,9 @@ export function CertificatePreviewModal({
                       key={element.id}
                       style={elementStyle}
                       dangerouslySetInnerHTML={{
-                      __html: applyCustomFields(replaceVariables(element.content)),
+                        __html: replaceVariables(
+                          applyCustomFields(element.content),
+                        ),
                       }}
                     />
                   );

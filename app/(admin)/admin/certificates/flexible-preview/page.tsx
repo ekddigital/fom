@@ -20,9 +20,8 @@ export default function FlexiblePreviewPage() {
   const certificateId = searchParams.get("certificateId");
   const [certificate, setCertificate] = React.useState<{
     templateData: TemplateData;
-    recipientFirstName?: string;
-    recipientLastName?: string;
-    authorizingOfficial?: string;
+    recipientName?: string;
+    issuerName?: string;
     issueDate?: string;
   } | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
@@ -171,10 +170,8 @@ export default function FlexiblePreviewPage() {
   }
 
   // Extract recipient information from the certificate
-  const recipientName = `${certificate.recipientFirstName || "Sample"} ${
-    certificate.recipientLastName || "Recipient"
-  }`;
-  const issuerName = certificate.authorizingOfficial || "System Administrator";
+  const recipientName = certificate.recipientName || "Sample Recipient";
+  const issuerName = certificate.issuerName || "System Administrator";
   const issueDate = certificate.issueDate
     ? new Date(certificate.issueDate).toLocaleDateString()
     : new Date().toLocaleDateString();
@@ -233,6 +230,7 @@ export default function FlexiblePreviewPage() {
         recipientName={recipientName}
         issuerName={issuerName}
         issueDate={issueDate}
+        customFields={{}}
       />
     </div>
   );

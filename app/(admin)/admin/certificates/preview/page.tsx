@@ -14,10 +14,16 @@ export default function CertificatePreviewPage() {
 
   const templateId = searchParams.get("template");
   const recipientName = searchParams.get("recipientName") || "Sample Recipient";
-  const issuerName = searchParams.get("issuerName") || "System Administrator";
+  const issuerName =
+    searchParams.get("authorizingOfficial") ||
+    searchParams.get("issuerName") ||
+    "System Administrator";
   const position = searchParams.get("position") || "Sample Position";
   const gender = searchParams.get("gender") || "his/her";
   const pastorName = searchParams.get("pastorName") || "Pst. Joseph G. Summers";
+  const issueDate =
+    searchParams.get("issueDate") ||
+    new Date().toLocaleDateString();
 
   // Collect any custom fields passed as customField_<key> params
   const customFields: Record<string, string> = {};
@@ -124,7 +130,7 @@ export default function CertificatePreviewPage() {
               variant="outline"
               onClick={() =>
                 router.push(
-                  `/admin/certificates/builder?template=${templateId}`
+                  `/admin/certificates/builder?template=${templateId}`,
                 )
               }
               className="flex items-center gap-2"
@@ -135,8 +141,8 @@ export default function CertificatePreviewPage() {
               onClick={() =>
                 router.push(
                   `/admin/certificates/issue?template=${templateId}&recipientName=${encodeURIComponent(
-                    recipientName
-                  )}`
+                    recipientName,
+                  )}`,
                 )
               }
               className="flex items-center gap-2 bg-red-600 hover:bg-red-700"
@@ -156,7 +162,7 @@ export default function CertificatePreviewPage() {
             template={template}
             recipientName={recipientName}
             issuerName={issuerName}
-            issueDate={new Date().toLocaleDateString()}
+            issueDate={issueDate}
             position={position}
             gender={gender}
             pastorName={pastorName}
