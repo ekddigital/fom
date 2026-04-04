@@ -5,12 +5,11 @@
 
 CERTIFICATE ID FORMAT EXPLAINED
 ---------------------------------
-Example ID:  JICF-2026-JIC-0001-LM
+Example ID:  JICF-2026-EAS-0001-LM
 
   JICF  → Organization prefix  (Jinan International Christian Fellowship)
   2026  → Year the certificate was issued
-  JIC   → Type code — first 3 uppercase letters of the template name
-           "JICF Easter Winner Certificate 2026" → J, I, C → "JIC"
+  EAS   → Type code — "EAS" for Easter (matched from template name)
   0001  → Sequence number (auto-incremented, 4 digits, zero-padded)
   LM    → Random 2-character suffix for uniqueness (changes every issue)
 

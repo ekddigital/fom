@@ -41,6 +41,7 @@ export function generateCertificateId(
   const getTypeCode = (name: string): string => {
     const nameUpper = name.toUpperCase();
 
+    if (nameUpper.includes("EASTER")) return "EAS";
     if (nameUpper.includes("APPRECIATION")) return "APP";
     if (nameUpper.includes("EXCELLENCE")) return "EXC";
     if (nameUpper.includes("OUTSTANDING")) return "OUT";
