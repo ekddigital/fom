@@ -922,7 +922,7 @@ export class CardRenderer {
       });
 
       await page.setContent(html, {
-        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 
@@ -934,7 +934,7 @@ export class CardRenderer {
         }
         return Promise.resolve();
       }); // Wait a bit more for rendering
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Check if this is multi-page content and capture accordingly
       const pageHtml = await page.content();
@@ -1001,7 +1001,7 @@ export class CardRenderer {
       });
 
       await page.setContent(html, {
-        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 
@@ -1013,7 +1013,7 @@ export class CardRenderer {
         }
         return Promise.resolve();
       });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       // Generate PDF with appropriate settings for multi-page content
       const isMultiPage = html.includes("page-break-after: always");

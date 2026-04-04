@@ -432,7 +432,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         text-align: center;
         width: 100%;
       ">
-        <div style="font-family:'Playfair Display',Georgia,serif; font-size:8.5px; font-weight:600; color:${KINGDOM_WEDDING_COLORS.gold}; letter-spacing:3px; margin-bottom:5px;">R · S · V · P</div>
+        <div style="font-family:'Playfair Display',Georgia,serif; font-size:10px; font-weight:700; color:${KINGDOM_WEDDING_COLORS.gold}; letter-spacing:4px; margin-bottom:5px;">R · S · V · P</div>
         <div style="font-family:'Playfair Display',Georgia,serif; font-size:11px; color:${KINGDOM_WEDDING_COLORS.coffeeMid}; letter-spacing:0.5px;">+86 185 0683 2159  &nbsp;·&nbsp;  +86 195 5811 1273</div>
       </div>`,
       position: { x: 40, y: 481, width: W - 80, height: 34 },
