@@ -11,16 +11,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Download, FileText, ImageIcon } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Download, FileText, ImageIcon, PenLine } from "lucide-react";
 
 export interface FormatSelectionDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onDownload: (format: "pdf" | "png") => void;
+  onDownload: (format: "pdf" | "png", hideSignature: boolean) => void;
   title?: string;
   description?: string;
   certificateName?: string;
   isBulkDownload?: boolean;
+  /** Show the "For manual signing" signature toggle (only for single-cert downloads). */
+  showSignatureToggle?: boolean;
 }
 
 export function FormatSelectionDialog({
@@ -31,14 +34,16 @@ export function FormatSelectionDialog({
   description = "Choose the format for downloading your certificate.",
   certificateName = "Certificate",
   isBulkDownload = false,
+  showSignatureToggle = false,
 }: FormatSelectionDialogProps) {
   const [selectedFormat, setSelectedFormat] = useState<"pdf" | "png">("pdf");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [hideSignature, setHideSignature] = useState(false);
 
   const handleDownload = async () => {
     setIsDownloading(true);
     try {
-      await onDownload(selectedFormat);
+      await onDownload(selectedFormat, hideSignature);
       onOpenChange(false);
     } catch (error) {
       console.error("Download failed:", error);
@@ -133,6 +138,34 @@ export function FormatSelectionDialog({
               </p>
             )}
           </div>
+
+          {showSignatureToggle && (
+            <div className="p-4 border-2 border-amber-200 bg-amber-50 rounded-lg">
+              <div className="flex items-start gap-3">
+                <Checkbox
+                  id="hide-signature"
+                  checked={hideSignature}
+                  onCheckedChange={(checked) =>
+                    setHideSignature(checked === true)
+                  }
+                  className="mt-0.5 border-amber-400 data-[state=checked]:bg-amber-600 data-[state=checked]:border-amber-600"
+                />
+                <div>
+                  <Label
+                    htmlFor="hide-signature"
+                    className="font-medium cursor-pointer text-amber-900 flex items-center gap-1.5"
+                  >
+                    <PenLine className="h-4 w-4" />
+                    For manual signing
+                  </Label>
+                  <p className="text-xs text-amber-800 mt-0.5">
+                    Hides the electronic signature so the pastor can sign the
+                    printed certificate by hand.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="flex justify-end space-x-3 pt-4 border-t border-gray-100">
             <Button

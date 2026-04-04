@@ -112,6 +112,8 @@ export interface TemplateElement {
   id: string;
   type: "text" | "image" | "shape" | "qr";
   content: string;
+  /** Optional group tag. Elements with group "signature" can be hidden for manual signing. */
+  group?: string;
   position: {
     x: number;
     y: number;

@@ -99,7 +99,7 @@ export default function AdminCertificatesPage() {
 
   // Bulk selection state
   const [selectedCertificates, setSelectedCertificates] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [isAllSelected, setIsAllSelected] = useState(false);
 
@@ -154,7 +154,9 @@ export default function AdminCertificatesPage() {
   useEffect(() => {
     if (paginatedCertificates.length > 0) {
       setIsAllSelected(
-        paginatedCertificates.every((cert) => selectedCertificates.has(cert.id))
+        paginatedCertificates.every((cert) =>
+          selectedCertificates.has(cert.id),
+        ),
       );
     } else {
       setIsAllSelected(false);
@@ -166,7 +168,7 @@ export default function AdminCertificatesPage() {
   const startItem = (currentPage - 1) * itemsPerPage + 1;
   const endItem = Math.min(
     currentPage * itemsPerPage,
-    filteredCertificates.length
+    filteredCertificates.length,
   );
   const hasNextPage = currentPage < totalPages;
   const hasPrevPage = currentPage > 1;
@@ -199,7 +201,7 @@ export default function AdminCertificatesPage() {
           cert.verificationId
             .toLowerCase()
             .includes(searchQuery.toLowerCase()) ||
-          cert.templateName.toLowerCase().includes(searchQuery.toLowerCase())
+          cert.templateName.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setFilteredCertificates(filtered);
     }
@@ -221,7 +223,7 @@ export default function AdminCertificatesPage() {
               isActive: true,
               certificatesIssued: Math.floor(Math.random() * 50), // Mock issued count for demo
               createdAt: "2024-12-01", // Mock creation date
-            })
+            }),
           );
           setCertificateTemplates(templatesWithMockData);
         } else {
@@ -271,7 +273,7 @@ export default function AdminCertificatesPage() {
   const handlePreviewTemplate = (template: CertificateTemplate) => {
     // Navigate to the new preview page instead of using modal
     router.push(
-      `/admin/certificates/preview?template=${template.id}&recipientName=Sample+Recipient`
+      `/admin/certificates/preview?template=${template.id}&recipientName=Sample+Recipient`,
     );
   };
 
@@ -301,18 +303,18 @@ export default function AdminCertificatesPage() {
   const handlePreviewCertificate = (certificate: IssuedCertificate) => {
     // Navigate to the preview page with the issued certificate data
     router.push(
-      `/admin/certificates/flexible-preview?certificateId=${certificate.id}`
+      `/admin/certificates/flexible-preview?certificateId=${certificate.id}`,
     );
   };
 
   const handleDownloadCertificate = async (
     certificate: IssuedCertificate,
-    format: "pdf" | "png" = "pdf"
+    format: "pdf" | "png" = "pdf",
+    hideSignature: boolean = false,
   ) => {
     try {
-      const response = await fetch(
-        `/api/certificates/${certificate.id}/download?format=${format}`
-      );
+      const url = `/api/certificates/${certificate.id}/download?format=${format}${hideSignature ? "&hideSignature=true" : ""}`;
+      const response = await fetch(url);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -326,7 +328,7 @@ export default function AdminCertificatesPage() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         toast.success(
-          `Certificate downloaded as ${format.toUpperCase()} successfully`
+          `Certificate downloaded as ${format.toUpperCase()} successfully`,
         );
       } else {
         // Try to get error details from response
@@ -338,17 +340,17 @@ export default function AdminCertificatesPage() {
               `${format.toUpperCase()} not available. Use the view button to see the certificate.`,
               {
                 duration: 5000,
-              }
+              },
             );
           } else {
             toast.error(
               errorData.message ||
-                `Failed to download certificate as ${format.toUpperCase()}`
+                `Failed to download certificate as ${format.toUpperCase()}`,
             );
           }
         } catch {
           toast.error(
-            `Failed to download certificate as ${format.toUpperCase()}`
+            `Failed to download certificate as ${format.toUpperCase()}`,
           );
         }
       }
@@ -376,13 +378,20 @@ export default function AdminCertificatesPage() {
   };
 
   // Handle format selection for downloads
-  const handleFormatSelection = async (format: "pdf" | "png") => {
+  const handleFormatSelection = async (
+    format: "pdf" | "png",
+    hideSignature: boolean = false,
+  ) => {
     setShowFormatDialog(false);
 
     if (isBulkDownload) {
       await handleBulkDownload(format);
     } else if (pendingDownloadCertificate) {
-      await handleDownloadCertificate(pendingDownloadCertificate, format);
+      await handleDownloadCertificate(
+        pendingDownloadCertificate,
+        format,
+        hideSignature,
+      );
     }
 
     setPendingDownloadCertificate(null);
@@ -392,7 +401,7 @@ export default function AdminCertificatesPage() {
   const handleDeleteCertificate = async (certificate: IssuedCertificate) => {
     if (
       confirm(
-        `Are you sure you want to revoke the certificate issued to ${certificate.recipientName}?`
+        `Are you sure you want to revoke the certificate issued to ${certificate.recipientName}?`,
       )
     ) {
       try {
@@ -413,11 +422,11 @@ export default function AdminCertificatesPage() {
   };
 
   const handlePermanentDeleteCertificate = async (
-    certificate: IssuedCertificate
+    certificate: IssuedCertificate,
   ) => {
     if (
       confirm(
-        `⚠️ PERMANENT DELETE WARNING ⚠️\n\nThis will PERMANENTLY DELETE the certificate issued to ${certificate.recipientName}.\n\nThis action CANNOT be undone and will:\n- Remove the certificate from the database\n- Delete associated files\n- Make the certificate unverifiable\n\nAre you absolutely sure you want to proceed?`
+        `⚠️ PERMANENT DELETE WARNING ⚠️\n\nThis will PERMANENTLY DELETE the certificate issued to ${certificate.recipientName}.\n\nThis action CANNOT be undone and will:\n- Remove the certificate from the database\n- Delete associated files\n- Make the certificate unverifiable\n\nAre you absolutely sure you want to proceed?`,
       )
     ) {
       try {
@@ -425,7 +434,7 @@ export default function AdminCertificatesPage() {
           `/api/certificates/${certificate.id}/delete-permanent`,
           {
             method: "DELETE",
-          }
+          },
         );
         if (response.ok) {
           toast.success("Certificate permanently deleted");
@@ -454,13 +463,13 @@ export default function AdminCertificatesPage() {
     console.log(
       "Total selected certificates:",
       newSelected.size,
-      Array.from(newSelected)
+      Array.from(newSelected),
     );
 
     // Update isAllSelected based on current page only
     setIsAllSelected(
       paginatedCertificates.every((cert) => newSelected.has(cert.id)) &&
-        paginatedCertificates.length > 0
+        paginatedCertificates.length > 0,
     );
   };
 
@@ -473,7 +482,7 @@ export default function AdminCertificatesPage() {
       setIsAllSelected(false);
       console.log(
         "Deselected all on current page. Total selected:",
-        newSelected.size
+        newSelected.size,
       );
     } else {
       // Select all certificates on current page
@@ -484,7 +493,7 @@ export default function AdminCertificatesPage() {
       console.log(
         "Selected all on current page. Total selected:",
         newSelected.size,
-        Array.from(newSelected)
+        Array.from(newSelected),
       );
     }
   };
@@ -503,12 +512,12 @@ export default function AdminCertificatesPage() {
 
     console.log(
       "Selected certificates for revoke:",
-      Array.from(selectedCertificates)
+      Array.from(selectedCertificates),
     );
 
     if (
       confirm(
-        `Are you sure you want to revoke ${selectedCertificates.size} certificate(s)?`
+        `Are you sure you want to revoke ${selectedCertificates.size} certificate(s)?`,
       )
     ) {
       try {
@@ -535,7 +544,7 @@ export default function AdminCertificatesPage() {
 
           if (result.details?.alreadyRevoked > 0) {
             toast.info(
-              `Note: ${result.details.alreadyRevoked} certificate(s) were already revoked`
+              `Note: ${result.details.alreadyRevoked} certificate(s) were already revoked`,
             );
           }
         } else {
@@ -543,7 +552,7 @@ export default function AdminCertificatesPage() {
 
           if (result.notFound && result.notFound.length > 0) {
             toast.error(
-              `Some certificates not found: ${result.notFound.join(", ")}`
+              `Some certificates not found: ${result.notFound.join(", ")}`,
             );
           } else {
             toast.error(result.error || "Failed to revoke certificates");
@@ -567,12 +576,12 @@ export default function AdminCertificatesPage() {
 
     console.log(
       "Selected certificates for deletion:",
-      Array.from(selectedCertificates)
+      Array.from(selectedCertificates),
     );
 
     if (
       confirm(
-        `⚠️ PERMANENT DELETE WARNING ⚠️\n\nThis will PERMANENTLY DELETE ${selectedCertificates.size} certificate(s).\n\nThis action CANNOT be undone and will:\n- Remove the certificates from the database\n- Delete associated files\n- Make the certificates unverifiable\n\nAre you absolutely sure you want to proceed?`
+        `⚠️ PERMANENT DELETE WARNING ⚠️\n\nThis will PERMANENTLY DELETE ${selectedCertificates.size} certificate(s).\n\nThis action CANNOT be undone and will:\n- Remove the certificates from the database\n- Delete associated files\n- Make the certificates unverifiable\n\nAre you absolutely sure you want to proceed?`,
       )
     ) {
       try {
@@ -587,7 +596,7 @@ export default function AdminCertificatesPage() {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ certificateIds }),
-          }
+          },
         );
 
         console.log("Bulk delete response status:", response.status);
@@ -602,7 +611,7 @@ export default function AdminCertificatesPage() {
 
           if (result.details?.fileErrors > 0) {
             toast.warning(
-              `Note: ${result.details.fileErrors} file(s) could not be deleted`
+              `Note: ${result.details.fileErrors} file(s) could not be deleted`,
             );
           }
         } else {
@@ -610,7 +619,7 @@ export default function AdminCertificatesPage() {
 
           if (result.notFound && result.notFound.length > 0) {
             toast.error(
-              `Some certificates not found: ${result.notFound.join(", ")}`
+              `Some certificates not found: ${result.notFound.join(", ")}`,
             );
           } else {
             toast.error(result.error || "Failed to delete certificates");
@@ -638,7 +647,7 @@ export default function AdminCertificatesPage() {
       toast.info(
         `Preparing ZIP download of ${
           certificateIds.length
-        } certificate(s) as ${format.toUpperCase()}...`
+        } certificate(s) as ${format.toUpperCase()}...`,
       );
 
       const response = await fetch("/api/certificates/bulk-download", {
@@ -678,17 +687,17 @@ export default function AdminCertificatesPage() {
         const failedCount = response.headers.get("X-Failed-Count");
         const totalCount = response.headers.get("X-Total-Certificates");
         const successfulCount = response.headers.get(
-          "X-Successful-Certificates"
+          "X-Successful-Certificates",
         );
 
         if (failedCount && parseInt(failedCount) > 0) {
           toast.warning(
             `ZIP downloaded successfully! ${successfulCount}/${totalCount} certificates included. ${failedCount} certificates failed to generate.`,
-            { duration: 8000 }
+            { duration: 8000 },
           );
         } else {
           toast.success(
-            `ZIP file downloaded successfully with ${successfulCount} certificate(s) as ${format.toUpperCase()}!`
+            `ZIP file downloaded successfully with ${successfulCount} certificate(s) as ${format.toUpperCase()}!`,
           );
         }
       } else {
@@ -699,7 +708,7 @@ export default function AdminCertificatesPage() {
           toast.error(
             errorData.message ||
               `Failed to generate ZIP file with ${format.toUpperCase()} certificates`,
-            { duration: 5000 }
+            { duration: 5000 },
           );
         } catch {
           toast.error(`Failed to download certificates as ZIP file`);
@@ -741,17 +750,20 @@ export default function AdminCertificatesPage() {
   // Calculate real analytics data
   const getAnalyticsData = () => {
     // Get certificates by category
-    const categoryStats = issuedCertificates.reduce((acc, cert) => {
-      const category = cert.templateCategory || "other";
-      acc[category] = (acc[category] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const categoryStats = issuedCertificates.reduce(
+      (acc, cert) => {
+        const category = cert.templateCategory || "other";
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // Get recent activity (last 10 certificates)
     const recentActivity = issuedCertificates
       .sort(
         (a, b) =>
-          new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime()
+          new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime(),
       )
       .slice(0, 10)
       .map((cert) => ({
@@ -850,7 +862,7 @@ export default function AdminCertificatesPage() {
 
                 if (response.ok) {
                   toast.success(
-                    "Database initialized successfully with default templates"
+                    "Database initialized successfully with default templates",
                   );
                 } else {
                   toast.error("Failed to initialize database");
@@ -1205,7 +1217,7 @@ export default function AdminCertificatesPage() {
                       (page) =>
                         page === 1 ||
                         page === totalPages ||
-                        Math.abs(page - currentPage) <= 1
+                        Math.abs(page - currentPage) <= 1,
                     )
                     .map((page, index, array) => {
                       const showEllipsis =
@@ -1461,7 +1473,7 @@ export default function AdminCertificatesPage() {
                       (page) =>
                         page === 1 ||
                         page === totalPages ||
-                        Math.abs(page - currentPage) <= 1
+                        Math.abs(page - currentPage) <= 1,
                     )
                     .map((page, index, array) => {
                       const showEllipsis =
@@ -1524,7 +1536,7 @@ export default function AdminCertificatesPage() {
                                   10,
                                   (count /
                                     Math.max(...Object.values(categoryStats))) *
-                                    100
+                                    100,
                                 )}%`,
                               }}
                             ></div>
@@ -1606,6 +1618,7 @@ export default function AdminCertificatesPage() {
             : pendingDownloadCertificate?.templateName || "Certificate"
         }
         isBulkDownload={isBulkDownload}
+        showSignatureToggle={!isBulkDownload}
       />
     </div>
   );

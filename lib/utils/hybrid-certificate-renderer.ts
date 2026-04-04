@@ -35,6 +35,8 @@ export interface TemplateElement {
   id: string;
   type: "text" | "image" | "shape" | "qr";
   content: string;
+  /** Optional group tag. Elements with group "signature" can be hidden for manual signing. */
+  group?: string;
   position: {
     x: number;
     y: number;
@@ -149,7 +151,7 @@ export class HybridCertificateRenderer {
    */
   private async generateQRCodeBase64(
     data: string,
-    format: "pdf" | "png" | "preview" = "preview"
+    format: "pdf" | "png" | "preview" = "preview",
   ): Promise<string> {
     try {
       console.log("🔍 QR Code generation started:", {
@@ -196,7 +198,7 @@ export class HybridCertificateRenderer {
         const publicPath = path.join(
           process.cwd(),
           "public",
-          imagePath.substring(1)
+          imagePath.substring(1),
         );
         try {
           const buffer = await fs.readFile(publicPath);
@@ -205,12 +207,12 @@ export class HybridCertificateRenderer {
             ext === ".jpg" || ext === ".jpeg"
               ? "image/jpeg"
               : ext === ".png"
-              ? "image/png"
-              : ext === ".gif"
-              ? "image/gif"
-              : ext === ".svg"
-              ? "image/svg+xml"
-              : "image/png";
+                ? "image/png"
+                : ext === ".gif"
+                  ? "image/gif"
+                  : ext === ".svg"
+                    ? "image/svg+xml"
+                    : "image/png";
           return `data:${mimeType};base64,${buffer.toString("base64")}`;
         } catch {
           // If file doesn't exist locally, try to fetch from the website
@@ -255,75 +257,75 @@ export class HybridCertificateRenderer {
           // Double brace format (templates) - clean styling without underlines
           .replace(
             /\{\{recipientName\}\}/g,
-            `<span style="font-weight: 600; color: inherit;">${recipientName}</span>`
+            `<span style="font-weight: 600; color: inherit;">${recipientName}</span>`,
           )
           .replace(
             /\{\{certificateId\}\}/g,
-            `<span style="font-weight: 600; color: inherit;">${this.certificate.id}</span>`
+            `<span style="font-weight: 600; color: inherit;">${this.certificate.id}</span>`,
           )
           .replace(
             /\{\{issueDate\}\}/g,
-            `<span style="font-weight: 600; color: inherit;">${issueDate}</span>`
+            `<span style="font-weight: 600; color: inherit;">${issueDate}</span>`,
           )
           .replace(
             /\{\{issuerName\}\}/g,
-            `<span style="font-weight: 600; color: inherit;">${issuerName}</span>`
+            `<span style="font-weight: 600; color: inherit;">${issuerName}</span>`,
           )
 
           // Single brace format - clean styling without underlines
           .replace(
             /\{recipientName\}/g,
-            `<span style="font-weight: 600; color: inherit;">${recipientName}</span>`
+            `<span style="font-weight: 600; color: inherit;">${recipientName}</span>`,
           )
           .replace(
             /\{certificateId\}/g,
-            `<span style="font-weight: 600; color: inherit;">${this.certificate.id}</span>`
+            `<span style="font-weight: 600; color: inherit;">${this.certificate.id}</span>`,
           )
           .replace(
             /\{issueDate\}/g,
-            `<span style="font-weight: 600; color: inherit;">${issueDate}</span>`
+            `<span style="font-weight: 600; color: inherit;">${issueDate}</span>`,
           )
           .replace(
             /\{([^}]+)\}/g,
-            `<span style="font-weight: 600; color: inherit;">$1</span>`
+            `<span style="font-weight: 600; color: inherit;">$1</span>`,
           )
 
           // Handle specific name patterns
           .replace(
             /\{Enoch Kwateh Dongbo\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`,
           )
 
           // Plain text replacements with styling
           .replace(
             /Sample Recipient/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`,
           )
           .replace(
             /System Administrator/g,
-            `<span style="font-weight: 600; color: inherit;">${issuerName}</span>`
+            `<span style="font-weight: 600; color: inherit;">${issuerName}</span>`,
           )
 
           // Date patterns - clean styling without underlines (for combined format)
           .replace(
             /Date: 6\/13\/2025/g,
-            `Date: <span style="font-weight: 600; color: inherit;">${issueDate}</span>`
+            `Date: <span style="font-weight: 600; color: inherit;">${issueDate}</span>`,
           )
           .replace(
             /6\/13\/2025/g,
-            `<span style="font-weight: 600; color: inherit;">${issueDate}</span>`
+            `<span style="font-weight: 600; color: inherit;">${issueDate}</span>`,
           )
 
           // Certificate ID patterns - clean styling without underlines
           .replace(
             /FOM-\d{4}-[A-Z]{3}-\d{4}-[A-Z0-9]{2}/g,
-            `<span style="font-weight: 600; color: inherit;">${this.certificate.id}</span>`
+            `<span style="font-weight: 600; color: inherit;">${this.certificate.id}</span>`,
           );
 
         // Handle security features placeholders separately
         if (content.includes("{{qrCode}}")) {
           console.log(
-            `Found {{qrCode}} placeholder in text element: ${element.id}`
+            `Found {{qrCode}} placeholder in text element: ${element.id}`,
           );
 
           // Use stored QR code data if available (for enhanced QR codes), otherwise generate from verification URL
@@ -331,28 +333,28 @@ export class HybridCertificateRenderer {
 
           if (this.certificate.qrCodeData) {
             console.log(
-              `Using stored QR code data for text element, length: ${this.certificate.qrCodeData.length}`
+              `Using stored QR code data for text element, length: ${this.certificate.qrCodeData.length}`,
             );
             qrCodeDataURL = await this.generateQRCodeBase64(
               this.certificate.qrCodeData,
-              this.outputFormat || "preview"
+              this.outputFormat || "preview",
             );
           } else {
             // Fallback to verification URL
             const verificationUrl =
               this.certificate.verificationUrl ||
               getVerificationUrl(
-                this.certificate.verificationId || this.certificate.id
+                this.certificate.verificationId || this.certificate.id,
               );
             console.log(`Text QR verification URL: ${verificationUrl}`);
             qrCodeDataURL = await this.generateQRCodeBase64(
               verificationUrl,
-              this.outputFormat || "preview"
+              this.outputFormat || "preview",
             );
           }
 
           console.log(
-            `Text QR code generated with data URL length: ${qrCodeDataURL.length}`
+            `Text QR code generated with data URL length: ${qrCodeDataURL.length}`,
           );
           content = content.replace(/\{\{qrCode\}\}/g, qrCodeDataURL);
         }
@@ -361,8 +363,8 @@ export class HybridCertificateRenderer {
           /\{\{verificationUrl\}\}/g,
           this.certificate.verificationUrl ||
             getVerificationUrl(
-              this.certificate.verificationId || this.certificate.id
-            )
+              this.certificate.verificationId || this.certificate.id,
+            ),
         );
 
         content = content
@@ -370,15 +372,15 @@ export class HybridCertificateRenderer {
           // Issuer patterns - clean styling to match date formatting (for combined format)
           .replace(
             /Authorized by: System Administrator/g,
-            `Authorized by: <span style="font-weight: 600; color: inherit;">${issuerName}</span>`
+            `Authorized by: <span style="font-weight: 600; color: inherit;">${issuerName}</span>`,
           )
           .replace(
             /Issued by: System Administrator/g,
-            `Issued by: <span style="font-weight: 600; color: inherit;">${issuerName}</span>`
+            `Issued by: <span style="font-weight: 600; color: inherit;">${issuerName}</span>`,
           )
           .replace(
             /Baptized by: System Administrator/g,
-            `Baptized by: <span style="font-weight: 600; color: inherit;">${issuerName}</span>`
+            `Baptized by: <span style="font-weight: 600; color: inherit;">${issuerName}</span>`,
           )
 
           // Clean up any remaining empty braces
@@ -393,7 +395,7 @@ export class HybridCertificateRenderer {
         // Handle QR code placeholders in image elements
         if (element.content === "{{qrCode}}") {
           console.log(
-            `Found {{qrCode}} placeholder in image element: ${element.id}`
+            `Found {{qrCode}} placeholder in image element: ${element.id}`,
           );
 
           // Use stored QR code data if available (for enhanced QR codes), otherwise generate from verification URL
@@ -401,34 +403,34 @@ export class HybridCertificateRenderer {
 
           if (this.certificate.qrCodeData) {
             console.log(
-              `Using stored QR code data, length: ${this.certificate.qrCodeData.length}`
+              `Using stored QR code data, length: ${this.certificate.qrCodeData.length}`,
             );
             console.log(
               `QR code data preview: ${this.certificate.qrCodeData.substring(
                 0,
-                100
-              )}...`
+                100,
+              )}...`,
             );
             qrCodeDataURL = await this.generateQRCodeBase64(
               this.certificate.qrCodeData,
-              this.outputFormat || "preview"
+              this.outputFormat || "preview",
             );
           } else {
             // Fallback to verification URL
             const verificationUrl =
               this.certificate.verificationUrl ||
               getVerificationUrl(
-                this.certificate.verificationId || this.certificate.id
+                this.certificate.verificationId || this.certificate.id,
               );
             console.log(`Image QR verification URL: ${verificationUrl}`);
             qrCodeDataURL = await this.generateQRCodeBase64(
               verificationUrl,
-              this.outputFormat || "preview"
+              this.outputFormat || "preview",
             );
           }
 
           console.log(
-            `Image QR code generated with data URL length: ${qrCodeDataURL.length}`
+            `Image QR code generated with data URL length: ${qrCodeDataURL.length}`,
           );
           processedElements.push({
             ...element,
@@ -450,28 +452,28 @@ export class HybridCertificateRenderer {
 
         if (this.certificate.qrCodeData) {
           console.log(
-            `Using stored QR code data for QR element, length: ${this.certificate.qrCodeData.length}`
+            `Using stored QR code data for QR element, length: ${this.certificate.qrCodeData.length}`,
           );
           qrCodeDataURL = await this.generateQRCodeBase64(
             this.certificate.qrCodeData,
-            this.outputFormat || "preview"
+            this.outputFormat || "preview",
           );
         } else {
           // Fallback to verification URL
           const verificationUrl =
             this.certificate.verificationUrl ||
             getVerificationUrl(
-              this.certificate.verificationId || this.certificate.id
+              this.certificate.verificationId || this.certificate.id,
             );
           console.log(`QR verification URL: ${verificationUrl}`);
           qrCodeDataURL = await this.generateQRCodeBase64(
             verificationUrl,
-            this.outputFormat || "preview"
+            this.outputFormat || "preview",
           );
         }
 
         console.log(
-          `QR code element converted to image with data URL length: ${qrCodeDataURL.length}`
+          `QR code element converted to image with data URL length: ${qrCodeDataURL.length}`,
         );
         processedElements.push({
           ...element,
@@ -493,7 +495,7 @@ export class HybridCertificateRenderer {
     fontSize: string | number | undefined,
     containerWidth: number,
     containerHeight: number,
-    textContent: string
+    textContent: string,
   ): string {
     if (!fontSize) return "16px";
 
@@ -542,7 +544,7 @@ export class HybridCertificateRenderer {
 
     // Calculate estimated lines needed at current font size
     const estimatedLines = Math.ceil(
-      estimatedTextWidth / (containerWidth * 0.9)
+      estimatedTextWidth / (containerWidth * 0.9),
     );
     const lineHeight = baseFontSize * 1.2; // Assuming 1.2 line height
     const estimatedTextHeight = estimatedLines * lineHeight;
@@ -587,7 +589,7 @@ export class HybridCertificateRenderer {
     style: Record<string, unknown> = {},
     containerWidth?: number,
     containerHeight?: number,
-    textContent?: string
+    textContent?: string,
   ): string {
     const cssRules: string[] = [];
 
@@ -605,7 +607,7 @@ export class HybridCertificateRenderer {
           value as string,
           containerWidth,
           containerHeight,
-          textContent
+          textContent,
         );
         cssRules.push(`font-size: ${smartSize}`);
         return;
@@ -656,8 +658,8 @@ export class HybridCertificateRenderer {
             element.style?.textAlign === "center"
               ? "center"
               : element.style?.textAlign === "right"
-              ? "flex-end"
-              : "flex-start",
+                ? "flex-end"
+                : "flex-start",
           whiteSpace: "pre-wrap",
           wordWrap: "break-word",
           // Preserve all text-specific styles (font size handled separately)
@@ -688,7 +690,7 @@ export class HybridCertificateRenderer {
           element.style?.fontSize,
           element.position.width,
           element.position.height,
-          element.content
+          element.content,
         );
 
         textStyle.fontSize = smartFontSize;
@@ -697,7 +699,7 @@ export class HybridCertificateRenderer {
           textStyle,
           element.position.width,
           element.position.height,
-          element.content
+          element.content,
         );
         elementsHtml += `<div style="${textCss}">${element.content}</div>`;
       } else if (element.type === "image") {
@@ -757,7 +759,7 @@ export class HybridCertificateRenderer {
       } else if (element.type === "qr") {
         // QR code fallback (QR elements should be converted to images in processElements)
         console.warn(
-          "QR element not converted to image - this shouldn't happen"
+          "QR element not converted to image - this shouldn't happen",
         );
         const qrStyle = {
           ...elementStyle,
@@ -966,7 +968,7 @@ export class HybridCertificateRenderer {
 
     try {
       console.log(
-        "🚀 Starting PDF generation with ultra-robust error handling..."
+        "🚀 Starting PDF generation with ultra-robust error handling...",
       );
 
       // Launch browser with optimized settings for stability
@@ -1015,7 +1017,7 @@ export class HybridCertificateRenderer {
 
       // Set user agent and configure page for stability
       await page.setUserAgent(
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       );
 
       // Set high-resolution viewport for better quality
@@ -1168,7 +1170,7 @@ export class HybridCertificateRenderer {
 
             const pngBuffer = await this.generatePNGFallback(page);
             console.log(
-              "✅ PNG fallback successful, returning PNG as PDF alternative"
+              "✅ PNG fallback successful, returning PNG as PDF alternative",
             );
             return pngBuffer;
           } catch (pngError) {
@@ -1190,14 +1192,14 @@ export class HybridCertificateRenderer {
       }
 
       console.log(
-        `✅ PDF generated successfully, size: ${pdfBuffer.length} bytes`
+        `✅ PDF generated successfully, size: ${pdfBuffer.length} bytes`,
       );
 
       // Validate PDF signature
       const signature = pdfBuffer.subarray(0, 4).toString();
       if (signature !== "%PDF") {
         console.warn(
-          `⚠️ Generated file signature is '${signature}', expected '%PDF', but returning buffer anyway`
+          `⚠️ Generated file signature is '${signature}', expected '%PDF', but returning buffer anyway`,
         );
       }
 
@@ -1231,7 +1233,7 @@ export class HybridCertificateRenderer {
                   console.warn("⚠️ Error closing page:", e);
                 }
               }
-            })
+            }),
           );
 
           // Then close the browser
@@ -1289,7 +1291,7 @@ export class HybridCertificateRenderer {
     // Check if certificate generation is disabled
     if (config.disabled) {
       throw new Error(
-        "Certificate generation is disabled in this environment. Please use the HTML fallback."
+        "Certificate generation is disabled in this environment. Please use the HTML fallback.",
       );
     }
 
@@ -1348,7 +1350,7 @@ export class HybridCertificateRenderer {
             fallbackError instanceof Error
               ? fallbackError.message
               : String(fallbackError)
-          }`
+          }`,
         );
       }
     }
@@ -1394,7 +1396,7 @@ export class HybridCertificateRenderer {
               img.addEventListener("error", resolve); // Continue even if image fails
               setTimeout(resolve, 2000); // Timeout after 2 seconds
             });
-          })
+          }),
         );
       });
       console.log("🖼️ Images loaded");
@@ -1411,7 +1413,7 @@ export class HybridCertificateRenderer {
       // Add extra delay to ensure fonts and styles are fully loaded
       console.log("⏳ Final render delay...");
       await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 2000)) // Reduced from 4000ms to 2000ms
+        () => new Promise((resolve) => setTimeout(resolve, 2000)), // Reduced from 4000ms to 2000ms
       );
 
       // Take high-quality screenshot of the certificate container
@@ -1430,7 +1432,7 @@ export class HybridCertificateRenderer {
       });
 
       console.log(
-        `✅ PNG generated successfully, size: ${screenshot.length} bytes`
+        `✅ PNG generated successfully, size: ${screenshot.length} bytes`,
       );
       return screenshot as Buffer;
     } catch (pageError) {
@@ -1449,7 +1451,7 @@ export class HybridCertificateRenderer {
    * @param format - Output format for QR code optimization
    */
   async generateHTMLWithFormat(
-    format: "pdf" | "png" | "preview" = "preview"
+    format: "pdf" | "png" | "preview" = "preview",
   ): Promise<string> {
     // Temporarily store the format for use in QR code generation
     this.outputFormat = format;

@@ -23,7 +23,7 @@ export async function GET() {
     console.error("Error fetching template options:", error);
     return NextResponse.json(
       { error: "Failed to fetch template options" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

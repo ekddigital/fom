@@ -18,7 +18,7 @@ import { getCertificateConfig } from "@/lib/config/certificate-config";
  */
 async function generateSimplifiedPDF(
   renderer: HybridCertificateRenderer,
-  certificateData: CertificateData
+  certificateData: CertificateData,
 ): Promise<Buffer> {
   // Use PDF-optimized HTML generation with format-specific QR codes
   const html = await renderer.generateHTMLWithFormat("pdf");
@@ -29,7 +29,7 @@ async function generateSimplifiedPDF(
   // Check if certificate generation is disabled
   if (config.disabled) {
     throw new Error(
-      "Certificate generation is disabled in this environment. Please use the HTML fallback."
+      "Certificate generation is disabled in this environment. Please use the HTML fallback.",
     );
   }
 
@@ -93,8 +93,8 @@ async function generateSimplifiedPDF(
                   // Add timeout to prevent hanging
                   setTimeout(() => resolve(img), 5000);
                 }
-              })
-          )
+              }),
+          ),
         ),
       ]);
     });
@@ -124,7 +124,7 @@ async function generateSimplifiedPDF(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -135,6 +135,7 @@ export async function GET(
     const { id: certificateId } = await params;
     const { searchParams } = new URL(request.url);
     const format = searchParams.get("format") || "pdf"; // Default to PDF
+    const hideSignature = searchParams.get("hideSignature") === "true";
 
     // Fetch the certificate from database
     const certificate = await prisma.certificate.findUnique({
@@ -147,7 +148,7 @@ export async function GET(
     if (!certificate) {
       return NextResponse.json(
         { error: "Certificate not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -161,16 +162,15 @@ export async function GET(
     if (ekdAssetId) {
       try {
         // Get download URL from EKD Assets
-        const downloadUrl = await EKDAssetService.getCertificateDownloadUrl(
-          ekdAssetId
-        );
+        const downloadUrl =
+          await EKDAssetService.getCertificateDownloadUrl(ekdAssetId);
 
         // Redirect to EKD Assets download URL
         return NextResponse.redirect(downloadUrl);
       } catch (error) {
         console.error(
           "EKD Assets download failed, falling back to generation:",
-          error
+          error,
         );
         // Continue to generate on-demand if EKD fails
       }
@@ -198,7 +198,7 @@ export async function GET(
                 certificate.template?.name || "Certificate"
               }-${certificate.recipientFirstName}-${
                 certificate.recipientLastName
-              }.pdf"`
+              }.pdf"`,
             );
           } else {
             headers.set("Content-Type", "image/png");
@@ -208,7 +208,7 @@ export async function GET(
                 certificate.template?.name || "Certificate"
               }-${certificate.recipientFirstName}-${
                 certificate.recipientLastName
-              }.png"`
+              }.png"`,
             );
           }
 
@@ -222,7 +222,7 @@ export async function GET(
 
     // Generate file on-demand using certificate renderer
     console.log(
-      `Generating ${format.toUpperCase()} for certificate ${certificateId}`
+      `Generating ${format.toUpperCase()} for certificate ${certificateId}`,
     );
 
     try {
@@ -232,6 +232,19 @@ export async function GET(
       const baseUrl = `${protocol}://${host}`;
 
       // Create CertificateData object from database certificate
+      let rawTemplateData = (certificate.certificateData ||
+        certificate.template?.templateData) as TemplateData;
+
+      // Strip signature elements when the caller requests manual-signing mode
+      if (hideSignature && rawTemplateData?.elements) {
+        rawTemplateData = {
+          ...rawTemplateData,
+          elements: rawTemplateData.elements.filter(
+            (el) => (el as { group?: string }).group !== "signature",
+          ),
+        };
+      }
+
       const certificateData = {
         id: certificate.id,
         templateName: certificate.template?.name || "Certificate",
@@ -242,8 +255,7 @@ export async function GET(
           certificate.certificateData as { authorizingOfficial?: string }
         )?.authorizingOfficial, // Extract from stored data
         issueDate: certificate.issueDate,
-        templateData: (certificate.certificateData ||
-          certificate.template?.templateData) as TemplateData,
+        templateData: rawTemplateData,
         qrCodeData: certificate.qrCodeData, // Include QR code data
         verificationUrl: `${protocol}://${host}/community/verify-certificate?id=${certificate.verificationId}`, // Generate verification URL
         verificationId: certificate.verificationId, // Include verification ID
@@ -262,7 +274,7 @@ export async function GET(
           certificate.recipientFirstName
         }-${certificate.recipientLastName}.png`;
         console.log(
-          `✅ PNG generated successfully, size: ${fileBuffer.length} bytes`
+          `✅ PNG generated successfully, size: ${fileBuffer.length} bytes`,
         );
       } else {
         console.log("📄 Generating PDF certificate...");
@@ -281,7 +293,7 @@ export async function GET(
 
           if (!isPdfValid) {
             console.warn(
-              "⚠️ Generated buffer doesn't have valid PDF signature, falling back to PNG"
+              "⚠️ Generated buffer doesn't have valid PDF signature, falling back to PNG",
             );
             throw new Error("Invalid PDF signature");
           }
@@ -291,7 +303,7 @@ export async function GET(
             certificate.recipientFirstName
           }-${certificate.recipientLastName}.pdf`;
           console.log(
-            `✅ PDF generated successfully, size: ${fileBuffer.length} bytes, valid: ${isPdfValid}`
+            `✅ PDF generated successfully, size: ${fileBuffer.length} bytes, valid: ${isPdfValid}`,
           );
         } catch (pdfError) {
           console.error("❌ PDF generation failed:", pdfError);
@@ -327,7 +339,7 @@ export async function GET(
               recipientName: `${certificate.recipientFirstName} ${certificate.recipientLastName}`,
               templateName: certificate.template?.name || "Certificate",
               issueDate: certificate.issueDate.toISOString().split("T")[0],
-            }
+            },
           );
 
           // Update database with EKD Asset ID for future downloads
@@ -343,7 +355,7 @@ export async function GET(
           });
 
           console.log(
-            `Certificate ${certificate.id} uploaded to EKD Assets: ${uploadResult.id}`
+            `Certificate ${certificate.id} uploaded to EKD Assets: ${uploadResult.id}`,
           );
         } catch (uploadError) {
           console.error("Failed to upload to EKD Assets:", uploadError);
@@ -413,14 +425,14 @@ export async function GET(
             ],
           },
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
     console.error(`Error downloading certificate:`, error);
     return NextResponse.json(
       { error: "Failed to download certificate" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

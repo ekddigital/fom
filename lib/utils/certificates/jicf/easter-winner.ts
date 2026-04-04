@@ -9,12 +9,12 @@ import { JICF_COLORS } from "./constants";
 
 // ─── Shared colour aliases ─────────────────────────────────────────────────────
 const C = {
-  navy: JICF_COLORS.blue,      // #190570
-  red:  JICF_COLORS.red,       // #ed1c24
-  gold: JICF_COLORS.gold!,     // #d4af37
-  yellow: JICF_COLORS.yellow,  // #efe31e
-  white: JICF_COLORS.white,    // #ffffff
-  dark: "#0d0040",             // deeper navy for body text
+  navy: JICF_COLORS.blue, // #190570
+  red: JICF_COLORS.red, // #ed1c24
+  gold: JICF_COLORS.gold!, // #d4af37
+  yellow: JICF_COLORS.yellow, // #efe31e
+  white: JICF_COLORS.white, // #ffffff
+  dark: "#0d0040", // deeper navy for body text
 };
 
 // ─── Template (800 × 600) ──────────────────────────────────────────────────────
@@ -224,7 +224,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
       id: "description",
       type: "text",
       content:
-        "In recognition of outstanding dedication and creativity in the JICF Easter Video Contest,\ntheme: \"The Resurrected King\" — 1 Corinthians 15:20. Your cell group's video inspired faith,\nspread the joy of Resurrection, and brought glory to our Lord Jesus Christ.",
+        'In recognition of outstanding dedication and creativity in the JICF Easter Video Contest,\ntheme: "The Resurrected King" — 1 Corinthians 15:20. Your cell group\'s video inspired faith,\nspread the joy of Resurrection, and brought glory to our Lord Jesus Christ.',
       position: { x: 70, y: 314, width: 660, height: 58 },
       style: {
         fontSize: 12.5,
@@ -289,6 +289,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-signature",
       type: "image",
+      group: "signature",
       content: "/pastor_Joe_signaturepng.png",
       position: { x: 310, y: 454, width: 180, height: 44 },
       style: {},
@@ -296,6 +297,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-sig-line",
       type: "shape",
+      group: "signature",
       content: "",
       position: { x: 290, y: 500, width: 220, height: 1 },
       style: { color: C.dark },
@@ -303,6 +305,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-name",
       type: "text",
+      group: "signature",
       content: "Pst. Joseph G. Summers",
       position: { x: 270, y: 505, width: 260, height: 14 },
       style: {
@@ -316,6 +319,7 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-title",
       type: "text",
+      group: "signature",
       content: "Senior Pastor, JICF",
       position: { x: 270, y: 519, width: 260, height: 12 },
       style: {
@@ -377,7 +381,5 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     margin: { top: 15, right: 15, bottom: 15, left: 15 },
     background: { color: JICF_COLORS.white },
   },
-  fonts: [
-    { family: "Georgia, serif", variants: ["normal", "bold", "italic"] },
-  ],
+  fonts: [{ family: "Georgia, serif", variants: ["normal", "bold", "italic"] }],
 };
