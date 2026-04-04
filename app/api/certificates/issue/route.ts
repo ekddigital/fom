@@ -48,7 +48,7 @@ export async function POST(req: Request) {
     ) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -73,16 +73,15 @@ export async function POST(req: Request) {
     console.log("Looking for template:", templateName);
 
     // Find the template in the database by ID or slug
-    const template = await dbCertificateService.getTemplateByIdOrSlug(
-      templateName
-    );
+    const template =
+      await dbCertificateService.getTemplateByIdOrSlug(templateName);
 
     if (!template) {
       return NextResponse.json(
         {
           error: `Template '${templateName}' not found. Please check the template name.`,
         },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -104,13 +103,13 @@ export async function POST(req: Request) {
       await dbCertificateService.getCertificateCountByTemplate(templateName);
     const certificateId = generateCertificateId(
       templateName,
-      existingCount + 1
+      existingCount + 1,
     );
 
     if (template.templateData && typeof template.templateData === "object") {
       // We have the actual beautiful template data
       fullTemplateDesignData = JSON.parse(
-        JSON.stringify(template.templateData)
+        JSON.stringify(template.templateData),
       ) as Prisma.JsonObject;
 
       // Customize the template with recipient and issuer information
@@ -153,20 +152,20 @@ export async function POST(req: Request) {
                 validatedData.gender === "Male"
                   ? "his"
                   : validatedData.gender === "Female"
-                  ? "her"
-                  : "his/her"
+                    ? "her"
+                    : "his/her",
               )
               .replace(
                 /\{\{position\}\}/g,
-                validatedData.position || "Ministry Position"
+                validatedData.position || "Ministry Position",
               )
               .replace(
                 /\{\{pastorName\}\}/g,
-                validatedData.pastorName || "Pst. Joseph G. Summers"
+                validatedData.pastorName || "Pst. Joseph G. Summers",
               )
               .replace(
                 /\{\{pastorSignature\}\}/g,
-                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png"
+                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png",
               )
               // Single curly brace format
               .replace(/\{recipientName\}/g, validatedData.recipientName)
@@ -178,20 +177,20 @@ export async function POST(req: Request) {
                 validatedData.gender === "Male"
                   ? "his"
                   : validatedData.gender === "Female"
-                  ? "her"
-                  : "his/her"
+                    ? "her"
+                    : "his/her",
               )
               .replace(
                 /\{position\}/g,
-                validatedData.position || "Ministry Position"
+                validatedData.position || "Ministry Position",
               )
               .replace(
                 /\{pastorName\}/g,
-                validatedData.pastorName || "Pst. Joseph G. Summers"
+                validatedData.pastorName || "Pst. Joseph G. Summers",
               )
               .replace(
                 /\{pastorSignature\}/g,
-                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png"
+                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png",
               )
               // Plain text replacements
               .replace(/Sample Recipient/g, validatedData.recipientName)
@@ -204,23 +203,31 @@ export async function POST(req: Request) {
               // Issuer patterns
               .replace(
                 /Authorized by: System Administrator/g,
-                `Authorized by: ${issuerDisplayName}`
+                `Authorized by: ${issuerDisplayName}`,
               )
               .replace(
                 /Issued by: System Administrator/g,
-                `Issued by: ${issuerDisplayName}`
+                `Issued by: ${issuerDisplayName}`,
               )
               .replace(
                 /Baptized by: System Administrator/g,
-                `Baptized by: ${issuerDisplayName}`
+                `Baptized by: ${issuerDisplayName}`,
               );
 
             // Custom fields substitution (e.g., {{custom.placement}})
             if (validatedData.customFields) {
-              for (const [key, value] of Object.entries(validatedData.customFields)) {
+              for (const [key, value] of Object.entries(
+                validatedData.customFields,
+              )) {
                 element.content = element.content
-                  .replace(new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"), String(value ?? ""))
-                  .replace(new RegExp(`\\{custom\\.${key}\\}`, "g"), String(value ?? ""));
+                  .replace(
+                    new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"),
+                    String(value ?? ""),
+                  )
+                  .replace(
+                    new RegExp(`\\{custom\\.${key}\\}`, "g"),
+                    String(value ?? ""),
+                  );
               }
             }
 
@@ -277,7 +284,7 @@ export async function POST(req: Request) {
               }
 
               console.log(
-                `Dynamic sizing applied to position: "${positionText}" (${textLength} chars, ${semicolonCount} semicolons) - Font: ${fontSize}px, Height: ${height}px`
+                `Dynamic sizing applied to position: "${positionText}" (${textLength} chars, ${semicolonCount} semicolons) - Font: ${fontSize}px, Height: ${height}px`,
               );
             }
 
@@ -293,20 +300,24 @@ export async function POST(req: Request) {
               let height = 50;
 
               if (nameLength > 50) {
-                fontSize = 20; height = 65;
+                fontSize = 20;
+                height = 65;
               } else if (nameLength > 40) {
-                fontSize = 22; height = 62;
+                fontSize = 22;
+                height = 62;
               } else if (nameLength > 30) {
-                fontSize = 26; height = 58;
+                fontSize = 26;
+                height = 58;
               } else if (nameLength > 20) {
-                fontSize = 30; height = 52;
+                fontSize = 30;
+                height = 52;
               }
 
               element.style.fontSize = fontSize;
               element.position.height = height;
 
               console.log(
-                `Dynamic sizing applied to recipient name: "${nameText}" (${nameLength} chars) - Font: ${fontSize}px, Height: ${height}px`
+                `Dynamic sizing applied to recipient name: "${nameText}" (${nameLength} chars) - Font: ${fontSize}px, Height: ${height}px`,
               );
             }
           }
@@ -317,7 +328,7 @@ export async function POST(req: Request) {
           (element) =>
             element.content &&
             typeof element.content === "string" &&
-            element.content.includes(certificateId)
+            element.content.includes(certificateId),
         );
 
         // If certificate ID is not visible, add it as a prominent element
@@ -349,14 +360,14 @@ export async function POST(req: Request) {
             el.id.includes("qr-code") ||
             el.id.includes("qr-verification") ||
             el.id.includes("verification-qr") ||
-            el.content === "{{qrCode}}"
+            el.content === "{{qrCode}}",
         );
         const hasSecurityWatermark = elements.some((el) =>
-          el.id.includes("security-watermark")
+          el.id.includes("security-watermark"),
         );
         const hasDigitalSignature = elements.some(
           (el) =>
-            el.id === "digital-signature" || el.id === "digital-verification"
+            el.id === "digital-signature" || el.id === "digital-verification",
         );
 
         // Add QR code for BASIC level and above
@@ -454,7 +465,7 @@ export async function POST(req: Request) {
         {
           error: `Template '${templateName}' has invalid or missing template data.`,
         },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -496,7 +507,7 @@ export async function POST(req: Request) {
         issuerName: issuerDisplayName,
         organizationName: "FOM", // You can make this dynamic based on organization
       },
-      baseUrl
+      baseUrl,
     );
 
     // Debug logging
@@ -505,7 +516,7 @@ export async function POST(req: Request) {
     console.log("Enhanced QR Code length:", enhancedQRCode.length);
     console.log(
       "Enhanced QR Code preview:",
-      enhancedQRCode.substring(0, 100) + "..."
+      enhancedQRCode.substring(0, 100) + "...",
     );
     console.log("Is Enhanced QR Code JSON?", enhancedQRCode.startsWith("{"));
 
@@ -519,7 +530,7 @@ export async function POST(req: Request) {
           validatedData.recipientEmail || "no-email@placeholder.com", // Provide default email if none
       },
       fullTemplateDesignData,
-      enhancedQRCode // Pass enhanced QR code as third parameter
+      enhancedQRCode, // Pass enhanced QR code as third parameter
     );
 
     return NextResponse.json({
@@ -540,7 +551,7 @@ export async function POST(req: Request) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid request data", details: error.errors },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -548,7 +559,7 @@ export async function POST(req: Request) {
       error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       { error: "Failed to issue certificate", message: errorMessage },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

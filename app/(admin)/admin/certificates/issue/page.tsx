@@ -71,18 +71,18 @@ export default function IssueCertificatePage() {
   const [selectedEmailColumn, setSelectedEmailColumn] = useState("");
   const [bulkAuthorizingOfficial, setBulkAuthorizingOfficial] = useState("");
   const [bulkIssueDate, setBulkIssueDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date().toISOString().split("T")[0],
   );
   const [bulkNotes, setBulkNotes] = useState("");
   const [bulkSecurityLevel, setBulkSecurityLevel] = useState("STANDARD");
   const [bulkValidityPeriod, setBulkValidityPeriod] = useState<number | null>(
-    null
+    null,
   );
   // JICF Certificate of Service bulk fields
   const [selectedGenderColumn, setSelectedGenderColumn] = useState("");
   const [selectedPositionColumn, setSelectedPositionColumn] = useState("");
   const [bulkPastorName, setBulkPastorName] = useState(
-    "Pst. Joseph G. Summers"
+    "Pst. Joseph G. Summers",
   );
 
   const loadTemplate = useCallback(
@@ -103,7 +103,7 @@ export default function IssueCertificatePage() {
             if (initResponse.ok) {
               toast.success("Database initialized successfully");
               const retryResponse = await fetch(
-                `/api/certificates/templates/${id}`
+                `/api/certificates/templates/${id}`,
               );
               if (retryResponse.ok) {
                 const templateData = await retryResponse.json();
@@ -127,7 +127,7 @@ export default function IssueCertificatePage() {
         router.push("/admin/certificates");
       }
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {
@@ -284,14 +284,14 @@ export default function IssueCertificatePage() {
           });
         } else {
           toast.error(
-            "Excel files not fully supported yet. Please use CSV format."
+            "Excel files not fully supported yet. Please use CSV format.",
           );
           return;
         }
 
         if (parsedData.length > 0) {
           const headers = parsedData[0].map(
-            (header, index) => header || `Column ${index + 1}`
+            (header, index) => header || `Column ${index + 1}`,
           );
           setFileColumns(headers);
           setFileData(parsedData.slice(1));
@@ -300,20 +300,20 @@ export default function IssueCertificatePage() {
             headers.find(
               (h) =>
                 h?.toLowerCase().includes("name") ||
-                h?.toLowerCase().includes("recipient")
+                h?.toLowerCase().includes("recipient"),
             ) || headers[0];
           const emailCol =
             headers.find(
               (h) =>
                 h?.toLowerCase().includes("email") ||
-                h?.toLowerCase().includes("mail")
+                h?.toLowerCase().includes("mail"),
             ) || headers[1];
 
           setSelectedNameColumn(nameCol || "");
           setSelectedEmailColumn(emailCol || "none");
 
           toast.success(
-            `File uploaded successfully! Found ${parsedData.length - 1} rows.`
+            `File uploaded successfully! Found ${parsedData.length - 1} rows.`,
           );
         }
       } catch (error) {
@@ -340,7 +340,7 @@ export default function IssueCertificatePage() {
 
     try {
       const nameColumnIndex = fileColumns.findIndex(
-        (col) => col === selectedNameColumn
+        (col) => col === selectedNameColumn,
       );
       const emailColumnIndex =
         selectedEmailColumn && selectedEmailColumn !== "none"
@@ -426,20 +426,20 @@ export default function IssueCertificatePage() {
             console.log(
               `✅ Certificate ${i + 1}/${
                 fileData.length
-              } created for ${recipientName}`
+              } created for ${recipientName}`,
             );
           } else {
             const error = await response.json();
             console.error(
               `❌ Failed to create certificate for ${recipientName}:`,
-              error
+              error,
             );
             errorCount++;
           }
         } catch (error) {
           console.error(
             `❌ Error creating certificate for ${recipientName}:`,
-            error
+            error,
           );
           errorCount++;
         }
@@ -449,7 +449,7 @@ export default function IssueCertificatePage() {
           toast.info(
             `Progress: ${i + 1}/${
               fileData.length
-            } certificates processed (${successCount} successful, ${errorCount} failed)`
+            } certificates processed (${successCount} successful, ${errorCount} failed)`,
           );
         }
       }
@@ -458,7 +458,7 @@ export default function IssueCertificatePage() {
         toast.success(
           `Successfully created ${successCount} certificate(s)${
             errorCount > 0 ? ` (${errorCount} failed)` : ""
-          }`
+          }`,
         );
       } else {
         toast.error("No certificates were created successfully");
@@ -629,7 +629,7 @@ export default function IssueCertificatePage() {
                           onChange={(e) =>
                             handleInputChange(
                               "authorizingOfficial",
-                              e.target.value
+                              e.target.value,
                             )
                           }
                           placeholder={`Enter authorizing official (default: ${
@@ -796,7 +796,7 @@ export default function IssueCertificatePage() {
                         onValueChange={(value) =>
                           handleInputChange(
                             "validityPeriod",
-                            value === "never" ? null : parseInt(value)
+                            value === "never" ? null : parseInt(value),
                           )
                         }
                       >
@@ -939,7 +939,7 @@ export default function IssueCertificatePage() {
                         onChange={(e) =>
                           handleCustomFieldChange(
                             "serviceYears",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         placeholder="e.g., 5"
@@ -975,7 +975,7 @@ export default function IssueCertificatePage() {
                         onChange={(e) =>
                           handleCustomFieldChange(
                             "specialRecognition",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         placeholder="e.g., Outstanding leadership in community outreach"
@@ -1367,7 +1367,7 @@ export default function IssueCertificatePage() {
                         }
                         onValueChange={(value) =>
                           setBulkValidityPeriod(
-                            value === "never" ? null : parseInt(value)
+                            value === "never" ? null : parseInt(value),
                           )
                         }
                       >
