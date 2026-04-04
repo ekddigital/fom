@@ -19,6 +19,14 @@ export default function CertificatePreviewPage() {
   const gender = searchParams.get("gender") || "his/her";
   const pastorName = searchParams.get("pastorName") || "Pst. Joseph G. Summers";
 
+  // Collect any custom fields passed as customField_<key> params
+  const customFields: Record<string, string> = {};
+  searchParams.forEach((value, key) => {
+    if (key.startsWith("customField_")) {
+      customFields[key.replace("customField_", "")] = value;
+    }
+  });
+
   const [template, setTemplate] = useState<TemplateData | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -152,6 +160,7 @@ export default function CertificatePreviewPage() {
             position={position}
             gender={gender}
             pastorName={pastorName}
+            customFields={customFields}
           />
         </div>
       </div>

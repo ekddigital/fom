@@ -36,6 +36,7 @@ interface CertificatePreviewModalProps {
   position?: string; // For JICF certificates
   gender?: string; // For JICF certificates
   pastorName?: string; // For JICF certificates
+  customFields?: Record<string, string>; // Custom fields (e.g., placement)
 }
 
 export function CertificatePreviewModal({
@@ -48,6 +49,7 @@ export function CertificatePreviewModal({
   position = "Sample Position",
   gender = "his/her",
   pastorName = "Pst. Joseph G. Summers",
+  customFields = {} as Record<string, string>,
 }: CertificatePreviewModalProps) {
   const [zoom, setZoom] = React.useState(1);
   const [isDownloading, setIsDownloading] = React.useState(false);
@@ -271,18 +273,18 @@ export function CertificatePreviewModal({
 
     // Dynamic sizing for recipient name field
     if (element.id === "recipient-name" && formData?.recipientName) {
-      const nameText = formData.recipientName;
-      const nameLength = nameText.length;
+      const nameLength = formData.recipientName.length;
 
-      if (nameLength > 30) {
-        fontSize = 28;
-        height = 55;
+      if (nameLength > 50) {
+        fontSize = 20; height = 65;
+      } else if (nameLength > 40) {
+        fontSize = 22; height = 62;
+      } else if (nameLength > 30) {
+        fontSize = 26; height = 58;
       } else if (nameLength > 20) {
-        fontSize = 32;
-        height = 50;
+        fontSize = 30; height = 52;
       } else {
-        fontSize = 36;
-        height = 45;
+        fontSize = 34; height = 50;
       }
     }
 
@@ -382,6 +384,17 @@ export function CertificatePreviewModal({
             : "";
         })
     );
+  };
+
+  // Apply custom field substitutions ({{custom.key}} → value from customFields prop)
+  const applyCustomFields = (content: string): string => {
+    let result = content;
+    for (const [key, value] of Object.entries(customFields)) {
+      result = result
+        .replace(new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"), value || "")
+        .replace(new RegExp(`\\{custom\\.${key}\\}`, "g"), value || "");
+    }
+    return result;
   };
 
   // Function to replace image variables
@@ -607,7 +620,7 @@ export function CertificatePreviewModal({
                       key={element.id}
                       style={elementStyle}
                       dangerouslySetInnerHTML={{
-                        __html: replaceVariables(element.content),
+                      __html: applyCustomFields(replaceVariables(element.content)),
                       }}
                     />
                   );

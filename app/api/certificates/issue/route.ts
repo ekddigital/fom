@@ -215,6 +215,15 @@ export async function POST(req: Request) {
                 `Baptized by: ${issuerDisplayName}`
               );
 
+            // Custom fields substitution (e.g., {{custom.placement}})
+            if (validatedData.customFields) {
+              for (const [key, value] of Object.entries(validatedData.customFields)) {
+                element.content = element.content
+                  .replace(new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"), String(value ?? ""))
+                  .replace(new RegExp(`\\{custom\\.${key}\\}`, "g"), String(value ?? ""));
+              }
+            }
+
             // Log replacement for debugging
             if (originalContent !== element.content) {
               console.log(`Replaced content in element:`, {
@@ -272,7 +281,7 @@ export async function POST(req: Request) {
               );
             }
 
-            // Dynamic sizing for recipient name field (in case of very long names)
+            // Dynamic sizing for recipient name field
             if (
               element.id === "recipient-name" &&
               validatedData.recipientName
@@ -280,45 +289,24 @@ export async function POST(req: Request) {
               const nameText = validatedData.recipientName;
               const nameLength = nameText.length;
 
-              let fontSize = 36; // Default size
-              let height = 45; // Default height
+              let fontSize = 34; // Default (matches template)
+              let height = 50;
 
-              if (nameLength > 30) {
-                // Very long name - smaller font, more height
-                fontSize = 28;
-                height = 55;
+              if (nameLength > 50) {
+                fontSize = 20; height = 65;
+              } else if (nameLength > 40) {
+                fontSize = 22; height = 62;
+              } else if (nameLength > 30) {
+                fontSize = 26; height = 58;
               } else if (nameLength > 20) {
-                // Long name - medium font
-                fontSize = 32;
-                height = 50;
+                fontSize = 30; height = 52;
               }
-              // Short names keep default 36px
 
               element.style.fontSize = fontSize;
               element.position.height = height;
 
               console.log(
                 `Dynamic sizing applied to recipient name: "${nameText}" (${nameLength} chars) - Font: ${fontSize}px, Height: ${height}px`
-              );
-            }
-
-            // Dynamic sizing for recipient name if very long
-            if (
-              element.id === "recipient-name" &&
-              validatedData.recipientName
-            ) {
-              const nameLength = validatedData.recipientName.length;
-              let fontSize = 36; // Default size
-
-              if (nameLength > 25) {
-                fontSize = 30;
-              } else if (nameLength > 20) {
-                fontSize = 32;
-              }
-
-              element.style.fontSize = fontSize;
-              console.log(
-                `Dynamic sizing applied to name: "${validatedData.recipientName}" (${nameLength} chars) - Font: ${fontSize}px`
               );
             }
           }
