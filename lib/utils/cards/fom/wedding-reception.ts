@@ -162,38 +162,75 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       style: { zIndex: 10 },
     },
 
-    // ─── Monogram medallion — SVG (reliable, no font-race) ────────────────
+    // ─── Monogram medallion — luxury medal redesign ──────────────────────
     {
       id: "monogram-svg",
       type: "decoration",
-      content: `<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 84 84">
+      content: `<svg xmlns="http://www.w3.org/2000/svg" width="90" height="90" viewBox="0 0 100 100">
         <defs>
-          <radialGradient id="mg" cx="50%" cy="35%" r="65%">
-            <stop offset="0%" stop-color="#005040"/>
-            <stop offset="100%" stop-color="#002E20"/>
+          <!-- Deep convex emerald gradient: bright highlight top-left, very dark bottom -->
+          <radialGradient id="mg" cx="40%" cy="30%" r="70%">
+            <stop offset="0%"   stop-color="#007A58"/>
+            <stop offset="45%"  stop-color="#003D2A"/>
+            <stop offset="100%" stop-color="#001712"/>
           </radialGradient>
+          <!-- Subtle inner glow for letter depth -->
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
         </defs>
-        <!-- Emerald circle -->
-        <circle cx="42" cy="42" r="39" fill="url(#mg)"/>
-        <!-- Gold outer ring -->
-        <circle cx="42" cy="42" r="39" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="2.5"/>
-        <!-- Gold inner hairline -->
-        <circle cx="42" cy="42" r="36" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.6" opacity="0.45"/>
-        <!-- Thin horizontal gold bar -->
-        <line x1="14" y1="42" x2="70" y2="42" stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="0.5" opacity="0.3"/>
-        <!-- "E" initial — left -->
-        <text x="24" y="54" font-family="Georgia, serif" font-style="italic" font-weight="bold"
-              font-size="36" fill="${KINGDOM_WEDDING_COLORS.goldLight}"
-              text-anchor="middle" opacity="0.95">E</text>
-        <!-- centre diamond ornament -->
-        <text x="42" y="47" font-family="serif" font-size="9"
-              fill="${KINGDOM_WEDDING_COLORS.gold}" text-anchor="middle" opacity="0.85">&#x25C6;</text>
-        <!-- "P" initial — right -->
-        <text x="60" y="54" font-family="Georgia, serif" font-style="italic" font-weight="bold"
-              font-size="36" fill="${KINGDOM_WEDDING_COLORS.goldLight}"
-              text-anchor="middle" opacity="0.95">P</text>
+
+        <!-- ① Deep emerald fill -->
+        <circle cx="50" cy="50" r="47" fill="url(#mg)"/>
+
+        <!-- ② Bold outer gold bezel ring -->
+        <circle cx="50" cy="50" r="47" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="2.2"/>
+
+        <!-- ③ Thin bright inner ring -->
+        <circle cx="50" cy="50" r="43.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.7" opacity="0.75"/>
+
+        <!-- ④ Ornamental dashed innermost ring -->
+        <circle cx="50" cy="50" r="39.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"
+                stroke-width="0.5" stroke-dasharray="2.2 3.2" opacity="0.5"/>
+
+        <!-- ⑤ Four cardinal dots on the bezel (luxury watch detail) -->
+        <circle cx="50" cy="5"  r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
+        <circle cx="50" cy="95" r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
+        <circle cx="5"  cy="50" r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
+        <circle cx="95" cy="50" r="1.6" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.9"/>
+
+        <!-- ⑥ Subtle horizontal hairline across centre -->
+        <line x1="12" y1="50" x2="88" y2="50"
+              stroke="${KINGDOM_WEDDING_COLORS.gold}" stroke-width="0.35" opacity="0.3"/>
+
+        <!-- ⑦ "E" — large italic bold, slightly left of centre -->
+        <text x="29" y="65"
+              font-family="Georgia, 'Times New Roman', serif"
+              font-style="italic" font-weight="bold"
+              font-size="46"
+              fill="${KINGDOM_WEDDING_COLORS.goldLight}"
+              text-anchor="middle"
+              filter="url(#glow)">E</text>
+
+        <!-- ⑧ Centre ✦ ornament -->
+        <text x="50" y="53"
+              font-family="serif"
+              font-size="12"
+              fill="${KINGDOM_WEDDING_COLORS.gold}"
+              text-anchor="middle"
+              opacity="0.95">✦</text>
+
+        <!-- ⑨ "P" — large italic bold, slightly right of centre -->
+        <text x="71" y="65"
+              font-family="Georgia, 'Times New Roman', serif"
+              font-style="italic" font-weight="bold"
+              font-size="46"
+              fill="${KINGDOM_WEDDING_COLORS.goldLight}"
+              text-anchor="middle"
+              filter="url(#glow)">P</text>
       </svg>`,
-      position: { x: W / 2 - 36, y: 58, width: 72, height: 72 },
+      position: { x: W / 2 - 45, y: 54, width: 90, height: 90 },
       style: { zIndex: 12 },
     },
 
