@@ -17,40 +17,40 @@ const C = {
 // ── 25 Bingo Squares ─────────────────────────────────────────────────────────
 // Row-major order. Center (index 12) is FREE.
 const SQUARES: string[] = [
-  // Row 1
-  "Can recite John 3:16 from memory",
+  // Row 1 — B column
+  "Has arrived in Jinan in the last 6 months",
   "Has 3 or more siblings",
-  "Sings in the church choir",
+  "Sings in the Worship \u0026 Praise team",
   "Was born in spring\n(Mar, Apr or May)",
-  "Has served as a volunteer at JICF",
+  "Has served as an Usher at JICF",
 
-  // Row 2
-  "Is wearing something gold or yellow today",
-  "Has lived in Jinan for more than 5 years",
-  "Has ever given a testimony in church",
+  // Row 2 — I column
+  "Has been in China for 7 or more years",
+  "Has never gone back home since first arriving in China",
+  "Has given a testimony in front of the church",
   "Can speak 3 or more languages",
-  "Has traveled outside of China",
+  "Has served in the Prayer Ministry",
 
-  // Row 3
-  "Attended a sunrise Easter service before",
-  "Has been in JICF for more than 2 years",
+  // Row 3 — N column
+  "Has attended a sunrise Easter service before",
+  "Has been a part of JICF for more than 2 years",
   "✝ FREE ✝\nWrite your own name",
-  "Is meeting someone new for the first time today",
-  "Has read the entire book of Mark",
+  "Is meeting someone completely new for the first time today",
+  "Can recite John 3:16 from memory",
 
-  // Row 4
-  "Knows the name of the hill where Jesus was crucified",
-  "Is currently in a cell group",
-  "Brought food or a dish to share today",
-  "Is wearing sneakers right now",
+  // Row 4 — G column
+  "Is from a country where French is an official language",
+  "Is currently serving in a church ministry",
+  "Has celebrated Chinese New Year in China",
+  "Has eaten something at a Chinese table they couldn\u2019t identify — and loved it",
   "Joined JICF in 2025 or 2026",
 
-  // Row 5
-  "Can name all 12 disciples",
-  "Has traveled the furthest to be here today",
-  "Was baptized on Easter Sunday",
-  "Is over 30 years old",
-  "Has taught a Bible study or Sunday School",
+  // Row 5 — O column
+  "Can name all 12 disciples of Jesus",
+  "Was baptized at JICF",
+  "Has taught a Sunday School or Bible Study class",
+  "Is currently a university student",
+  "Has lived in 3 or more countries",
 ];
 
 const isFree = (i: number) => i === 12;
@@ -176,21 +176,23 @@ export default function EasterBingoPage() {
           {/* Right: JICF badge */}
           <div
             style={{
-              width: 38,
-              height: 38,
+              width: 42,
+              height: 42,
               borderRadius: "50%",
               border: `2px solid ${C.gold}`,
+              backgroundColor: "#ffffff",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               flexShrink: 0,
+              padding: 2,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/JICF_LOGO1.png"
               alt="JICF"
-              style={{ width: 32, height: 32, objectFit: "contain" }}
+              style={{ width: 34, height: 34, objectFit: "contain" }}
             />
           </div>
         </div>
@@ -210,11 +212,13 @@ export default function EasterBingoPage() {
         >
           <span style={{ color: C.yellow, fontSize: "9px", lineHeight: "1.5" }}>
             <strong style={{ color: "#fff" }}>HOW TO PLAY: </strong>
-            Walk around the room and find someone who matches each square.
-            Ask them to <strong style={{ color: C.gold }}>sign their name</strong> in that box.
-            Each person may sign your card <strong style={{ color: C.gold }}>only once</strong>.
+            Walk around the room and find someone who matches each square. Ask them to{" "}
+            <strong style={{ color: C.gold }}>sign their name</strong> in that box.{" "}
+            Each person may sign your card <strong style={{ color: C.gold }}>only once total</strong> — one square, one signature.{" "}
             First to complete a row, column, or diagonal shouts{" "}
-            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong> to win!
+            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong> to win!{" "}
+            <strong style={{ color: C.gold }}>Bonus:</strong> Fill the whole card for the{" "}
+            <strong style={{ color: C.yellow }}>GRAND PRIZE!</strong>
           </span>
         </div>
 
@@ -247,7 +251,7 @@ export default function EasterBingoPage() {
           <span
             style={{ fontSize: "10px", color: C.dark, whiteSpace: "nowrap", marginLeft: 16 }}
           >
-            Cell Group:
+            Home Country:
           </span>
           <div
             style={{
