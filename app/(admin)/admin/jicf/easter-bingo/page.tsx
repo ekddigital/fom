@@ -227,15 +227,13 @@ export default function EasterBingoPage() {
             <strong style={{ color: C.gold }}>sign their name</strong> in that
             box. Each person may sign your card{" "}
             <strong style={{ color: C.gold }}>only once</strong>.{" "}
-            If you complete <strong style={{ color: C.yellow }}>all your squares</strong> before
+            If you fill <strong style={{ color: C.yellow }}>all 24 squares</strong> before
             time is up, shout{" "}
             <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong>{" "}
-            immediately and you win! Otherwise, when time is called, the player
-            with the{" "}
-            <strong style={{ color: C.gold }}>
-              most completed rows, columns, or diagonals
-            </strong>{" "}
-            wins.
+            and come stand in front — others keep going until time is called.
+            When time is up, <strong style={{ color: C.gold }}>everyone comes up front</strong>{" "}
+            and shares how many squares they completed.
+            The person with the <strong style={{ color: C.yellow }}>most squares wins!</strong>
           </span>
         </div>
 
