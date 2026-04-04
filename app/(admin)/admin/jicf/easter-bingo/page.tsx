@@ -63,6 +63,11 @@ export default function EasterBingoPage() {
     <>
       {/* ── Print styles ── */}
       <style>{`
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
         @media print {
           body * { visibility: hidden; }
           #bingo-printable, #bingo-printable * { visibility: visible; }
@@ -83,6 +88,9 @@ export default function EasterBingoPage() {
           </h1>
           <p className="text-sm text-gray-500">
             Print one copy per player · ~50–60 copies recommended
+          </p>
+          <p className="text-xs text-amber-600 font-medium mt-1">
+            ⚠ In the print dialog, enable <strong>Background graphics</strong> to print colors correctly.
           </p>
         </div>
         <div className="flex gap-3">
@@ -212,13 +220,14 @@ export default function EasterBingoPage() {
         >
           <span style={{ color: C.yellow, fontSize: "9px", lineHeight: "1.5" }}>
             <strong style={{ color: "#fff" }}>HOW TO PLAY: </strong>
-            Walk around the room and find someone who matches each square. Ask them to{" "}
+            You have <strong style={{ color: C.yellow }}>15 minutes</strong> — walk around and find someone who matches each square. Ask them to{" "}
             <strong style={{ color: C.gold }}>sign their name</strong> in that box.{" "}
-            Each person may sign your card <strong style={{ color: C.gold }}>only once total</strong> — one square, one signature.{" "}
-            First to complete a row, column, or diagonal shouts{" "}
-            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong> to win!{" "}
-            <strong style={{ color: C.gold }}>Bonus:</strong> Fill the whole card for the{" "}
-            <strong style={{ color: C.yellow }}>GRAND PRIZE!</strong>
+            Each person may sign your card <strong style={{ color: C.gold }}>only once</strong>.{" "}
+            When time is called, the player with the{" "}
+            <strong style={{ color: C.gold }}>most completed rows, columns, or diagonals</strong> shouts{" "}
+            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong> and wins!{" "}
+            <strong style={{ color: C.gold }}>Grand Prize:</strong>{" "}
+            <strong style={{ color: C.yellow }}>fill all 24 squares!</strong>
           </span>
         </div>
 
