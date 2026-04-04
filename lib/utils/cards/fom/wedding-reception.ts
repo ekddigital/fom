@@ -223,7 +223,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
               text-anchor="middle"
               filter="url(#shadow)">P</text>
       </svg>`,
-      position: { x: W / 2 - 36, y: 54, width: 72, height: 72 },
+      position: { x: W / 2 - 36, y: 62, width: 72, height: 72 },
       style: { zIndex: 12 },
     },
 
@@ -235,7 +235,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
         width: 460px; height: 1px;
         background: linear-gradient(to right, transparent, ${KINGDOM_WEDDING_COLORS.gold} 20%, ${KINGDOM_WEDDING_COLORS.gold} 80%, transparent);
       "></div>`,
-      position: { x: 70, y: 133, width: 460, height: 1 },
+      position: { x: 70, y: 141, width: 460, height: 1 },
       style: { zIndex: 8 },
     },
 
@@ -244,7 +244,7 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       id: "label-kingdom",
       type: "text",
       content: "KINGDOM  WEDDING",
-      position: { x: 40, y: 136, width: W - 80, height: 16 },
+      position: { x: 40, y: 144, width: W - 80, height: 16 },
       style: {
         fontSize: 11,
         fontFamily: "'Playfair Display', Georgia, serif",
