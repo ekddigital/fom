@@ -162,73 +162,68 @@ export const kingdomWeddingReceptionCard: CardTemplate = {
       style: { zIndex: 10 },
     },
 
-    // ─── Monogram medallion — Great Vibes cursive script ────────────────
+    // ─── Monogram medallion ───────────────────────────────────────────────
     {
       id: "monogram-svg",
       type: "decoration",
-      content: `<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 100 100">
+      content: `<svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 100 100">
         <defs>
-          <!-- Deep convex emerald gradient -->
           <radialGradient id="mg" cx="38%" cy="28%" r="72%">
             <stop offset="0%"   stop-color="#007A58"/>
             <stop offset="50%"  stop-color="#003D2A"/>
             <stop offset="100%" stop-color="#001510"/>
           </radialGradient>
-          <!-- Gold shimmer on the letters -->
           <linearGradient id="goldGrad" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%"   stop-color="#F5DFA0"/>
             <stop offset="50%"  stop-color="${KINGDOM_WEDDING_COLORS.gold}"/>
             <stop offset="100%" stop-color="#A07820"/>
           </linearGradient>
-          <!-- Soft drop-shadow for letters -->
-          <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
-            <feDropShadow dx="0.5" dy="1" stdDeviation="1.2"
-                          flood-color="#001510" flood-opacity="0.7"/>
+          <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="1" stdDeviation="0.8"
+                          flood-color="#001510" flood-opacity="0.6"/>
           </filter>
         </defs>
 
-        <!-- ① Emerald fill -->
-        <circle cx="50" cy="50" r="47" fill="url(#mg)"/>
+        <!-- Emerald fill -->
+        <circle cx="50" cy="50" r="46" fill="url(#mg)"/>
+        <!-- Outer gold ring -->
+        <circle cx="50" cy="50" r="46"   fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"      stroke-width="2.2"/>
+        <!-- Inner bright ring -->
+        <circle cx="50" cy="50" r="42.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.6" opacity="0.7"/>
+        <!-- Dashed ornamental ring -->
+        <circle cx="50" cy="50" r="38.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"
+                stroke-width="0.4" stroke-dasharray="1.8 3" opacity="0.4"/>
 
-        <!-- ② Bold outer gold bezel -->
-        <circle cx="50" cy="50" r="47"  fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"      stroke-width="2.4"/>
-        <!-- ③ Inner bright ring -->
-        <circle cx="50" cy="50" r="43.5" fill="none" stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.7" opacity="0.8"/>
-        <!-- ④ Dashed ornamental ring -->
-        <circle cx="50" cy="50" r="40"   fill="none" stroke="${KINGDOM_WEDDING_COLORS.gold}"
-                stroke-width="0.45" stroke-dasharray="2 3.5" opacity="0.45"/>
+        <!-- Cardinal dots -->
+        <circle cx="50" cy="6"  r="1.3" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
+        <circle cx="50" cy="94" r="1.3" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
+        <circle cx="6"  cy="50" r="1.3" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
+        <circle cx="94" cy="50" r="1.3" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
 
-        <!-- ⑤ Cardinal dots -->
-        <circle cx="50" cy="5"  r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
-        <circle cx="50" cy="95" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
-        <circle cx="5"  cy="50" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
-        <circle cx="95" cy="50" r="1.5" fill="${KINGDOM_WEDDING_COLORS.gold}"/>
-
-        <!-- ⑥ "E" — Great Vibes cursive, gold shimmer, drop-shadow -->
+        <!-- "E" — Cormorant Garamond italic bold, fits cleanly -->
         <text x="30" y="62"
-              font-family="'Great Vibes', cursive"
-              font-size="38"
+              font-family="'Cormorant Garamond', Georgia, serif"
+              font-style="italic" font-weight="700"
+              font-size="34"
               fill="url(#goldGrad)"
               text-anchor="middle"
               filter="url(#shadow)">E</text>
 
-        <!-- ⑦ "·" centre dot separator -->
-        <text x="50" y="53"
-              font-family="serif"
-              font-size="9"
-              fill="${KINGDOM_WEDDING_COLORS.goldLight}"
-              text-anchor="middle"
-              opacity="0.9">·</text>
+        <!-- Centre divider hairlines + dot -->
+        <line x1="50" y1="30" x2="50" y2="70"
+              stroke="${KINGDOM_WEDDING_COLORS.goldLight}" stroke-width="0.5" opacity="0.5"/>
+        <circle cx="50" cy="50" r="2" fill="${KINGDOM_WEDDING_COLORS.gold}" opacity="0.8"/>
 
-        <!-- ⑧ "P" — Great Vibes cursive, gold shimmer, drop-shadow -->
+        <!-- "P" — Cormorant Garamond italic bold -->
         <text x="70" y="62"
-              font-family="'Great Vibes', cursive"
-              font-size="38"
+              font-family="'Cormorant Garamond', Georgia, serif"
+              font-style="italic" font-weight="700"
+              font-size="34"
               fill="url(#goldGrad)"
               text-anchor="middle"
               filter="url(#shadow)">P</text>
       </svg>`,
-      position: { x: W / 2 - 40, y: 48, width: 80, height: 80 },
+      position: { x: W / 2 - 36, y: 54, width: 72, height: 72 },
       style: { zIndex: 12 },
     },
 
