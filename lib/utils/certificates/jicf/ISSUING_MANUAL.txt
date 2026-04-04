@@ -62,9 +62,9 @@ When Pastor Joseph needs to sign the certificate by hand:
   1. Go to Admin Panel → Certificates → Issued Certificates
   2. Find the certificate and click the Download button
   3. In the Download dialog, tick: "For manual signing"
-     → This hides the electronic signature, the signature line,
-       the pastor name, and the title — leaving blank space for
-       the pastor to physically sign after printing.
+     → This hides ONLY the electronic signature image, leaving
+       the signature line, pastor name, and title visible —
+       so the pastor knows where and as whom to sign.
   4. Select PDF (recommended for printing) and click Download.
   5. Print and hand to the pastor for signing.
 

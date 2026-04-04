@@ -297,7 +297,6 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-sig-line",
       type: "shape",
-      group: "signature",
       content: "",
       position: { x: 290, y: 500, width: 220, height: 1 },
       style: { color: C.dark },
@@ -305,7 +304,6 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-name",
       type: "text",
-      group: "signature",
       content: "Pst. Joseph G. Summers",
       position: { x: 270, y: 505, width: 260, height: 14 },
       style: {
@@ -319,7 +317,6 @@ export const jicfEasterWinnerCert: CertificateTemplate = {
     {
       id: "pastor-title",
       type: "text",
-      group: "signature",
       content: "Senior Pastor, JICF",
       position: { x: 270, y: 519, width: 260, height: 12 },
       style: {
