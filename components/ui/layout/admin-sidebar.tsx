@@ -13,6 +13,7 @@ import {
   Award,
   Heart,
   HandHeart,
+  Grid3x3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -80,6 +81,12 @@ const adminMenuItems = [
         href: "/admin/cards",
         icon: Heart,
         description: "Beautiful graduation and appreciation cards",
+      },
+      {
+        label: "Easter Bingo",
+        href: "/admin/jicf/easter-bingo",
+        icon: Grid3x3,
+        description: "Human Bingo game card for Easter celebrations",
       },
     ],
   },
