@@ -18,7 +18,7 @@ export class CardDatabaseService {
    */
   static async seedCardTemplates(
     forceOverride = false,
-    updatedBy?: string
+    updatedBy?: string,
   ): Promise<void> {
     console.log("📋 Seeding card templates...");
 
@@ -33,7 +33,7 @@ export class CardDatabaseService {
         // Check if the provided user has admin privileges
         if (adminUser && !["ADMIN", "SUPER_ADMIN"].includes(adminUser.role)) {
           console.warn(
-            `⚠️ User ${updatedBy} does not have admin privileges (role: ${adminUser.role})`
+            `⚠️ User ${updatedBy} does not have admin privileges (role: ${adminUser.role})`,
           );
           adminUser = null; // Reset to find another admin
         }
@@ -51,16 +51,16 @@ export class CardDatabaseService {
       if (!adminUser) {
         console.error("❌ No admin user found for card template creation");
         console.error(
-          "❌ Please ensure at least one admin user exists in the database"
+          "❌ Please ensure at least one admin user exists in the database",
         );
         console.error(
-          "❌ Run the user promotion script or create an admin user manually"
+          "❌ Run the user promotion script or create an admin user manually",
         );
         return;
       }
 
       console.log(
-        `🔑 Using admin user: ${adminUser.firstName} ${adminUser.lastName} (${adminUser.email})`
+        `🔑 Using admin user: ${adminUser.firstName} ${adminUser.lastName} (${adminUser.email})`,
       );
 
       // Process each template individually to avoid transaction timeout
@@ -99,7 +99,7 @@ export class CardDatabaseService {
             });
 
             console.log(
-              `🔄 Upserted card template: ${upsertedTemplate.name} (ID: ${upsertedTemplate.id})`
+              `🔄 Upserted card template: ${upsertedTemplate.name} (ID: ${upsertedTemplate.id})`,
             );
           } else {
             // Only create if doesn't exist
@@ -121,18 +121,18 @@ export class CardDatabaseService {
               });
 
               console.log(
-                `✨ Created new card template: ${newTemplate.name} (ID: ${newTemplate.id})`
+                `✨ Created new card template: ${newTemplate.name} (ID: ${newTemplate.id})`,
               );
             } else {
               console.log(
-                `⏭️ Card template already exists: ${existingTemplate.name} (ID: ${existingTemplate.id})`
+                `⏭️ Card template already exists: ${existingTemplate.name} (ID: ${existingTemplate.id})`,
               );
             }
           }
         } catch (templateError) {
           console.error(
             `❌ Failed to process template ${template.id}:`,
-            templateError
+            templateError,
           );
           // Continue with other templates instead of failing completely
         }
@@ -206,52 +206,55 @@ export class CardDatabaseService {
     graduatesList?: string;
     meetOurGraduatesData?: string;
   }): Promise<Card> {
-    return await prisma.$transaction(async (tx) => {
-      // Verify template exists
-      const template = await tx.cardTemplate.findUnique({
-        where: { id: data.templateId },
-      });
+    return await prisma.$transaction(
+      async (tx) => {
+        // Verify template exists
+        const template = await tx.cardTemplate.findUnique({
+          where: { id: data.templateId },
+        });
 
-      if (!template) {
-        throw new Error(`Card template with ID ${data.templateId} not found`);
-      }
+        if (!template) {
+          throw new Error(`Card template with ID ${data.templateId} not found`);
+        }
 
-      // Generate unique card ID
-      const cardId = `JICF-${new Date().getFullYear()}-CARD-${Date.now()
-        .toString()
-        .slice(-6)}`; // Create the card
-      const card = await tx.card.create({
-        data: {
-          id: cardId,
-          templateId: data.templateId,
-          recipientName: data.recipientName,
-          customMessage: data.customMessage,
-          serviceOutline: data.serviceOutline,
-          eventName: data.eventName,
-          eventDate: data.eventDate,
-          mcName: data.mcName,
-          graduatesList: data.graduatesList,
-          meetOurGraduatesData: data.meetOurGraduatesData,
-          createdBy: data.createdBy,
-        },
-        include: {
-          template: true,
-          creator: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              email: true,
+        // Generate unique card ID
+        const cardId = `JICF-${new Date().getFullYear()}-CARD-${Date.now()
+          .toString()
+          .slice(-6)}`; // Create the card
+        const card = await tx.card.create({
+          data: {
+            id: cardId,
+            templateId: data.templateId,
+            recipientName: data.recipientName,
+            customMessage: data.customMessage,
+            serviceOutline: data.serviceOutline,
+            eventName: data.eventName,
+            eventDate: data.eventDate,
+            mcName: data.mcName,
+            graduatesList: data.graduatesList,
+            meetOurGraduatesData: data.meetOurGraduatesData,
+            createdBy: data.createdBy,
+          },
+          include: {
+            template: true,
+            creator: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      console.log(
-        `✨ Created new card: ${card.id} using template: ${template.name}`
-      );
-      return card;
-    }, { timeout: 30000 });
+        console.log(
+          `✨ Created new card: ${card.id} using template: ${template.name}`,
+        );
+        return card;
+      },
+      { timeout: 30000 },
+    );
   }
 
   /**

@@ -12,6 +12,24 @@ export const authConfig: NextAuthConfig = {
     error: "/auth/error",
   },
   callbacks: {
+    async jwt({ token }) {
+      // No-op: token is already populated by the full auth in lib/auth.ts.
+      // This stub prevents next-auth from complaining in the edge config.
+      return token;
+    },
+    async session({ session, token }) {
+      // Map custom JWT fields to session.user so middleware can read them.
+      const u = session.user as typeof session.user & Record<string, unknown>;
+      if (token) {
+        u.id = (token.id ?? token.sub) as string;
+        u.role = token.role as string;
+        u.firstName = token.firstName as string;
+        u.lastName = token.lastName as string;
+        u.username = token.username as string | undefined;
+        u.displayNamePreference = token.displayNamePreference as string;
+      }
+      return session;
+    },
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAuthPage =
