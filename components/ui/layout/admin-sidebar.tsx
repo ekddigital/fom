@@ -14,6 +14,7 @@ import {
   Heart,
   HandHeart,
   Grid3x3,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -88,6 +89,12 @@ const adminMenuItems = [
         icon: Grid3x3,
         description: "Human Bingo game card for Easter celebrations",
       },
+      {
+        label: "Scripture Match",
+        href: "/admin/jicf/scripture-match",
+        icon: BookOpen,
+        description: "Bible verse match-up game slips",
+      },
     ],
   },
   {
@@ -152,7 +159,7 @@ export function AdminSidebar({
           "fixed left-0 top-0 z-50 h-full bg-white border-r border-red-200 transition-all duration-300 flex flex-col",
           collapsed ? "w-16" : "w-64",
           isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-          className
+          className,
         )}
       >
         {/* Sidebar Header */}
@@ -205,7 +212,7 @@ export function AdminSidebar({
                         collapsed ? "px-3" : "px-3",
                         active
                           ? "bg-red-100 text-red-900 hover:bg-red-200"
-                          : "text-gray-700 hover:bg-red-50 hover:text-red-900"
+                          : "text-gray-700 hover:bg-red-50 hover:text-red-900",
                       )}
                       asChild
                     >
@@ -213,13 +220,13 @@ export function AdminSidebar({
                         <div
                           className={cn(
                             "flex items-center w-full",
-                            collapsed ? "justify-center" : "space-x-3"
+                            collapsed ? "justify-center" : "space-x-3",
                           )}
                         >
                           <IconComponent
                             className={cn(
                               "w-5 h-5 flex-shrink-0",
-                              active ? "text-red-700" : "text-gray-500"
+                              active ? "text-red-700" : "text-gray-500",
                             )}
                           />
                           {!collapsed && (
