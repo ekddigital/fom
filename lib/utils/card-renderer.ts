@@ -127,6 +127,10 @@ export class CardRenderer {
           .card-element {
             position: absolute;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            outline: none;
+            pointer-events: none;
           }
           
           .card-text {
@@ -164,6 +168,12 @@ export class CardRenderer {
               margin: 0;
               page-break-inside: avoid;
               transform: none;
+            }
+            .card-element {
+              user-select: none !important;
+              -webkit-user-select: none !important;
+              outline: none !important;
+              -webkit-tap-highlight-color: transparent !important;
             }
             * {
               -webkit-print-color-adjust: exact !important;
