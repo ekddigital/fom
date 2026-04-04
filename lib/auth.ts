@@ -112,7 +112,7 @@ const config: NextAuthConfig = {
     error: "/auth/error",
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
       // If user is signing in for the first time, set initial token data
       if (user) {
         const u = user as User & Record<string, unknown>;
@@ -124,8 +124,10 @@ const config: NextAuthConfig = {
         token.displayNamePreference = u.displayNamePreference as string;
       }
 
-      // Always fetch fresh user data from database to ensure latest role/info
-      if (token.id) {
+      // Fetch fresh user data from DB only on sign-in or explicit session update,
+      // not on every request (avoids DB call on every page navigation).
+      const shouldRefresh = !!user || trigger === "update";
+      if (shouldRefresh && token.id) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { id: token.id as string },
