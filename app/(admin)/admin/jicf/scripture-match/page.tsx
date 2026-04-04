@@ -231,7 +231,9 @@ const VERSES: Verse[] = [
 
 // ── Component ─────────────────────────────────────────────────────────────────
 export default function ScriptureMatchPage() {
-  const [printMode, setPrintMode] = useState<"ref" | "verse" | "all" | "master">("all");
+  const [printMode, setPrintMode] = useState<
+    "ref" | "verse" | "all" | "master"
+  >("all");
 
   const handlePrint = (mode: "ref" | "verse" | "all" | "master") => {
     setPrintMode(mode);
@@ -277,8 +279,8 @@ export default function ScriptureMatchPage() {
             30 verse pairs · 60 slips · up to 60 players
           </p>
           <p className="text-xs text-amber-600 font-medium mt-1">
-            ⚠ In the print dialog, enable{" "}
-            <strong>Background graphics</strong> to print colors correctly.
+            ⚠ In the print dialog, enable <strong>Background graphics</strong>{" "}
+            to print colors correctly.
           </p>
         </div>
 
@@ -323,18 +325,45 @@ export default function ScriptureMatchPage() {
       {/* ── Organizer instructions (screen only) ── */}
       <div className="no-print max-w-4xl mx-auto px-6 py-6 space-y-6">
         {/* How to run */}
-        <div className="rounded-xl border-2 p-5" style={{ borderColor: C.gold, backgroundColor: C.lightGold }}>
+        <div
+          className="rounded-xl border-2 p-5"
+          style={{ borderColor: C.gold, backgroundColor: C.lightGold }}
+        >
           <h2 className="font-bold text-base mb-3" style={{ color: C.dark }}>
             ✝ How to Run This Game
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
             {[
-              { step: "1", title: "Print & Cut", desc: "Print the Reference slips and Verse slips separately. Cut along the dashed lines." },
-              { step: "2", title: "Fold & Separate", desc: "Fold each slip so the text faces in. Place navy slips in one basket, cream slips in another." },
-              { step: "3", title: "Distribute", desc: "Each person draws one slip from either basket at random. Tell them NOT to open it yet." },
-              { step: "4", title: "Say GO!", desc: "Everyone opens their slip. People with References shout their verse address; people with Verses read their text aloud. They mingle until they find their match!" },
-              { step: "5", title: "First 3 Pairs Win", desc: "The first 3 matched pairs to come to you and read the verse together win a prize." },
-              { step: "6", title: "Read Aloud", desc: "Once all pairs have matched, go around and have each pair read their completed verse aloud. The room fills with Scripture!" },
+              {
+                step: "1",
+                title: "Print & Cut",
+                desc: "Print the Reference slips and Verse slips separately. Cut along the dashed lines.",
+              },
+              {
+                step: "2",
+                title: "Fold & Separate",
+                desc: "Fold each slip so the text faces in. Place navy slips in one basket, cream slips in another.",
+              },
+              {
+                step: "3",
+                title: "Distribute",
+                desc: "Each person draws one slip from either basket at random. Tell them NOT to open it yet.",
+              },
+              {
+                step: "4",
+                title: "Say GO!",
+                desc: "Everyone opens their slip. People with References shout their verse address; people with Verses read their text aloud. They mingle until they find their match!",
+              },
+              {
+                step: "5",
+                title: "First 3 Pairs Win",
+                desc: "The first 3 matched pairs to come to you and read the verse together win a prize.",
+              },
+              {
+                step: "6",
+                title: "Read Aloud",
+                desc: "Once all pairs have matched, go around and have each pair read their completed verse aloud. The room fills with Scripture!",
+              },
             ].map(({ step, title, desc }) => (
               <div key={step} className="flex gap-3">
                 <div
@@ -344,7 +373,9 @@ export default function ScriptureMatchPage() {
                   {step}
                 </div>
                 <div>
-                  <div className="font-semibold" style={{ color: C.dark }}>{title}</div>
+                  <div className="font-semibold" style={{ color: C.dark }}>
+                    {title}
+                  </div>
                   <div className="text-xs text-gray-600 mt-0.5">{desc}</div>
                 </div>
               </div>
@@ -359,20 +390,31 @@ export default function ScriptureMatchPage() {
           </h2>
           <div className="space-y-1">
             {(["easter", "popular", "harder"] as Category[]).map((cat) => (
-              <details key={cat} open className="rounded-lg overflow-hidden border">
+              <details
+                key={cat}
+                open
+                className="rounded-lg overflow-hidden border"
+              >
                 <summary
                   className="px-4 py-2 cursor-pointer font-semibold text-sm flex items-center gap-2"
-                  style={{ backgroundColor: CATEGORY_META[cat].bg, color: CATEGORY_META[cat].color }}
+                  style={{
+                    backgroundColor: CATEGORY_META[cat].bg,
+                    color: CATEGORY_META[cat].color,
+                  }}
                 >
                   <span
                     className="w-2 h-2 rounded-full shrink-0"
                     style={{ backgroundColor: CATEGORY_META[cat].color }}
                   />
-                  {CATEGORY_META[cat].label} ({VERSES.filter((v) => v.category === cat).length} pairs)
+                  {CATEGORY_META[cat].label} (
+                  {VERSES.filter((v) => v.category === cat).length} pairs)
                 </summary>
                 <div className="divide-y">
                   {VERSES.filter((v) => v.category === cat).map((v) => (
-                    <div key={v.id} className="px-4 py-2 flex gap-3 text-sm hover:bg-gray-50">
+                    <div
+                      key={v.id}
+                      className="px-4 py-2 flex gap-3 text-sm hover:bg-gray-50"
+                    >
                       <span
                         className="w-6 h-6 rounded-full text-white text-xs flex items-center justify-center font-bold shrink-0 mt-0.5"
                         style={{ backgroundColor: CATEGORY_META[cat].color }}
@@ -380,8 +422,12 @@ export default function ScriptureMatchPage() {
                         {v.id}
                       </span>
                       <div>
-                        <div className="font-semibold text-gray-800">{v.ref}</div>
-                        <div className="text-gray-500 text-xs mt-0.5 italic">&ldquo;{v.text}&rdquo;</div>
+                        <div className="font-semibold text-gray-800">
+                          {v.ref}
+                        </div>
+                        <div className="text-gray-500 text-xs mt-0.5 italic">
+                          &ldquo;{v.text}&rdquo;
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -394,9 +440,8 @@ export default function ScriptureMatchPage() {
 
       {/* ── PRINTABLE SECTION ── */}
       <div id="scripture-printable" style={{ fontFamily: "Georgia, serif" }}>
-
         {/* ════════════════ MASTER LIST (organizer reference) ════════════════ */}
-        {(printMode === "master") && (
+        {printMode === "master" && (
           <div style={{ padding: "10mm", backgroundColor: "#fff" }}>
             {/* Header */}
             <div
@@ -410,12 +455,23 @@ export default function ScriptureMatchPage() {
                 justifyContent: "space-between",
               }}
             >
-              <div style={{ color: C.gold, fontWeight: "bold", fontSize: 14, letterSpacing: 1 }}>
+              <div
+                style={{
+                  color: C.gold,
+                  fontWeight: "bold",
+                  fontSize: 14,
+                  letterSpacing: 1,
+                }}
+              >
                 JICF · SCRIPTURE MATCH-UP
               </div>
-              <div style={{ color: C.yellow, fontSize: 10 }}>ORGANIZER MASTER LIST · Easter 2026</div>
+              <div style={{ color: C.yellow, fontSize: 10 }}>
+                ORGANIZER MASTER LIST · Easter 2026
+              </div>
             </div>
-            <div style={{ height: 3, backgroundColor: C.gold, marginBottom: 10 }} />
+            <div
+              style={{ height: 3, backgroundColor: C.gold, marginBottom: 10 }}
+            />
 
             {/* Instructions to organizer */}
             <div
@@ -430,12 +486,20 @@ export default function ScriptureMatchPage() {
                 color: C.dark,
               }}
             >
-              <strong>Keep this sheet with you during the game.</strong> Use pair numbers (#01–#30) to verify matches instantly.
-              First 3 pairs to match correctly win a prize. After all match, have each pair read their verse aloud.
+              <strong>Keep this sheet with you during the game.</strong> Use
+              pair numbers (#01–#30) to verify matches instantly. First 3 pairs
+              to match correctly win a prize. After all match, have each pair
+              read their verse aloud.
             </div>
 
             {/* Pair grid */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "5px" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2, 1fr)",
+                gap: "5px",
+              }}
+            >
               {VERSES.map((v) => (
                 <div
                   key={v.id}
@@ -446,7 +510,14 @@ export default function ScriptureMatchPage() {
                     backgroundColor: CATEGORY_META[v.category].bg,
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      marginBottom: 2,
+                    }}
+                  >
                     <span
                       style={{
                         width: 18,
@@ -464,7 +535,15 @@ export default function ScriptureMatchPage() {
                     >
                       {String(v.id).padStart(2, "0")}
                     </span>
-                    <span style={{ fontWeight: "bold", fontSize: 10, color: C.dark }}>{v.ref}</span>
+                    <span
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 10,
+                        color: C.dark,
+                      }}
+                    >
+                      {v.ref}
+                    </span>
                     <span
                       style={{
                         marginLeft: "auto",
@@ -478,14 +557,31 @@ export default function ScriptureMatchPage() {
                       {v.category}
                     </span>
                   </div>
-                  <div style={{ fontSize: 8, color: "#555", fontStyle: "italic", lineHeight: 1.4 }}>
-                    &ldquo;{v.text.length > 100 ? v.text.slice(0, 97) + "…" : v.text}&rdquo;
+                  <div
+                    style={{
+                      fontSize: 8,
+                      color: "#555",
+                      fontStyle: "italic",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    &ldquo;
+                    {v.text.length > 100 ? v.text.slice(0, 97) + "…" : v.text}
+                    &rdquo;
                   </div>
                 </div>
               ))}
             </div>
 
-            <div style={{ marginTop: 10, borderTop: `2px solid ${C.gold}`, paddingTop: 4, display: "flex", justifyContent: "space-between" }}>
+            <div
+              style={{
+                marginTop: 10,
+                borderTop: `2px solid ${C.gold}`,
+                paddingTop: 4,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
               <span style={{ fontSize: 8, color: C.dark }}>
                 &ldquo;He is risen indeed!&rdquo; · 1 Corinthians 15:20
               </span>
@@ -513,10 +609,25 @@ export default function ScriptureMatchPage() {
               }}
             >
               <div style={{ textAlign: "center" }}>
-                <div style={{ color: C.gold, fontSize: 10, letterSpacing: 3, fontWeight: "bold", marginBottom: 4 }}>
+                <div
+                  style={{
+                    color: C.gold,
+                    fontSize: 10,
+                    letterSpacing: 3,
+                    fontWeight: "bold",
+                    marginBottom: 4,
+                  }}
+                >
                   JINAN INTERNATIONAL CHRISTIAN FELLOWSHIP
                 </div>
-                <div style={{ color: "#fff", fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>
+                <div
+                  style={{
+                    color: "#fff",
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    letterSpacing: 1,
+                  }}
+                >
                   SCRIPTURE MATCH-UP
                 </div>
                 <div style={{ color: C.yellow, fontSize: 9, marginTop: 3 }}>
@@ -534,9 +645,17 @@ export default function ScriptureMatchPage() {
                     letterSpacing: 1,
                   }}
                 >
-                  ✂ SECTION A &nbsp;·&nbsp; REFERENCE SLIPS (navy) &nbsp;·&nbsp; 30 SLIPS
+                  ✂ SECTION A &nbsp;·&nbsp; REFERENCE SLIPS (navy) &nbsp;·&nbsp;
+                  30 SLIPS
                 </div>
-                <div style={{ color: C.yellow, fontSize: 8, marginTop: 6, opacity: 0.8 }}>
+                <div
+                  style={{
+                    color: C.yellow,
+                    fontSize: 8,
+                    marginTop: 6,
+                    opacity: 0.8,
+                  }}
+                >
                   Cut along dashed lines · Fold · Place in basket
                 </div>
               </div>
@@ -579,10 +698,25 @@ export default function ScriptureMatchPage() {
               }}
             >
               <div style={{ textAlign: "center" }}>
-                <div style={{ color: C.navy, fontSize: 10, letterSpacing: 3, fontWeight: "bold", marginBottom: 4 }}>
+                <div
+                  style={{
+                    color: C.navy,
+                    fontSize: 10,
+                    letterSpacing: 3,
+                    fontWeight: "bold",
+                    marginBottom: 4,
+                  }}
+                >
                   JINAN INTERNATIONAL CHRISTIAN FELLOWSHIP
                 </div>
-                <div style={{ color: C.dark, fontSize: 18, fontWeight: "bold", letterSpacing: 1 }}>
+                <div
+                  style={{
+                    color: C.dark,
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    letterSpacing: 1,
+                  }}
+                >
                   SCRIPTURE MATCH-UP
                 </div>
                 <div style={{ color: C.red, fontSize: 9, marginTop: 3 }}>
@@ -600,9 +734,17 @@ export default function ScriptureMatchPage() {
                     letterSpacing: 1,
                   }}
                 >
-                  ✂ SECTION B &nbsp;·&nbsp; VERSE SLIPS (cream) &nbsp;·&nbsp; 30 SLIPS
+                  ✂ SECTION B &nbsp;·&nbsp; VERSE SLIPS (cream) &nbsp;·&nbsp; 30
+                  SLIPS
                 </div>
-                <div style={{ color: C.dark, fontSize: 8, marginTop: 6, opacity: 0.7 }}>
+                <div
+                  style={{
+                    color: C.dark,
+                    fontSize: 8,
+                    marginTop: 6,
+                    opacity: 0.7,
+                  }}
+                >
                   Cut along dashed lines · Fold · Place in basket
                 </div>
               </div>
@@ -637,9 +779,17 @@ export default function ScriptureMatchPage() {
             }}
           >
             <span style={{ fontSize: 7, color: C.dark }}>
-              &ldquo;But now is Christ risen from the dead…&rdquo; — 1 Corinthians 15:20
+              &ldquo;But now is Christ risen from the dead…&rdquo; — 1
+              Corinthians 15:20
             </span>
-            <span style={{ fontSize: 7, color: C.navy, fontWeight: "bold", letterSpacing: 1 }}>
+            <span
+              style={{
+                fontSize: 7,
+                color: C.navy,
+                fontWeight: "bold",
+                letterSpacing: 1,
+              }}
+            >
               JICF · JINAN, CHINA · EASTER 2026
             </span>
           </div>
@@ -851,7 +1001,8 @@ function VerseSlip({ verse }: { verse: Verse }) {
         <div
           style={{
             color: C.dark,
-            fontSize: verse.text.length > 150 ? 12 : verse.text.length > 100 ? 13 : 15,
+            fontSize:
+              verse.text.length > 150 ? 12 : verse.text.length > 100 ? 13 : 15,
             fontStyle: "italic",
             textAlign: "center",
             lineHeight: 1.55,
