@@ -547,8 +547,8 @@ model Certificate {
   templateId String @map("template_id")
 
   // Enhanced recipient information with separate name fields
-  recipientFirstName String  @map("recipient_first_name") @db.VarChar(50)
-  recipientLastName  String  @map("recipient_last_name") @db.VarChar(50)
+  recipientFirstName String  @map("recipient_first_name") @db.VarChar(150)
+  recipientLastName  String  @map("recipient_last_name") @db.VarChar(150)
   recipientEmail     String  @map("recipient_email") @db.VarChar(255)
   issuedTo           String? @map("issued_to") // User ID if recipient is registered user
 
