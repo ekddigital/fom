@@ -90,7 +90,8 @@ export default function EasterBingoPage() {
             Print one copy per player · ~50–60 copies recommended
           </p>
           <p className="text-xs text-amber-600 font-medium mt-1">
-            ⚠ In the print dialog, enable <strong>Background graphics</strong> to print colors correctly.
+            ⚠ In the print dialog, enable <strong>Background graphics</strong>{" "}
+            to print colors correctly.
           </p>
         </div>
         <div className="flex gap-3">
@@ -177,7 +178,8 @@ export default function EasterBingoPage() {
               EASTER HUMAN BINGO
             </div>
             <div style={{ color: C.yellow, fontSize: "10px", marginTop: 1 }}>
-              Easter Celebration · April 5, 2026 · &ldquo;He is risen indeed!&rdquo; ✝
+              Easter Celebration · April 5, 2026 · &ldquo;He is risen
+              indeed!&rdquo; ✝
             </div>
           </div>
 
@@ -220,14 +222,18 @@ export default function EasterBingoPage() {
         >
           <span style={{ color: C.yellow, fontSize: "9px", lineHeight: "1.5" }}>
             <strong style={{ color: "#fff" }}>HOW TO PLAY: </strong>
-            You have <strong style={{ color: C.yellow }}>15 minutes</strong> — walk around and find someone who matches each square. Ask them to{" "}
-            <strong style={{ color: C.gold }}>sign their name</strong> in that box.{" "}
-            Each person may sign your card <strong style={{ color: C.gold }}>only once</strong>.{" "}
-            When time is called, the player with the{" "}
-            <strong style={{ color: C.gold }}>most completed rows, columns, or diagonals</strong> shouts{" "}
-            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong> and wins!{" "}
-            <strong style={{ color: C.gold }}>Grand Prize:</strong>{" "}
-            <strong style={{ color: C.yellow }}>fill all 24 squares!</strong>
+            You have <strong style={{ color: C.yellow }}>15 minutes</strong> —
+            walk around and find someone who matches each square. Ask them to{" "}
+            <strong style={{ color: C.gold }}>sign their name</strong> in that
+            box. Each person may sign your card{" "}
+            <strong style={{ color: C.gold }}>only once</strong>. When time is
+            called, the player with the{" "}
+            <strong style={{ color: C.gold }}>
+              most completed rows, columns, or diagonals
+            </strong>{" "}
+            shouts{" "}
+            <strong style={{ color: C.yellow }}>&ldquo;ALLELUIA!&rdquo;</strong>{" "}
+            and wins!
           </span>
         </div>
 
@@ -258,7 +264,12 @@ export default function EasterBingoPage() {
             }}
           />
           <span
-            style={{ fontSize: "10px", color: C.dark, whiteSpace: "nowrap", marginLeft: 16 }}
+            style={{
+              fontSize: "10px",
+              color: C.dark,
+              whiteSpace: "nowrap",
+              marginLeft: 16,
+            }}
           >
             Home Country:
           </span>
@@ -325,7 +336,8 @@ export default function EasterBingoPage() {
           }}
         >
           <span style={{ fontSize: "8px", color: C.dark }}>
-            &ldquo;But now is Christ risen from the dead...&rdquo; — 1 Corinthians 15:20
+            &ldquo;But now is Christ risen from the dead...&rdquo; — 1
+            Corinthians 15:20
           </span>
           <span
             style={{
