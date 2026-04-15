@@ -18,6 +18,7 @@ import {
   Settings,
   Users,
   BarChart3,
+  CalendarDays,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -64,6 +65,20 @@ const contentSections = [
       { label: "Create New", href: "/admin/cards" },
     ],
   },
+  {
+    title: "Conference Docs",
+    description:
+      "Build and maintain conference introduction, team slots, program timeline, and action tracker documents.",
+    icon: CalendarDays,
+    href: "/admin/conference-docs",
+    color: "bg-sky-50 border-sky-200",
+    iconColor: "text-sky-600",
+    stats: "Program and planning documents",
+    actions: [
+      { label: "Open Document System", href: "/admin/conference-docs" },
+      { label: "Preview Program", href: "/admin/conference-docs" },
+    ],
+  },
 ];
 
 const quickActions = [
@@ -90,6 +105,14 @@ const quickActions = [
     href: "/admin/settings",
     color: "bg-gray-50 border-gray-200",
     iconColor: "text-gray-600",
+  },
+  {
+    title: "Conference Docs",
+    description: "Manage May 2026 conference plan",
+    icon: CalendarDays,
+    href: "/admin/conference-docs",
+    color: "bg-sky-50 border-sky-200",
+    iconColor: "text-sky-600",
   },
 ];
 

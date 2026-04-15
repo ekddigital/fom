@@ -68,8 +68,8 @@ export default function AdminDashboardPage() {
           changeType: stats.userGrowthChange.startsWith("+")
             ? "positive"
             : stats.userGrowthChange.startsWith("-")
-            ? "negative"
-            : "neutral",
+              ? "negative"
+              : "neutral",
           icon: Users,
           description: "Registered members",
         },
@@ -80,8 +80,8 @@ export default function AdminDashboardPage() {
           changeType: stats.activeUsersChange.startsWith("+")
             ? "positive"
             : stats.activeUsersChange.startsWith("-")
-            ? "negative"
-            : "neutral",
+              ? "negative"
+              : "neutral",
           icon: TrendingUp,
           description: "Active in last 30 days",
         },
@@ -92,8 +92,8 @@ export default function AdminDashboardPage() {
           changeType: stats.userGrowthChange.startsWith("+")
             ? "positive"
             : stats.userGrowthChange.startsWith("-")
-            ? "negative"
-            : "neutral",
+              ? "negative"
+              : "neutral",
           icon: Calendar,
           description: "New registrations",
         },
@@ -167,6 +167,13 @@ export default function AdminDashboardPage() {
       icon: FileText,
       href: "/admin/content",
       color: "bg-indigo-500",
+    },
+    {
+      title: "Conference Docs",
+      description: "Plan intro, slots, and timeline",
+      icon: Calendar,
+      href: "/admin/conference-docs",
+      color: "bg-sky-500",
     },
     {
       title: "System Settings",
@@ -253,8 +260,8 @@ export default function AdminDashboardPage() {
                         stat.changeType === "positive"
                           ? "text-green-600"
                           : stat.changeType === "negative"
-                          ? "text-red-600"
-                          : "text-gray-600"
+                            ? "text-red-600"
+                            : "text-gray-600"
                       }`}
                     >
                       {stat.change}
@@ -385,8 +392,8 @@ export default function AdminDashboardPage() {
                             alert.type === "warning"
                               ? "destructive"
                               : alert.type === "success"
-                              ? "default"
-                              : "secondary"
+                                ? "default"
+                                : "secondary"
                           }
                           className="text-xs"
                         >
@@ -429,10 +436,10 @@ export default function AdminDashboardPage() {
                       item.severity === "warning"
                         ? "bg-yellow-500"
                         : item.severity === "success"
-                        ? "bg-green-500"
-                        : item.severity === "error"
-                        ? "bg-red-500"
-                        : "bg-blue-500"
+                          ? "bg-green-500"
+                          : item.severity === "error"
+                            ? "bg-red-500"
+                            : "bg-blue-500"
                     }`}
                   />
                   <div className="flex-1">

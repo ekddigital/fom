@@ -15,6 +15,7 @@ import {
   HandHeart,
   Grid3x3,
   BookOpen,
+  CalendarDays,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -82,6 +83,12 @@ const adminMenuItems = [
         href: "/admin/cards",
         icon: Heart,
         description: "Beautiful graduation and appreciation cards",
+      },
+      {
+        label: "Conference Docs",
+        href: "/admin/conference-docs",
+        icon: CalendarDays,
+        description: "Plan conference intro, team slots, and timeline",
       },
       {
         label: "Easter Bingo",
