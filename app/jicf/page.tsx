@@ -15,7 +15,7 @@ export default function JICFPage() {
     <>
       <PublicHeader />
 
-      <main className="min-h-screen bg-gradient-to-b from-[#172554] via-[#0c436a] to-[#172554]">
+      <main className="min-h-screen bg-linear-to-b from-[#172554] via-[#0c436a] to-[#172554]">
         {/* Hero */}
         <div className="mx-auto max-w-3xl px-6 pt-16 pb-8 text-center">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white p-3 shadow-xl ring-2 ring-[#2596be]/60">
@@ -41,59 +41,107 @@ export default function JICFPage() {
           <div className="mt-4 h-px bg-white/10 mx-auto max-w-xs" />
         </div>
 
-        {/* Upcoming event card */}
-        <div className="mx-auto max-w-2xl px-6 pb-16">
+        {/* Event cards */}
+        <div className="mx-auto max-w-4xl px-6 pb-16">
           <p className="mb-4 text-center text-xs font-bold uppercase tracking-[0.22em] text-[#2596be]/80">
-            Upcoming Event
+            Upcoming Events
           </p>
-          <Link
-            href="/jicf/sports-day"
-            className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#2596be]/50 transition-all duration-300"
-          >
-            {/* Event photo banner */}
-            <div className="relative h-44 overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/jicf/outdoor-field.png"
-                alt="Outdoor field"
-                className="h-full w-full object-cover object-center brightness-75 group-hover:scale-105 transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#172554]/90 to-transparent" />
-              <div className="absolute bottom-4 left-5">
-                <span className="rounded-full bg-[#2596be]/20 border border-[#2596be]/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#2596be]">
-                  Sports Day
-                </span>
-              </div>
-            </div>
 
-            {/* Event info */}
-            <div className="bg-[#172554]/90 px-6 py-5 backdrop-blur-sm">
-              <h2 className="text-xl font-black text-white mb-1">
-                Outdoor Service &amp; Sports Day
-              </h2>
-              <p className="text-[#ccdce3]/70 text-xs mb-4 italic">
-                &ldquo;They will run and not grow weary&rdquo; — Isaiah 40:31
-              </p>
-              <div className="flex flex-wrap gap-4 text-sm text-white/70">
-                <span className="flex items-center gap-1.5">
-                  <Calendar className="size-3.5 text-[#2596be]" />
-                  Sunday, May 17, 2026
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Clock className="size-3.5 text-[#2596be]" />
-                  14:00
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <MapPin className="size-3.5 text-[#2596be]" />
-                  Venue TBA
-                </span>
+          <div className="grid gap-6 md:grid-cols-2">
+            <Link
+              href="/jicf/sports-day"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#2596be]/50 transition-all duration-300"
+            >
+              <div className="relative h-44 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/jicf/outdoor-field.png"
+                  alt="Sports field"
+                  className="h-full w-full object-cover object-center brightness-75 group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#172554]/90 to-transparent" />
+                <div className="absolute bottom-4 left-5">
+                  <span className="rounded-full bg-[#2596be]/20 border border-[#2596be]/50 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#2596be]">
+                    Sports Day
+                  </span>
+                </div>
               </div>
-              <div className="mt-4 flex items-center gap-1 text-[#2596be] text-sm font-semibold group-hover:gap-2 transition-all">
-                View Flyer
-                <ArrowRight className="size-4" />
+
+              <div className="bg-[#172554]/90 px-6 py-5 backdrop-blur-sm">
+                <h2 className="text-xl font-black text-white mb-1">
+                  JICF Sports Day
+                </h2>
+                <p className="text-[#ccdce3]/70 text-xs mb-4 italic">
+                  &ldquo;They will run and not grow weary&rdquo; — Isaiah 40:31
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="size-3.5 text-[#2596be]" />
+                    Sunday, May 17, 2026
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-[#2596be]" />
+                    14:00
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="size-3.5 text-[#2596be]" />
+                    Venue TBA
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[#2596be] text-sm font-semibold group-hover:gap-2 transition-all">
+                  View Flyer
+                  <ArrowRight className="size-4" />
+                </div>
               </div>
-            </div>
-          </Link>
+            </Link>
+
+            <Link
+              href="/jicf/graduates-celebration"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#fbbf24]/50 transition-all duration-300"
+            >
+              <div className="relative h-44 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/jicf/graduates.png"
+                  alt="Graduates celebration"
+                  className="h-full w-full object-cover object-center brightness-75 group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#172554]/90 to-transparent" />
+                <div className="absolute bottom-4 left-5">
+                  <span className="rounded-full bg-[#fbbf24]/15 border border-[#fbbf24]/45 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#fbbf24]">
+                    Graduates 2026
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-[#172554]/90 px-6 py-5 backdrop-blur-sm">
+                <h2 className="text-xl font-black text-white mb-1">
+                  Graduates Service, Celebration &amp; Dinner
+                </h2>
+                <p className="text-[#ccdce3]/70 text-xs mb-4 italic">
+                  Celebrating all graduates of 2026
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="size-3.5 text-[#fbbf24]" />
+                    Sunday, June 14, 2026
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-[#fbbf24]" />
+                    14:30 - 17:00
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="size-3.5 text-[#fbbf24]" />
+                    Dinner after service
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[#fbbf24] text-sm font-semibold group-hover:gap-2 transition-all">
+                  View Flyer
+                  <ArrowRight className="size-4" />
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
       </main>
 

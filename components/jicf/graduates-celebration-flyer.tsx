@@ -4,16 +4,7 @@ import { useRef, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-/* ─── Flyer Canvas ──────────────────────────────────────────────────────────
-  Designed for 540 × 675 px preview  →  scale:2 export  →  1080 × 1350
-   Instagram portrait (4:5)
-
-  Layout uses position:absolute exclusively — NO flex:1 spacers — so that
-  export captures identically to the browser render.
-   • Header  → absolute, top: 0
-   • Content → absolute, bottom: 0
-─────────────────────────────────────────────────────────────────────────── */
-function JICFSportsDayCanvas() {
+function JICFGraduatesCelebrationCanvas() {
   return (
     <div
       style={{
@@ -24,76 +15,54 @@ function JICFSportsDayCanvas() {
         fontFamily: "'Arial', 'Helvetica Neue', sans-serif",
       }}
     >
-      {/* ── BACKGROUND: field photo + layered overlays ── */}
       <div
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
-          width: 540,
-          height: 675,
+          inset: 0,
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/jicf/outdoor-field.png"
-          alt=""
+          src="/jicf/graduates.png"
+          alt="Graduates celebration"
           crossOrigin="anonymous"
           style={{
             width: 540,
             height: 675,
             objectFit: "cover",
-            objectPosition: "center 25%",
+            objectPosition: "center 30%",
             display: "block",
           }}
         />
-        {/* Deep navy gradient from bottom up */}
         <div
           style={{
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
+            inset: 0,
             background:
-              "linear-gradient(to bottom, rgba(23,37,84,0.55) 0%, rgba(12,67,106,0.25) 30%, rgba(12,67,106,0.45) 50%, rgba(23,37,84,0.88) 65%, #172554 85%)",
+              "linear-gradient(to bottom, rgba(23,37,84,0.55) 0%, rgba(12,67,106,0.2) 30%, rgba(12,67,106,0.4) 48%, rgba(23,37,84,0.92) 66%, #172554 85%)",
           }}
         />
-        {/* Top edge darkening */}
         <div
           style={{
             position: "absolute",
             top: 0,
             left: 0,
             right: 0,
-            height: 169,
+            height: 170,
             background:
-              "linear-gradient(to bottom, rgba(12,67,106,0.75) 0%, transparent 100%)",
-          }}
-        />
-        {/* Subtle radial glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background:
-              "radial-gradient(ellipse 80% 50% at 50% 40%, rgba(37,150,190,0.08) 0%, transparent 70%)",
+              "linear-gradient(to bottom, rgba(12,67,106,0.76) 0%, transparent 100%)",
           }}
         />
       </div>
 
-      {/* ── DECORATIVE: thin diagonal accent lines ── */}
       <div
         style={{
           position: "absolute",
           top: 0,
           right: 0,
-          width: 120,
-          height: 120,
-          opacity: 0.18,
+          width: 130,
+          height: 130,
+          opacity: 0.2,
           overflow: "hidden",
         }}
       >
@@ -102,7 +71,7 @@ function JICFSportsDayCanvas() {
             key={offset}
             style={{
               position: "absolute",
-              width: 200,
+              width: 210,
               height: 2,
               background:
                 "linear-gradient(to right, transparent, #2596be, transparent)",
@@ -115,7 +84,36 @@ function JICFSportsDayCanvas() {
         ))}
       </div>
 
-      {/* ── HEADER — pinned to top via absolute ── */}
+      {/* Celebration dots for a distinct graduates look */}
+      <div
+        style={{
+          position: "absolute",
+          top: 88,
+          left: 24,
+          zIndex: 9,
+          display: "flex",
+          gap: 6,
+        }}
+      >
+        {[
+          "rgba(251,191,36,0.9)",
+          "rgba(37,150,190,0.85)",
+          "rgba(255,255,255,0.8)",
+          "rgba(251,191,36,0.6)",
+        ].map((color, idx) => (
+          <span
+            key={idx}
+            style={{
+              width: idx % 2 === 0 ? 5 : 4,
+              height: idx % 2 === 0 ? 5 : 4,
+              borderRadius: "50%",
+              background: color,
+              display: "block",
+            }}
+          />
+        ))}
+      </div>
+
       <div
         style={{
           position: "absolute",
@@ -129,8 +127,7 @@ function JICFSportsDayCanvas() {
           padding: "18px 22px 10px",
         }}
       >
-        {/* JICF identity */}
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 0 }}>
+        <div style={{ display: "flex", alignItems: "flex-start" }}>
           <div
             style={{
               width: 60,
@@ -141,7 +138,6 @@ function JICFSportsDayCanvas() {
               boxShadow:
                 "0 0 18px rgba(37,150,190,0.45), 0 2px 8px rgba(0,0,0,0.3)",
               overflow: "hidden",
-              flexShrink: 0,
               marginRight: 10,
             }}
           >
@@ -150,18 +146,13 @@ function JICFSportsDayCanvas() {
               src="/JICF_LOGO1.png"
               alt="JICF"
               crossOrigin="anonymous"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                display: "block",
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </div>
           <div style={{ marginTop: 15 }}>
             <p
               style={{
-                fontSize: 10,
+                fontSize: 9,
                 color: "#fbbf24",
                 fontWeight: 900,
                 letterSpacing: "0.2em",
@@ -197,7 +188,6 @@ function JICFSportsDayCanvas() {
           </div>
         </div>
 
-        {/* Year badge */}
         <div
           style={{
             background: "rgba(251,191,36,0.12)",
@@ -224,10 +214,7 @@ function JICFSportsDayCanvas() {
         </div>
       </div>
 
-      {/* ── BOTTOM CONTENT STACK — pinned to bottom via absolute ── */}
-      {/* data-bottom-content lets the download fn swap bottom:0→top:Npx for html2canvas */}
       <div
-        data-bottom-content="1"
         style={{
           position: "absolute",
           bottom: 0,
@@ -238,43 +225,53 @@ function JICFSportsDayCanvas() {
           flexDirection: "column",
         }}
       >
-        {/* ── EVENT BADGE ── */}
         <div style={{ padding: "0 22px 8px" }}>
           <div
             style={{
               display: "inline-flex",
               alignItems: "center",
               gap: 7,
-              background: "rgba(12,67,106,0.72)",
-              border: "1px solid rgba(37,150,190,0.5)",
+              background: "rgba(12,67,106,0.78)",
+              border: "1px solid rgba(251,191,36,0.45)",
               borderRadius: 22,
               padding: "5px 14px",
             }}
           >
-            <span style={{ fontSize: 11 }}>⛪</span>
+            <span style={{ fontSize: 11 }}>🎓</span>
             <p
               style={{
-                fontSize: 8.5,
-                color: "rgba(255,255,255,0.92)",
+                fontSize: 8.3,
+                color: "#f8fafc",
                 fontWeight: 700,
-                letterSpacing: "0.16em",
+                letterSpacing: "0.14em",
                 textTransform: "uppercase",
                 margin: 0,
               }}
             >
-              JICF Sports Day
+              JICF Graduates Service, Celebration &amp; Dinner
             </p>
           </div>
         </div>
 
-        {/* ── MAIN TITLE ── */}
         <div style={{ padding: "0 22px 2px" }}>
+          <p
+            style={{
+              margin: "0 0 4px",
+              fontSize: 8,
+              color: "rgba(251,191,36,0.9)",
+              letterSpacing: "0.18em",
+              fontWeight: 800,
+              textTransform: "uppercase",
+            }}
+          >
+            Class of 2026
+          </p>
           <h1
             style={{
-              fontSize: 62,
+              fontSize: 52,
               fontWeight: 900,
               color: "white",
-              lineHeight: 0.9,
+              lineHeight: 0.92,
               letterSpacing: "-0.02em",
               textShadow:
                 "0 3px 18px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.4)",
@@ -282,11 +279,81 @@ function JICFSportsDayCanvas() {
               margin: 0,
             }}
           >
-            JICF
+            GRADUATES
           </h1>
           <h1
             style={{
-              fontSize: 48,
+              fontSize: 52,
+              fontWeight: 900,
+              color: "white",
+              lineHeight: 0.92,
+              letterSpacing: "-0.02em",
+              textShadow:
+                "0 3px 18px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.4)",
+              textTransform: "uppercase",
+              margin: 0,
+            }}
+          >
+            CELEBRATION
+          </h1>
+
+          <h1
+            style={{
+              fontSize: 34,
+              fontWeight: 900,
+              color: "#fbbf24",
+              lineHeight: 0.95,
+              letterSpacing: "-0.01em",
+              textShadow:
+                "0 3px 14px rgba(0,0,0,0.5), 0 1px 3px rgba(251,191,36,0.25)",
+              textTransform: "uppercase",
+              margin: "1px 0 0",
+            }}
+          >
+            SERVICE
+          </h1>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              margin: "6px 0 2px",
+            }}
+          >
+            <div
+              style={{
+                height: 2,
+                width: 22,
+                background: "#2596be",
+                borderRadius: 2,
+              }}
+            />
+            <p
+              style={{
+                fontSize: 8,
+                color: "rgba(255,255,255,0.5)",
+                fontWeight: 700,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                margin: 0,
+              }}
+            >
+              followed by
+            </p>
+            <div
+              style={{
+                height: 2,
+                width: 190,
+                background: "rgba(37,150,190,0.35)",
+                borderRadius: 2,
+              }}
+            />
+          </div>
+
+          <h1
+            style={{
+              fontSize: 46,
               fontWeight: 900,
               color: "#fbbf24",
               lineHeight: 0.92,
@@ -297,23 +364,22 @@ function JICFSportsDayCanvas() {
               margin: 0,
             }}
           >
-            SPORTS DAY
+            DINNER
           </h1>
           <p
             style={{
+              margin: "3px 0 0",
               fontSize: 8,
-              color: "rgba(255,255,255,0.6)",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
+              color: "rgba(255,255,255,0.7)",
+              letterSpacing: "0.11em",
               textTransform: "uppercase",
-              margin: "5px 0 0",
+              fontWeight: 700,
             }}
           >
-            Fun games · fellowship · recreation
+            after the service
           </p>
         </div>
 
-        {/* ── VERSE ── */}
         <div style={{ padding: "8px 22px 10px" }}>
           <p
             style={{
@@ -326,24 +392,23 @@ function JICFSportsDayCanvas() {
               paddingLeft: 8,
             }}
           >
-            &ldquo;They will run and not grow weary, they will walk and not be
-            faint.&rdquo;
+            &ldquo;We celebrate God&rsquo;s faithfulness over every graduate and
+            pray for a fruitful new season ahead.&rdquo;
           </p>
           <p
             style={{
               fontSize: 7.5,
               color: "#fbbf24",
               fontWeight: 700,
-              letterSpacing: "0.1em",
+              letterSpacing: "0.08em",
               margin: 0,
               paddingLeft: 10,
             }}
           >
-            — Isaiah 40:31
+            — JICF 2026 Graduates
           </p>
         </div>
 
-        {/* ── ACCENT STRIPE ── */}
         <div
           style={{
             height: 3,
@@ -352,11 +417,13 @@ function JICFSportsDayCanvas() {
           }}
         />
 
-        {/* ── DETAILS PANEL ── */}
         <div
           style={{
-            background: "rgba(23,37,84,0.97)",
+            background:
+              "linear-gradient(180deg, rgba(23,37,84,0.97) 0%, rgba(18,31,74,0.98) 100%)",
             padding: "16px 22px 14px",
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
           }}
         >
           <p
@@ -372,23 +439,22 @@ function JICFSportsDayCanvas() {
             Event Details
           </p>
 
-          {/* Detail rows */}
           <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
             {[
               {
                 icon: "📅",
-                label: "Sunday, May 17, 2026",
-                sub: "A special day set apart for worship & fun",
+                label: "Sunday, June 14, 2026",
+                sub: "JICF Graduates Service, Celebration & Dinner",
               },
               {
                 icon: "🕑",
-                label: "2:00 PM",
-                sub: "Sports activities, fellowship, and fun games",
+                label: "Service: 14:30 — 17:00",
+                sub: "Graduate dinner follows immediately after service",
               },
               {
                 icon: "📍",
                 label: "Venue — To Be Announced",
-                sub: "Location details coming soon",
+                sub: "Details will be shared soon",
               },
             ].map(({ icon, label, sub }) => (
               <div
@@ -437,7 +503,6 @@ function JICFSportsDayCanvas() {
             ))}
           </div>
 
-          {/* Activity tags */}
           <div
             style={{
               marginTop: 12,
@@ -447,7 +512,7 @@ function JICFSportsDayCanvas() {
           >
             <p
               style={{
-                fontSize: 8.8,
+                fontSize: 8,
                 color: "rgba(255,255,255,0.4)",
                 margin: "0 0 7px",
                 textAlign: "center",
@@ -455,7 +520,7 @@ function JICFSportsDayCanvas() {
                 textTransform: "uppercase",
               }}
             >
-              Activities include:
+              Highlights:
             </p>
             <div
               style={{
@@ -465,13 +530,12 @@ function JICFSportsDayCanvas() {
                 justifyContent: "space-between",
               }}
             >
-              {(
-                [
-                  { label: "🎯 Fun Games", highlight: false },
-                  { label: "🤝 Fellowship", highlight: true },
-                  { label: "🎉 Recreation", highlight: false },
-                ] as { label: string; highlight: boolean }[]
-              ).map(({ label, highlight }) => (
+              {[
+                { label: "🎓 Graduate Prayer", highlight: true },
+                { label: "🙏 Thanksgiving", highlight: false },
+                { label: "🍽 Dinner", highlight: true },
+                { label: "🤝 Fellowship", highlight: false },
+              ].map(({ label, highlight }) => (
                 <span
                   key={label}
                   style={{
@@ -482,8 +546,8 @@ function JICFSportsDayCanvas() {
                       ? "1px solid rgba(251,191,36,0.4)"
                       : "1px solid rgba(255,255,255,0.11)",
                     borderRadius: 20,
-                    padding: "4px 10px",
-                    fontSize: 9,
+                    padding: "4px 8px",
+                    fontSize: 7.5,
                     color: highlight ? "#fbbf24" : "rgba(255,255,255,0.78)",
                     fontWeight: highlight ? 600 : 500,
                     lineHeight: 1,
@@ -497,7 +561,6 @@ function JICFSportsDayCanvas() {
           </div>
         </div>
 
-        {/* ── CONTACT STRIP ── */}
         <div
           style={{
             background: "#0a3050",
@@ -509,10 +572,10 @@ function JICFSportsDayCanvas() {
           }}
         >
           <div style={{ display: "flex", alignItems: "center" }}>
-            <span style={{ fontSize: 9 }}>🌐</span>
+            <span style={{ fontSize: 8.5 }}>🌐</span>
             <span
               style={{
-                fontSize: 8,
+                fontSize: 7.5,
                 color: "rgba(255,255,255,0.65)",
                 fontWeight: 500,
                 marginLeft: 4,
@@ -523,10 +586,10 @@ function JICFSportsDayCanvas() {
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <span style={{ fontSize: 9 }}>✉</span>
+            <span style={{ fontSize: 8.5 }}>✉</span>
             <span
               style={{
-                fontSize: 8,
+                fontSize: 7.5,
                 color: "rgba(255,255,255,0.65)",
                 fontWeight: 500,
                 marginLeft: 4,
@@ -537,10 +600,10 @@ function JICFSportsDayCanvas() {
             </span>
           </div>
           <div style={{ display: "flex", alignItems: "center" }}>
-            <span style={{ fontSize: 9 }}>📞</span>
+            <span style={{ fontSize: 8.5 }}>📞</span>
             <span
               style={{
-                fontSize: 8,
+                fontSize: 7.5,
                 color: "rgba(255,255,255,0.65)",
                 fontWeight: 500,
                 marginLeft: 4,
@@ -552,7 +615,6 @@ function JICFSportsDayCanvas() {
           </div>
         </div>
 
-        {/* ── FOOTER ── */}
         <div
           style={{
             background: "#0c436a",
@@ -569,8 +631,8 @@ function JICFSportsDayCanvas() {
               borderRadius: "50%",
               background: "rgba(255,255,255,0.9)",
               padding: 2,
-              flexShrink: 0,
               overflow: "hidden",
+              flexShrink: 0,
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -578,39 +640,34 @@ function JICFSportsDayCanvas() {
               src="/JICF_LOGO1.png"
               alt="JICF"
               crossOrigin="anonymous"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "contain",
-                display: "block",
-              }}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
           </div>
           <p
             style={{
-              fontSize: 12,
+              fontSize: 10.5,
               color: "rgba(255,255,255,0.75)",
               fontStyle: "italic",
               fontWeight: 500,
               margin: 0,
               letterSpacing: "0.02em",
-              marginTop: 5,
               whiteSpace: "nowrap",
+              marginTop: 6,
             }}
           >
-            Come as you are · Bring a friend
+            Celebrating every graduate, together
           </p>
           <p
             style={{
-              fontSize: 9,
+              fontSize: 8,
               color: "#fbbf24",
               fontWeight: 700,
               margin: 0,
-              marginTop: 7,
+              marginTop: 8,
               whiteSpace: "nowrap",
             }}
           >
-            #JICFSportsDay
+            #JICFGraduates2026
           </p>
         </div>
       </div>
@@ -618,8 +675,7 @@ function JICFSportsDayCanvas() {
   );
 }
 
-/* ─── Shell (preview + download controls) ───────────────────────────────── */
-export function SportsDayFlyerShell() {
+export function GraduatesCelebrationFlyerShell() {
   const flyerRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
 
@@ -630,7 +686,6 @@ export function SportsDayFlyerShell() {
       const { toPng } = await import("html-to-image");
       const el = flyerRef.current;
 
-      // Wait for fonts to be fully ready before rasterizing.
       if ("fonts" in document) {
         await (document as Document & { fonts: { ready: Promise<unknown> } })
           .fonts.ready;
@@ -638,7 +693,7 @@ export function SportsDayFlyerShell() {
 
       const dataUrl = await toPng(el, {
         cacheBust: true,
-        pixelRatio: 2, // 540 × 2 = 1080, 675 × 2 = 1350
+        pixelRatio: 2,
         width: 540,
         height: 675,
         canvasWidth: 1080,
@@ -647,7 +702,7 @@ export function SportsDayFlyerShell() {
       });
 
       const link = document.createElement("a");
-      link.download = "jicf-sports-day-may-2026.png";
+      link.download = "jicf-graduates-celebration-2026.png";
       link.href = dataUrl;
       link.click();
     } finally {
@@ -659,7 +714,6 @@ export function SportsDayFlyerShell() {
 
   return (
     <div className="flex flex-col items-center gap-6 py-8 px-4">
-      {/* Action buttons */}
       <div className="flex flex-wrap gap-3 print:hidden">
         <Button
           onClick={() => void downloadPng()}
@@ -667,7 +721,7 @@ export function SportsDayFlyerShell() {
           className="bg-[#0c436a] hover:bg-[#172554] text-white"
         >
           <Download className="size-4 mr-2" />
-          {downloading ? "Preparing…" : "Download PNG (1080 × 1350)"}
+          {downloading ? "Preparing..." : "Download PNG (1080 × 1350)"}
         </Button>
         <Button
           variant="outline"
@@ -679,7 +733,6 @@ export function SportsDayFlyerShell() {
         </Button>
       </div>
 
-      {/* Flyer preview */}
       <div
         className="shadow-2xl print:shadow-none"
         style={{
@@ -699,7 +752,7 @@ export function SportsDayFlyerShell() {
             overflow: "hidden",
           }}
         >
-          <JICFSportsDayCanvas />
+          <JICFGraduatesCelebrationCanvas />
         </div>
       </div>
 

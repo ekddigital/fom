@@ -6,11 +6,11 @@ import { SportsDayFlyerShell } from "@/components/jicf/sports-day-flyer";
 export const metadata: Metadata = {
   title: "JICF Sports Day 2026 — Jinan International Christian Fellowship",
   description:
-    "Join us for the JICF Sports Day on Sunday, May 17, 2026 — an outdoor worship service followed by football, basketball, badminton and fun games together.",
+    "Join us for JICF Sports Day on Sunday, May 17, 2026 — an afternoon of fun games, fellowship, and recreation together.",
   openGraph: {
     title: "JICF Sports Day — May 17, 2026",
     description:
-      "Outdoor worship service + sports & games. Come as you are, bring a friend!",
+      "Sports and games for everyone. Come as you are, bring a friend!",
     images: [{ url: "/jicf/outdoor-field.png" }],
   },
 };
@@ -20,7 +20,7 @@ export default function SportsDayPage() {
     <>
       <PublicHeader />
 
-      <main className="min-h-screen bg-gradient-to-b from-[#172554] via-[#0c436a] to-[#172554]">
+      <main className="min-h-screen bg-linear-to-b from-[#172554] via-[#0c436a] to-[#172554]">
         {/* Page heading */}
         <div className="mx-auto max-w-2xl px-4 pt-10 pb-2 text-center">
           <p className="text-[#2596be] text-xs font-bold uppercase tracking-[0.22em] mb-2">
@@ -30,7 +30,7 @@ export default function SportsDayPage() {
             Sports Day 2026
           </h1>
           <p className="mt-2 text-[#ccdce3] text-sm">
-            Outdoor Worship Service &amp; Recreational Games
+            JICF Sports Day · Fun Games &amp; Fellowship
           </p>
           <div className="mt-4 h-px bg-white/10 mx-auto max-w-xs" />
         </div>
