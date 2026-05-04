@@ -157,7 +157,7 @@ function EnglishTutoringCanvas() {
                 "Exam strategies and past paper training",
                 "Full listening, reading, writing and speaking practice",
                 "Mock exam simulation and homework feedback",
-                "Free 20-30 minute level assessment trial lesson for new students",
+                "Free 30-40 minute demo class for new students",
               ].map((item) => (
                 <div
                   key={item}
