@@ -47,7 +47,7 @@ export default function JICFPage() {
             Upcoming Events
           </p>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Link
               href="/jicf/sports-day"
               className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#2596be]/50 transition-all duration-300"
@@ -133,6 +133,59 @@ export default function JICFPage() {
                   <span className="flex items-center gap-1.5">
                     <MapPin className="size-3.5 text-[#fbbf24]" />
                     Dinner after service
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[#fbbf24] text-sm font-semibold group-hover:gap-2 transition-all">
+                  View Flyer
+                  <ArrowRight className="size-4" />
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/jicf/english-tutoring"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#fbbf24]/50 transition-all duration-300"
+            >
+              <div className="relative h-44 overflow-hidden bg-linear-to-br from-[#0b3a62] via-[#0c436a] to-[#172554] p-5">
+                <div className="h-full w-full border border-[#fbbf24]/25 rounded-xl p-4">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#cbd5e1] font-bold">
+                    Online Tutoring
+                  </p>
+                  <h3 className="mt-2 text-2xl font-black text-white leading-none">
+                    KET · PET
+                    <br />
+                    IELTS
+                  </h3>
+                  <p className="mt-2 text-xs text-[#fbbf24] font-semibold">
+                    One-on-One English Prep
+                  </p>
+                  <div className="mt-3 rounded-lg bg-white/95 px-2 py-1.5 w-fit">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/ielts_logo.png"
+                      alt="IELTS"
+                      className="h-6 w-auto object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-[#172554]/90 px-6 py-5 backdrop-blur-sm">
+                <h2 className="text-xl font-black text-white mb-1">
+                  KET PET IELTS Tutoring
+                </h2>
+                <p className="text-[#ccdce3]/70 text-xs mb-4">
+                  Personalized exam preparation with free trial assessment
+                  lesson
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-[#fbbf24]" />
+                    Weekday evenings / weekends
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="size-3.5 text-[#fbbf24]" />
+                    Online One-on-One
                   </span>
                 </div>
                 <div className="mt-4 flex items-center gap-1 text-[#fbbf24] text-sm font-semibold group-hover:gap-2 transition-all">
