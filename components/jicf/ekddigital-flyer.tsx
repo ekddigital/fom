@@ -12,11 +12,11 @@ import { Button } from "@/components/ui/button";
     Header      :   0 → 72  (72 px)
     Gold line   :  72 → 75  ( 3 px)
     Image strip :  75 → 232 (157 px)
-    Pain points : 232 → 387 (155 px)
-    Separator   :      387  (  1 px)
-    Services    : 388 → 505 (117 px)
-    Gold border :      505  ( 2.5px)
-    CTA/Contact : 507 → 675 (168 px)
+    Pain points : 232 → 352 (120 px)
+    Separator   :      352  (  1 px)
+    Services    : 353 → 468 (115 px)
+    Gold border :      468  ( 2.5px)
+    CTA/Contact : 470.5 → 675 (204.5 px)
 ─────────────────────────────────────────────────────────────────────────── */
 function EKDDigitalFlyerCanvas() {
   return (
@@ -162,11 +162,13 @@ function EKDDigitalFlyerCanvas() {
           <p
             style={{
               margin: "2px 0 0",
-              fontSize: 8.5,
-              color: "#6b7280",
-              letterSpacing: "0.18em",
+              fontSize: 9.5,
+              fontWeight: 700,
+              color: "#e8e6e3",
+              letterSpacing: "0.12em",
               textTransform: "uppercase",
-              lineHeight: 1,
+              lineHeight: 1.15,
+              textShadow: "0 1px 2px rgba(0,0,0,0.9)",
             }}
           >
             Build · Write · Deliver
@@ -184,11 +186,12 @@ function EKDDigitalFlyerCanvas() {
           <p
             style={{
               margin: 0,
-              fontSize: 8.5,
-              color: "#C9972E",
-              fontWeight: 700,
+              fontSize: 9,
+              color: "#f3e8c8",
+              fontWeight: 800,
               letterSpacing: "0.04em",
               whiteSpace: "nowrap",
+              textShadow: "0 1px 2px rgba(0,0,0,0.75)",
             }}
           >
             ekddigital.com
@@ -266,7 +269,7 @@ function EKDDigitalFlyerCanvas() {
                 margin: 0,
                 fontSize: 11,
                 fontWeight: 800,
-                color: "#C9972E",
+                color: "#e6c258",
                 textTransform: "uppercase",
                 letterSpacing: "0.1em",
                 textShadow: "0 1px 6px rgba(0,0,0,0.6)",
@@ -277,10 +280,11 @@ function EKDDigitalFlyerCanvas() {
             <p
               style={{
                 margin: "1px 0 0",
-                fontSize: 9,
-                color: "#f3f4f6",
-                lineHeight: 1.3,
-                textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                fontSize: 9.5,
+                fontWeight: 600,
+                color: "#f8fafc",
+                lineHeight: 1.35,
+                textShadow: "0 1px 4px rgba(0,0,0,0.85)",
               }}
             >
               Thesis · Papers · Reports
@@ -342,7 +346,7 @@ function EKDDigitalFlyerCanvas() {
                 margin: 0,
                 fontSize: 11,
                 fontWeight: 800,
-                color: "#C9972E",
+                color: "#e6c258",
                 textTransform: "uppercase",
                 letterSpacing: "0.1em",
                 textShadow: "0 1px 6px rgba(0,0,0,0.6)",
@@ -353,10 +357,11 @@ function EKDDigitalFlyerCanvas() {
             <p
               style={{
                 margin: "1px 0 0",
-                fontSize: 9,
-                color: "#f3f4f6",
-                lineHeight: 1.3,
-                textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                fontSize: 9.5,
+                fontWeight: 600,
+                color: "#f8fafc",
+                lineHeight: 1.35,
+                textShadow: "0 1px 4px rgba(0,0,0,0.85)",
               }}
             >
               Web · Mobile · Desktop
@@ -398,6 +403,7 @@ function EKDDigitalFlyerCanvas() {
               color: "#ffffff",
               lineHeight: 1.15,
               letterSpacing: "-0.01em",
+              textShadow: "0 2px 8px rgba(0,0,0,0.55)",
             }}
           >
             WE BUILD. <span style={{ color: "#C9972E" }}>WE WRITE.</span>
@@ -405,10 +411,12 @@ function EKDDigitalFlyerCanvas() {
           <p
             style={{
               margin: "3px 0 0",
-              fontSize: 8.5,
-              color: "#d1d5db",
-              letterSpacing: "0.18em",
+              fontSize: 9,
+              fontWeight: 700,
+              color: "#eef2f7",
+              letterSpacing: "0.12em",
               textTransform: "uppercase",
+              textShadow: "0 1px 3px rgba(0,0,0,0.8)",
             }}
           >
             Your Academic &amp; Tech Partner
@@ -417,7 +425,7 @@ function EKDDigitalFlyerCanvas() {
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 3 — PAIN POINTS  (top: 232, height: 155)
+          SECTION 3 — PAIN POINTS  (top: 232, height: 120)
       ══════════════════════════════════════════════════════════════ */}
       <div
         style={{
@@ -425,8 +433,8 @@ function EKDDigitalFlyerCanvas() {
           top: 232,
           left: 0,
           right: 0,
-          height: 155,
-          padding: "13px 20px 10px",
+          height: 120,
+          padding: "10px 20px 7px",
           zIndex: 2,
         }}
       >
@@ -435,7 +443,7 @@ function EKDDigitalFlyerCanvas() {
           style={{
             borderLeft: "3px solid #C9972E",
             paddingLeft: 8,
-            marginBottom: 10,
+            marginBottom: 8,
           }}
         >
           <p
@@ -443,9 +451,10 @@ function EKDDigitalFlyerCanvas() {
               margin: 0,
               fontSize: 11,
               fontWeight: 900,
-              color: "#C9972E",
+              color: "#e6c258",
               textTransform: "uppercase",
-              letterSpacing: "0.14em",
+              letterSpacing: "0.12em",
+              textShadow: "0 1px 2px rgba(0,0,0,0.6)",
             }}
           >
             Sound Familiar?
@@ -464,13 +473,13 @@ function EKDDigitalFlyerCanvas() {
               display: "flex",
               alignItems: "flex-start",
               gap: 8,
-              marginBottom: 8,
+              marginBottom: 5,
             }}
           >
             <span
               style={{
                 color: "#C9972E",
-                fontSize: 15,
+                fontSize: 14,
                 fontWeight: 900,
                 lineHeight: 1.2,
                 flexShrink: 0,
@@ -482,9 +491,11 @@ function EKDDigitalFlyerCanvas() {
             <p
               style={{
                 margin: 0,
-                fontSize: 11.5,
-                color: "#d1d5db",
+                fontSize: 11,
+                fontWeight: 600,
+                color: "#f1f5f9",
                 lineHeight: 1.35,
+                textShadow: "0 1px 2px rgba(0,0,0,0.45)",
               }}
             >
               {point}
@@ -497,7 +508,7 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 387,
+          top: 352,
           left: 20,
           right: 20,
           height: 1,
@@ -507,55 +518,70 @@ function EKDDigitalFlyerCanvas() {
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 4 — SERVICES  (top: 388, height: 117)
+          SECTION 4 — SERVICES  (top: 353, height: 115)
       ══════════════════════════════════════════════════════════════ */}
       <div
         style={{
           position: "absolute",
-          top: 388,
+          top: 353,
           left: 0,
           right: 0,
-          height: 117,
-          padding: "12px 20px 8px",
+          height: 115,
+          padding: "7px 18px 10px",
+          boxSizing: "border-box",
           zIndex: 2,
+          display: "flex",
+          flexDirection: "column",
+          gap: 16,
         }}
       >
         <p
           style={{
-            margin: "0 0 9px",
+            margin: 0,
             fontSize: 11,
             fontWeight: 800,
             color: "#ffffff",
             letterSpacing: "0.02em",
+            lineHeight: 1.2,
+            flexShrink: 0,
+            textShadow: "0 1px 2px rgba(0,0,0,0.45)",
           }}
         >
-          <span style={{ color: "#C9972E" }}>EKD Digital</span> is here to help
+          <span style={{ color: "#e6c258" }}>EKD Digital</span> is here to help
           you with:
         </p>
 
         <div
           style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 12,
-            justifyContent: "center",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            columnGap: 7,
+            rowGap: 6,
+            justifyItems: "stretch",
             alignItems: "center",
-            marginTop: 8,
+            flexShrink: 0,
           }}
         >
           {(
             [
-              { label: "📄 Academic Papers", highlight: false },
-              { label: "🎓 Thesis & Dissertations", highlight: false },
-              { label: "📱 Android & iOS Apps", highlight: true },
-              { label: "🌐 Websites", highlight: false },
-              { label: "🖥️ Desktop Applications", highlight: false },
-              { label: "✍️ Technical Writing", highlight: true },
-            ] as { label: string; highlight: boolean }[]
-          ).map(({ label, highlight }) => (
+              { icon: "📄", text: "Academic Papers", highlight: false },
+              { icon: "🎓", text: "Thesis & Dissertations", highlight: false },
+              { icon: "📱", text: "Android & iOS Apps", highlight: true },
+              { icon: "🌐", text: "Websites", highlight: false },
+              { icon: "🖥️", text: "Desktop Applications", highlight: false },
+              { icon: "✍️", text: "Technical Writing", highlight: true },
+            ] as { icon: string; text: string; highlight: boolean }[]
+          ).map(({ icon, text, highlight }) => (
             <div
-              key={label}
+              key={text}
               style={{
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "nowrap",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 6,
+                minWidth: 0,
                 background: highlight
                   ? "rgba(201,151,46,0.2)"
                   : "rgba(255,255,255,0.07)",
@@ -563,17 +589,35 @@ function EKDDigitalFlyerCanvas() {
                   ? "1px solid rgba(201,151,46,0.6)"
                   : "1px solid rgba(255,255,255,0.13)",
                 borderRadius: 20,
-                padding: "7px 18px",
-                fontSize: 15,
-                color: highlight ? "#f3e8c8" : "#cbd5e1",
-                fontWeight: highlight ? 800 : 600,
-                whiteSpace: "nowrap",
-                textAlign: "center",
+                padding: "6px 9px",
+                boxSizing: "border-box",
+                fontSize: 13.5,
+                lineHeight: 1,
+                color: highlight ? "#fffef8" : "#f1f5f9",
+                fontWeight: highlight ? 800 : 650,
                 boxShadow: highlight ? "0 2px 8px rgba(201,151,46,0.10)" : undefined,
                 letterSpacing: "0.01em",
               }}
             >
-              {label}
+              <span
+                style={{
+                  fontSize: 15,
+                  lineHeight: 1,
+                  flexShrink: 0,
+                  display: "block",
+                }}
+                aria-hidden
+              >
+                {icon}
+              </span>
+              <span
+                style={{
+                  lineHeight: 1.2,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {text}
+              </span>
             </div>
           ))}
         </div>
@@ -583,7 +627,7 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 505,
+          top: 468,
           left: 0,
           right: 0,
           height: 2.5,
@@ -593,16 +637,16 @@ function EKDDigitalFlyerCanvas() {
       />
 
       {/* ══════════════════════════════════════════════════════════════
-          SECTION 5 — CTA + CONTACT  (top: 507, bottom: 0 = 168 px)
+          SECTION 5 — CTA + CONTACT  (top: 470.5, bottom: 0 ≈204.5 px)
       ══════════════════════════════════════════════════════════════ */}
       <div
         style={{
           position: "absolute",
-          top: 507,
+          top: 470.5,
           left: 0,
           right: 0,
           bottom: 0,
-          padding: "13px 20px 14px",
+          padding: "11px 20px 16px",
           background: "rgba(7, 9, 15, 0.98)",
           zIndex: 2,
         }}
@@ -610,21 +654,23 @@ function EKDDigitalFlyerCanvas() {
         {/* Hook line */}
         <p
           style={{
-            margin: "0 0 7px",
+            margin: "0 0 6px",
             fontSize: 12.5,
             fontWeight: 900,
             color: "#ffffff",
             textAlign: "center",
             letterSpacing: "0.01em",
+            textShadow: "0 1px 3px rgba(0,0,0,0.5)",
           }}
         >
           We&apos;re just a <span style={{ color: "#C9972E" }}>button</span>{" "}
           away —{" "}
           <span
             style={{
-              fontWeight: 400,
+              fontWeight: 650,
               fontStyle: "italic",
-              color: "#9ca3af",
+              color: "#e2e8f0",
+              textShadow: "0 1px 2px rgba(0,0,0,0.55)",
             }}
           >
             reach out today!
@@ -639,7 +685,7 @@ function EKDDigitalFlyerCanvas() {
             borderRadius: 7,
             padding: "6px 20px",
             textAlign: "center",
-            marginBottom: 8,
+            marginBottom: 6,
             boxShadow: "0 4px 18px rgba(201,151,46,0.35)",
           }}
         >
@@ -662,10 +708,10 @@ function EKDDigitalFlyerCanvas() {
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
-            gap: "10px 20px",
+            gap: "6px 14px",
             justifyItems: "center",
-            alignItems: "center",
-            marginTop: 4,
+            alignItems: "start",
+            marginTop: 0,
           }}
         >
           {(
@@ -696,7 +742,7 @@ function EKDDigitalFlyerCanvas() {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 2,
+                gap: 1,
                 textAlign: "center",
               }}
             >
@@ -706,12 +752,13 @@ function EKDDigitalFlyerCanvas() {
               <p
                 style={{
                   margin: 0,
-                  fontSize: 7.6,
-                  color: "#6b7280",
+                  fontSize: 8.2,
+                  color: "#c4c9d4",
                   textTransform: "uppercase",
-                  letterSpacing: "0.1em",
-                  lineHeight: 1,
-                  fontWeight: 700,
+                  letterSpacing: "0.08em",
+                  lineHeight: 1.2,
+                  fontWeight: 800,
+                  textShadow: "0 1px 2px rgba(0,0,0,0.5)",
                 }}
               >
                 {label}
@@ -719,11 +766,13 @@ function EKDDigitalFlyerCanvas() {
               <p
                 style={{
                   margin: "1px 0 0",
+                  paddingBottom: 1,
                   fontSize: 10.9,
-                  color: gold ? "#C9972E" : "#f3f4f6",
+                  color: gold ? "#e6c258" : "#ffffff",
                   fontWeight: 800,
-                  lineHeight: 1.2,
+                  lineHeight: 1.28,
                   letterSpacing: "0.01em",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.55)",
                 }}
               >
                 {value}

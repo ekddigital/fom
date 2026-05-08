@@ -194,6 +194,49 @@ export default function JICFPage() {
                 </div>
               </div>
             </Link>
+
+            <Link
+              href="/jicf/ekddigital"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#C9972E]/50 transition-all duration-300"
+            >
+              <div className="relative h-44 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/jicf/ekddigital.png"
+                  alt="EKDDigital"
+                  className="h-full w-full object-cover object-center brightness-75 group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#172554]/90 to-transparent" />
+                <div className="absolute bottom-4 left-5">
+                  <span className="rounded-full bg-[#C99724]/15 border border-[#C99724]/45 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#C99724]">
+                    EKDDigital
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-[#172554]/90 px-6 py-5 backdrop-blur-sm">
+                <h2 className="text-xl font-black text-white mb-1">
+                  EKDDigital
+                </h2>
+                <p className="text-[#ccdce3]/70 text-xs mb-4">
+                  Academic Writing · App Development · Technical Services
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-[#C9972E]" />
+                    Weekday evenings / weekends
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="size-3.5 text-[#C9972E]" />
+                    Online One-on-One
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[#C9972E] text-sm font-semibold group-hover:gap-2 transition-all">
+                  View Flyer
+                  <ArrowRight className="size-4" />
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </main>
