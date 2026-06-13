@@ -26,6 +26,8 @@ import {
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+const COLOR_FUNCTION_PATTERN = /(?:oklch|oklab|lch|lab|color\()/i;
+
 interface CertificatePreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -55,6 +57,98 @@ export function CertificatePreviewModal({
   const [isDownloading, setIsDownloading] = React.useState(false);
   const [qrCodeDataUrl, setQrCodeDataUrl] = React.useState<string>("");
   const certificateRef = React.useRef<HTMLDivElement>(null);
+
+  const normalizeColor = React.useMemo(() => {
+    if (typeof document === "undefined") {
+      return (value: string, fallback: string) => value || fallback;
+    }
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    return (value: string, fallback: string): string => {
+      if (!value || value === "transparent") {
+        return value;
+      }
+
+      if (!COLOR_FUNCTION_PATTERN.test(value)) {
+        return value;
+      }
+
+      if (!context) {
+        return fallback;
+      }
+
+      try {
+        context.fillStyle = "#000000";
+        context.fillStyle = value;
+        const normalized = context.fillStyle;
+        if (normalized && !COLOR_FUNCTION_PATTERN.test(normalized)) {
+          return normalized;
+        }
+      } catch {
+        return fallback;
+      }
+
+      return fallback;
+    };
+  }, []);
+
+  const sanitizeCloneForHtml2Canvas = React.useCallback(
+    (clonedDoc: Document) => {
+      const clonedElement = clonedDoc.querySelector(
+        "[data-html2canvas-safe]",
+      ) as HTMLElement | null;
+
+      if (!clonedElement) {
+        return;
+      }
+
+      const nodes = [
+        clonedElement,
+        ...Array.from(clonedElement.querySelectorAll<HTMLElement>("*")),
+      ];
+
+      for (const node of nodes) {
+        const computedStyles = clonedDoc.defaultView?.getComputedStyle(node);
+        if (!computedStyles) {
+          continue;
+        }
+
+        const safeColor = normalizeColor(computedStyles.color, "#111827");
+        const safeBg = normalizeColor(
+          computedStyles.backgroundColor,
+          "transparent",
+        );
+        const safeBorder = normalizeColor(
+          computedStyles.borderTopColor,
+          "#d1d5db",
+        );
+
+        if (safeColor) {
+          node.style.color = safeColor;
+        }
+        if (safeBg) {
+          node.style.backgroundColor = safeBg;
+        }
+        if (safeBorder) {
+          node.style.borderTopColor = safeBorder;
+          node.style.borderRightColor = safeBorder;
+          node.style.borderBottomColor = safeBorder;
+          node.style.borderLeftColor = safeBorder;
+        }
+
+        if (
+          computedStyles.backgroundImage &&
+          computedStyles.backgroundImage !== "none" &&
+          COLOR_FUNCTION_PATTERN.test(computedStyles.backgroundImage)
+        ) {
+          node.style.backgroundImage = "none";
+        }
+      }
+    },
+    [normalizeColor],
+  );
 
   // Generate a sample certificate ID based on the template
   const certificateId = React.useMemo(() => {
@@ -110,13 +204,7 @@ export function CertificatePreviewModal({
         useCORS: true,
         allowTaint: true,
         onclone: (clonedDoc) => {
-          // Ensure the cloned document also has the safe class
-          const clonedElement = clonedDoc.querySelector(
-            "[data-html2canvas-safe]",
-          );
-          if (clonedElement) {
-            clonedElement.classList.add("html2canvas-safe");
-          }
+          sanitizeCloneForHtml2Canvas(clonedDoc);
         },
       });
 
@@ -152,13 +240,7 @@ export function CertificatePreviewModal({
         useCORS: true,
         allowTaint: true,
         onclone: (clonedDoc) => {
-          // Ensure the cloned document also has the safe class
-          const clonedElement = clonedDoc.querySelector(
-            "[data-html2canvas-safe]",
-          );
-          if (clonedElement) {
-            clonedElement.classList.add("html2canvas-safe");
-          }
+          sanitizeCloneForHtml2Canvas(clonedDoc);
         },
       });
 
@@ -309,10 +391,7 @@ export function CertificatePreviewModal({
           /\{\{issuerName\}\}/g,
           `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`,
         )
-        .replace(
-          /\{\{issueDate\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
-        )
+        .replace(/\{\{issueDate\}\}/g, `<span>${issueDate}</span>`)
         .replace(
           /\{\{baptismDate\}\}/g,
           `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
@@ -345,7 +424,7 @@ export function CertificatePreviewModal({
         // JICF Certificate of Service specific variables
         .replace(
           /\{\{gender\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${
+          `<span style="display: inline-block; margin: 0 4px; border-bottom: 2px solid #1e40af; padding: 0 2px 1px 2px;">${
             gender === "Male" ? "his" : gender === "Female" ? "her" : "his/her"
           }</span>`,
         )
@@ -353,10 +432,7 @@ export function CertificatePreviewModal({
           /\{\{position\}\}/g,
           `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${position}</span>`,
         )
-        .replace(
-          /\{\{pastorName\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${pastorName}</span>`,
-        )
+        .replace(/\{\{pastorName\}\}/g, `<span>${pastorName}</span>`)
 
         // Handle single brace format (issued certificates)
         .replace(
@@ -367,10 +443,7 @@ export function CertificatePreviewModal({
           /\{issuerName\}/g,
           `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`,
         )
-        .replace(
-          /\{issueDate\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
-        )
+        .replace(/\{issueDate\}/g, `<span>${issueDate}</span>`)
         .replace(
           /\{certificateId\}/g,
           `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`,
@@ -378,6 +451,11 @@ export function CertificatePreviewModal({
         .replace(
           /\{verificationUrl\}/g,
           `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`,
+        )
+        // Guard against templates where gender placeholder has no surrounding spaces
+        .replace(
+          /\bto\s*(his|her|his\/her)\s*stewardship\b/gi,
+          "to $1 stewardship",
         )
 
         // Clean up any remaining empty braces
@@ -570,7 +648,7 @@ export function CertificatePreviewModal({
             <div
               ref={certificateRef}
               data-html2canvas-safe="true"
-              className="relative bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-300"
+              className="relative overflow-hidden"
               style={{
                 width: `${template.pageSettings.width * zoom}px`,
                 height: `${template.pageSettings.height * zoom}px`,
@@ -581,6 +659,9 @@ export function CertificatePreviewModal({
                   : undefined,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                border: "1px solid #d1d5db",
+                borderRadius: "0px",
+                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
               }}
             >
               {/* Certificate Elements */}

@@ -22,7 +22,7 @@ export class WebsiteCertificateRenderer {
 
   constructor(
     certificate: CertificateData,
-    baseUrl: string = "http://localhost:3000"
+    baseUrl: string = "http://localhost:3000",
   ) {
     this.certificate = certificate;
     this.baseUrl = baseUrl;
@@ -54,7 +54,7 @@ export class WebsiteCertificateRenderer {
 
       // Set user agent to avoid bot detection
       await page.setUserAgent(
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       );
 
       // Navigate to the certificate preview page
@@ -62,7 +62,7 @@ export class WebsiteCertificateRenderer {
       console.log("Loading certificate preview URL:", previewUrl);
 
       await page.goto(previewUrl, {
-        waitUntil: ["networkidle0", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 
@@ -71,12 +71,12 @@ export class WebsiteCertificateRenderer {
         ".certificate-container, .certificate-preview",
         {
           timeout: 15000,
-        }
+        },
       );
 
       // Add extra time for images, fonts, and styles to load
       await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 3000))
+        () => new Promise((resolve) => setTimeout(resolve, 3000)),
       );
 
       // Wait for any images to load
@@ -88,7 +88,7 @@ export class WebsiteCertificateRenderer {
               img.addEventListener("load", resolve);
               img.addEventListener("error", reject);
             });
-          })
+          }),
         );
       });
 
@@ -100,10 +100,10 @@ export class WebsiteCertificateRenderer {
       if (!element) {
         // If we can't find a specific certificate container, try to capture the main content
         console.log(
-          "Certificate container not found, trying main content area"
+          "Certificate container not found, trying main content area",
         );
         const mainContent = await page.$(
-          'main, .certificate-display, [role="main"]'
+          'main, .certificate-display, [role="main"]',
         );
         if (mainContent) {
           // Get the bounding box to determine dimensions
@@ -146,7 +146,7 @@ export class WebsiteCertificateRenderer {
       throw new Error(
         `Failed to generate PDF: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`
+        }`,
       );
     } finally {
       await browser.close();
@@ -179,7 +179,7 @@ export class WebsiteCertificateRenderer {
 
       // Set user agent to avoid bot detection
       await page.setUserAgent(
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
       );
 
       // Set high-resolution viewport for crisp PNG rendering
@@ -194,7 +194,7 @@ export class WebsiteCertificateRenderer {
       console.log("Loading certificate preview URL:", previewUrl);
 
       await page.goto(previewUrl, {
-        waitUntil: ["networkidle0", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 
@@ -203,12 +203,12 @@ export class WebsiteCertificateRenderer {
         ".certificate-container, .certificate-preview",
         {
           timeout: 15000,
-        }
+        },
       );
 
       // Add extra time for images, fonts, and styles to load
       await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 3000))
+        () => new Promise((resolve) => setTimeout(resolve, 3000)),
       );
 
       // Wait for any images to load
@@ -220,7 +220,7 @@ export class WebsiteCertificateRenderer {
               img.addEventListener("load", resolve);
               img.addEventListener("error", reject);
             });
-          })
+          }),
         );
       });
 
@@ -231,7 +231,7 @@ export class WebsiteCertificateRenderer {
 
       if (!element) {
         console.log(
-          "Certificate container not found, trying full page screenshot"
+          "Certificate container not found, trying full page screenshot",
         );
         // Fallback to full page screenshot
         const screenshot = await page.screenshot({
@@ -261,7 +261,7 @@ export class WebsiteCertificateRenderer {
       throw new Error(
         `Failed to generate PNG: ${
           error instanceof Error ? error.message : "Unknown error"
-        }`
+        }`,
       );
     } finally {
       await browser.close();

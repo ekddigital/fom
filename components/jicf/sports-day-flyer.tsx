@@ -3,6 +3,11 @@
 import { useRef, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  JICFCircuitAccent,
+  JICFMeshConstellation,
+  JICFThinRule,
+} from "@/components/jicf/jicf-flyer-motifs";
 
 /* ─── Flyer Canvas ──────────────────────────────────────────────────────────
   Designed for 540 × 675 px preview  →  scale:2 export  →  1080 × 1350
@@ -84,6 +89,8 @@ function JICFSportsDayCanvas() {
           }}
         />
       </div>
+      <JICFMeshConstellation corner="top-right" />
+      <JICFMeshConstellation corner="bottom-left" opacity={0.14} />
 
       {/* ── DECORATIVE: thin diagonal accent lines ── */}
       <div
@@ -311,6 +318,8 @@ function JICFSportsDayCanvas() {
           >
             Fun games · fellowship · recreation
           </p>
+          <JICFThinRule style={{ marginTop: 8 }} />
+          <JICFCircuitAccent style={{ marginTop: 6 }} />
         </div>
 
         {/* ── VERSE ── */}
@@ -387,8 +396,8 @@ function JICFSportsDayCanvas() {
               },
               {
                 icon: "📍",
-                label: "Venue — To Be Announced",
-                sub: "Location details coming soon",
+                label: "济南翊康体育运动公园",
+                sub: "Jinan Yikang Sports Park",
               },
             ].map(({ icon, label, sub }) => (
               <div

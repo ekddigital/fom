@@ -2,11 +2,12 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { dbCertificateService } from "@/lib/services/certificate-database";
+import { jicfCertificateOfService } from "@/lib/utils/certificates/jicf";
 
 // Handler for GET, PUT, and DELETE requests to /api/certificates/templates/[id]
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
@@ -22,8 +23,16 @@ export async function GET(
     if (!template) {
       return NextResponse.json(
         { error: "Certificate template not found" },
-        { status: 404 }
+        { status: 404 },
       );
+    }
+
+    if (template.name === "Certificate of Service") {
+      return NextResponse.json({
+        ...template,
+        description: jicfCertificateOfService.description,
+        templateData: JSON.parse(JSON.stringify(jicfCertificateOfService)),
+      });
     }
 
     return NextResponse.json(template);
@@ -31,14 +40,14 @@ export async function GET(
     console.error(`Error in GET /api/certificates/templates/${id}:`, error);
     return NextResponse.json(
       { error: "Failed to fetch certificate template" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function PUT(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
@@ -58,7 +67,7 @@ export async function PUT(
     ) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -78,14 +87,14 @@ export async function PUT(
     console.error(`Error in PUT /api/certificates/templates/${id}:`, error);
     return NextResponse.json(
       { error: "Failed to update certificate template" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
@@ -103,7 +112,7 @@ export async function DELETE(
     ) {
       return NextResponse.json(
         { error: "Insufficient permissions" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 

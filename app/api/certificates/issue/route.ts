@@ -3,6 +3,7 @@ import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { dbCertificateService } from "@/lib/services/certificate-database";
 import { generateEnhancedQRCodeData } from "@/lib/utils/certificate";
+import { jicfCertificateOfService } from "@/lib/utils/certificates/jicf";
 import { z, ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 
@@ -106,7 +107,14 @@ export async function POST(req: Request) {
       existingCount + 1,
     );
 
-    if (template.templateData && typeof template.templateData === "object") {
+    if (template.name === "Certificate of Service") {
+      fullTemplateDesignData = JSON.parse(
+        JSON.stringify(jicfCertificateOfService),
+      ) as Prisma.JsonObject;
+    } else if (
+      template.templateData &&
+      typeof template.templateData === "object"
+    ) {
       // We have the actual beautiful template data
       fullTemplateDesignData = JSON.parse(
         JSON.stringify(template.templateData),
@@ -213,6 +221,12 @@ export async function POST(req: Request) {
                 /Baptized by: System Administrator/g,
                 `Baptized by: ${issuerDisplayName}`,
               );
+
+            // Normalize wording/spacing for service certificate phrasing.
+            element.content = element.content.replace(
+              /\bto\s*(his|her|his\/her)\s*stewardship\b/gi,
+              "to $1 stewardship",
+            );
 
             // Custom fields substitution (e.g., {{custom.placement}})
             if (validatedData.customFields) {

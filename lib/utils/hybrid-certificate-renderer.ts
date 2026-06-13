@@ -1046,7 +1046,7 @@ export class HybridCertificateRenderer {
 
       // Set content with robust timeout and wait conditions
       await page.setContent(html, {
-        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 
@@ -1369,7 +1369,7 @@ export class HybridCertificateRenderer {
 
       // Set content and wait for all resources to load with increased timeout
       await page.setContent(html, {
-        waitUntil: ["networkidle0", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: config.timeout,
       });
       console.log("📝 Content set");

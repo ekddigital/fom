@@ -4,6 +4,7 @@
  */
 
 import puppeteer from "puppeteer";
+import fs from "node:fs";
 import { CardTemplate, CardElement } from "./card-templates";
 import { Card } from "@prisma/client";
 
@@ -44,10 +45,92 @@ export function cardToCardData(card: Card): CardData {
 export class CardRenderer {
   private template: CardTemplate;
   private cardData: CardData;
+  private static readonly CHROME_LAUNCH_ARGS = [
+    "--no-sandbox",
+    "--disable-setuid-sandbox",
+    "--disable-dev-shm-usage",
+    "--disable-gpu",
+    "--disable-web-security",
+    "--allow-running-insecure-content",
+  ];
 
   constructor(template: CardTemplate, cardData: CardData) {
     this.template = template;
     this.cardData = cardData;
+  }
+
+  private resolveOrganizationName(): string {
+    return (
+      process.env.CARD_ORGANIZATION_NAME ||
+      process.env.NEXT_PUBLIC_ORGANIZATION_NAME ||
+      process.env.NEXT_PUBLIC_ORG_NAME ||
+      "Jinan International Christian Fellowship (JICF)"
+    );
+  }
+
+  private getChromeExecutablePath(): string | null {
+    const envPath =
+      process.env.PUPPETEER_EXECUTABLE_PATH ||
+      process.env.CHROME_PATH ||
+      process.env.GOOGLE_CHROME_BIN;
+
+    if (envPath && fs.existsSync(envPath)) {
+      return envPath;
+    }
+
+    const commonPaths = [
+      "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+      "/Applications/Chromium.app/Contents/MacOS/Chromium",
+      "/usr/bin/google-chrome",
+      "/usr/bin/google-chrome-stable",
+      "/usr/bin/chromium-browser",
+      "/usr/bin/chromium",
+      "C:/Program Files/Google/Chrome/Application/chrome.exe",
+      "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
+    ];
+
+    for (const candidate of commonPaths) {
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    }
+
+    return null;
+  }
+
+  private async launchBrowser() {
+    const launchArgs = CardRenderer.CHROME_LAUNCH_ARGS;
+
+    try {
+      return await puppeteer.launch({
+        headless: true,
+        channel: "chrome",
+        args: launchArgs,
+      });
+    } catch {
+      // Fall through to explicit path/default launch strategies.
+    }
+
+    const executablePath = this.getChromeExecutablePath();
+    if (executablePath) {
+      try {
+        return await puppeteer.launch({
+          headless: true,
+          executablePath,
+          args: launchArgs,
+        });
+      } catch (error) {
+        console.warn(
+          `Failed to launch Chrome at explicit path (${executablePath}):`,
+          error,
+        );
+      }
+    }
+
+    return await puppeteer.launch({
+      headless: true,
+      args: launchArgs,
+    });
   }
 
   /**
@@ -346,7 +429,16 @@ export class CardRenderer {
         },
       );
       content = content.replace("{{date}}", formattedDate);
-    } // Handle service outline - split into individual lines
+    }
+
+    if (content.includes("{{organizationName}}")) {
+      content = content.replace(
+        "{{organizationName}}",
+        this.resolveOrganizationName(),
+      );
+    }
+
+    // Handle service outline - split into individual lines
     if (content.includes("{{serviceOutlineItems}}")) {
       console.log(
         "🔍 Processing serviceOutlineItems, cardData.serviceOutline:",
@@ -911,17 +1003,7 @@ export class CardRenderer {
     let page;
 
     try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu",
-          "--disable-web-security",
-          "--allow-running-insecure-content",
-        ],
-      });
+      browser = await this.launchBrowser();
 
       page = await browser.newPage();
 
@@ -990,17 +1072,7 @@ export class CardRenderer {
     let page;
 
     try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-gpu",
-          "--disable-web-security",
-          "--allow-running-insecure-content",
-        ],
-      });
+      browser = await this.launchBrowser();
 
       page = await browser.newPage();
 

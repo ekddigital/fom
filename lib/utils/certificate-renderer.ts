@@ -122,83 +122,83 @@ export class CertificateRenderer {
           // Double brace format (templates) - add underline styling
           .replace(
             /\{\{recipientName\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
           )
           .replace(
             /\{\{certificateId\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${this.certificate.id}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${this.certificate.id}</span>`,
           )
           .replace(
             /\{\{issueDate\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
           )
           .replace(
             /\{\{issuerName\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`,
           )
 
           // Single brace format - add underline styling
           .replace(
             /\{recipientName\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
           )
           .replace(
             /\{certificateId\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${this.certificate.id}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${this.certificate.id}</span>`,
           )
           .replace(
             /\{issueDate\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
           )
           .replace(
             /\{([^}]+)\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">$1</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">$1</span>`,
           ) // Handle any other braces
 
           // Handle specific name patterns
           .replace(
             /\{Enoch Kwateh Dongbo\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
           )
 
           // Plain text replacements
           .replace(
             /Sample Recipient/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
           )
           .replace(
             /System Administrator/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`,
           )
 
           // Date patterns
           .replace(
             /6\/13\/2025/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
           )
           .replace(
             /Date: 6\/13\/2025/g,
-            `Date: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`
+            `Date: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
           )
 
           // Certificate ID patterns
           .replace(
             /FOM-\d{4}-[A-Z]{3}-\d{4}-[A-Z0-9]{2}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${this.certificate.id}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${this.certificate.id}</span>`,
           )
 
           // Issuer patterns
           .replace(
             /Authorized by: System Administrator/g,
-            `Authorized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`
+            `Authorized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`,
           )
           .replace(
             /Issued by: System Administrator/g,
-            `Issued by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`
+            `Issued by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`,
           )
           .replace(
             /Baptized by: System Administrator/g,
-            `Baptized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`
+            `Baptized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Hetawk</span>`,
           )
 
           // Clean up any remaining empty braces or malformed patterns
@@ -351,7 +351,7 @@ export class CertificateRenderer {
         borderWidth / 2,
         borderWidth / 2,
         pdfWidth - borderWidth,
-        pdfHeight - borderWidth
+        pdfHeight - borderWidth,
       );
     }
 
@@ -440,7 +440,7 @@ export class CertificateRenderer {
         deviceScaleFactor: 2, // High DPI for better quality
       });
 
-      await page.setContent(html, { waitUntil: "networkidle0" });
+      await page.setContent(html, { waitUntil: "domcontentloaded" });
 
       // Take screenshot of the certificate container
       const element = await page.$(".certificate-container");
@@ -478,7 +478,7 @@ export class CertificateRenderer {
    */
   private extractNumber(
     value: string | number | undefined,
-    defaultValue: number
+    defaultValue: number,
   ): number {
     if (!value) return defaultValue;
 

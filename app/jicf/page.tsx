@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
+import {
+  ALL_SERVICE_PRICING_CONFIGS,
+  pricingFlyerHref,
+} from "@/components/jicf/ekddigital-pricing-data";
 import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -48,6 +52,53 @@ export default function JICFPage() {
           </p>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <Link
+              href="/jicf/fom-conference"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#b8c0cc]/50 transition-all duration-300"
+            >
+              <div className="relative h-44 overflow-hidden bg-linear-to-br from-[#060d1f] via-[#0c1a3a] to-[#132a52] p-5 flex items-center justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/Logo.png"
+                  alt="Fishers of Men"
+                  className="h-28 w-28 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#060d1f]/90 to-transparent" />
+                <div className="absolute bottom-4 left-5">
+                  <span className="rounded-full bg-[#b8c0cc]/15 border border-[#b8c0cc]/45 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#d4dae3]">
+                    FOM Conference
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-[#060d1f]/95 px-6 py-5 backdrop-blur-sm border-t border-[#b8c0cc]/15">
+                <h2 className="text-xl font-black text-white mb-1">
+                  Fishers of Men Conference
+                </h2>
+                <p className="text-[#d4dae3]/70 text-xs mb-4 italic">
+                  Teaching, worship, fellowship &amp; all-night gathering
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <span className="flex items-center gap-1.5">
+                    <Calendar className="size-3.5 text-[#b8c0cc]" />
+                    May 22–24, 2026
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-[#b8c0cc]" />
+                    Multi-day schedule
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="size-3.5 text-[#b8c0cc]" />
+                    Thompson&apos;s Place (Fri night)
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[#d4dae3] text-sm font-semibold group-hover:gap-2 transition-all">
+                  View Flyer
+                  <ArrowRight className="size-4" />
+                </div>
+              </div>
+            </Link>
+
             <Link
               href="/jicf/sports-day"
               className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#2596be]/50 transition-all duration-300"
@@ -237,11 +288,96 @@ export default function JICFPage() {
                 </div>
               </div>
             </Link>
+
+            <Link
+              href="/jicf/ekddigital/services"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#C9972E]/50 transition-all duration-300"
+            >
+              <div className="relative h-44 overflow-hidden bg-linear-to-br from-[#07090f] via-[#0c1221] to-[#07090f] p-5">
+                <div className="h-full w-full border border-[#C9972E]/30 rounded-xl p-4 flex flex-col justify-between">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#e6c258] font-bold">
+                    Cloud &amp; Software
+                  </p>
+                  <div>
+                    <h3 className="text-xl font-black text-white leading-tight">
+                      Build · Host · Scale
+                    </h3>
+                    <p className="mt-1 text-xs text-[#9ca3af] font-medium">
+                      EKDSend · Assets · SSL · Email · Hosting
+                    </p>
+                  </div>
+                  <p className="text-[10px] text-[#C9972E] font-bold uppercase tracking-widest">
+                    EKD Digital
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-[#07090f]/95 px-6 py-5 backdrop-blur-sm border-t border-[#C9972E]/20">
+                <h2 className="text-xl font-black text-white mb-1">
+                  EKD Digital Cloud
+                </h2>
+                <p className="text-[#9ca3af]/90 text-xs mb-4">
+                  Software Development · Cloud Services · Communications APIs
+                </p>
+                <div className="flex flex-wrap gap-4 text-sm text-white/70">
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="size-3.5 text-[#C9972E]" />
+                    Enterprise-ready platforms
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="size-3.5 text-[#C9972E]" />
+                    Global CDN &amp; APIs
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center gap-1 text-[#C9972E] text-sm font-semibold group-hover:gap-2 transition-all">
+                  View Flyer
+                  <ArrowRight className="size-4" />
+                </div>
+              </div>
+            </Link>
           </div>
+
+          <EkddigitalPricingHubSection />
+
         </div>
       </main>
 
       <PublicFooter />
     </>
+  );
+}
+
+function EkddigitalPricingHubSection() {
+  return (
+    <div className="mt-10">
+      <p className="mb-4 text-center text-xs font-bold uppercase tracking-[0.22em] text-[#C9972E]/80">
+        EKD Digital — Service Pricing Flyers
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {ALL_SERVICE_PRICING_CONFIGS.map((config) => (
+          <Link
+            key={config.slug}
+            href={pricingFlyerHref(config.slug)}
+            className="group flex items-center justify-between rounded-xl border border-[#C9972E]/25 bg-[#07090f]/80 px-4 py-3 hover:border-[#C9972E]/50 transition-colors"
+          >
+            <div>
+              <p className="text-sm font-bold text-white">{config.title}</p>
+              <p className="text-xs text-[#9ca3af]">{config.subtitle}</p>
+            </div>
+            <ArrowRight className="size-4 text-[#C9972E] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+        ))}
+      </div>
+      <p className="mt-3 text-center text-xs text-[#9ca3af]/80">
+        <Link
+          href="/jicf/ekddigital/services"
+          className="text-[#C9972E] font-semibold hover:underline"
+        >
+          Services overview
+        </Link>
+        {" · "}
+        each service has its own pricing flyer
+      </p>
+    </div>
   );
 }

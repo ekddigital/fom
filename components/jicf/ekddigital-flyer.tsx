@@ -3,6 +3,14 @@
 import { useRef, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  FlyerChevronCluster,
+  FlyerContactGrid,
+  FlyerGradientWord,
+  FlyerMeshConstellation,
+  FlyerSlantedCta,
+} from "@/components/jicf/ekddigital-flyer-motifs";
+import { BG_DARK, CYAN_TECH } from "@/components/jicf/ekddigital-flyer-theme";
 
 /* ─── Flyer Canvas ──────────────────────────────────────────────────────────
   540 × 675 px preview → pixelRatio:2 export → 1080 × 1350 px (Instagram 4:5)
@@ -35,9 +43,11 @@ function EKDDigitalFlyerCanvas() {
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(160deg, #07090f 0%, #0c1221 45%, #07090f 100%)",
+            `linear-gradient(160deg, ${BG_DARK} 0%, #0a1628 45%, ${BG_DARK} 100%)`,
         }}
       />
+      <FlyerMeshConstellation corner="top-right" />
+      <FlyerMeshConstellation corner="bottom-left" opacity={0.12} />
 
       {/* ── SUBTLE DOT-GRID TEXTURE ── */}
       <div
@@ -45,8 +55,8 @@ function EKDDigitalFlyerCanvas() {
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "radial-gradient(rgba(201,151,46,0.07) 1px, transparent 1px)",
-          backgroundSize: "20px 20px",
+            "radial-gradient(rgba(0,212,255,0.04) 1px, transparent 1px), radial-gradient(rgba(201,151,46,0.05) 1px, transparent 1px)",
+          backgroundSize: "22px 22px, 20px 20px",
           pointerEvents: "none",
         }}
       />
@@ -406,15 +416,15 @@ function EKDDigitalFlyerCanvas() {
               textShadow: "0 2px 8px rgba(0,0,0,0.55)",
             }}
           >
-            WE BUILD. <span style={{ color: "#C9972E" }}>WE WRITE.</span>
+            WE BUILD. <FlyerGradientWord>WE WRITE.</FlyerGradientWord>
           </p>
           <p
             style={{
               margin: "3px 0 0",
-              fontSize: 9,
+              fontSize: 8.5,
               fontWeight: 700,
-              color: "#eef2f7",
-              letterSpacing: "0.12em",
+              color: CYAN_TECH,
+              letterSpacing: "0.16em",
               textTransform: "uppercase",
               textShadow: "0 1px 3px rgba(0,0,0,0.8)",
             }}
@@ -423,6 +433,9 @@ function EKDDigitalFlyerCanvas() {
           </p>
         </div>
       </div>
+      <FlyerChevronCluster
+        style={{ position: "absolute", top: 195, right: 12, zIndex: 6 }}
+      />
 
       {/* ══════════════════════════════════════════════════════════════
           SECTION 3 — PAIN POINTS  (top: 232, height: 120)
@@ -651,135 +664,73 @@ function EKDDigitalFlyerCanvas() {
           zIndex: 2,
         }}
       >
-        {/* Hook line */}
+        {/* Hope + CTA hook (one-liner from share-note; Kingdom DNA line below) */}
         <p
           style={{
-            margin: "0 0 6px",
-            fontSize: 12.5,
-            fontWeight: 900,
+            margin: "0 0 4px",
+            fontSize: 10.8,
+            fontWeight: 800,
             color: "#ffffff",
             textAlign: "center",
             letterSpacing: "0.01em",
+            lineHeight: 1.33,
             textShadow: "0 1px 3px rgba(0,0,0,0.5)",
           }}
         >
-          We&apos;re just a <span style={{ color: "#C9972E" }}>button</span>{" "}
-          away —{" "}
-          <span
-            style={{
-              fontWeight: 650,
-              fontStyle: "italic",
-              color: "#e2e8f0",
-              textShadow: "0 1px 2px rgba(0,0,0,0.55)",
-            }}
-          >
-            reach out today!
-          </span>
+          Don&apos;t give up in silence—we&apos;re just a{" "}
+          <span style={{ color: "#C9972E" }}>button</span> away,
+          <br />
+          and we help you{" "}
+          <span style={{ color: "#e6c258" }}>recover time</span>.
         </p>
-
-        {/* CTA bar */}
-        <div
+        <p
           style={{
-            background:
-              "linear-gradient(135deg, #a87222 0%, #C9972E 40%, #e6b84a 100%)",
-            borderRadius: 7,
-            padding: "6px 20px",
+            margin: "0 0 6px",
+            fontSize: 7.6,
+            fontWeight: 800,
+            color: "#c9a857",
             textAlign: "center",
-            marginBottom: 6,
-            boxShadow: "0 4px 18px rgba(201,151,46,0.35)",
+            letterSpacing: "0.13em",
+            textTransform: "uppercase",
+            lineHeight: 1.25,
+            textShadow: "0 1px 2px rgba(0,0,0,0.45)",
           }}
         >
+          Kingdom workers · Kingdom solutions — our DNA
+        </p>
+
+        <FlyerSlantedCta>
           <p
             style={{
               margin: 0,
               fontSize: 11.5,
               fontWeight: 900,
-              color: "#07090f",
-              letterSpacing: "0.08em",
+              color: BG_DARK,
+              letterSpacing: "0.1em",
               textTransform: "uppercase",
             }}
           >
             GET YOUR FREE CONSULTATION →
           </p>
-        </div>
+        </FlyerSlantedCta>
 
-        {/* Contact 2 × 2 grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "6px 14px",
-            justifyItems: "center",
-            alignItems: "start",
-            marginTop: 0,
-          }}
-        >
-          {(
-            [
-              {
-                icon: "📞",
-                label: "Phone / WhatsApp",
-                value: "+86 185 0683 2159",
-              },
-              { icon: "📧", label: "Email", value: "ekd@ekddigital.com" },
-              { icon: "💬", label: "WeChat ID", value: "EKD231777285010" },
-              {
-                icon: "🌐",
-                label: "Website",
-                value: "ekddigital.com",
-                gold: true,
-              },
-            ] as {
-              icon: string;
-              label: string;
-              value: string;
-              gold?: boolean;
-            }[]
-          ).map(({ icon, label, value, gold }) => (
-            <div
-              key={label}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 1,
-                textAlign: "center",
-              }}
-            >
-              <span style={{ fontSize: 16, flexShrink: 0, lineHeight: 1 }}>
-                {icon}
-              </span>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: 8.2,
-                  color: "#c4c9d4",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  lineHeight: 1.2,
-                  fontWeight: 800,
-                  textShadow: "0 1px 2px rgba(0,0,0,0.5)",
-                }}
-              >
-                {label}
-              </p>
-              <p
-                style={{
-                  margin: "1px 0 0",
-                  paddingBottom: 1,
-                  fontSize: 10.9,
-                  color: gold ? "#e6c258" : "#ffffff",
-                  fontWeight: 800,
-                  lineHeight: 1.28,
-                  letterSpacing: "0.01em",
-                  textShadow: "0 1px 2px rgba(0,0,0,0.55)",
-                }}
-              >
-                {value}
-              </p>
-            </div>
-          ))}
-        </div>
+        <FlyerContactGrid
+          rows={[
+            {
+              icon: "📞",
+              label: "Phone / WhatsApp",
+              value: "+86 185 0683 2159",
+            },
+            { icon: "📧", label: "Email", value: "ekd@ekddigital.com" },
+            { icon: "💬", label: "WeChat ID", value: "EKD231777285010" },
+            {
+              icon: "🌐",
+              label: "Website",
+              value: "ekddigital.com",
+              gold: true,
+            },
+          ]}
+        />
       </div>
     </div>
   );

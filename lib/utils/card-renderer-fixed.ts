@@ -43,7 +43,7 @@ export class CardRenderer {
 
     // Process elements and replace placeholders
     const processedElements = elements.map((element) =>
-      this.processElement(element)
+      this.processElement(element),
     );
 
     const elementsHtml = processedElements
@@ -84,7 +84,7 @@ export class CardRenderer {
             ${
               settings.backgroundImage
                 ? `background-image: url(${this.getAbsoluteUrl(
-                    settings.backgroundImage
+                    settings.backgroundImage,
                   )});`
                 : ""
             }
@@ -167,7 +167,7 @@ export class CardRenderer {
 
     // Process elements and replace placeholders
     const processedElements = elements.map((element) =>
-      this.processElement(element)
+      this.processElement(element),
     );
 
     const elementsHtml = processedElements
@@ -235,7 +235,7 @@ export class CardRenderer {
       if (this.cardData.recipientName && this.cardData.recipientName.trim()) {
         content = content.replace(
           "{{recipientName}}",
-          this.cardData.recipientName
+          this.cardData.recipientName,
         );
       } else {
         // If no recipient name, hide this element by making it transparent
@@ -254,7 +254,7 @@ export class CardRenderer {
       if (this.cardData.customMessage && this.cardData.customMessage.trim()) {
         content = content.replace(
           "{{customMessage}}",
-          this.cardData.customMessage
+          this.cardData.customMessage,
         );
       } else {
         return {
@@ -275,7 +275,7 @@ export class CardRenderer {
           year: "numeric",
           month: "long",
           day: "numeric",
-        }
+        },
       );
       content = content.replace("{{date}}", formattedDate);
     }
@@ -318,7 +318,7 @@ export class CardRenderer {
    */
   private buildStyleString(
     position: CardElement["position"],
-    style: CardElement["style"]
+    style: CardElement["style"],
   ): string {
     const styles: string[] = [
       `left: ${position.x}px`,
@@ -377,7 +377,7 @@ export class CardRenderer {
       });
 
       await page.setContent(html, {
-        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 
@@ -443,7 +443,7 @@ export class CardRenderer {
       });
 
       await page.setContent(html, {
-        waitUntil: ["load", "domcontentloaded", "networkidle0"],
+        waitUntil: ["load", "domcontentloaded"],
         timeout: 30000,
       });
 

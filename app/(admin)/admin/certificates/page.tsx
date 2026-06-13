@@ -814,6 +814,7 @@ export default function AdminCertificatesPage() {
       course: "bg-purple-100 text-purple-800",
       training: "bg-yellow-100 text-yellow-800",
       volunteer: "bg-pink-100 text-pink-800",
+      service: "bg-amber-100 text-amber-800",
       mission: "bg-indigo-100 text-indigo-800",
     };
     return (
@@ -861,9 +862,8 @@ export default function AdminCertificatesPage() {
                 });
 
                 if (response.ok) {
-                  toast.success(
-                    "Database initialized successfully with default templates",
-                  );
+                  await loadTemplates();
+                  toast.success("Database initialized and templates refreshed");
                 } else {
                   toast.error("Failed to initialize database");
                 }
@@ -912,7 +912,7 @@ export default function AdminCertificatesPage() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {stats.map((stat, index) => (
-          <Card key={index}>
+          <Card key={index} className="rounded-none">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -981,7 +981,7 @@ export default function AdminCertificatesPage() {
           {loading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {[1, 2, 3].map((i) => (
-                <Card key={i} className="animate-pulse">
+                <Card key={i} className="animate-pulse rounded-none">
                   <CardHeader className="pb-3">
                     <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
                     <div className="h-4 bg-gray-200 rounded w-1/2"></div>
@@ -999,7 +999,7 @@ export default function AdminCertificatesPage() {
               {certificateTemplates.map((template) => (
                 <Card
                   key={template.id}
-                  className="hover:shadow-md transition-shadow"
+                  className="hover:shadow-md transition-shadow rounded-none"
                 >
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
@@ -1254,7 +1254,7 @@ export default function AdminCertificatesPage() {
             </div>
           )}
 
-          <Card>
+          <Card className="rounded-none">
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -1514,7 +1514,7 @@ export default function AdminCertificatesPage() {
         <TabsContent value="analytics" className="space-y-4">
           <h3 className="text-lg font-semibold">Certificate Analytics</h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
+            <Card className="rounded-none">
               <CardHeader>
                 <CardTitle>Certificates by Category</CardTitle>
               </CardHeader>
@@ -1554,7 +1554,7 @@ export default function AdminCertificatesPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="rounded-none">
               <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
               </CardHeader>

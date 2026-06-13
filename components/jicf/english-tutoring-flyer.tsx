@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { JICFCircuitAccent } from "@/components/jicf/jicf-flyer-motifs";
 
 function EnglishTutoringCanvas() {
   return (
@@ -67,17 +68,28 @@ function EnglishTutoringCanvas() {
             >
               Exam-focused English Training
             </p>
-            <h1
+            <div
               style={{
                 margin: "3px 0 0",
-                fontSize: 31,
-                lineHeight: 1.1,
-                fontWeight: 900,
-                letterSpacing: "-0.01em",
+                display: "flex",
+                alignItems: "flex-end",
+                gap: 8,
               }}
             >
-              KET · PET · IELTS
-            </h1>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 31,
+                  lineHeight: 1.1,
+                  fontWeight: 900,
+                  letterSpacing: "-0.01em",
+                  textTransform: "uppercase",
+                }}
+              >
+                KET · PET · IELTS
+              </h1>
+              <JICFCircuitAccent color="#fca5a5" opacity={0.85} />
+            </div>
             <p
               style={{
                 margin: "6px 0 0",
@@ -284,11 +296,21 @@ function EnglishTutoringCanvas() {
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr 1fr 70px",
-            gap: 8,
-            alignItems: "center",
+            gap: 0,
+            alignItems: "stretch",
+            border: "1.5px solid rgba(252,165,165,0.55)",
+            borderRadius: 10,
+            overflow: "hidden",
+            background: "rgba(0,0,0,0.12)",
           }}
         >
-          <div style={{ textAlign: "center" }}>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "8px 6px",
+              borderRight: "1px solid rgba(252,165,165,0.35)",
+            }}
+          >
             <p style={contactLabelStyle}>Email</p>
             <p style={contactValueStyle}>teacherjoejinan@gmail.com</p>
           </div>
@@ -368,7 +390,7 @@ const contactLabelStyle: React.CSSProperties = {
   margin: "0 0 2px",
   fontSize: 9.2,
   textTransform: "uppercase",
-  letterSpacing: "0.08em",
+  letterSpacing: "0.14em",
   color: "#fecdd3",
   fontWeight: 700,
 };

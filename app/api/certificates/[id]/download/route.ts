@@ -68,7 +68,7 @@ async function generateSimplifiedPDF(
 
     // Set content with enhanced QR code handling and increased timeout
     await page.setContent(html, {
-      waitUntil: ["load", "domcontentloaded", "networkidle0"],
+      waitUntil: ["load", "domcontentloaded"],
       timeout: config.timeout,
     });
 

@@ -3,6 +3,11 @@
 import { useRef, useState } from "react";
 import { Download, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  JICFCircuitAccent,
+  JICFMeshConstellation,
+  JICFThinRule,
+} from "@/components/jicf/jicf-flyer-motifs";
 
 function JICFGraduatesCelebrationCanvas() {
   return (
@@ -83,6 +88,8 @@ function JICFGraduatesCelebrationCanvas() {
           />
         ))}
       </div>
+      <JICFMeshConstellation corner="top-right" />
+      <JICFMeshConstellation corner="bottom-left" opacity={0.12} />
 
       {/* Celebration dots for a distinct graduates look */}
       <div
@@ -378,6 +385,8 @@ function JICFGraduatesCelebrationCanvas() {
           >
             after the service
           </p>
+          <JICFThinRule style={{ marginTop: 8 }} />
+          <JICFCircuitAccent style={{ marginTop: 6 }} />
         </div>
 
         <div style={{ padding: "8px 22px 10px" }}>

@@ -122,83 +122,83 @@ export class EnhancedCertificateRenderer {
           // Double brace format (templates) - add elegant underline styling
           .replace(
             /\{\{recipientName\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`,
           )
           .replace(
             /\{\{certificateId\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${this.certificate.id}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${this.certificate.id}</span>`,
           )
           .replace(
             /\{\{issueDate\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`,
           )
           .replace(
             /\{\{issuerName\}\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`,
           )
 
           // Single brace format - add elegant underline styling
           .replace(
             /\{recipientName\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`,
           )
           .replace(
             /\{certificateId\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${this.certificate.id}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${this.certificate.id}</span>`,
           )
           .replace(
             /\{issueDate\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`,
           )
           .replace(
             /\{([^}]+)\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">$1</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">$1</span>`,
           )
 
           // Handle specific name patterns
           .replace(
             /\{Enoch Kwateh Dongbo\}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`,
           )
 
           // Plain text replacements with styling
           .replace(
             /Sample Recipient/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${recipientName}</span>`,
           )
           .replace(
             /System Administrator/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`,
           )
 
           // Date patterns
           .replace(
             /6\/13\/2025/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`,
           )
           .replace(
             /Date: 6\/13\/2025/g,
-            `Date: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`
+            `Date: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${issueDate}</span>`,
           )
 
           // Certificate ID patterns
           .replace(
             /FOM-\d{4}-[A-Z]{3}-\d{4}-[A-Z0-9]{2}/g,
-            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${this.certificate.id}</span>`
+            `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">${this.certificate.id}</span>`,
           )
 
           // Issuer patterns
           .replace(
             /Authorized by: System Administrator/g,
-            `Authorized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`
+            `Authorized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`,
           )
           .replace(
             /Issued by: System Administrator/g,
-            `Issued by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`
+            `Issued by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`,
           )
           .replace(
             /Baptized by: System Administrator/g,
-            `Baptized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`
+            `Baptized by: <span style="border-bottom: 2px solid #1e40af; padding-bottom: 2px; font-weight: 600; color: #1e40af;">Hetawk</span>`,
           )
 
           // Clean up any remaining empty braces
@@ -257,8 +257,8 @@ export class EnhancedCertificateRenderer {
           element.style?.textAlign === "center"
             ? "center"
             : element.style?.textAlign === "right"
-            ? "flex-end"
-            : "flex-start",
+              ? "flex-end"
+              : "flex-start",
       };
 
       const baseStyle = this.styleToCSS(elementStyle);
@@ -383,12 +383,12 @@ export class EnhancedCertificateRenderer {
 
       // Set content and wait for all resources to load
       await page.setContent(html, {
-        waitUntil: ["networkidle0", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded"],
       });
 
       // Add delay to ensure fonts and styles are fully loaded
       await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 2000))
+        () => new Promise((resolve) => setTimeout(resolve, 2000)),
       );
 
       // Generate PDF with precise dimensions
@@ -441,12 +441,12 @@ export class EnhancedCertificateRenderer {
 
       // Set content and wait for all resources to load
       await page.setContent(html, {
-        waitUntil: ["networkidle0", "domcontentloaded"],
+        waitUntil: ["load", "domcontentloaded"],
       });
 
       // Add delay to ensure fonts and styles are fully loaded
       await page.evaluate(
-        () => new Promise((resolve) => setTimeout(resolve, 2000))
+        () => new Promise((resolve) => setTimeout(resolve, 2000)),
       );
 
       // Take high-quality screenshot of the certificate container
