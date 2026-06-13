@@ -376,7 +376,7 @@ export const elegantRoses: CardTemplate = {
         height: 100%;
         background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 50%, #e8f4f8 100%);
         border: 3px solid ${JICF_COLORS.gold};
-        border-radius: 25px;
+        border-radius: 0;
         box-shadow: 0 12px 48px rgba(0,0,0,0.15);
       "></div>`,
       position: { x: 0, y: 0, width: 500, height: 700 },

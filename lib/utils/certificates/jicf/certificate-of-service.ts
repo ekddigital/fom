@@ -191,14 +191,14 @@ export const jicfCertificateOfService: CertificateTemplate = {
       type: "image",
       content: "{{pastorSignature}}",
       group: "signature",
-      position: { x: 125, y: 490, width: 130, height: 42 },
+      position: { x: 133, y: 488, width: 130, height: 42 },
       style: {},
     },
     {
       id: "pastor-name",
       type: "text",
       content: "{{pastorName}}",
-      position: { x: 80, y: 530, width: 220, height: 18 },
+      position: { x: 80, y: 522, width: 220, height: 18 },
       style: {
         fontSize: 14,
         fontFamily: "serif",
@@ -211,7 +211,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "pastor-title",
       type: "text",
       content: "JICF Senior Pastor",
-      position: { x: 80, y: 548, width: 220, height: 14 },
+      position: { x: 80, y: 540, width: 220, height: 14 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
@@ -224,7 +224,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "issue-date",
       type: "text",
       content: "Date: {{issueDate}}",
-      position: { x: 540, y: 526, width: 150, height: 20 },
+      position: { x: 535, y: 522, width: 155, height: 20 },
       style: {
         fontSize: 12,
         fontFamily: "serif",

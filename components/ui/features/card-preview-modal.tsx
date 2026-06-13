@@ -66,7 +66,7 @@ export function CardPreviewModal({
     try {
       setIsDownloading(true);
       const response = await fetch(
-        `/api/cards/${card.id}/download?format=${format}`
+        `/api/cards/${card.id}/download?format=${format}`,
       );
 
       if (response.ok) {
@@ -190,7 +190,7 @@ export function CardPreviewModal({
           ) : (
             <div className="relative">
               {/* Card Shadow */}
-              <div className="absolute top-4 left-4 bg-black/30 rounded-lg blur-sm w-full h-full" />{" "}
+              <div className="absolute top-4 left-4 bg-black/30 blur-sm w-full h-full" />{" "}
               {/* Card Container */}
               <div
                 className="relative max-w-[90vw] max-h-[80vh]"
@@ -202,7 +202,7 @@ export function CardPreviewModal({
                 {cardImage ? (
                   <div
                     dangerouslySetInnerHTML={{ __html: cardImage }}
-                    className="bg-white rounded-lg shadow-2xl border border-gray-300"
+                    className="bg-white shadow-2xl border border-gray-300"
                   />
                 ) : (
                   <div className="w-96 h-64 flex flex-col items-center justify-center bg-gray-100 text-gray-500 p-8">
