@@ -119,361 +119,6 @@ export async function POST(req: Request) {
       fullTemplateDesignData = JSON.parse(
         JSON.stringify(template.templateData),
       ) as Prisma.JsonObject;
-
-      // Customize the template with recipient and issuer information
-      const defaultIssuerName =
-        `${session.user.firstName || ""} ${
-          session.user.lastName || ""
-        }`.trim() || session.user.email;
-
-      // Use provided authorizing official or fall back to the session user's name
-      const issuerDisplayName =
-        validatedData.authorizingOfficial || defaultIssuerName;
-
-      // Use provided issue date or default to current date
-      const issueDate = validatedData.issueDate
-        ? new Date(validatedData.issueDate).toLocaleDateString()
-        : new Date().toLocaleDateString();
-
-      // Update dynamic fields in the template if they exist
-      if (
-        fullTemplateDesignData.elements &&
-        Array.isArray(fullTemplateDesignData.elements)
-      ) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const elements = fullTemplateDesignData.elements as any[];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        elements.forEach((element: any) => {
-          if (element.content && typeof element.content === "string") {
-            const originalContent = element.content;
-
-            // Replace placeholders with actual values - try multiple formats
-            element.content = element.content
-              // Double curly brace format (templates)
-              .replace(/\{\{recipientName\}\}/g, validatedData.recipientName)
-              .replace(/\{\{issuerName\}\}/g, issuerDisplayName)
-              .replace(/\{\{issueDate\}\}/g, issueDate)
-              .replace(/\{\{certificateId\}\}/g, certificateId)
-              // JICF Certificate of Service specific replacements
-              .replace(
-                /\{\{gender\}\}/g,
-                validatedData.gender === "Male"
-                  ? "his"
-                  : validatedData.gender === "Female"
-                    ? "her"
-                    : "his/her",
-              )
-              .replace(
-                /\{\{position\}\}/g,
-                validatedData.position || "Ministry Position",
-              )
-              .replace(
-                /\{\{pastorName\}\}/g,
-                validatedData.pastorName || "Pst. Joseph G. Summers",
-              )
-              .replace(
-                /\{\{pastorSignature\}\}/g,
-                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png",
-              )
-              // Single curly brace format
-              .replace(/\{recipientName\}/g, validatedData.recipientName)
-              .replace(/\{issuerName\}/g, issuerDisplayName)
-              .replace(/\{issueDate\}/g, issueDate)
-              .replace(/\{certificateId\}/g, certificateId)
-              .replace(
-                /\{gender\}/g,
-                validatedData.gender === "Male"
-                  ? "his"
-                  : validatedData.gender === "Female"
-                    ? "her"
-                    : "his/her",
-              )
-              .replace(
-                /\{position\}/g,
-                validatedData.position || "Ministry Position",
-              )
-              .replace(
-                /\{pastorName\}/g,
-                validatedData.pastorName || "Pst. Joseph G. Summers",
-              )
-              .replace(
-                /\{pastorSignature\}/g,
-                validatedData.pastorSignature || "/pastor_Joe_signaturepng.png",
-              )
-              // Plain text replacements
-              .replace(/Sample Recipient/g, validatedData.recipientName)
-              .replace(/System Administrator/g, issuerDisplayName)
-              // Date patterns
-              .replace(/6\/13\/2025/g, issueDate)
-              .replace(/Date: 6\/13\/2025/g, `Date: ${issueDate}`)
-              // Certificate ID patterns
-              .replace(/FOM-\d{4}-[A-Z]{3}-\d{4}-[A-Z0-9]{2}/g, certificateId)
-              // Issuer patterns
-              .replace(
-                /Authorized by: System Administrator/g,
-                `Authorized by: ${issuerDisplayName}`,
-              )
-              .replace(
-                /Issued by: System Administrator/g,
-                `Issued by: ${issuerDisplayName}`,
-              )
-              .replace(
-                /Baptized by: System Administrator/g,
-                `Baptized by: ${issuerDisplayName}`,
-              );
-
-            // Normalize wording/spacing for service certificate phrasing.
-            element.content = element.content.replace(
-              /\bto\s*(his|her|his\/her)\s*stewardship\b/gi,
-              "to $1 stewardship",
-            );
-
-            // Custom fields substitution (e.g., {{custom.placement}})
-            if (validatedData.customFields) {
-              for (const [key, value] of Object.entries(
-                validatedData.customFields,
-              )) {
-                element.content = element.content
-                  .replace(
-                    new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"),
-                    String(value ?? ""),
-                  )
-                  .replace(
-                    new RegExp(`\\{custom\\.${key}\\}`, "g"),
-                    String(value ?? ""),
-                  );
-              }
-            }
-
-            // Log replacement for debugging
-            if (originalContent !== element.content) {
-              console.log(`Replaced content in element:`, {
-                original: originalContent,
-                updated: element.content,
-              });
-            }
-
-            // Dynamic sizing for JICF Certificate of Service position field
-            if (element.id === "position-served" && validatedData.position) {
-              const positionText = validatedData.position;
-              const textLength = positionText.length;
-
-              // Calculate optimal font size and height based on text length and content
-              let fontSize = 22; // Default size
-              let height = 30; // Default height
-
-              // Count semicolons and line breaks to determine if text spans multiple lines
-              const semicolonCount = (positionText.match(/;/g) || []).length;
-              const hasMultipleRoles = semicolonCount > 0;
-
-              if (textLength > 80 || (hasMultipleRoles && textLength > 50)) {
-                // Very long text or multiple roles - much smaller font, more height
-                fontSize = 14;
-                height = 60;
-              } else if (
-                textLength > 60 ||
-                (hasMultipleRoles && textLength > 30)
-              ) {
-                // Long text with multiple roles - smaller font, more height
-                fontSize = 16;
-                height = 50;
-              } else if (textLength > 40) {
-                // Medium-long text - medium font
-                fontSize = 18;
-                height = 40;
-              } else if (textLength > 25) {
-                // Medium text - slightly smaller font
-                fontSize = 20;
-                height = 35;
-              }
-              // Short text (≤25 chars) keeps default 22px font and 30px height
-
-              // Update element style and position
-              element.style.fontSize = fontSize;
-              element.position.height = height;
-
-              // Add line-height for better text spacing when multiple lines
-              if (height > 35) {
-                element.style.lineHeight = "1.3";
-              }
-
-              console.log(
-                `Dynamic sizing applied to position: "${positionText}" (${textLength} chars, ${semicolonCount} semicolons) - Font: ${fontSize}px, Height: ${height}px`,
-              );
-            }
-
-            // Dynamic sizing for recipient name field
-            if (
-              element.id === "recipient-name" &&
-              validatedData.recipientName
-            ) {
-              const nameText = validatedData.recipientName;
-              const nameLength = nameText.length;
-
-              let fontSize = 34; // Default (matches template)
-              let height = 50;
-
-              if (nameLength > 50) {
-                fontSize = 20;
-                height = 65;
-              } else if (nameLength > 40) {
-                fontSize = 22;
-                height = 62;
-              } else if (nameLength > 30) {
-                fontSize = 26;
-                height = 58;
-              } else if (nameLength > 20) {
-                fontSize = 30;
-                height = 52;
-              }
-
-              element.style.fontSize = fontSize;
-              element.position.height = height;
-
-              console.log(
-                `Dynamic sizing applied to recipient name: "${nameText}" (${nameLength} chars) - Font: ${fontSize}px, Height: ${height}px`,
-              );
-            }
-          }
-        });
-
-        // Check if certificate ID is visible anywhere in the template
-        const certificateIdVisible = elements.some(
-          (element) =>
-            element.content &&
-            typeof element.content === "string" &&
-            element.content.includes(certificateId),
-        );
-
-        // If certificate ID is not visible, add it as a prominent element
-        if (!certificateIdVisible) {
-          elements.push({
-            id: "certificate-id-display",
-            type: "text",
-            content: `Certificate ID: ${certificateId}`,
-            position: { x: 50, y: 550, width: 700, height: 30 },
-            style: {
-              fontSize: "14px",
-              fontWeight: "bold",
-              color: "#2563eb",
-              textAlign: "center",
-              fontFamily: "serif",
-              backgroundColor: "#f0f9ff",
-              padding: "5px",
-              border: "1px solid #2563eb",
-              borderRadius: "4px",
-            },
-          });
-
-          console.log(`Added certificate ID element: ${certificateId}`);
-        }
-
-        // Add security features based on security level if not already present
-        const hasQrCode = elements.some(
-          (el) =>
-            el.id.includes("qr-code") ||
-            el.id.includes("qr-verification") ||
-            el.id.includes("verification-qr") ||
-            el.content === "{{qrCode}}",
-        );
-        const hasSecurityWatermark = elements.some((el) =>
-          el.id.includes("security-watermark"),
-        );
-        const hasDigitalSignature = elements.some(
-          (el) =>
-            el.id === "digital-signature" || el.id === "digital-verification",
-        );
-
-        // Add QR code for BASIC level and above
-        if (
-          (validatedData.securityLevel === "BASIC" ||
-            validatedData.securityLevel === "STANDARD" ||
-            validatedData.securityLevel === "HIGH") &&
-          !hasQrCode
-        ) {
-          elements.push({
-            id: "qr-code",
-            type: "image",
-            content: "{{qrCode}}",
-            position: { x: 650, y: 460, width: 60, height: 60 },
-            style: {
-              borderRadius: "4px",
-            },
-          });
-
-          elements.push({
-            id: "qr-label",
-            type: "text",
-            content: "Scan to verify",
-            position: { x: 635, y: 525, width: 90, height: 12 },
-            style: {
-              fontSize: 8,
-              fontFamily: "serif",
-              color: "#7c7c7b",
-              textAlign: "center",
-            },
-          });
-        }
-
-        // Add digital signature indicator for STANDARD level and above
-        if (
-          (validatedData.securityLevel === "STANDARD" ||
-            validatedData.securityLevel === "HIGH") &&
-          !hasDigitalSignature
-        ) {
-          // Calculate position based on template type
-          let signaturePosition = { x: 50, y: 545, width: 300, height: 12 }; // Default position
-
-          // Adjust position for JULS award templates to be under certificate ID
-          if (
-            validatedData.templateName === "JULS Outstanding Contribution Award"
-          ) {
-            signaturePosition = { x: 300, y: 575, width: 200, height: 12 }; // Below certificate ID at y:555
-          } else if (
-            validatedData.templateName === "JULS Certificate of Appreciation"
-          ) {
-            signaturePosition = { x: 300, y: 550, width: 200, height: 12 }; // Below certificate ID at y:530
-          } else if (
-            validatedData.templateName === "JULS Most Dedicated Award"
-          ) {
-            signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
-          } else if (validatedData.templateName === "JULS Hard Working Award") {
-            signaturePosition = { x: 300, y: 555, width: 200, height: 12 }; // Under certificate reference at y:540
-          } else if (validatedData.templateName === "JULS Most Active Award") {
-            signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
-          }
-
-          elements.push({
-            id: "digital-signature",
-            type: "text",
-            content: "Digitally Signed & Verified",
-            position: signaturePosition,
-            style: {
-              fontSize: 8,
-              fontFamily: "serif",
-              color: "#7c7c7b",
-              textAlign: "center",
-            },
-          });
-        }
-
-        // Add security watermark for HIGH level
-        if (validatedData.securityLevel === "HIGH" && !hasSecurityWatermark) {
-          elements.push({
-            id: "security-watermark",
-            type: "text",
-            content: "AUTHENTIC",
-            position: { x: 300, y: 300, width: 200, height: 80 },
-            style: {
-              fontSize: 48,
-              fontFamily: "serif",
-              fontWeight: "bold",
-              color: "rgba(12, 67, 106, 0.08)",
-              textAlign: "center",
-            },
-          });
-        }
-      }
     } else {
       return NextResponse.json(
         {
@@ -481,6 +126,349 @@ export async function POST(req: Request) {
         },
         { status: 500 },
       );
+    }
+
+    // Customize the template with recipient and issuer information for all templates
+    const defaultIssuerName =
+      `${session.user.firstName || ""} ${
+        session.user.lastName || ""
+      }`.trim() || session.user.email;
+
+    // Use provided authorizing official or fall back to the session user's name
+    const issuerDisplayName =
+      validatedData.authorizingOfficial || defaultIssuerName;
+
+    // Use provided issue date or default to current date
+    const issueDate = validatedData.issueDate
+      ? new Date(validatedData.issueDate).toLocaleDateString()
+      : new Date().toLocaleDateString();
+
+    // Update dynamic fields in the template if they exist
+    if (fullTemplateDesignData.elements && Array.isArray(fullTemplateDesignData.elements)) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const elements = fullTemplateDesignData.elements as any[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      elements.forEach((element: any) => {
+        if (element.content && typeof element.content === "string") {
+          const originalContent = element.content;
+
+          // Replace placeholders with actual values - try multiple formats
+          element.content = element.content
+            // Double curly brace format (templates)
+            .replace(/\{\{recipientName\}\}/g, validatedData.recipientName)
+            .replace(/\{\{issuerName\}\}/g, issuerDisplayName)
+            .replace(/\{\{issueDate\}\}/g, issueDate)
+            .replace(/\{\{certificateId\}\}/g, certificateId)
+            // JICF Certificate of Service specific replacements
+            .replace(
+              /\{\{gender\}\}/g,
+              validatedData.gender === "Male"
+                ? "his"
+                : validatedData.gender === "Female"
+                  ? "her"
+                  : "his/her",
+            )
+            .replace(
+              /\{\{position\}\}/g,
+              validatedData.position || "Ministry Position",
+            )
+            .replace(
+              /\{\{pastorName\}\}/g,
+              validatedData.pastorName || "Pst. Joseph G. Summers",
+            )
+            .replace(
+              /\{\{pastorSignature\}\}/g,
+              validatedData.pastorSignature || "/pastor_Joe_signaturepng.png",
+            )
+            // Single curly brace format
+            .replace(/\{recipientName\}/g, validatedData.recipientName)
+            .replace(/\{issuerName\}/g, issuerDisplayName)
+            .replace(/\{issueDate\}/g, issueDate)
+            .replace(/\{certificateId\}/g, certificateId)
+            .replace(
+              /\{gender\}/g,
+              validatedData.gender === "Male"
+                ? "his"
+                : validatedData.gender === "Female"
+                  ? "her"
+                  : "his/her",
+            )
+            .replace(
+              /\{position\}/g,
+              validatedData.position || "Ministry Position",
+            )
+            .replace(
+              /\{pastorName\}/g,
+              validatedData.pastorName || "Pst. Joseph G. Summers",
+            )
+            .replace(
+              /\{pastorSignature\}/g,
+              validatedData.pastorSignature || "/pastor_Joe_signaturepng.png",
+            )
+            // Plain text replacements
+            .replace(/Sample Recipient/g, validatedData.recipientName)
+            .replace(/System Administrator/g, issuerDisplayName)
+            // Date patterns
+            .replace(/6\/13\/2025/g, issueDate)
+            .replace(/Date: 6\/13\/2025/g, `Date: ${issueDate}`)
+            // Certificate ID patterns
+            .replace(/FOM-\d{4}-[A-Z]{3}-\d{4}-[A-Z0-9]{2}/g, certificateId)
+            // Issuer patterns
+            .replace(
+              /Authorized by: System Administrator/g,
+              `Authorized by: ${issuerDisplayName}`,
+            )
+            .replace(
+              /Issued by: System Administrator/g,
+              `Issued by: ${issuerDisplayName}`,
+            )
+            .replace(
+              /Baptized by: System Administrator/g,
+              `Baptized by: ${issuerDisplayName}`,
+            );
+
+          // Normalize wording/spacing for service certificate phrasing.
+          element.content = element.content.replace(
+            /\bto\s*(his|her|his\/her)\s*stewardship\b/gi,
+            "to $1 stewardship",
+          );
+
+          // Custom fields substitution (e.g., {{custom.placement}})
+          if (validatedData.customFields) {
+            for (const [key, value] of Object.entries(validatedData.customFields)) {
+              element.content = element.content
+                .replace(
+                  new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"),
+                  String(value ?? ""),
+                )
+                .replace(
+                  new RegExp(`\\{custom\\.${key}\\}`, "g"),
+                  String(value ?? ""),
+                );
+            }
+          }
+
+          // Log replacement for debugging
+          if (originalContent !== element.content) {
+            console.log(`Replaced content in element:`, {
+              original: originalContent,
+              updated: element.content,
+            });
+          }
+
+          // Dynamic sizing for JICF Certificate of Service position field
+          if (element.id === "position-served" && validatedData.position) {
+            const positionText = validatedData.position;
+            const textLength = positionText.length;
+
+            // Calculate optimal font size and height based on text length and content
+            let fontSize = 22; // Default size
+            let height = 30; // Default height
+
+            // Count semicolons and line breaks to determine if text spans multiple lines
+            const semicolonCount = (positionText.match(/;/g) || []).length;
+            const hasMultipleRoles = semicolonCount > 0;
+
+            if (textLength > 80 || (hasMultipleRoles && textLength > 50)) {
+              // Very long text or multiple roles - much smaller font, more height
+              fontSize = 14;
+              height = 60;
+            } else if (textLength > 60 || (hasMultipleRoles && textLength > 30)) {
+              // Long text with multiple roles - smaller font, more height
+              fontSize = 16;
+              height = 50;
+            } else if (textLength > 40) {
+              // Medium-long text - medium font
+              fontSize = 18;
+              height = 40;
+            } else if (textLength > 25) {
+              // Medium text - slightly smaller font
+              fontSize = 20;
+              height = 35;
+            }
+
+            // Update element style and position
+            element.style.fontSize = fontSize;
+            element.position.height = height;
+
+            // Add line-height for better text spacing when multiple lines
+            if (height > 35) {
+              element.style.lineHeight = "1.3";
+            }
+
+            console.log(
+              `Dynamic sizing applied to position: "${positionText}" (${textLength} chars, ${semicolonCount} semicolons) - Font: ${fontSize}px, Height: ${height}px`,
+            );
+          }
+
+          // Dynamic sizing for recipient name field
+          if (element.id === "recipient-name" && validatedData.recipientName) {
+            const nameText = validatedData.recipientName;
+            const nameLength = nameText.length;
+
+            let fontSize = 34; // Default (matches template)
+            let height = 50;
+
+            if (nameLength > 50) {
+              fontSize = 20;
+              height = 65;
+            } else if (nameLength > 40) {
+              fontSize = 22;
+              height = 62;
+            } else if (nameLength > 30) {
+              fontSize = 26;
+              height = 58;
+            } else if (nameLength > 20) {
+              fontSize = 30;
+              height = 52;
+            }
+
+            element.style.fontSize = fontSize;
+            element.position.height = height;
+
+            console.log(
+              `Dynamic sizing applied to recipient name: "${nameText}" (${nameLength} chars) - Font: ${fontSize}px, Height: ${height}px`,
+            );
+          }
+        }
+      });
+
+      // Check if certificate ID is visible anywhere in the template
+      const certificateIdVisible = elements.some(
+        (element) =>
+          element.content &&
+          typeof element.content === "string" &&
+          element.content.includes(certificateId),
+      );
+
+      // If certificate ID is not visible, add it as a prominent element
+      if (!certificateIdVisible) {
+        elements.push({
+          id: "certificate-id-display",
+          type: "text",
+          content: `Certificate ID: ${certificateId}`,
+          position: { x: 50, y: 550, width: 700, height: 30 },
+          style: {
+            fontSize: "14px",
+            fontWeight: "bold",
+            color: "#2563eb",
+            textAlign: "center",
+            fontFamily: "serif",
+            backgroundColor: "#f0f9ff",
+            padding: "5px",
+            border: "1px solid #2563eb",
+            borderRadius: "4px",
+          },
+        });
+
+        console.log(`Added certificate ID element: ${certificateId}`);
+      }
+
+      // Add security features based on security level if not already present
+      const hasQrCode = elements.some(
+        (el) =>
+          el.id.includes("qr-code") ||
+          el.id.includes("qr-verification") ||
+          el.id.includes("verification-qr") ||
+          el.content === "{{qrCode}}",
+      );
+      const hasSecurityWatermark = elements.some((el) =>
+        el.id.includes("security-watermark"),
+      );
+      const hasDigitalSignature = elements.some(
+        (el) =>
+          el.id === "digital-signature" || el.id === "digital-verification",
+      );
+
+      // Add QR code for BASIC level and above
+      if (
+        (validatedData.securityLevel === "BASIC" ||
+          validatedData.securityLevel === "STANDARD" ||
+          validatedData.securityLevel === "HIGH") &&
+        !hasQrCode
+      ) {
+        elements.push({
+          id: "qr-code",
+          type: "image",
+          content: "{{qrCode}}",
+          position: { x: 650, y: 460, width: 60, height: 60 },
+          style: {
+            borderRadius: "4px",
+          },
+        });
+
+        elements.push({
+          id: "qr-label",
+          type: "text",
+          content: "Scan to verify",
+          position: { x: 635, y: 525, width: 90, height: 12 },
+          style: {
+            fontSize: 8,
+            fontFamily: "serif",
+            color: "#7c7c7b",
+            textAlign: "center",
+          },
+        });
+      }
+
+      // Add digital signature indicator for STANDARD level and above
+      if (
+        (validatedData.securityLevel === "STANDARD" ||
+          validatedData.securityLevel === "HIGH") &&
+        !hasDigitalSignature
+      ) {
+        // Calculate position based on template type
+        let signaturePosition = { x: 50, y: 545, width: 300, height: 12 }; // Default position
+
+        // Adjust position for JULS award templates to be under certificate ID
+        if (
+          validatedData.templateName === "JULS Outstanding Contribution Award"
+        ) {
+          signaturePosition = { x: 300, y: 575, width: 200, height: 12 }; // Below certificate ID at y:555
+        } else if (
+          validatedData.templateName === "JULS Certificate of Appreciation"
+        ) {
+          signaturePosition = { x: 300, y: 550, width: 200, height: 12 }; // Below certificate ID at y:530
+        } else if (
+          validatedData.templateName === "JULS Most Dedicated Award"
+        ) {
+          signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
+        } else if (validatedData.templateName === "JULS Hard Working Award") {
+          signaturePosition = { x: 300, y: 555, width: 200, height: 12 }; // Under certificate reference at y:540
+        } else if (validatedData.templateName === "JULS Most Active Award") {
+          signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
+        }
+
+        elements.push({
+          id: "digital-signature",
+          type: "text",
+          content: "Digitally Signed & Verified",
+          position: signaturePosition,
+          style: {
+            fontSize: 8,
+            fontFamily: "serif",
+            color: "#7c7c7b",
+            textAlign: "center",
+          },
+        });
+      }
+
+      // Add security watermark for HIGH level
+      if (validatedData.securityLevel === "HIGH" && !hasSecurityWatermark) {
+        elements.push({
+          id: "security-watermark",
+          type: "text",
+          content: "AUTHENTIC",
+          position: { x: 300, y: 300, width: 200, height: 80 },
+          style: {
+            fontSize: 48,
+            fontFamily: "serif",
+            fontWeight: "bold",
+            color: "rgba(12, 67, 106, 0.08)",
+            textAlign: "center",
+          },
+        });
+      }
     }
 
     console.log("Using actual template data:", {
@@ -495,7 +483,7 @@ export async function POST(req: Request) {
     const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
 
     // For JICF Certificate of Service, use pastor name; otherwise use authorizing official
-    let issuerDisplayName =
+    let qrIssuerDisplayName =
       validatedData.authorizingOfficial ||
       session.user.firstName + " " + session.user.lastName;
 
@@ -503,10 +491,10 @@ export async function POST(req: Request) {
       template.name === "Certificate of Service" &&
       validatedData.pastorName
     ) {
-      issuerDisplayName = validatedData.pastorName;
+      qrIssuerDisplayName = validatedData.pastorName;
     }
 
-    const issueDate = validatedData.issueDate
+    const qrIssueDate = validatedData.issueDate
       ? new Date(validatedData.issueDate).toLocaleDateString()
       : new Date().toLocaleDateString();
 
@@ -517,8 +505,8 @@ export async function POST(req: Request) {
         recipientEmail:
           validatedData.recipientEmail || "no-email@placeholder.com",
         templateName: template.name,
-        issueDate: issueDate,
-        issuerName: issuerDisplayName,
+        issueDate: qrIssueDate,
+        issuerName: qrIssuerDisplayName,
         organizationName: "FOM", // You can make this dynamic based on organization
       },
       baseUrl,

@@ -23,6 +23,9 @@ export default function FlexiblePreviewPage() {
     recipientName?: string;
     issuerName?: string;
     issueDate?: string;
+    certificateId?: string;
+    templateName?: string;
+    recipientEmail?: string;
   } | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -176,6 +179,27 @@ export default function FlexiblePreviewPage() {
     ? new Date(certificate.issueDate).toLocaleDateString()
     : new Date().toLocaleDateString();
 
+  const getElementContent = (elementId: string): string => {
+    const elements = certificate?.templateData?.elements || [];
+    const match = elements.find((el) => el.id === elementId);
+    if (!match || typeof match.content !== "string") {
+      return "";
+    }
+    return match.content;
+  };
+
+  const resolvedPosition = getElementContent("position-served") || "";
+  const resolvedPastorName =
+    getElementContent("pastor-name") || "Pst. Joseph G. Summers";
+  const recognitionText = getElementContent("recognition-text").toLowerCase();
+  const resolvedGender = recognitionText.includes(" her stewardship")
+    ? "Female"
+    : recognitionText.includes(" his stewardship")
+      ? "Male"
+      : "";
+  const safePosition =
+    resolvedPosition && !resolvedPosition.includes("{") ? resolvedPosition : "";
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header with navigation and download options */}
@@ -230,6 +254,9 @@ export default function FlexiblePreviewPage() {
         recipientName={recipientName}
         issuerName={issuerName}
         issueDate={issueDate}
+        position={safePosition}
+        gender={resolvedGender || "his/her"}
+        pastorName={resolvedPastorName}
         customFields={{}}
       />
     </div>

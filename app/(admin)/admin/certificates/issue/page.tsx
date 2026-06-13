@@ -40,6 +40,7 @@ export default function IssueCertificatePage() {
   const searchParams = useSearchParams();
   const { data: session } = useSession();
   const templateId = searchParams.get("template");
+  const editCertificateId = searchParams.get("edit");
 
   const [template, setTemplate] = useState<CertificateTemplate | null>(null);
   const [loading, setLoading] = useState(false);
@@ -84,6 +85,29 @@ export default function IssueCertificatePage() {
   const [bulkPastorName, setBulkPastorName] = useState(
     "Pst. Joseph G. Summers",
   );
+
+  const extractElementText = (
+    templateData: Record<string, unknown> | null | undefined,
+    elementId: string,
+  ): string => {
+    const elements = templateData?.elements;
+    if (!Array.isArray(elements)) return "";
+
+    const element = elements.find(
+      (el) =>
+        typeof el === "object" &&
+        el !== null &&
+        "id" in el &&
+        (el as { id?: string }).id === elementId,
+    ) as { content?: unknown } | undefined;
+
+    if (!element || typeof element.content !== "string") return "";
+
+    return element.content
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/g, " ")
+      .trim();
+  };
 
   const loadTemplate = useCallback(
     async (id: string) => {
@@ -135,6 +159,65 @@ export default function IssueCertificatePage() {
       loadTemplate(templateId);
     }
   }, [templateId, loadTemplate]);
+
+  useEffect(() => {
+    const prefillFromIssuedCertificate = async () => {
+      if (!editCertificateId) return;
+
+      try {
+        const response = await fetch(`/api/certificates/${editCertificateId}`);
+        if (!response.ok) {
+          toast.error("Failed to load certificate for editing");
+          return;
+        }
+
+        const data = await response.json();
+        const templateData = (data.templateData || null) as Record<
+          string,
+          unknown
+        > | null;
+
+        const extractedPosition = extractElementText(
+          templateData,
+          "position-served",
+        );
+        const extractedPastorName =
+          extractElementText(templateData, "pastor-name") ||
+          "Pst. Joseph G. Summers";
+        const recognitionText = extractElementText(
+          templateData,
+          "recognition-text",
+        ).toLowerCase();
+        const extractedGender = recognitionText.includes(" her stewardship")
+          ? "Female"
+          : recognitionText.includes(" his stewardship")
+            ? "Male"
+            : "Male";
+
+        const isoDate = data.issueDate
+          ? new Date(data.issueDate).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0];
+
+        setFormData((prev) => ({
+          ...prev,
+          recipientName: data.recipientName || prev.recipientName,
+          recipientEmail: data.recipientEmail || prev.recipientEmail,
+          authorizingOfficial: data.issuerName || prev.authorizingOfficial,
+          issueDate: isoDate,
+          position: extractedPosition || prev.position,
+          pastorName: extractedPastorName,
+          gender: extractedGender as "Male" | "Female",
+        }));
+
+        toast.success("Certificate loaded for editing");
+      } catch (error) {
+        console.error("Error loading certificate for editing:", error);
+        toast.error("Failed to load certificate for editing");
+      }
+    };
+
+    prefillFromIssuedCertificate();
+  }, [editCertificateId]);
 
   const handleInputChange = (field: string, value: string | number | null) => {
     setFormData((prev) => ({
@@ -512,10 +595,12 @@ export default function IssueCertificatePage() {
             </Button>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Issue Certificate
+                {editCertificateId ? "Edit Certificate" : "Issue Certificate"}
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Issue a new certificate using the selected template
+                {editCertificateId
+                  ? "Update certificate details using the selected template"
+                  : "Issue a new certificate using the selected template"}
               </p>
             </div>
           </div>

@@ -230,11 +230,15 @@ export const jicfCertificateOfService: CertificateTemplate = {
     },
     {
       id: "date-line",
-      type: "shape",
-      content: "",
-      position: { x: 535, y: 535, width: 155, height: 1 },
+      type: "text",
+      content: "Date",
+      position: { x: 535, y: 523, width: 155, height: 14 },
       style: {
+        fontSize: 12,
+        fontFamily: "serif",
+        fontWeight: "bold",
         color: JICF_COLORS.darkGray,
+        textAlign: "center",
       },
     },
     {

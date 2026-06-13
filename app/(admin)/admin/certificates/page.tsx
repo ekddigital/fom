@@ -307,6 +307,12 @@ export default function AdminCertificatesPage() {
     );
   };
 
+  const handleEditIssuedCertificate = (certificate: IssuedCertificate) => {
+    router.push(
+      `/admin/certificates/issue?template=${certificate.templateId}&edit=${certificate.id}`,
+    );
+  };
+
   const handleDownloadCertificate = async (
     certificate: IssuedCertificate,
     format: "pdf" | "png" = "pdf",
@@ -1401,6 +1407,16 @@ export default function AdminCertificatesPage() {
                                 title="Preview Certificate"
                               >
                                 <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() =>
+                                  handleEditIssuedCertificate(certificate)
+                                }
+                                title="Edit Certificate"
+                              >
+                                <Edit className="h-4 w-4" />
                               </Button>
                               <Button
                                 variant="ghost"
