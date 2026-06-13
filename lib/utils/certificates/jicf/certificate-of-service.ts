@@ -191,14 +191,14 @@ export const jicfCertificateOfService: CertificateTemplate = {
       type: "image",
       content: "{{pastorSignature}}",
       group: "signature",
-      position: { x: 140, y: 495, width: 130, height: 42 },
+      position: { x: 140, y: 487, width: 130, height: 42 },
       style: {},
     },
     {
       id: "pastor-line",
       type: "shape",
       content: "",
-      position: { x: 110, y: 535, width: 160, height: 1 },
+      position: { x: 110, y: 525, width: 160, height: 1 },
       style: {
         color: JICF_COLORS.blue,
       },
@@ -207,7 +207,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "pastor-name",
       type: "text",
       content: "{{pastorName}}",
-      position: { x: 80, y: 540, width: 220, height: 18 },
+      position: { x: 110, y: 530, width: 160, height: 16 },
       style: {
         fontSize: 14,
         fontFamily: "serif",
@@ -220,7 +220,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "pastor-title",
       type: "text",
       content: "JICF Senior Pastor",
-      position: { x: 80, y: 558, width: 220, height: 14 },
+      position: { x: 110, y: 545, width: 160, height: 14 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
@@ -232,7 +232,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "date-line",
       type: "text",
       content: "Date",
-      position: { x: 535, y: 523, width: 155, height: 14 },
+      position: { x: 535, y: 515, width: 155, height: 14 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
@@ -245,7 +245,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "issue-date",
       type: "text",
       content: "{{issueDate}}",
-      position: { x: 535, y: 540, width: 155, height: 20 },
+      position: { x: 535, y: 530, width: 155, height: 18 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
@@ -257,7 +257,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "certificate-id-service",
       type: "text",
       content: "Certificate ID: {{certificateId}}",
-      position: { x: 300, y: 525, width: 200, height: 15 },
+      position: { x: 300, y: 514, width: 200, height: 15 },
       style: {
         fontSize: 10,
         fontFamily: "serif",
@@ -269,7 +269,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "digital-verification",
       type: "text",
       content: "Digitally Signed and Verified",
-      position: { x: 300, y: 545, width: 200, height: 15 },
+      position: { x: 300, y: 529, width: 200, height: 15 },
       style: {
         fontSize: 10,
         fontFamily: "serif",
