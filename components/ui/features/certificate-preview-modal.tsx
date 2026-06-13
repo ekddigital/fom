@@ -78,6 +78,34 @@ export function CertificatePreviewModal({
   const [qrCodeDataUrl, setQrCodeDataUrl] = React.useState<string>("");
   const certificateRef = React.useRef<HTMLDivElement>(null);
 
+  const annotateComputedStylesForCapture = React.useCallback(() => {
+    const root = certificateRef.current;
+    if (!root) return;
+
+    // Recursive function to annotate all elements
+    const annotate = (el: HTMLElement) => {
+      const style = window.getComputedStyle(el);
+
+      // Store colors that html2canvas often misses or gets wrong when using CSS vars/oklch
+      if (style.color) el.setAttribute("data-captured-color", style.color);
+      if (style.backgroundColor)
+        el.setAttribute("data-captured-bg", style.backgroundColor);
+      if (style.borderColor)
+        el.setAttribute("data-captured-border", style.borderColor);
+
+      // Store font weight because it can get lost
+      if (style.fontWeight)
+        el.setAttribute("data-captured-font-weight", style.fontWeight);
+
+      // Recurse to children
+      Array.from(el.children).forEach((child) => {
+        if (child instanceof HTMLElement) annotate(child);
+      });
+    };
+
+    annotate(root);
+  }, []);
+
   const sanitizeCloneForHtml2Canvas = React.useCallback(
     (clonedDoc: Document) => {
       const clonedElement = clonedDoc.querySelector(
@@ -88,10 +116,35 @@ export function CertificatePreviewModal({
         return;
       }
 
+      // Add safety styles
       const safetyStyle = clonedDoc.createElement("style");
       safetyStyle.setAttribute("data-fom-certificate-color-safety", "true");
       safetyStyle.textContent = COLOR_SAFETY_CSS;
       clonedDoc.head.appendChild(safetyStyle);
+
+      // Function to apply annotated styles back to the clone
+      const applyAnnotatedStyles = (el: HTMLElement) => {
+        const color = el.getAttribute("data-captured-color");
+        const bg = el.getAttribute("data-captured-bg");
+        const border = el.getAttribute("data-captured-border");
+        const fontWeight = el.getAttribute("data-captured-font-weight");
+
+        if (color) el.style.color = color;
+        if (bg) el.style.backgroundColor = bg;
+        if (border) el.style.borderColor = border;
+        if (fontWeight) el.style.fontWeight = fontWeight;
+
+        // Clean up visual noise - hide elements that shouldn't be in capture
+        if (el.classList.contains("no-capture")) {
+          el.style.display = "none";
+        }
+
+        Array.from(el.children).forEach((child) => {
+          if (child instanceof HTMLElement) applyAnnotatedStyles(child);
+        });
+      };
+
+      applyAnnotatedStyles(clonedElement);
 
       clonedDoc.documentElement.style.backgroundColor = "#ffffff";
       clonedDoc.body.style.backgroundColor = "#ffffff";
@@ -205,6 +258,9 @@ export function CertificatePreviewModal({
     try {
       await waitForCaptureAssets();
 
+      // Annotate computed styles before capture to fix color corruption
+      annotateComputedStylesForCapture();
+
       // Add safe class before capturing
       certificateRef.current.classList.add("html2canvas-safe");
 
@@ -244,6 +300,9 @@ export function CertificatePreviewModal({
     setIsDownloading(true);
     try {
       await waitForCaptureAssets();
+
+      // Annotate computed styles before capture to fix color corruption
+      annotateComputedStylesForCapture();
 
       // Add safe class before capturing
       certificateRef.current.classList.add("html2canvas-safe");

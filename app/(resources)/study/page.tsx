@@ -55,7 +55,7 @@ export default function StudyPage() {
       instructor: "Dr. Sarah Williams",
       image: "/api/placeholder/300/200",
       status: "In Progress",
-      startDate: "June 15, 2025",
+      startDate: "June 14, 2026",
     },
     {
       id: 3,
@@ -124,7 +124,7 @@ export default function StudyPage() {
       id: 1,
       title: "The Book of Romans: Righteousness Revealed",
       teacher: "Pastor John Smith",
-      date: "June 15, 2025",
+      date: "June 14, 2026",
       duration: "45 min",
       views: 1200,
       type: "Video Study",

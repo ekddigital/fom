@@ -191,14 +191,23 @@ export const jicfCertificateOfService: CertificateTemplate = {
       type: "image",
       content: "{{pastorSignature}}",
       group: "signature",
-      position: { x: 133, y: 488, width: 130, height: 42 },
+      position: { x: 140, y: 485, width: 130, height: 42 },
       style: {},
+    },
+    {
+      id: "pastor-line",
+      type: "shape",
+      content: "",
+      position: { x: 110, y: 520, width: 160, height: 1 },
+      style: {
+        color: JICF_COLORS.blue,
+      },
     },
     {
       id: "pastor-name",
       type: "text",
       content: "{{pastorName}}",
-      position: { x: 80, y: 522, width: 220, height: 18 },
+      position: { x: 80, y: 525, width: 220, height: 18 },
       style: {
         fontSize: 14,
         fontFamily: "serif",
@@ -211,7 +220,7 @@ export const jicfCertificateOfService: CertificateTemplate = {
       id: "pastor-title",
       type: "text",
       content: "JICF Senior Pastor",
-      position: { x: 80, y: 540, width: 220, height: 14 },
+      position: { x: 80, y: 543, width: 220, height: 14 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
@@ -219,17 +228,25 @@ export const jicfCertificateOfService: CertificateTemplate = {
         textAlign: "center",
       },
     },
-
+    {
+      id: "date-line",
+      type: "shape",
+      content: "",
+      position: { x: 535, y: 520, width: 155, height: 1 },
+      style: {
+        color: JICF_COLORS.darkGray,
+      },
+    },
     {
       id: "issue-date",
       type: "text",
-      content: "Date: {{issueDate}}",
-      position: { x: 535, y: 522, width: 155, height: 20 },
+      content: "{{issueDate}}",
+      position: { x: 535, y: 525, width: 155, height: 20 },
       style: {
         fontSize: 12,
         fontFamily: "serif",
         color: JICF_COLORS.darkGray,
-        textAlign: "right",
+        textAlign: "center",
       },
     },
     {

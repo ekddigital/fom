@@ -107,13 +107,13 @@ export default function CardsPage() {
 
   // Bulk operations state
   const [selectedCardIds, setSelectedCardIds] = useState<Set<string>>(
-    new Set()
+    new Set(),
   ); // Search and filter
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [templatesViewMode, setTemplatesViewMode] = useState<"grid" | "list">(
-    "grid"
+    "grid",
   );
 
   // Preview modal state
@@ -295,7 +295,7 @@ export default function CardsPage() {
 
         if (parsedData.length > 0) {
           const headers = parsedData[0].map(
-            (header, index) => header || `Column ${index + 1}`
+            (header, index) => header || `Column ${index + 1}`,
           );
           setFileColumns(headers);
           setFileData(parsedData.slice(1)); // Rest as data          // Set default columns based on template type
@@ -317,7 +317,7 @@ export default function CardsPage() {
 
             setSelectedTimeColumn(timeCol || `col_1`);
             setSelectedEndTimeColumn(
-              endTimeCol ? endTimeCol || `col_2` : "none"
+              endTimeCol ? endTimeCol || `col_2` : "none",
             );
             setSelectedItemColumn(itemCol || `col_3`);
             setSelectedCoordinatorColumn(coordinatorCol || `col_4`);
@@ -333,13 +333,13 @@ export default function CardsPage() {
               headers.find(
                 (h) =>
                   h?.toLowerCase().includes("university") ||
-                  h?.toLowerCase().includes("school")
+                  h?.toLowerCase().includes("school"),
               ) || headers[2];
             const majorCol =
               headers.find(
                 (h) =>
                   h?.toLowerCase().includes("major") ||
-                  h?.toLowerCase().includes("academic")
+                  h?.toLowerCase().includes("academic"),
               ) || headers[3];
             setSelectedNameColumn(nameCol || `col_0`);
             setSelectedCountryColumn(countryCol || `col_1`);
@@ -357,13 +357,13 @@ export default function CardsPage() {
               headers.find(
                 (h) =>
                   h?.toLowerCase().includes("university") ||
-                  h?.toLowerCase().includes("school")
+                  h?.toLowerCase().includes("school"),
               ) || headers[2];
             const majorCol =
               headers.find(
                 (h) =>
                   h?.toLowerCase().includes("major") ||
-                  h?.toLowerCase().includes("academic")
+                  h?.toLowerCase().includes("academic"),
               ) || headers[3];
 
             setSelectedNameColumn(nameCol || `col_0`);
@@ -469,19 +469,19 @@ export default function CardsPage() {
       if (selectedTemplate === "service-outline") {
         // Create a single service outline card
         const timeColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedTimeColumn
+          (col, idx) => (col || `col_${idx}`) === selectedTimeColumn,
         );
         const endTimeColumnIndex =
           selectedEndTimeColumn && selectedEndTimeColumn !== "none"
             ? fileColumns.findIndex(
-                (col, idx) => (col || `col_${idx}`) === selectedEndTimeColumn
+                (col, idx) => (col || `col_${idx}`) === selectedEndTimeColumn,
               )
             : -1;
         const itemColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedItemColumn
+          (col, idx) => (col || `col_${idx}`) === selectedItemColumn,
         );
         const coordinatorColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedCoordinatorColumn
+          (col, idx) => (col || `col_${idx}`) === selectedCoordinatorColumn,
         );
         // Build service outline from CSV data
         const serviceItems = fileData
@@ -530,16 +530,16 @@ export default function CardsPage() {
       } else if (selectedTemplate === "graduates-name-list") {
         // Create a single graduates name list card
         const nameColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedNameColumn
+          (col, idx) => (col || `col_${idx}`) === selectedNameColumn,
         );
         const countryColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedCountryColumn
+          (col, idx) => (col || `col_${idx}`) === selectedCountryColumn,
         );
         const universityColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedUniversityColumn
+          (col, idx) => (col || `col_${idx}`) === selectedUniversityColumn,
         );
         const majorColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedMajorColumn
+          (col, idx) => (col || `col_${idx}`) === selectedMajorColumn,
         );
 
         // Build graduates list from CSV data
@@ -567,7 +567,7 @@ export default function CardsPage() {
             (grad, index) =>
               `${index + 1}. ${grad.name} • ${grad.country} • ${
                 grad.university
-              } • ${grad.major}`
+              } • ${grad.major}`,
           )
           .join("\n");
 
@@ -598,38 +598,39 @@ export default function CardsPage() {
       } else if (selectedTemplate === "meet-our-graduates") {
         // Create a single "Meet Our Graduates" multi-page card
         const nameColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedNameColumn
+          (col, idx) => (col || `col_${idx}`) === selectedNameColumn,
         );
         const countryColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedCountryColumn
+          (col, idx) => (col || `col_${idx}`) === selectedCountryColumn,
         );
         const universityColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedUniversityColumn
+          (col, idx) => (col || `col_${idx}`) === selectedUniversityColumn,
         );
         const majorColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedMajorColumn
+          (col, idx) => (col || `col_${idx}`) === selectedMajorColumn,
         );
 
         // Additional columns for Meet Our Graduates
         const emailColumnIndex = fileColumns.findIndex(
           (col, idx) =>
-            col?.toLowerCase().includes("email") || `col_${idx}` === `col_6`
+            col?.toLowerCase().includes("email") || `col_${idx}` === `col_6`,
         );
         const phoneColumnIndex = fileColumns.findIndex(
           (col, idx) =>
-            col?.toLowerCase().includes("phone") || `col_${idx}` === `col_7`
+            col?.toLowerCase().includes("phone") || `col_${idx}` === `col_7`,
         );
         const positionColumnIndex = fileColumns.findIndex(
           (col, idx) =>
-            col?.toLowerCase().includes("position") || `col_${idx}` === `col_10`
+            col?.toLowerCase().includes("position") ||
+            `col_${idx}` === `col_10`,
         );
         const messageColumnIndex = fileColumns.findIndex(
           (col, idx) =>
-            col?.toLowerCase().includes("message") || `col_${idx}` === `col_13`
+            col?.toLowerCase().includes("message") || `col_${idx}` === `col_13`,
         );
         const numPicturesColumnIndex = fileColumns.findIndex(
           (col, idx) =>
-            col?.toLowerCase().includes("picture") || `col_${idx}` === `col_14`
+            col?.toLowerCase().includes("picture") || `col_${idx}` === `col_14`,
         );
 
         // Build detailed graduates data from CSV
@@ -691,7 +692,7 @@ export default function CardsPage() {
       } else {
         // Create multiple cards for other templates (name-based)
         const nameColumnIndex = fileColumns.findIndex(
-          (col, idx) => (col || `col_${idx}`) === selectedNameColumn
+          (col, idx) => (col || `col_${idx}`) === selectedNameColumn,
         );
 
         if (nameColumnIndex === -1) {
@@ -758,7 +759,7 @@ export default function CardsPage() {
   const handleDownload = async (cardId: string, format: "png" | "pdf") => {
     try {
       const response = await fetch(
-        `/api/cards/${cardId}/download?format=${format}`
+        `/api/cards/${cardId}/download?format=${format}`,
       );
 
       if (response.ok) {
@@ -798,7 +799,7 @@ export default function CardsPage() {
   // Bulk download as ZIP
   const handleBulkDownload = async (format: "png" | "pdf") => {
     const cardsToDownload = filteredCards.filter((card) =>
-      selectedCardIds.has(card.id)
+      selectedCardIds.has(card.id),
     );
 
     if (cardsToDownload.length === 0) {
@@ -819,7 +820,7 @@ export default function CardsPage() {
       for (const card of cardsToDownload) {
         try {
           const response = await fetch(
-            `/api/cards/${card.id}/download?format=${format}`
+            `/api/cards/${card.id}/download?format=${format}`,
           );
           if (response.ok) {
             const blob = await response.blob();
@@ -894,7 +895,7 @@ export default function CardsPage() {
   // Bulk delete
   const handleBulkDelete = async () => {
     const cardsToDelete = filteredCards.filter((card) =>
-      selectedCardIds.has(card.id)
+      selectedCardIds.has(card.id),
     );
 
     if (cardsToDelete.length === 0) {
@@ -908,7 +909,7 @@ export default function CardsPage() {
 
     if (
       !window.confirm(
-        `Are you sure you want to delete ${cardsToDelete.length} cards?`
+        `Are you sure you want to delete ${cardsToDelete.length} cards?`,
       )
     ) {
       return;
@@ -918,7 +919,7 @@ export default function CardsPage() {
 
     try {
       const deletePromises = cardsToDelete.map((card) =>
-        fetch(`/api/cards/${card.id}`, { method: "DELETE" })
+        fetch(`/api/cards/${card.id}`, { method: "DELETE" }),
       );
 
       await Promise.all(deletePromises);
@@ -1408,7 +1409,9 @@ export default function CardsPage() {
                           {selectedUniversityColumn || "Not selected"}
                         </strong>
                         {" | "}Major:{" "}
-                        <strong>{selectedMajorColumn || "Not selected"}</strong>{" "}
+                        <strong>
+                          {selectedMajorColumn || "Not selected"}
+                        </strong>{" "}
                       </div>
                     </div>
                   </div>
@@ -1601,7 +1604,7 @@ export default function CardsPage() {
                     <Label htmlFor="bulk-event-date">Event Date</Label>
                     <Input
                       id="bulk-event-date"
-                      placeholder="e.g., Sunday, June 15, 2025"
+                      placeholder="e.g., Sunday, June 14, 2026"
                       value={bulkEventDate}
                       onChange={(e) => setBulkEventDate(e.target.value)}
                     />
@@ -1659,8 +1662,8 @@ export default function CardsPage() {
               {isBulkCreating
                 ? "Creating Cards..."
                 : selectedTemplate === "service-outline"
-                ? "Create Service Outline"
-                : `Create ${fileData.length} Cards`}
+                  ? "Create Service Outline"
+                  : `Create ${fileData.length} Cards`}
             </Button>
           </div>
         </CardContent>
@@ -1752,7 +1755,7 @@ export default function CardsPage() {
                   <Label htmlFor="event-date">Event Date</Label>
                   <Input
                     id="event-date"
-                    placeholder="e.g., Sunday, June 15, 2025"
+                    placeholder="e.g., Sunday, June 14, 2026"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
                   />

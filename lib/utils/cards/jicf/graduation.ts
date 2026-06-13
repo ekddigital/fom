@@ -28,7 +28,7 @@ export const gradBlessing: CardTemplate = {
         width: 100%;
         height: 100%;
         background: linear-gradient(135deg, ${JICF_COLORS.lightBlue} 0%, ${JICF_COLORS.white} 50%, ${JICF_COLORS.lightYellow} 100%);
-        border-radius: 20px;
+        border-radius: 0px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.1);
       "></div>`,
       position: { x: 0, y: 0, width: 500, height: 700 },
@@ -197,7 +197,7 @@ export const biblicalVerse: CardTemplate = {
         width: 100%;
         height: 100%;
         background: linear-gradient(45deg, ${JICF_COLORS.lightRed} 0%, ${JICF_COLORS.white} 50%, ${JICF_COLORS.lightYellow} 100%);
-        border-radius: 20px;
+        border-radius: 0px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.1);
       "></div>`,
       position: { x: 0, y: 0, width: 500, height: 700 },
