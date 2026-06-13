@@ -26,7 +26,27 @@ import {
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
-const COLOR_FUNCTION_PATTERN = /(?:oklch|oklab|lch|lab|color\()/i;
+const COLOR_SAFETY_CSS = `
+:root {
+  --background: #ffffff !important;
+  --foreground: #0f172a !important;
+  --card: #ffffff !important;
+  --card-foreground: #0f172a !important;
+  --popover: #ffffff !important;
+  --popover-foreground: #0f172a !important;
+  --primary: #0c436a !important;
+  --primary-foreground: #ffffff !important;
+  --secondary: #f1f5f9 !important;
+  --secondary-foreground: #0f172a !important;
+  --muted: #f1f5f9 !important;
+  --muted-foreground: #64748b !important;
+  --accent: #e2e8f0 !important;
+  --accent-foreground: #0f172a !important;
+  --border: #cbd5e1 !important;
+  --input: #cbd5e1 !important;
+  --ring: #94a3b8 !important;
+}
+`;
 
 interface CertificatePreviewModalProps {
   isOpen: boolean;
@@ -58,42 +78,6 @@ export function CertificatePreviewModal({
   const [qrCodeDataUrl, setQrCodeDataUrl] = React.useState<string>("");
   const certificateRef = React.useRef<HTMLDivElement>(null);
 
-  const normalizeColor = React.useMemo(() => {
-    if (typeof document === "undefined") {
-      return (value: string, fallback: string) => value || fallback;
-    }
-
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
-    return (value: string, fallback: string): string => {
-      if (!value || value === "transparent") {
-        return value;
-      }
-
-      if (!COLOR_FUNCTION_PATTERN.test(value)) {
-        return value;
-      }
-
-      if (!context) {
-        return fallback;
-      }
-
-      try {
-        context.fillStyle = "#000000";
-        context.fillStyle = value;
-        const normalized = context.fillStyle;
-        if (normalized && !COLOR_FUNCTION_PATTERN.test(normalized)) {
-          return normalized;
-        }
-      } catch {
-        return fallback;
-      }
-
-      return fallback;
-    };
-  }, []);
-
   const sanitizeCloneForHtml2Canvas = React.useCallback(
     (clonedDoc: Document) => {
       const clonedElement = clonedDoc.querySelector(
@@ -104,51 +88,75 @@ export function CertificatePreviewModal({
         return;
       }
 
-      const nodes = [
-        clonedElement,
-        ...Array.from(clonedElement.querySelectorAll<HTMLElement>("*")),
-      ];
+      const safetyStyle = clonedDoc.createElement("style");
+      safetyStyle.setAttribute("data-fom-certificate-color-safety", "true");
+      safetyStyle.textContent = COLOR_SAFETY_CSS;
+      clonedDoc.head.appendChild(safetyStyle);
 
-      for (const node of nodes) {
-        const computedStyles = clonedDoc.defaultView?.getComputedStyle(node);
-        if (!computedStyles) {
-          continue;
-        }
-
-        const safeColor = normalizeColor(computedStyles.color, "#111827");
-        const safeBg = normalizeColor(
-          computedStyles.backgroundColor,
-          "transparent",
-        );
-        const safeBorder = normalizeColor(
-          computedStyles.borderTopColor,
-          "#d1d5db",
-        );
-
-        if (safeColor) {
-          node.style.color = safeColor;
-        }
-        if (safeBg) {
-          node.style.backgroundColor = safeBg;
-        }
-        if (safeBorder) {
-          node.style.borderTopColor = safeBorder;
-          node.style.borderRightColor = safeBorder;
-          node.style.borderBottomColor = safeBorder;
-          node.style.borderLeftColor = safeBorder;
-        }
-
-        if (
-          computedStyles.backgroundImage &&
-          computedStyles.backgroundImage !== "none" &&
-          COLOR_FUNCTION_PATTERN.test(computedStyles.backgroundImage)
-        ) {
-          node.style.backgroundImage = "none";
-        }
-      }
+      clonedDoc.documentElement.style.backgroundColor = "#ffffff";
+      clonedDoc.body.style.backgroundColor = "#ffffff";
     },
-    [normalizeColor],
+    [],
   );
+
+  const waitForCaptureAssets = React.useCallback(async () => {
+    const captureRoot = certificateRef.current;
+    if (!captureRoot) {
+      return;
+    }
+
+    const imageElements = Array.from(
+      captureRoot.querySelectorAll<HTMLImageElement>("img"),
+    );
+
+    await Promise.all(
+      imageElements.map(
+        (img) =>
+          new Promise<void>((resolve) => {
+            const done = () => resolve();
+
+            const tryDecode = async () => {
+              if (img.complete && img.naturalWidth > 0) {
+                try {
+                  await img.decode();
+                } catch {
+                  // decode can throw for cross-origin images; load state is still usable.
+                }
+                done();
+                return;
+              }
+
+              img.addEventListener(
+                "load",
+                async () => {
+                  try {
+                    await img.decode();
+                  } catch {
+                    // ignore decode failure; image has loaded.
+                  }
+                  done();
+                },
+                { once: true },
+              );
+              img.addEventListener("error", done, { once: true });
+              setTimeout(done, 4000);
+            };
+
+            void tryDecode();
+          }),
+      ),
+    );
+
+    if (typeof document !== "undefined" && "fonts" in document) {
+      await document.fonts.ready;
+    }
+
+    await new Promise<void>((resolve) => {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => resolve());
+      });
+    });
+  }, []);
 
   // Generate a sample certificate ID based on the template
   const certificateId = React.useMemo(() => {
@@ -195,6 +203,8 @@ export function CertificatePreviewModal({
 
     setIsDownloading(true);
     try {
+      await waitForCaptureAssets();
+
       // Add safe class before capturing
       certificateRef.current.classList.add("html2canvas-safe");
 
@@ -203,13 +213,16 @@ export function CertificatePreviewModal({
         scale: 2, // Higher quality
         useCORS: true,
         allowTaint: true,
+        width: template.pageSettings.width,
+        height: template.pageSettings.height,
+        windowWidth: template.pageSettings.width,
+        windowHeight: template.pageSettings.height,
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
           sanitizeCloneForHtml2Canvas(clonedDoc);
         },
       });
-
-      // Remove safe class after capturing
-      certificateRef.current.classList.remove("html2canvas-safe");
 
       const link = document.createElement("a");
       link.download = `${
@@ -219,9 +232,8 @@ export function CertificatePreviewModal({
       link.click();
     } catch (error) {
       console.error("Error downloading PNG:", error);
-      // Ensure class is removed even on error
-      certificateRef.current?.classList.remove("html2canvas-safe");
     } finally {
+      certificateRef.current?.classList.remove("html2canvas-safe");
       setIsDownloading(false);
     }
   };
@@ -231,6 +243,8 @@ export function CertificatePreviewModal({
 
     setIsDownloading(true);
     try {
+      await waitForCaptureAssets();
+
       // Add safe class before capturing
       certificateRef.current.classList.add("html2canvas-safe");
 
@@ -239,13 +253,16 @@ export function CertificatePreviewModal({
         scale: 2, // Higher quality
         useCORS: true,
         allowTaint: true,
+        width: template.pageSettings.width,
+        height: template.pageSettings.height,
+        windowWidth: template.pageSettings.width,
+        windowHeight: template.pageSettings.height,
+        scrollX: 0,
+        scrollY: 0,
         onclone: (clonedDoc) => {
           sanitizeCloneForHtml2Canvas(clonedDoc);
         },
       });
-
-      // Remove safe class after capturing
-      certificateRef.current.classList.remove("html2canvas-safe");
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({
@@ -273,9 +290,8 @@ export function CertificatePreviewModal({
       );
     } catch (error) {
       console.error("Error downloading PDF:", error);
-      // Ensure class is removed even on error
-      certificateRef.current?.classList.remove("html2canvas-safe");
     } finally {
+      certificateRef.current?.classList.remove("html2canvas-safe");
       setIsDownloading(false);
     }
   };
@@ -634,119 +650,136 @@ export function CertificatePreviewModal({
       {/* Preview Area */}
       <div className="flex-1 overflow-auto bg-gradient-to-br from-gray-800 to-gray-900">
         <div className="min-h-full flex items-center justify-center p-8">
-          <div className="relative">
+          <div
+            className="relative"
+            style={{
+              width: `${template.pageSettings.width * zoom}px`,
+              height: `${template.pageSettings.height * zoom}px`,
+            }}
+          >
             {/* Certificate Shadow */}
             <div
-              className="absolute top-4 left-4 bg-black/30 rounded-lg blur-sm"
+              className="absolute top-4 left-4 bg-black/30 blur-sm"
               style={{
-                width: `${template.pageSettings.width * zoom}px`,
-                height: `${template.pageSettings.height * zoom}px`,
+                width: `${template.pageSettings.width}px`,
+                height: `${template.pageSettings.height}px`,
+                transform: `scale(${zoom})`,
+                transformOrigin: "top left",
               }}
             />
 
-            {/* Certificate Container */}
             <div
-              ref={certificateRef}
-              data-html2canvas-safe="true"
-              className="relative overflow-hidden"
               style={{
-                width: `${template.pageSettings.width * zoom}px`,
-                height: `${template.pageSettings.height * zoom}px`,
-                backgroundColor:
-                  template.pageSettings.background?.color || "#ffffff",
-                backgroundImage: template.pageSettings.background?.image
-                  ? `url(${template.pageSettings.background.image})`
-                  : undefined,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                border: "1px solid #d1d5db",
-                borderRadius: "0px",
-                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                transform: `scale(${zoom})`,
+                transformOrigin: "top left",
               }}
             >
-              {/* Certificate Elements */}
-              {template.elements.map((element) => {
-                // Apply dynamic sizing for JICF certificate fields
-                const dynamicSizing = applyDynamicSizing(element, {
-                  position: position,
-                  recipientName: recipientName,
-                });
-
-                const elementStyle: React.CSSProperties = {
-                  position: "absolute",
-                  left: `${element.position.x * zoom}px`,
-                  top: `${element.position.y * zoom}px`,
-                  width: `${element.position.width * zoom}px`,
-                  height: `${dynamicSizing.height * zoom}px`,
-                  fontSize: dynamicSizing.fontSize
-                    ? `${dynamicSizing.fontSize * zoom}px`
-                    : undefined,
-                  fontFamily: element.style.fontFamily || "serif",
-                  fontWeight: element.style.fontWeight || "normal",
-                  color: element.style.color || "#000000",
-                  textAlign: element.style.textAlign || "left",
+              {/* Certificate Container */}
+              <div
+                ref={certificateRef}
+                data-html2canvas-safe="true"
+                className="relative overflow-hidden"
+                style={{
+                  width: `${template.pageSettings.width}px`,
+                  height: `${template.pageSettings.height}px`,
                   backgroundColor:
-                    element.type === "shape" ? element.style.color : undefined,
-                  borderRadius: element.style.borderRadius || undefined,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent:
-                    element.style.textAlign === "center"
-                      ? "center"
-                      : element.style.textAlign === "right"
-                        ? "flex-end"
-                        : "flex-start",
-                  overflow: "hidden",
-                  lineHeight: dynamicSizing.lineHeight,
-                };
+                    template.pageSettings.background?.color || "#ffffff",
+                  backgroundImage: template.pageSettings.background?.image
+                    ? `url(${template.pageSettings.background.image})`
+                    : undefined,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "0px",
+                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+                }}
+              >
+                {/* Certificate Elements */}
+                {template.elements.map((element) => {
+                  // Apply dynamic sizing for JICF certificate fields
+                  const dynamicSizing = applyDynamicSizing(element, {
+                    position: position,
+                    recipientName: recipientName,
+                  });
 
-                if (element.type === "text") {
-                  return (
-                    <div
-                      key={element.id}
-                      style={elementStyle}
-                      dangerouslySetInnerHTML={{
-                        __html: replaceVariables(
-                          applyCustomFields(element.content),
-                        ),
-                      }}
-                    />
-                  );
-                }
+                  const elementStyle: React.CSSProperties = {
+                    position: "absolute",
+                    left: `${element.position.x}px`,
+                    top: `${element.position.y}px`,
+                    width: `${element.position.width}px`,
+                    height: `${dynamicSizing.height}px`,
+                    fontSize: dynamicSizing.fontSize
+                      ? `${dynamicSizing.fontSize}px`
+                      : undefined,
+                    fontFamily: element.style.fontFamily || "serif",
+                    fontWeight: element.style.fontWeight || "normal",
+                    color: element.style.color || "#000000",
+                    textAlign: element.style.textAlign || "left",
+                    backgroundColor:
+                      element.type === "shape"
+                        ? element.style.color
+                        : undefined,
+                    borderRadius: element.style.borderRadius || undefined,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent:
+                      element.style.textAlign === "center"
+                        ? "center"
+                        : element.style.textAlign === "right"
+                          ? "flex-end"
+                          : "flex-start",
+                    overflow: "hidden",
+                    lineHeight: dynamicSizing.lineHeight,
+                  };
 
-                if (element.type === "image") {
-                  const imageSrc = replaceImageVariables(element.content);
-                  return (
-                    <div key={element.id} style={elementStyle}>
-                      <Image
-                        src={imageSrc}
-                        alt="Certificate Image"
-                        width={element.position.width * zoom}
-                        height={element.position.height * zoom}
-                        style={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "contain",
-                          borderRadius: element.style.borderRadius || "0px", // Apply template borderRadius
-                          border: "none", // Ensure no browser default border
-                          outline: "none", // Ensure no outline
-                          boxShadow: "none", // Ensure no box shadow
-                        }}
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
+                  if (element.type === "text") {
+                    return (
+                      <div
+                        key={element.id}
+                        style={elementStyle}
+                        dangerouslySetInnerHTML={{
+                          __html: replaceVariables(
+                            applyCustomFields(element.content),
+                          ),
                         }}
                       />
-                    </div>
-                  );
-                }
+                    );
+                  }
 
-                if (element.type === "shape") {
-                  return <div key={element.id} style={elementStyle} />;
-                }
+                  if (element.type === "image") {
+                    const imageSrc = replaceImageVariables(element.content);
+                    return (
+                      <div key={element.id} style={elementStyle}>
+                        <Image
+                          src={imageSrc}
+                          alt="Certificate Image"
+                          width={element.position.width}
+                          height={element.position.height}
+                          style={{
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "contain",
+                            borderRadius: element.style.borderRadius || "0px", // Apply template borderRadius
+                            border: "none", // Ensure no browser default border
+                            outline: "none", // Ensure no outline
+                            boxShadow: "none", // Ensure no box shadow
+                          }}
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                          }}
+                        />
+                      </div>
+                    );
+                  }
 
-                return null;
-              })}
+                  if (element.type === "shape") {
+                    return <div key={element.id} style={elementStyle} />;
+                  }
+
+                  return null;
+                })}
+              </div>
             </div>
           </div>
         </div>
