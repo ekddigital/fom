@@ -130,9 +130,8 @@ export async function POST(req: Request) {
 
     // Customize the template with recipient and issuer information for all templates
     const defaultIssuerName =
-      `${session.user.firstName || ""} ${
-        session.user.lastName || ""
-      }`.trim() || session.user.email;
+      `${session.user.firstName || ""} ${session.user.lastName || ""}`.trim() ||
+      session.user.email;
 
     // Use provided authorizing official or fall back to the session user's name
     const issuerDisplayName =
@@ -144,7 +143,10 @@ export async function POST(req: Request) {
       : new Date().toLocaleDateString();
 
     // Update dynamic fields in the template if they exist
-    if (fullTemplateDesignData.elements && Array.isArray(fullTemplateDesignData.elements)) {
+    if (
+      fullTemplateDesignData.elements &&
+      Array.isArray(fullTemplateDesignData.elements)
+    ) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const elements = fullTemplateDesignData.elements as any[];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -235,7 +237,9 @@ export async function POST(req: Request) {
 
           // Custom fields substitution (e.g., {{custom.placement}})
           if (validatedData.customFields) {
-            for (const [key, value] of Object.entries(validatedData.customFields)) {
+            for (const [key, value] of Object.entries(
+              validatedData.customFields,
+            )) {
               element.content = element.content
                 .replace(
                   new RegExp(`\\{\\{custom\\.${key}\\}\\}`, "g"),
@@ -273,7 +277,10 @@ export async function POST(req: Request) {
               // Very long text or multiple roles - much smaller font, more height
               fontSize = 14;
               height = 60;
-            } else if (textLength > 60 || (hasMultipleRoles && textLength > 30)) {
+            } else if (
+              textLength > 60 ||
+              (hasMultipleRoles && textLength > 30)
+            ) {
               // Long text with multiple roles - smaller font, more height
               fontSize = 16;
               height = 50;
@@ -429,9 +436,7 @@ export async function POST(req: Request) {
           validatedData.templateName === "JULS Certificate of Appreciation"
         ) {
           signaturePosition = { x: 300, y: 550, width: 200, height: 12 }; // Below certificate ID at y:530
-        } else if (
-          validatedData.templateName === "JULS Most Dedicated Award"
-        ) {
+        } else if (validatedData.templateName === "JULS Most Dedicated Award") {
           signaturePosition = { x: 300, y: 560, width: 200, height: 12 }; // Under certificate ID at y:545
         } else if (validatedData.templateName === "JULS Hard Working Award") {
           signaturePosition = { x: 300, y: 555, width: 200, height: 12 }; // Under certificate reference at y:540

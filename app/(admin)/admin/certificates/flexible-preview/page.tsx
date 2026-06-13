@@ -40,7 +40,7 @@ export default function FlexiblePreviewPage() {
       "Starting download for certificate:",
       certificateId,
       "format:",
-      format
+      format,
     );
 
     try {
@@ -51,7 +51,7 @@ export default function FlexiblePreviewPage() {
       console.log("Download response status:", response.status);
       console.log(
         "Download response headers:",
-        Object.fromEntries(response.headers.entries())
+        Object.fromEntries(response.headers.entries()),
       );
 
       if (response.ok) {
@@ -67,7 +67,7 @@ export default function FlexiblePreviewPage() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         toast.success(
-          `Certificate downloaded as ${format.toUpperCase()} successfully`
+          `Certificate downloaded as ${format.toUpperCase()} successfully`,
         );
       } else {
         // Try to get error details from response
@@ -90,14 +90,14 @@ export default function FlexiblePreviewPage() {
               }`,
             {
               duration: 5000,
-            }
+            },
           );
         } catch (parseError) {
           console.error("Error parsing response:", parseError);
           toast.error(
             `Failed to download certificate as ${format.toUpperCase()}. Status: ${
               response.status
-            }`
+            }`,
           );
         }
       }
@@ -106,7 +106,7 @@ export default function FlexiblePreviewPage() {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       toast.error(
-        `Failed to download certificate as ${format.toUpperCase()}: ${errorMessage}`
+        `Failed to download certificate as ${format.toUpperCase()}: ${errorMessage}`,
       );
     }
   };

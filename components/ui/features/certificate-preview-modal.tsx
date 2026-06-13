@@ -255,6 +255,10 @@ export function CertificatePreviewModal({
     if (!certificateRef.current) return;
 
     setIsDownloading(true);
+    // Temporarily reset the zoom transform so html2canvas captures at native 1:1 resolution
+    const scaledParentPNG = certificateRef.current.parentElement as HTMLElement | null;
+    const savedTransformPNG = scaledParentPNG ? scaledParentPNG.style.transform : "";
+    if (scaledParentPNG) scaledParentPNG.style.transform = "scale(1)";
     try {
       await waitForCaptureAssets();
 
@@ -289,6 +293,7 @@ export function CertificatePreviewModal({
     } catch (error) {
       console.error("Error downloading PNG:", error);
     } finally {
+      if (scaledParentPNG) scaledParentPNG.style.transform = savedTransformPNG;
       certificateRef.current?.classList.remove("html2canvas-safe");
       setIsDownloading(false);
     }
@@ -298,6 +303,10 @@ export function CertificatePreviewModal({
     if (!certificateRef.current) return;
 
     setIsDownloading(true);
+    // Temporarily reset the zoom transform so html2canvas captures at native 1:1 resolution
+    const scaledParentPDF = certificateRef.current.parentElement as HTMLElement | null;
+    const savedTransformPDF = scaledParentPDF ? scaledParentPDF.style.transform : "";
+    if (scaledParentPDF) scaledParentPDF.style.transform = "scale(1)";
     try {
       await waitForCaptureAssets();
 
@@ -350,6 +359,7 @@ export function CertificatePreviewModal({
     } catch (error) {
       console.error("Error downloading PDF:", error);
     } finally {
+      if (scaledParentPDF) scaledParentPDF.style.transform = savedTransformPDF;
       certificateRef.current?.classList.remove("html2canvas-safe");
       setIsDownloading(false);
     }
