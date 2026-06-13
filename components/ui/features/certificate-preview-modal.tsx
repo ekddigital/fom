@@ -410,12 +410,12 @@ export function CertificatePreviewModal({
 
       if (textLength > 80 || (hasMultipleRoles && textLength > 50)) {
         fontSize = 14;
-        height = 60;
-        lineHeight = "1.3";
+        height = 55;
+        lineHeight = "1.2";
       } else if (textLength > 60 || (hasMultipleRoles && textLength > 30)) {
         fontSize = 16;
-        height = 50;
-        lineHeight = "1.3";
+        height = 45;
+        lineHeight = "1.2";
       } else if (textLength > 40) {
         fontSize = 18;
         height = 40;
@@ -434,18 +434,18 @@ export function CertificatePreviewModal({
 
       if (nameLength > 50) {
         fontSize = 20;
-        height = 65;
+        height = 60;
       } else if (nameLength > 40) {
-        fontSize = 22;
-        height = 62;
+        fontSize = 24;
+        height = 55;
       } else if (nameLength > 30) {
-        fontSize = 26;
-        height = 58;
+        fontSize = 28;
+        height = 55;
       } else if (nameLength > 20) {
-        fontSize = 30;
-        height = 52;
+        fontSize = 32;
+        height = 50;
       } else {
-        fontSize = 34;
+        fontSize = 36;
         height = 50;
       }
     }
@@ -457,89 +457,37 @@ export function CertificatePreviewModal({
   const replaceVariables = (content: string): string => {
     return (
       content
-        // Handle double brace format (template builder)
-        .replace(
-          /\{\{recipientName\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
-        )
-        .replace(
-          /\{\{issuerName\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`,
-        )
-        .replace(/\{\{issueDate\}\}/g, `<span>${issueDate}</span>`)
-        .replace(
-          /\{\{baptismDate\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issueDate}</span>`,
-        )
-        .replace(
-          /\{\{serviceYears\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">5</span>`,
-        )
-        .replace(
-          /\{\{volunteerHours\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">120</span>`,
-        )
-        .replace(
-          /\{\{missionLocation\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Tanzania</span>`,
-        )
-        .replace(
-          /\{\{achievementArea\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">Bible Study</span>`,
-        )
-        .replace(
-          /\{\{certificateId\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`,
-        )
-        .replace(
-          /\{\{verificationUrl\}\}/g,
-          `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`,
-        )
+        // Handle double brace format (template builder) - Use plain text without spans for capture reliability
+        .replace(/\{\{recipientName\}\}/g, recipientName)
+        .replace(/\{\{issuerName\}\}/g, issuerName)
+        .replace(/\{\{issueDate\}\}/g, issueDate)
+        .replace(/\{\{baptismDate\}\}/g, issueDate)
+        .replace(/\{\{serviceYears\}\}/g, "5")
+        .replace(/\{\{volunteerHours\}\}/g, "120")
+        .replace(/\{\{missionLocation\}\}/g, "Tanzania")
+        .replace(/\{\{achievementArea\}\}/g, "Bible Study")
+        .replace(/\{\{certificateId\}\}/g, certificateId)
+        .replace(/\{\{verificationUrl\}\}/g, sampleVerificationUrl)
 
         // JICF Certificate of Service specific variables
         .replace(
           /\{\{gender\}\}/g,
-          `<span style="display: inline-block; margin: 0 4px; border-bottom: 2px solid #1e40af; padding: 0 2px 1px 2px;">${
-            gender === "Male" ? "his" : gender === "Female" ? "her" : "his/her"
-          }</span>`,
+          gender === "Male" ? "his" : gender === "Female" ? "her" : "his/her",
         )
-        .replace(
-          /\{\{position\}\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${position}</span>`,
-        )
-        .replace(/\{\{pastorName\}\}/g, `<span>${pastorName}</span>`)
+        .replace(/\{\{position\}\}/g, position)
+        .replace(/\{\{pastorName\}\}/g, pastorName)
 
         // Handle single brace format (issued certificates)
-        .replace(
-          /\{recipientName\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${recipientName}</span>`,
-        )
-        .replace(
-          /\{issuerName\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${issuerName}</span>`,
-        )
-        .replace(/\{issueDate\}/g, `<span>${issueDate}</span>`)
-        .replace(
-          /\{certificateId\}/g,
-          `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${certificateId}</span>`,
-        )
-        .replace(
-          /\{verificationUrl\}/g,
-          `<span style="color: #0066cc; text-decoration: underline;">${sampleVerificationUrl}</span>`,
-        )
-        // Guard against templates where gender placeholder has no surrounding spaces
-        .replace(
-          /\bto\s*(his|her|his\/her)\s*stewardship\b/gi,
-          "to $1 stewardship",
-        )
+        .replace(/\{recipientName\}/g, recipientName)
+        .replace(/\{issuerName\}/g, issuerName)
+        .replace(/\{issueDate\}/g, issueDate)
+        .replace(/\{certificateId\}/g, certificateId)
+        .replace(/\{verificationUrl\}/g, sampleVerificationUrl)
 
         // Clean up any remaining empty braces
         .replace(/\{\s*\}/g, "")
         .replace(/\{[^}]*\}/g, (match) => {
-          const content = match.slice(1, -1).trim();
-          return content
-            ? `<span style="border-bottom: 2px solid #1e40af; padding-bottom: 1px;">${content}</span>`
-            : "";
+          return match.slice(1, -1).trim();
         })
     );
   };
@@ -789,6 +737,7 @@ export function CertificatePreviewModal({
                           : "flex-start",
                     overflow: "hidden",
                     lineHeight: dynamicSizing.lineHeight,
+                    whiteSpace: "pre-line",
                   };
 
                   if (element.type === "text") {
