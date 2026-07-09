@@ -23,10 +23,11 @@ const L = EKDSEND_PROMO_LAYOUT;
 
 const HEADLINE = "COMMUNICATIONS THAT DELIVER.";
 const SUBHEADLINE =
-  "Email, SMS, and voice — one platform built for reliability and control.";
+  "Transactional email and business mailboxes — built for reliability, security, and control.";
 const BULLETS = [
   "Transactional email API for apps & businesses",
-  "Custom domains with verified deliverability",
+  "Mailboxes and storage on your own domains",
+  "Custom domains with SPF, DKIM, and DMARC verification",
   "Free tier — 100 emails/month, no card needed",
 ] as const;
 const CTA_LABEL = "Get started free →";
