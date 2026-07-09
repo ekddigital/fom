@@ -268,10 +268,10 @@ function ContentBlock() {
       <h2
         style={{
           margin: 0,
-          fontSize: 21,
+          fontSize: 24,
           fontWeight: 900,
           color: "#ffffff",
-          lineHeight: 1.12,
+          lineHeight: 1.16,
           letterSpacing: "0.04em",
           textTransform: "uppercase",
         }}
@@ -282,10 +282,10 @@ function ContentBlock() {
       <p
         style={{
           margin: `${FLYER_SPACE.lg}px 0 0`,
-          fontSize: 11,
+          fontSize: 12.5,
           fontWeight: 600,
-          color: "#d6d3d1",
-          lineHeight: 1.4,
+          color: "#e7e5e4",
+          lineHeight: 1.48,
           maxWidth: 420,
         }}
       >
@@ -298,11 +298,11 @@ function ContentBlock() {
         ))}
       </div>
 
-      <div style={{ marginTop: FLYER_SPACE.xl }}>
+      <div style={{ marginTop: FLYER_SPACE.xl + 2 }}>
         <div
           style={{
             background: `linear-gradient(135deg, ${EKDSEND_GOLD_LIGHT} 0%, ${EKDSEND_GOLD} 100%)`,
-            padding: "7px 24px",
+            padding: "9px 24px",
             textAlign: "center",
             boxShadow: "0 4px 18px rgba(200,160,97,0.35)",
             clipPath:
@@ -312,10 +312,11 @@ function ContentBlock() {
           <p
             style={{
               margin: 0,
-              fontSize: 12,
+              fontSize: 13.5,
               fontWeight: 900,
               color: EKDSEND_BG,
-              letterSpacing: "0.08em",
+              lineHeight: 1.2,
+              letterSpacing: "0.075em",
               textTransform: "uppercase",
             }}
           >
@@ -325,11 +326,12 @@ function ContentBlock() {
         <p
           style={{
             margin: `${FLYER_SPACE.sm}px 0 0`,
-            fontSize: 10,
+            fontSize: 11.5,
             fontWeight: 700,
-            color: EKDSEND_GOLD,
+            color: EKDSEND_GOLD_LIGHT,
             textAlign: "center",
             letterSpacing: "0.06em",
+            lineHeight: 1.25,
           }}
         >
           {CTA_URL}
@@ -341,11 +343,11 @@ function ContentBlock() {
 
 function Bullet({ text }: { text: string }) {
   return (
-    <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.lg }}>
+    <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.lg + 2 }}>
       <span
         style={{
           color: EKDSEND_GOLD,
-          fontSize: 14,
+          fontSize: 15,
           fontWeight: 900,
           flexShrink: 0,
           lineHeight: 1.2,
@@ -356,10 +358,10 @@ function Bullet({ text }: { text: string }) {
       <p
         style={{
           margin: 0,
-          fontSize: 10.5,
+          fontSize: 11.5,
           fontWeight: 600,
           color: "#f5f5f4",
-          lineHeight: 1.35,
+          lineHeight: 1.45,
         }}
       >
         {text}
@@ -394,10 +396,11 @@ function FooterBlock() {
         <p
           style={{
             margin: 0,
-            fontSize: 9,
+            fontSize: 10.5,
             fontWeight: 700,
-            color: "#a8a29e",
+            color: "#d6d3d1",
             letterSpacing: "0.1em",
+            lineHeight: 1.25,
             textTransform: "uppercase",
           }}
         >
@@ -406,9 +409,10 @@ function FooterBlock() {
         <p
           style={{
             margin: `${FLYER_SPACE.xs}px 0 0`,
-            fontSize: 8,
+            fontSize: 9.5,
             fontWeight: 600,
-            color: "#78716c",
+            color: "#a8a29e",
+            lineHeight: 1.25,
           }}
         >
           support@ekddigital.com
