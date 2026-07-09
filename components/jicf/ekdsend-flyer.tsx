@@ -264,16 +264,17 @@ function HeroImage() {
 
 function ContentBlock() {
   return (
-    <FlyerBlock top={L.contentTop} minHeight={360} padding={`0 ${FLYER_PAD_X}px`}>
+    <FlyerBlock top={L.contentTop} minHeight={368} padding={`0 ${FLYER_PAD_X}px`}>
       <h2
         style={{
           margin: 0,
-          fontSize: 24,
+          fontSize: 27,
           fontWeight: 900,
           color: "#ffffff",
-          lineHeight: 1.16,
+          lineHeight: 1.14,
           letterSpacing: "0.04em",
           textTransform: "uppercase",
+          textShadow: "0 1px 3px rgba(0,0,0,0.25)",
         }}
       >
         {HEADLINE}
@@ -282,27 +283,27 @@ function ContentBlock() {
       <p
         style={{
           margin: `${FLYER_SPACE.lg}px 0 0`,
-          fontSize: 12.5,
-          fontWeight: 600,
-          color: "#e7e5e4",
-          lineHeight: 1.48,
+          fontSize: 14,
+          fontWeight: 700,
+          color: "#f3f2f0",
+          lineHeight: 1.44,
           maxWidth: 420,
         }}
       >
         {SUBHEADLINE}
       </p>
 
-      <div style={{ marginTop: FLYER_SPACE.xl }}>
+      <div style={{ marginTop: FLYER_SPACE.lg + 4 }}>
         {BULLETS.map((text) => (
           <Bullet key={text} text={text} />
         ))}
       </div>
 
-      <div style={{ marginTop: FLYER_SPACE.xl + 2 }}>
+      <div style={{ marginTop: FLYER_SPACE.lg + 2 }}>
         <div
           style={{
             background: `linear-gradient(135deg, ${EKDSEND_GOLD_LIGHT} 0%, ${EKDSEND_GOLD} 100%)`,
-            padding: "9px 24px",
+            padding: "10px 24px",
             textAlign: "center",
             boxShadow: "0 4px 18px rgba(200,160,97,0.35)",
             clipPath:
@@ -312,7 +313,7 @@ function ContentBlock() {
           <p
             style={{
               margin: 0,
-              fontSize: 13.5,
+              fontSize: 15,
               fontWeight: 900,
               color: EKDSEND_BG,
               lineHeight: 1.2,
@@ -325,9 +326,9 @@ function ContentBlock() {
         </div>
         <p
           style={{
-            margin: `${FLYER_SPACE.sm}px 0 0`,
-            fontSize: 11.5,
-            fontWeight: 700,
+            margin: `${FLYER_SPACE.xs + 1}px 0 0`,
+            fontSize: 13,
+            fontWeight: 800,
             color: EKDSEND_GOLD_LIGHT,
             textAlign: "center",
             letterSpacing: "0.06em",
@@ -343,11 +344,11 @@ function ContentBlock() {
 
 function Bullet({ text }: { text: string }) {
   return (
-    <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.lg + 2 }}>
+    <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.lg }}>
       <span
         style={{
           color: EKDSEND_GOLD,
-          fontSize: 15,
+          fontSize: 17,
           fontWeight: 900,
           flexShrink: 0,
           lineHeight: 1.2,
@@ -358,10 +359,10 @@ function Bullet({ text }: { text: string }) {
       <p
         style={{
           margin: 0,
-          fontSize: 11.5,
-          fontWeight: 600,
-          color: "#f5f5f4",
-          lineHeight: 1.45,
+          fontSize: 13,
+          fontWeight: 700,
+          color: "#fafaf9",
+          lineHeight: 1.42,
         }}
       >
         {text}
@@ -396,9 +397,9 @@ function FooterBlock() {
         <p
           style={{
             margin: 0,
-            fontSize: 10.5,
-            fontWeight: 700,
-            color: "#d6d3d1",
+            fontSize: 12.5,
+            fontWeight: 800,
+            color: "#e7e5e4",
             letterSpacing: "0.1em",
             lineHeight: 1.25,
             textTransform: "uppercase",
@@ -408,10 +409,10 @@ function FooterBlock() {
         </p>
         <p
           style={{
-            margin: `${FLYER_SPACE.xs}px 0 0`,
-            fontSize: 9.5,
-            fontWeight: 600,
-            color: "#a8a29e",
+            margin: `3px 0 0`,
+            fontSize: 11,
+            fontWeight: 700,
+            color: "#c9c6c2",
             lineHeight: 1.25,
           }}
         >

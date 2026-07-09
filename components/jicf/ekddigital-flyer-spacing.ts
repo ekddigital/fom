@@ -64,7 +64,7 @@ export const EKDSEND_PROMO_LAYOUT = {
   heroTop: 72,
   heroHeight: 300,
   contentTop: 72 + 300 + FLYER_SPACE.xl,
-  footerTop: 780,
+  footerTop: 768,
 } as const;
 
 export const PRICING_FLYER_LAYOUT = {
