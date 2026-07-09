@@ -9,7 +9,7 @@ import { pricingFlyerHref } from "@/components/jicf/ekddigital-pricing-data";
 
 export const metadata = buildFlyerMetadata(
   "EKDSend — Communications That Deliver",
-  "EKDSend promotional flyer: transactional email, SMS, and voice on one reliable platform. Free tier available at es.ekddigital.com.",
+  "EKDSend promotional flyer: transactional email and business mailboxes. WhatsApp +86 185 0683 2159 · WeChat EKD231777285010 · es.ekddigital.com",
 );
 
 const relatedLinkClass =

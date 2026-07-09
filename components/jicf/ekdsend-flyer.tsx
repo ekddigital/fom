@@ -32,6 +32,8 @@ const BULLETS = [
 ] as const;
 const CTA_LABEL = "Get started free →";
 const CTA_URL = "es.ekddigital.com";
+const CONTACT_PHONE = "+86 185 0683 2159";
+const CONTACT_WECHAT = "EKD231777285010";
 
 const canvasStyle = {
   position: "relative" as const,
@@ -419,8 +421,74 @@ function FooterBlock() {
         >
           support@ekddigital.com
         </p>
+        <div
+          style={{
+            marginTop: 10,
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+            padding: "10px 14px",
+            border: `1px solid rgba(200,160,97,0.42)`,
+            borderRadius: 8,
+            background: "rgba(42,37,32,0.6)",
+          }}
+        >
+          <FooterContactLine
+            icon="📞"
+            label="WhatsApp"
+            value={CONTACT_PHONE}
+          />
+          <FooterContactLine icon="💬" label="WeChat" value={CONTACT_WECHAT} />
+        </div>
       </div>
     </>
+  );
+}
+
+function FooterContactLine({
+  icon,
+  label,
+  value,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+      }}
+    >
+      <span style={{ fontSize: 14, lineHeight: 1, flexShrink: 0 }}>{icon}</span>
+      <p style={{ margin: 0, lineHeight: 1.2 }}>
+        <span
+          style={{
+            fontSize: 9,
+            fontWeight: 800,
+            color: EKDSEND_GOLD,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+          }}
+        >
+          {label}
+        </span>
+        <span
+          style={{
+            marginLeft: 6,
+            fontSize: 13,
+            fontWeight: 800,
+            color: "#fafaf9",
+            letterSpacing: "0.02em",
+          }}
+        >
+          {value}
+        </span>
+      </p>
+    </div>
   );
 }
 
