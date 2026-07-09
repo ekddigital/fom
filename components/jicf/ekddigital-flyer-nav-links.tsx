@@ -10,8 +10,27 @@ const linkClass =
 export function EKDDigitalOverviewNavLinks() {
   return (
   <>
+      <Link href="/jicf/ekddigital/ekdsend" className={linkClass}>
+        EKDSend promo
+      </Link>
       <Link href="/jicf/ekddigital/services" className={linkClass}>
         Services overview
+      </Link>
+      <Link href="/jicf" className={linkClass}>
+        JICF hub
+      </Link>
+    </>
+  );
+}
+
+export function EKDSendPromoNavLinks() {
+  return (
+    <>
+      <Link href="/jicf/ekddigital/services" className={linkClass}>
+        All services
+      </Link>
+      <Link href={PRICING_ROUTE_PREFIX + "/ekdsend"} className={linkClass}>
+        EKDSend pricing
       </Link>
       <Link href="/jicf" className={linkClass}>
         JICF hub

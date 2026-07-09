@@ -1,0 +1,451 @@
+"use client";
+
+import type { CSSProperties, ReactNode } from "react";
+import { EKDDigitalFlyerShell } from "@/components/jicf/ekddigital-flyer-shell";
+import {
+  EKDSEND_PROMO_LAYOUT,
+  FLYER_PAD_X,
+  FLYER_SPACE,
+  flyerBulletRowStyle,
+} from "@/components/jicf/ekddigital-flyer-spacing";
+import {
+  FLYER_PORTRAIT_H,
+  FLYER_PORTRAIT_W,
+} from "@/components/jicf/ekddigital-flyer-theme";
+
+/** EKDSend product brand palette (from mail/docs/ekdsend-flyer-copy.txt) */
+const EKDSEND_GOLD = "#C8A061";
+const EKDSEND_GOLD_LIGHT = "#E8C589";
+const EKDSEND_BG = "#1F1C18";
+const EKDSEND_BG_MID = "#2A2520";
+
+const L = EKDSEND_PROMO_LAYOUT;
+
+const HEADLINE = "COMMUNICATIONS THAT DELIVER.";
+const SUBHEADLINE =
+  "Email, SMS, and voice — one platform built for reliability and control.";
+const BULLETS = [
+  "Transactional email API for apps & businesses",
+  "Custom domains with verified deliverability",
+  "Free tier — 100 emails/month, no card needed",
+] as const;
+const CTA_LABEL = "Get started free →";
+const CTA_URL = "es.ekddigital.com";
+
+const canvasStyle = {
+  position: "relative" as const,
+  width: FLYER_PORTRAIT_W,
+  height: FLYER_PORTRAIT_H,
+  overflow: "hidden" as const,
+  fontFamily: "'Arial', 'Helvetica Neue', sans-serif",
+  background: EKDSEND_BG,
+};
+
+export const EKDSEND_PROMO_ROUTE = "/jicf/ekddigital/ekdsend";
+
+export function EKDSendFlyerShell() {
+  return (
+    <EKDDigitalFlyerShell
+      downloadFilename="ekdsend-promo-flyer.png"
+      exportBackgroundColor={EKDSEND_BG}
+    >
+      <EKDSendPromoCanvas />
+    </EKDDigitalFlyerShell>
+  );
+}
+
+function EKDSendPromoCanvas() {
+  return (
+    <div style={canvasStyle}>
+      <BackgroundLayers />
+      <EKDSendHeader />
+      <HeroImage />
+      <ContentBlock />
+      <FooterBlock />
+    </div>
+  );
+}
+
+function BackgroundLayers() {
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: `linear-gradient(165deg, ${EKDSEND_BG} 0%, ${EKDSEND_BG_MID} 42%, ${EKDSEND_BG} 100%)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: -80,
+          right: -60,
+          width: 220,
+          height: 220,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, rgba(200,160,97,0.14) 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: 120,
+          left: -50,
+          width: 180,
+          height: 180,
+          borderRadius: "50%",
+          background: `radial-gradient(circle, rgba(200,160,97,0.08) 0%, transparent 70%)`,
+          pointerEvents: "none",
+        }}
+      />
+    </>
+  );
+}
+
+function EKDSendHeader() {
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 2,
+          background: `linear-gradient(to right, transparent, ${EKDSEND_GOLD} 35%, ${EKDSEND_GOLD_LIGHT} 65%, transparent)`,
+          zIndex: 11,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          height: L.headerHeight,
+          display: "flex",
+          alignItems: "center",
+          padding: `0 ${FLYER_PAD_X}px`,
+          gap: 12,
+          background: "rgba(31,28,24,0.98)",
+          borderBottom: `2px solid ${EKDSEND_GOLD}`,
+          zIndex: 10,
+        }}
+      >
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 10,
+            overflow: "hidden",
+            flexShrink: 0,
+            border: `1.5px solid rgba(200,160,97,0.55)`,
+            boxShadow: "0 0 12px rgba(200,160,97,0.2)",
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/ekdsend_logo.svg"
+            alt="EKDSend"
+            crossOrigin="anonymous"
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+        </div>
+        <div style={{ flex: 1 }}>
+          <p
+            style={{
+              margin: 0,
+              fontSize: 22,
+              fontWeight: 900,
+              color: "#ffffff",
+              letterSpacing: "-0.02em",
+              lineHeight: 1.1,
+            }}
+          >
+            EKD<span style={{ color: EKDSEND_GOLD }}>Send</span>
+          </p>
+          <p
+            style={{
+              margin: "2px 0 0",
+              fontSize: 9,
+              fontWeight: 700,
+              color: "#a8a29e",
+              letterSpacing: "0.16em",
+              textTransform: "uppercase",
+            }}
+          >
+            by EKD Digital
+          </p>
+        </div>
+        <div
+          style={{
+            border: `1px solid rgba(200,160,97,0.45)`,
+            borderRadius: 20,
+            padding: "4px 11px",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontSize: 8.5,
+              color: EKDSEND_GOLD_LIGHT,
+              fontWeight: 800,
+              letterSpacing: "0.04em",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {CTA_URL}
+          </p>
+        </div>
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          top: L.headerHeight,
+          left: 0,
+          right: 0,
+          height: 2,
+          background: `linear-gradient(to right, transparent, ${EKDSEND_GOLD} 25%, ${EKDSEND_GOLD_LIGHT} 50%, ${EKDSEND_GOLD} 75%, transparent)`,
+        }}
+      />
+    </>
+  );
+}
+
+function HeroImage() {
+  return (
+    <FlyerBlock
+      top={L.heroTop}
+      minHeight={L.heroHeight}
+      padding="0"
+      style={{ overflow: "hidden" }}
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/ekd/EKDSend.png"
+        alt="Professional using EKDSend on laptop"
+        crossOrigin="anonymous"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "center 35%",
+          display: "block",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background:
+            "linear-gradient(to bottom, rgba(31,28,24,0.15) 0%, rgba(31,28,24,0.05) 35%, rgba(31,28,24,0.75) 100%)",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          background: `linear-gradient(to right, transparent, ${EKDSEND_GOLD} 20%, ${EKDSEND_GOLD_LIGHT} 50%, ${EKDSEND_GOLD} 80%, transparent)`,
+        }}
+      />
+    </FlyerBlock>
+  );
+}
+
+function ContentBlock() {
+  return (
+    <FlyerBlock top={L.contentTop} minHeight={360} padding={`0 ${FLYER_PAD_X}px`}>
+      <h2
+        style={{
+          margin: 0,
+          fontSize: 21,
+          fontWeight: 900,
+          color: "#ffffff",
+          lineHeight: 1.12,
+          letterSpacing: "0.04em",
+          textTransform: "uppercase",
+        }}
+      >
+        {HEADLINE}
+      </h2>
+
+      <p
+        style={{
+          margin: `${FLYER_SPACE.lg}px 0 0`,
+          fontSize: 11,
+          fontWeight: 600,
+          color: "#d6d3d1",
+          lineHeight: 1.4,
+          maxWidth: 420,
+        }}
+      >
+        {SUBHEADLINE}
+      </p>
+
+      <div style={{ marginTop: FLYER_SPACE.xl }}>
+        {BULLETS.map((text) => (
+          <Bullet key={text} text={text} />
+        ))}
+      </div>
+
+      <div style={{ marginTop: FLYER_SPACE.xl }}>
+        <div
+          style={{
+            background: `linear-gradient(135deg, ${EKDSEND_GOLD_LIGHT} 0%, ${EKDSEND_GOLD} 100%)`,
+            padding: "7px 24px",
+            textAlign: "center",
+            boxShadow: "0 4px 18px rgba(200,160,97,0.35)",
+            clipPath:
+              "polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%)",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontSize: 12,
+              fontWeight: 900,
+              color: EKDSEND_BG,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+            }}
+          >
+            {CTA_LABEL}
+          </p>
+        </div>
+        <p
+          style={{
+            margin: `${FLYER_SPACE.sm}px 0 0`,
+            fontSize: 10,
+            fontWeight: 700,
+            color: EKDSEND_GOLD,
+            textAlign: "center",
+            letterSpacing: "0.06em",
+          }}
+        >
+          {CTA_URL}
+        </p>
+      </div>
+    </FlyerBlock>
+  );
+}
+
+function Bullet({ text }: { text: string }) {
+  return (
+    <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.lg }}>
+      <span
+        style={{
+          color: EKDSEND_GOLD,
+          fontSize: 14,
+          fontWeight: 900,
+          flexShrink: 0,
+          lineHeight: 1.2,
+        }}
+      >
+        ›
+      </span>
+      <p
+        style={{
+          margin: 0,
+          fontSize: 10.5,
+          fontWeight: 600,
+          color: "#f5f5f4",
+          lineHeight: 1.35,
+        }}
+      >
+        {text}
+      </p>
+    </div>
+  );
+}
+
+function FooterBlock() {
+  return (
+    <>
+      <div
+        style={{
+          position: "absolute",
+          top: L.footerTop,
+          left: FLYER_PAD_X,
+          right: FLYER_PAD_X,
+          height: 1,
+          background: `linear-gradient(to right, transparent, rgba(200,160,97,0.4) 50%, transparent)`,
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: L.footerTop + FLYER_SPACE.md,
+          left: 0,
+          right: 0,
+          textAlign: "center",
+          padding: `0 ${FLYER_PAD_X}px`,
+        }}
+      >
+        <p
+          style={{
+            margin: 0,
+            fontSize: 9,
+            fontWeight: 700,
+            color: "#a8a29e",
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+          }}
+        >
+          EKDSend by EKD Digital
+        </p>
+        <p
+          style={{
+            margin: `${FLYER_SPACE.xs}px 0 0`,
+            fontSize: 8,
+            fontWeight: 600,
+            color: "#78716c",
+          }}
+        >
+          support@ekddigital.com
+        </p>
+      </div>
+    </>
+  );
+}
+
+function FlyerBlock({
+  top,
+  minHeight,
+  padding = `${FLYER_SPACE.sm}px ${FLYER_PAD_X}px 0`,
+  style,
+  children,
+}: {
+  top: number;
+  minHeight: number;
+  padding?: string;
+  style?: CSSProperties;
+  children: ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top,
+        left: 0,
+        right: 0,
+        minHeight,
+        padding,
+        zIndex: 2,
+        boxSizing: "border-box",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}

@@ -354,6 +354,18 @@ function EkddigitalPricingHubSection() {
         EKD Digital — Service Pricing Flyers
       </p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <Link
+          href="/jicf/ekddigital/ekdsend"
+          className="group flex items-center justify-between rounded-xl border border-[#C8A061]/35 bg-[#1F1C18]/80 px-4 py-3 hover:border-[#C8A061]/55 transition-colors sm:col-span-2 lg:col-span-3"
+        >
+          <div>
+            <p className="text-sm font-bold text-white">EKDSend — Promotional Flyer</p>
+            <p className="text-xs text-[#a8a29e]">
+              Communications that deliver · es.ekddigital.com
+            </p>
+          </div>
+          <ArrowRight className="size-4 text-[#C8A061] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+        </Link>
         {ALL_SERVICE_PRICING_CONFIGS.map((config) => (
           <Link
             key={config.slug}

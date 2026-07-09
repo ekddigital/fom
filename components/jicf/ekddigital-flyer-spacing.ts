@@ -58,6 +58,15 @@ export const CLOUD_FLYER_LAYOUT = {
   ),
 } as const;
 
+/** EKDSend promotional flyer — sparse NORASEND-style portrait layout */
+export const EKDSEND_PROMO_LAYOUT = {
+  headerHeight: 72,
+  heroTop: 72,
+  heroHeight: 300,
+  contentTop: 72 + 300 + FLYER_SPACE.xl,
+  footerTop: 780,
+} as const;
+
 export const PRICING_FLYER_LAYOUT = {
   heroTop: FLYER_HEADER_END,
   heroHeight: 128,

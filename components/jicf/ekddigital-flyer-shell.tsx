@@ -13,11 +13,14 @@ import {
 type EKDDigitalFlyerShellProps = {
   children: ReactNode;
   downloadFilename: string;
+  /** PNG export background — defaults to EKD Digital navy */
+  exportBackgroundColor?: string;
 };
 
 export function EKDDigitalFlyerShell({
   children,
   downloadFilename,
+  exportBackgroundColor = BG_DARK,
 }: EKDDigitalFlyerShellProps) {
   const flyerRef = useRef<HTMLDivElement>(null);
   const [downloading, setDownloading] = useState(false);
@@ -41,7 +44,7 @@ export function EKDDigitalFlyerShell({
         height: FLYER_PORTRAIT_H,
         canvasWidth: FLYER_PORTRAIT_W * 2,
         canvasHeight: FLYER_PORTRAIT_H * 2,
-        backgroundColor: BG_DARK,
+        backgroundColor: exportBackgroundColor,
       });
 
       const link = document.createElement("a");

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+    <!-- EKDSend Logo - Hexagon Modules (Enhanced Blend) -->
+
+    <defs>
+        <linearGradient id="goldGradientV2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#E8C589" />
+            <stop offset="50%" stop-color="#D4AF6A" />
+            <stop offset="100%" stop-color="#C8A061" />
+        </linearGradient>
+        <linearGradient id="darkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#2A2520" />
+            <stop offset="100%" stop-color="#14120F" />
+        </linearGradient>
+        <linearGradient id="maroonGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#A81200" />
+            <stop offset="100%" stop-color="#8E0E00" />
+        </linearGradient>
+        <filter id="glowEffectV2">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="6" />
+            <feOffset dx="0" dy="0" result="offsetblur" />
+            <feComponentTransfer>
+                <feFuncA type="linear" slope="0.4" />
+            </feComponentTransfer>
+            <feMerge>
+                <feMergeNode />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+
+    <!-- Background (transparent) -->
+    <rect width="1024" height="1024" fill="transparent" />
+
+    <!-- Outer glow ring -->
+    <circle cx="512" cy="512" r="440" fill="none" stroke="#C8A061" stroke-width="4" opacity="0.25"
+        filter="url(#glowEffectV2)" />
+
+    <!-- Main circular background with gold gradient -->
+    <circle cx="512" cy="512" r="400" fill="url(#goldGradientV2)" opacity="0.95" />
+
+    <!-- Inner shadow effect -->
+    <circle cx="512" cy="512" r="400" fill="#1A1A1A" opacity="0.15" />
+
+    <!-- Core darker circle with gradient -->
+    <circle cx="512" cy="512" r="300" fill="url(#darkGradient)" />
+
+    <!-- Decorative gold ring -->
+    <circle cx="512" cy="512" r="310" fill="none" stroke="url(#goldGradientV2)" stroke-width="2.5"
+        opacity="0.7" />
+
+    <!-- Curved connection paths -->
+    <path d="M 512 340 Q 612 390 512 512" fill="none" stroke="url(#goldGradientV2)"
+        stroke-width="4" opacity="0.5" stroke-linecap="round" />
+    <path d="M 684 512 Q 612 562 512 512" fill="none" stroke="url(#goldGradientV2)"
+        stroke-width="4" opacity="0.5" stroke-linecap="round" />
+    <path d="M 512 684 Q 412 612 512 512" fill="none" stroke="url(#goldGradientV2)"
+        stroke-width="4" opacity="0.5" stroke-linecap="round" />
+    <path d="M 340 512 Q 390 450 512 512" fill="none" stroke="url(#goldGradientV2)"
+        stroke-width="4" opacity="0.5" stroke-linecap="round" />
+
+    <!-- Central hub with ES -->
+    <circle cx="512" cy="512" r="85" fill="url(#goldGradientV2)" opacity="0.95" />
+    <circle cx="512" cy="512" r="90" fill="none" stroke="url(#goldGradientV2)" stroke-width="3"
+        opacity="0.5" />
+    <text x="512" y="540" font-family="Arial, sans-serif" font-size="72" font-weight="700"
+        text-anchor="middle" fill="url(#darkGradient)" opacity="0.98">ES</text>
+
+    <!-- Hexagon nodes (modular blocks) -->
+    <!-- Top hexagon -->
+    <circle cx="512" cy="340" r="50" fill="url(#goldGradientV2)" opacity="0.95" />
+    <polygon points="512,316 533,328 533,352 512,364 491,352 491,328"
+        fill="url(#darkGradient)" opacity="0.9" />
+    <polygon points="512,328 523,334 523,346 512,352 501,346 501,334"
+        fill="none" stroke="url(#goldGradientV2)" stroke-width="3" />
+
+    <!-- Right hexagon -->
+    <circle cx="684" cy="512" r="50" fill="url(#goldGradientV2)" opacity="0.95" />
+    <polygon points="684,488 705,500 705,524 684,536 663,524 663,500"
+        fill="url(#darkGradient)" opacity="0.9" />
+    <polygon points="684,500 695,506 695,518 684,524 673,518 673,506"
+        fill="none" stroke="url(#goldGradientV2)" stroke-width="3" />
+
+    <!-- Bottom hexagon -->
+    <circle cx="512" cy="684" r="50" fill="url(#goldGradientV2)" opacity="0.95" />
+    <polygon points="512,660 533,672 533,696 512,708 491,696 491,672"
+        fill="url(#darkGradient)" opacity="0.9" />
+    <polygon points="512,672 523,678 523,690 512,696 501,690 501,678"
+        fill="none" stroke="url(#goldGradientV2)" stroke-width="3" />
+
+    <!-- Left hexagon -->
+    <circle cx="340" cy="512" r="50" fill="url(#goldGradientV2)" opacity="0.95" />
+    <polygon points="340,488 361,500 361,524 340,536 319,524 319,500"
+        fill="url(#darkGradient)" opacity="0.9" />
+    <polygon points="340,500 351,506 351,518 340,524 329,518 329,506"
+        fill="none" stroke="url(#goldGradientV2)" stroke-width="3" />
+
+    <title>EKDSend - Hexagon Modules (Enhanced Blend)</title>
+</svg>

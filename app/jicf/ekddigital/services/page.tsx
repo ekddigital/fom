@@ -30,6 +30,15 @@ export default function EKDDigitalCloudServicesFlyerPage() {
 
       <div className="mt-8 print:hidden max-w-lg mx-auto space-y-2">
         <p className="text-xs font-bold uppercase tracking-widest text-[#C9972E] text-center mb-3">
+          Product promotional flyers
+        </p>
+        <Link href="/jicf/ekddigital/ekdsend" className={`${pricingLinkClass} block`}>
+          <span className="text-sm font-bold text-white">EKDSend</span>
+          <span className="block text-xs text-[#9ca3af] mt-0.5">
+            Communications platform — view promotional flyer
+          </span>
+        </Link>
+        <p className="text-xs font-bold uppercase tracking-widest text-[#C9972E] text-center mb-3 pt-4">
           Service pricing flyers
         </p>
         {ALL_SERVICE_PRICING_CONFIGS.map((config) => (
