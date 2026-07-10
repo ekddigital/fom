@@ -12,6 +12,10 @@ import {
   FLYER_PORTRAIT_H,
   FLYER_PORTRAIT_W,
 } from "@/components/jicf/ekddigital-flyer-theme";
+import {
+  EKDSendFlyerBackgroundDecorations,
+  EKDSendFlyerHeroDecorations,
+} from "@/components/jicf/ekdsend-flyer-decorations";
 
 /** EKDSend product brand palette (from mail/docs/ekdsend-flyer-copy.txt) */
 const EKDSEND_GOLD = "#C8A061";
@@ -103,6 +107,7 @@ function BackgroundLayers() {
           pointerEvents: "none",
         }}
       />
+      <EKDSendFlyerBackgroundDecorations />
     </>
   );
 }
@@ -251,6 +256,7 @@ function HeroImage() {
             "linear-gradient(to bottom, rgba(31,28,24,0.15) 0%, rgba(31,28,24,0.05) 35%, rgba(31,28,24,0.75) 100%)",
         }}
       />
+      <EKDSendFlyerHeroDecorations />
       <div
         style={{
           position: "absolute",
