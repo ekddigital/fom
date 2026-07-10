@@ -38,6 +38,12 @@ export default function EKDDigitalCloudServicesFlyerPage() {
             Communications platform — view promotional flyer
           </span>
         </Link>
+        <Link href="/jicf/ekddigital/digital-assets" className={`${pricingLinkClass} block`}>
+          <span className="text-sm font-bold text-white">Digital Assets</span>
+          <span className="block text-xs text-[#9ca3af] mt-0.5">
+            Secure DAM &amp; CDN — view promotional flyer
+          </span>
+        </Link>
         <p className="text-xs font-bold uppercase tracking-widest text-[#C9972E] text-center mb-3 pt-4">
           Service pricing flyers
         </p>

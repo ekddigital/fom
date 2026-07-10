@@ -13,6 +13,9 @@ export function EKDDigitalOverviewNavLinks() {
       <Link href="/jicf/ekddigital/ekdsend" className={linkClass}>
         EKDSend promo
       </Link>
+      <Link href="/jicf/ekddigital/digital-assets" className={linkClass}>
+        Digital Assets promo
+      </Link>
       <Link href="/jicf/ekddigital/services" className={linkClass}>
         Services overview
       </Link>
@@ -29,8 +32,30 @@ export function EKDSendPromoNavLinks() {
       <Link href="/jicf/ekddigital/services" className={linkClass}>
         All services
       </Link>
+      <Link href="/jicf/ekddigital/digital-assets" className={linkClass}>
+        Digital Assets promo
+      </Link>
       <Link href={PRICING_ROUTE_PREFIX + "/ekdsend"} className={linkClass}>
         EKDSend pricing
+      </Link>
+      <Link href="/jicf" className={linkClass}>
+        JICF hub
+      </Link>
+    </>
+  );
+}
+
+export function EKDDigitalAssetsPromoNavLinks() {
+  return (
+    <>
+      <Link href="/jicf/ekddigital/services" className={linkClass}>
+        All services
+      </Link>
+      <Link href={PRICING_ROUTE_PREFIX + "/digital-assets"} className={linkClass}>
+        Digital Assets pricing
+      </Link>
+      <Link href="/jicf/ekddigital/ekdsend" className={linkClass}>
+        EKDSend promo
       </Link>
       <Link href="/jicf" className={linkClass}>
         JICF hub

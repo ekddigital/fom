@@ -67,6 +67,15 @@ export const EKDSEND_PROMO_LAYOUT = {
   footerTop: 768,
 } as const;
 
+/** Digital Assets promotional flyer — same sparse portrait rhythm as EKDSend */
+export const DIGITAL_ASSETS_PROMO_LAYOUT = {
+  headerHeight: 72,
+  heroTop: 72,
+  heroHeight: 300,
+  contentTop: 72 + 300 + FLYER_SPACE.xl,
+  footerTop: 768,
+} as const;
+
 export const PRICING_FLYER_LAYOUT = {
   heroTop: FLYER_HEADER_END,
   heroHeight: 128,

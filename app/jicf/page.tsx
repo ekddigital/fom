@@ -366,6 +366,18 @@ function EkddigitalPricingHubSection() {
           </div>
           <ArrowRight className="size-4 text-[#C8A061] shrink-0 group-hover:translate-x-0.5 transition-transform" />
         </Link>
+        <Link
+          href="/jicf/ekddigital/digital-assets"
+          className="group flex items-center justify-between rounded-xl border border-[#38BDF8]/35 bg-[#0A1628]/80 px-4 py-3 hover:border-[#38BDF8]/55 transition-colors sm:col-span-2 lg:col-span-3"
+        >
+          <div>
+            <p className="text-sm font-bold text-white">Digital Assets — Promotional Flyer</p>
+            <p className="text-xs text-[#94a3b8]">
+              Your assets. Secured. · assets.andgroupco.com
+            </p>
+          </div>
+          <ArrowRight className="size-4 text-[#38BDF8] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+        </Link>
         {ALL_SERVICE_PRICING_CONFIGS.map((config) => (
           <Link
             key={config.slug}
