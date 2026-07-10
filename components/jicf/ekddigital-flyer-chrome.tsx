@@ -12,7 +12,7 @@ import {
 import {
   BG_DARK,
   BG_MID,
-  CONTACT_ROWS,
+  EKD_DIGITAL_WEBSITE,
   FLYER_PORTRAIT_H,
   FLYER_PORTRAIT_W,
   GOLD,
@@ -21,6 +21,9 @@ import {
   PARENT_COMPANY_NAME,
   PARENT_COMPANY_URL,
   PARENT_COMPANY_WEBSITE_LABEL,
+  contactRowsWithWebsite,
+  type FlyerContactRow,
+  type ProductFlyerBrand,
 } from "@/components/jicf/ekddigital-flyer-theme";
 
 const parentFooterStyle = {
@@ -132,9 +135,20 @@ function FlyerWatermark({ char }: { char: string }) {
 
 type FlyerHeaderProps = {
   tagline?: string;
+  websiteUrl?: string;
+  brand?: ProductFlyerBrand;
 };
 
-export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderProps) {
+export function FlyerHeader({
+  tagline = "Build · Host · Scale",
+  websiteUrl = EKD_DIGITAL_WEBSITE,
+  brand,
+}: FlyerHeaderProps) {
+  const logoSrc = brand?.logoSrc ?? "/ekddigital.png";
+  const logoAlt = brand?.logoAlt ?? "EKD Digital";
+  const brandLead = brand?.brandLead ?? "EKD ";
+  const brandAccent = brand?.brandAccent ?? "Digital";
+  const titleFontSize = brand ? 20 : 21;
   return (
     <>
       <div
@@ -178,8 +192,8 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/ekddigital.png"
-            alt="EKD Digital"
+            src={logoSrc}
+            alt={logoAlt}
             crossOrigin="anonymous"
             style={{
               width: "100%",
@@ -193,14 +207,15 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
           <p
             style={{
               margin: 0,
-              fontSize: 21,
+              fontSize: titleFontSize,
               fontWeight: 900,
               color: "#ffffff",
               letterSpacing: "-0.01em",
               lineHeight: 1.1,
             }}
           >
-            EKD <span style={{ color: GOLD }}>Digital</span>
+            {brandLead}
+            <span style={{ color: GOLD }}>{brandAccent}</span>
           </p>
           <div
             style={{
@@ -213,18 +228,18 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
             <p
               style={{
                 margin: 0,
-                fontSize: 9.5,
+                fontSize: brand ? 9 : 9.5,
                 fontWeight: 700,
-                color: "#e8e6e3",
-                letterSpacing: "0.14em",
+                color: brand ? "#a8a29e" : "#e8e6e3",
+                letterSpacing: brand ? "0.16em" : "0.14em",
                 textTransform: "uppercase",
                 lineHeight: 1.15,
-                textShadow: "0 1px 2px rgba(0,0,0,0.9)",
+                textShadow: brand ? undefined : "0 1px 2px rgba(0,0,0,0.9)",
               }}
             >
-              {tagline}
+              {brand ? "by EKD Digital" : tagline}
             </p>
-            <FlyerCircuitAccent opacity={0.4} color={GOLD_LIGHT} />
+            {!brand ? <FlyerCircuitAccent opacity={0.4} color={GOLD_LIGHT} /> : null}
           </div>
         </div>
         <div
@@ -245,7 +260,7 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
               textShadow: "0 1px 2px rgba(0,0,0,0.75)",
             }}
           >
-            ekddigital.com
+            {websiteUrl}
           </p>
         </div>
       </div>
@@ -267,13 +282,18 @@ type FlyerContactFooterProps = {
   top: number;
   ctaHeadline?: string;
   ctaSubline?: string;
+  websiteUrl?: string;
+  contactRows?: readonly FlyerContactRow[];
 };
 
 export function FlyerContactFooter({
   top,
   ctaHeadline = "GET YOUR FREE CONSULTATION →",
   ctaSubline = "Kingdom workers · Kingdom solutions — our DNA",
+  websiteUrl = EKD_DIGITAL_WEBSITE,
+  contactRows,
 }: FlyerContactFooterProps) {
+  const rows = contactRows ?? contactRowsWithWebsite(websiteUrl);
   return (
     <>
       <div
@@ -353,7 +373,7 @@ export function FlyerContactFooter({
             {ctaHeadline}
           </p>
         </FlyerSlantedCta>
-        <FlyerContactGrid rows={CONTACT_ROWS} />
+        <FlyerContactGrid rows={rows} />
         <FlyerParentCompanyLine />
       </div>
     </>

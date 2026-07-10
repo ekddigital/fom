@@ -63,7 +63,11 @@ function PricingFlyerCanvas({ config }: EKDDigitalServicePricingFlyerProps) {
   return (
     <div style={flyerCanvasStyle}>
       <FlyerBackground watermark={config.watermark} />
-      <FlyerHeader tagline="Build · Host · Scale" />
+      <FlyerHeader
+        tagline="Build · Host · Scale"
+        websiteUrl={config.productUrl}
+        brand={config.brand}
+      />
 
       <PricingHero config={config} lead={lead} accent={accent} />
 
@@ -83,6 +87,7 @@ function PricingFlyerCanvas({ config }: EKDDigitalServicePricingFlyerProps) {
       <FlyerContactFooter
         top={L.footerTop}
         ctaHeadline={config.ctaHeadline ?? "GET STARTED →"}
+        websiteUrl={config.productUrl}
       />
     </div>
   );
@@ -139,19 +144,24 @@ function PricingHero({
               "linear-gradient(120deg, rgba(200,160,97,0.22) 0%, rgba(31,28,24,0.95) 55%)",
           }}
         />
-        <div
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/assets_logo.svg"
+          alt=""
+          crossOrigin="anonymous"
+          aria-hidden
           style={{
             position: "absolute",
-            right: -20,
-            top: 10,
-            fontSize: 88,
-            opacity: 0.12,
+            right: 16,
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 118,
+            height: 118,
+            opacity: 0.42,
+            objectFit: "contain",
             pointerEvents: "none",
           }}
-          aria-hidden
-        >
-          🗂️
-        </div>
+        />
         <HeroLabel text={config.heroLabel} position="top-left" />
         <HeroHeadlineBox
           lead={lead}
@@ -215,6 +225,24 @@ function PricingHero({
             borderBottom: "1px solid rgba(200,160,97,0.35)",
           }}
         />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/ekdsend_logo.svg"
+          alt=""
+          crossOrigin="anonymous"
+          aria-hidden
+          style={{
+            position: "absolute",
+            right: 20,
+            top: "50%",
+            transform: "translateY(-50%)",
+            width: 108,
+            height: 108,
+            opacity: 0.38,
+            objectFit: "contain",
+            pointerEvents: "none",
+          }}
+        />
         <HeroLabel text={config.heroLabel} position="top-left" />
         <FlyerChevronCluster
           style={{ position: "absolute", right: FLYER_SPACE.lg, top: "42%", marginTop: -11 }}
@@ -240,6 +268,24 @@ function PricingHero({
           background:
             "linear-gradient(160deg, rgba(200,160,97,0.14) 0%, rgba(31,28,24,0.97) 60%)",
           borderBottom: `1px solid rgba(200,160,97,0.4)`,
+        }}
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/ekdsend_logo.svg"
+        alt=""
+        crossOrigin="anonymous"
+        aria-hidden
+        style={{
+          position: "absolute",
+          right: 20,
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: 108,
+          height: 108,
+          opacity: 0.36,
+          objectFit: "contain",
+          pointerEvents: "none",
         }}
       />
       <HeroLabel text={config.heroLabel} position="top-left" />

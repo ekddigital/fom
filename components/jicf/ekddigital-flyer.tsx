@@ -18,7 +18,7 @@ import {
   flyerBulletRowStyle,
   flyerSectionLabelStyle,
 } from "@/components/jicf/ekddigital-flyer-spacing";
-import { BG_DARK, BG_MID, GOLD_LIGHT } from "@/components/jicf/ekddigital-flyer-theme";
+import { BG_DARK, BG_MID, EKD_DIGITAL_WEBSITE, GOLD_LIGHT } from "@/components/jicf/ekddigital-flyer-theme";
 
 const L = INSTAGRAM_FLYER_LAYOUT;
 function EKDDigitalFlyerCanvas() {
@@ -199,7 +199,7 @@ function EKDDigitalFlyerCanvas() {
               textShadow: "0 1px 2px rgba(0,0,0,0.75)",
             }}
           >
-            ekddigital.com
+            {EKD_DIGITAL_WEBSITE}
           </p>
         </div>
       </div>
@@ -712,7 +712,7 @@ function EKDDigitalFlyerCanvas() {
             {
               icon: "🌐",
               label: "Website",
-              value: "ekddigital.com",
+              value: EKD_DIGITAL_WEBSITE,
               gold: true,
             },
           ]}

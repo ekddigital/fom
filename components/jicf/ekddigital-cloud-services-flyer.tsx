@@ -8,7 +8,11 @@ import {
   flyerCanvasStyle,
 } from "@/components/jicf/ekddigital-flyer-chrome";
 import { EKDDigitalFlyerShell } from "@/components/jicf/ekddigital-flyer-shell";
-import { pricingFlyerHref } from "@/components/jicf/ekddigital-pricing-data";
+import {
+  DIGITAL_ASSETS_WEBSITE,
+  EKD_DIGITAL_WEBSITE,
+  EKDSEND_WEBSITE,
+} from "@/components/jicf/ekddigital-flyer-theme";
 import {
   FlyerChevronCluster,
   FlyerCircuitAccent,
@@ -35,6 +39,7 @@ const SERVICES = [
     description: "Full-stack apps, integrations, and technical delivery.",
     cta: "CONTACT US →",
     pricingSlug: null as string | null,
+    productUrl: EKD_DIGITAL_WEBSITE,
     highlight: true,
   },
   {
@@ -44,6 +49,7 @@ const SERVICES = [
     description: "Unified communications APIs for product teams.",
     cta: "VIEW PRICING →",
     pricingSlug: "ekdsend",
+    productUrl: EKDSEND_WEBSITE,
     highlight: true,
   },
   {
@@ -53,6 +59,7 @@ const SERVICES = [
     description: "Store, transform, and deliver media globally.",
     cta: "VIEW PRICING →",
     pricingSlug: "digital-assets",
+    productUrl: DIGITAL_ASSETS_WEBSITE,
     highlight: false,
   },
   {
@@ -62,6 +69,7 @@ const SERVICES = [
     description: "DV, wildcard, and enterprise certificate management.",
     cta: "VIEW PRICING →",
     pricingSlug: "ssl",
+    productUrl: EKD_DIGITAL_WEBSITE,
     highlight: false,
   },
   {
@@ -71,6 +79,7 @@ const SERVICES = [
     description: "Developer-first email API with analytics & webhooks.",
     cta: "VIEW PRICING →",
     pricingSlug: "transactional-email",
+    productUrl: EKDSEND_WEBSITE,
     highlight: false,
   },
   {
@@ -80,6 +89,7 @@ const SERVICES = [
     description: "Managed hosting with monitoring and expert ops.",
     cta: "VIEW PRICING →",
     pricingSlug: "hosting",
+    productUrl: EKD_DIGITAL_WEBSITE,
     highlight: false,
   },
 ] as const;
@@ -321,9 +331,7 @@ function ServicesGrid() {
 type Service = (typeof SERVICES)[number];
 
 function ServiceCard({ service }: { service: Service }) {
-  const pathHint = service.pricingSlug
-    ? pricingFlyerHref(service.pricingSlug).replace("/jicf", "jicf")
-    : "ekd@ekddigital.com";
+  const pathHint = service.productUrl;
 
   return (
     <div

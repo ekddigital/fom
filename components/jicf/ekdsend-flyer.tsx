@@ -13,6 +13,7 @@ import {
 import {
   FLYER_PORTRAIT_H,
   FLYER_PORTRAIT_W,
+  EKDSEND_WEBSITE,
 } from "@/components/jicf/ekddigital-flyer-theme";
 import { EKDSendFlyerDecorations } from "@/components/jicf/ekdsend-flyer-decorations";
 
@@ -36,7 +37,7 @@ const BULLETS = [
   "Free tier — 100 emails/month, no card needed",
 ] as const;
 const CTA_LABEL = "Get started free →";
-const CTA_URL = "es.ekddigital.com";
+const CTA_URL = EKDSEND_WEBSITE;
 const CONTACT_PHONE = "+86 185 0683 2159";
 const CONTACT_WECHAT = "EKD231777285010";
 
@@ -152,6 +153,7 @@ function EKDSendHeader() {
             flexShrink: 0,
             border: `1.5px solid rgba(200,160,97,0.55)`,
             boxShadow: "0 0 12px rgba(200,160,97,0.2)",
+            background: EKDSEND_BG,
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -162,7 +164,7 @@ function EKDSendHeader() {
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit: "contain",
               display: "block",
             }}
           />

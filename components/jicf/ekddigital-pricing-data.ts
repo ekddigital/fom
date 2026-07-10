@@ -9,6 +9,14 @@ import {
   formatEmailsPerMonth,
   formatMonthlyPrice,
 } from "@/lib/jicf/ekddigital-transactional-pricing";
+import {
+  DIGITAL_ASSETS_PRODUCT_BRAND,
+  DIGITAL_ASSETS_WEBSITE,
+  EKD_DIGITAL_WEBSITE,
+  EKDSEND_PRODUCT_BRAND,
+  EKDSEND_WEBSITE,
+  type ProductFlyerBrand,
+} from "@/components/jicf/ekddigital-flyer-theme";
 
 export type PricingTier = {
   name: string;
@@ -41,6 +49,8 @@ export type ServicePricingFlyerConfig = {
   tiers: readonly PricingTier[];
   footnote: string;
   ctaHeadline?: string;
+  productUrl: string;
+  brand?: ProductFlyerBrand;
   downloadFilename: string;
   metadataTitle: string;
   metadataDescription: string;
@@ -71,7 +81,7 @@ export const TRANSACTIONAL_EMAIL_PRICING: ServicePricingFlyerConfig = {
   variant: "email",
   heroLabel: "Email API · Webhooks · Analytics",
   heroHeadline: "DELIVER AT SCALE.",
-  heroSubline: "REST & SMTP · es.ekddigital.com",
+  heroSubline: `REST & SMTP · ${EKDSEND_WEBSITE}`,
   tagline:
     "Reliable transactional email for password resets, invoices, and product notifications—built for developers.",
   bullets: [
@@ -81,7 +91,9 @@ export const TRANSACTIONAL_EMAIL_PRICING: ServicePricingFlyerConfig = {
   ],
   tiers: transactionalEmailTiers,
   footnote:
-    "Dedicated IPs & SLA — contact us · es.ekddigital.com · Prices from EKDSend mail platform",
+    `Dedicated IPs & SLA — contact us · ${EKDSEND_WEBSITE} · Prices from EKDSend mail platform`,
+  productUrl: EKDSEND_WEBSITE,
+  brand: EKDSEND_PRODUCT_BRAND,
   downloadFilename: "ekddigital-transactional-email-pricing.png",
   metadataTitle: "EKD Digital — Transactional Email Pricing",
   metadataDescription:
@@ -131,7 +143,9 @@ export const EKDSEND_PRICING: ServicePricingFlyerConfig = {
     },
   ],
   footnote:
-    "Voice minutes & bundled email API — contact for custom packages · es.ekddigital.com",
+    `Voice minutes & bundled email API — contact for custom packages · ${EKDSEND_WEBSITE}`,
+  productUrl: EKDSEND_WEBSITE,
+  brand: EKDSEND_PRODUCT_BRAND,
   downloadFilename: "ekddigital-ekdsend-pricing.png",
   metadataTitle: "EKD Digital — EKDSend Pricing",
   metadataDescription:
@@ -147,7 +161,7 @@ export const DIGITAL_ASSETS_PRICING: ServicePricingFlyerConfig = {
   variant: "assets",
   heroLabel: "Asset Management · Global CDN",
   heroHeadline: "STORE & DELIVER.",
-  heroSubline: "Images · Video · Documents",
+  heroSubline: `DAM · CDN · ${DIGITAL_ASSETS_WEBSITE}`,
   tagline:
     "Secure digital asset management with fast global CDN delivery for marketing, product, and media teams.",
   bullets: [
@@ -179,7 +193,9 @@ export const DIGITAL_ASSETS_PRICING: ServicePricingFlyerConfig = {
       contactOnly: true,
     },
   ],
-  footnote: "Custom CDN regions & dedicated buckets — contact for a tailored quote",
+  footnote: `Custom CDN regions & dedicated buckets — ${DIGITAL_ASSETS_WEBSITE}`,
+  productUrl: DIGITAL_ASSETS_WEBSITE,
+  brand: DIGITAL_ASSETS_PRODUCT_BRAND,
   downloadFilename: "ekddigital-digital-assets-pricing.png",
   metadataTitle: "EKD Digital — Digital Assets Pricing",
   metadataDescription:
@@ -228,6 +244,7 @@ export const SSL_PRICING: ServicePricingFlyerConfig = {
     },
   ],
   footnote: "Installation & renewal management available — contact for bulk or EV quotes",
+  productUrl: EKD_DIGITAL_WEBSITE,
   downloadFilename: "ekddigital-ssl-pricing.png",
   metadataTitle: "EKD Digital — SSL Certificate Pricing",
   metadataDescription:
@@ -276,6 +293,7 @@ export const HOSTING_PRICING: ServicePricingFlyerConfig = {
     },
   ],
   footnote: "Dedicated clusters & multi-region — contact for architecture review",
+  productUrl: EKD_DIGITAL_WEBSITE,
   downloadFilename: "ekddigital-hosting-pricing.png",
   metadataTitle: "EKD Digital — Cloud Hosting Pricing",
   metadataDescription:
