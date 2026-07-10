@@ -14,7 +14,7 @@ type DecorProps = {
 /** Curved dashed trajectory with terminal dot — abstract "message sent" arc */
 export function SendTrajectoryArc({
   style,
-  opacity = 0.28,
+  opacity = 0.42,
   color = EKDSEND_DECOR_GOLD,
   flip = false,
   variant = "wide",
@@ -41,7 +41,7 @@ export function SendTrajectoryArc({
       <path
         d={path}
         stroke={color}
-        strokeWidth={1.25}
+        strokeWidth={1.75}
         strokeDasharray="5 7"
         strokeLinecap="round"
         fill="none"
@@ -67,7 +67,7 @@ export function SendTrajectoryArc({
 /** Minimal abstract paper-plane / send glyph — not a literal airplane */
 export function PaperPlaneGlyph({
   style,
-  opacity = 0.32,
+  opacity = 0.44,
   color = EKDSEND_DECOR_GOLD,
   size = 36,
   rotate = 0,
@@ -109,7 +109,7 @@ export function PaperPlaneGlyph({
 /** Broken dashed segments along a swooping delivery path */
 export function MessageTrailDecoration({
   style,
-  opacity = 0.22,
+  opacity = 0.38,
   color = EKDSEND_DECOR_GOLD_LIGHT,
   flip = false,
 }: DecorProps & { flip?: boolean }) {
@@ -130,7 +130,7 @@ export function MessageTrailDecoration({
       <path
         d="M 12 98 C 48 72, 72 28, 118 22 S 178 58, 188 88"
         stroke={color}
-        strokeWidth={1}
+        strokeWidth={1.5}
         strokeDasharray="3 9 6 7"
         strokeLinecap="round"
         fill="none"
@@ -153,7 +153,7 @@ export function MessageTrailDecoration({
 /** Concentric arc rings suggesting broadcast / delivery radius */
 export function SendRadiusRings({
   style,
-  opacity = 0.14,
+  opacity = 0.34,
   color = EKDSEND_DECOR_GOLD,
 }: DecorProps) {
   return (
@@ -201,78 +201,91 @@ export function SendRadiusRings({
 }
 
 /**
- * Pre-composed placement layer for the EKDSend promo flyer.
- * Background/corner accents — sits behind hero and content (z-index 1).
+ * Dark-background accents below hero/content — footer zone only.
+ * (Hero/content decorations live inside those blocks so they aren't covered.)
  */
 export function EKDSendFlyerBackgroundDecorations() {
   return (
     <>
-      {/* Top-right corner — outbound trajectory */}
-      <SendTrajectoryArc
-        variant="wide"
-        opacity={0.26}
-        style={{ top: 88, right: 12, zIndex: 1 }}
-      />
-
-      {/* Top-left — small send glyph near header */}
-      <PaperPlaneGlyph
-        size={28}
-        opacity={0.2}
-        rotate={-18}
-        style={{ top: 82, left: 18, zIndex: 1 }}
-      />
-
-      {/* Content block — right flank trajectory */}
-      <SendTrajectoryArc
-        variant="tight"
-        flip
-        opacity={0.2}
-        style={{ top: 520, right: 8, zIndex: 1 }}
-      />
-
-      {/* Content block — left flank plane */}
-      <PaperPlaneGlyph
-        size={32}
-        opacity={0.16}
-        rotate={12}
-        style={{ top: 480, left: 6, zIndex: 1 }}
-      />
-
-      {/* Footer area — subtle trail */}
+      {/* Footer area — delivery trail sweeping in from the right */}
       <MessageTrailDecoration
         flip
-        opacity={0.14}
-        style={{ bottom: 48, right: -24, zIndex: 1 }}
+        opacity={0.4}
+        style={{ bottom: 72, right: 4, zIndex: 1 }}
       />
 
       {/* Bottom-left corner accent */}
       <PaperPlaneGlyph
-        size={24}
-        opacity={0.14}
+        size={28}
+        opacity={0.38}
         rotate={-8}
-        style={{ bottom: 100, left: 14, zIndex: 1 }}
+        style={{ bottom: 108, left: 16, zIndex: 1 }}
       />
     </>
   );
 }
 
-/** Hero-area decorations — place inside hero block above image, below text */
+/** Content-block flank accents — behind copy, above dark canvas */
+export function EKDSendFlyerContentDecorations() {
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 0,
+        overflow: "hidden",
+      }}
+    >
+      <SendTrajectoryArc
+        variant="tight"
+        flip
+        opacity={0.42}
+        style={{ top: 48, right: 6 }}
+      />
+      <PaperPlaneGlyph
+        size={34}
+        opacity={0.4}
+        rotate={12}
+        style={{ top: 8, left: 2 }}
+      />
+      <SendTrajectoryArc
+        variant="wide"
+        opacity={0.36}
+        style={{ bottom: 24, left: 12 }}
+      />
+    </div>
+  );
+}
+
+/** Hero-area decorations — above photo gradient, below any hero copy */
 export function EKDSendFlyerHeroDecorations() {
   return (
     <>
+      {/* Prominent top-right outbound arc — primary visual anchor */}
+      <SendTrajectoryArc
+        variant="wide"
+        opacity={0.52}
+        style={{ top: 12, right: 16, zIndex: 2 }}
+      />
+
+      {/* Sweeping delivery trail across upper hero */}
       <MessageTrailDecoration
-        opacity={0.2}
-        style={{ top: 40, left: -20, zIndex: 2 }}
+        opacity={0.44}
+        style={{ top: 28, left: 8, zIndex: 2 }}
       />
+
       <SendRadiusRings
-        opacity={0.14}
-        style={{ top: -10, right: -30, zIndex: 2 }}
+        opacity={0.36}
+        style={{ top: 8, right: -8, zIndex: 2 }}
       />
+
       <PaperPlaneGlyph
-        size={26}
-        opacity={0.22}
+        size={30}
+        opacity={0.48}
         rotate={-24}
-        style={{ top: 24, right: 28, zIndex: 2 }}
+        style={{ top: 56, right: 36, zIndex: 2 }}
       />
     </>
   );

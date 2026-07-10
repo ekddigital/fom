@@ -14,6 +14,7 @@ import {
 } from "@/components/jicf/ekddigital-flyer-theme";
 import {
   EKDSendFlyerBackgroundDecorations,
+  EKDSendFlyerContentDecorations,
   EKDSendFlyerHeroDecorations,
 } from "@/components/jicf/ekdsend-flyer-decorations";
 
@@ -252,6 +253,7 @@ function HeroImage() {
         style={{
           position: "absolute",
           inset: 0,
+          zIndex: 1,
           background:
             "linear-gradient(to bottom, rgba(31,28,24,0.15) 0%, rgba(31,28,24,0.05) 35%, rgba(31,28,24,0.75) 100%)",
         }}
@@ -274,6 +276,8 @@ function HeroImage() {
 function ContentBlock() {
   return (
     <FlyerBlock top={L.contentTop} minHeight={368} padding={`0 ${FLYER_PAD_X}px`}>
+      <EKDSendFlyerContentDecorations />
+      <div style={{ position: "relative", zIndex: 1 }}>
       <h2
         style={{
           margin: 0,
@@ -346,6 +350,7 @@ function ContentBlock() {
         >
           {CTA_URL}
         </p>
+      </div>
       </div>
     </FlyerBlock>
   );
