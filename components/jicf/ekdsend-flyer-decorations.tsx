@@ -3,20 +3,23 @@ import type { CSSProperties } from "react";
 /** EKDSend brand gold — matches ekdsend-flyer.tsx */
 export const EKDSEND_DECOR_GOLD = "#C8A061";
 export const EKDSEND_DECOR_GOLD_LIGHT = "#E8C589";
+/** Slightly brighter gold for path strokes on dark / photo areas */
+export const EKDSEND_DECOR_GOLD_PATH = "#D4B06E";
 
 /**
- * Full-canvas send trajectory — one continuous cubic-bezier chain.
- * Origin (top-right hero) → mid waypoint (content entry) → destination (CTA).
+ * Right-gutter send trajectory — stays in negative space:
+ * hero top-right → down right edge → flanks bullets → arrives at CTA.
+ * Avoids headline, subhead, and bullet copy (x ≲ 460).
  */
 const SEND_PATH_D =
-  "M 492 38 C 518 78, 502 148, 448 198 C 392 248, 318 302, 268 358 C 208 424, 178 508, 212 592 C 248 652, 262 682, 268 698";
+  "M 514 92 C 528 158, 520 248, 508 338 C 502 418, 500 498, 498 578 C 492 632, 462 664, 412 680";
 
-/** Paper plane on the first sweep (~t=0.32 of segment 1) */
-const PLANE_ANCHOR = { x: 472, y: 102, rotate: -28 };
+/** Paper plane on the first hero sweep */
+const PLANE_ANCHOR = { x: 522, y: 148, rotate: -16 };
 
-const ORIGIN = { x: 492, y: 38 };
-const MIDPOINT = { x: 268, y: 358 };
-const DESTINATION = { x: 268, y: 698 };
+const ORIGIN = { x: 514, y: 92 };
+const MIDPOINT = { x: 500, y: 498 };
+const DESTINATION = { x: 412, y: 680 };
 
 type DecorProps = {
   style?: CSSProperties;
@@ -26,7 +29,7 @@ type DecorProps = {
 
 /** Inline paper-plane glyph — centered on (18,18) in 36×36 space */
 function PlaneGlyphPaths({
-  color = EKDSEND_DECOR_GOLD,
+  color = EKDSEND_DECOR_GOLD_PATH,
   opacity = 1,
 }: {
   color?: string;
@@ -38,15 +41,15 @@ function PlaneGlyphPaths({
         d="M 4 18 L 32 6 L 20 18 L 32 30 Z"
         fill="none"
         stroke={color}
-        strokeWidth={1.5}
+        strokeWidth={1.75}
         strokeLinejoin="round"
       />
       <path
         d="M 20 18 L 20 28 L 14 22 Z"
         fill={color}
-        fillOpacity={0.2}
+        fillOpacity={0.28}
         stroke={color}
-        strokeWidth={1}
+        strokeWidth={1.15}
         strokeLinejoin="round"
       />
       <line
@@ -55,8 +58,8 @@ function PlaneGlyphPaths({
         x2={10}
         y2={24}
         stroke={color}
-        strokeWidth={1}
-        opacity={0.55}
+        strokeWidth={1.15}
+        opacity={0.65}
       />
     </g>
   );
@@ -69,7 +72,7 @@ function PlaneGlyphPaths({
 export function ConnectedSendPath({
   style,
   opacity = 1,
-  color = EKDSEND_DECOR_GOLD,
+  color = EKDSEND_DECOR_GOLD_PATH,
   lightColor = EKDSEND_DECOR_GOLD_LIGHT,
 }: DecorProps & { lightColor?: string }) {
   const { x: px, y: py, rotate } = PLANE_ANCHOR;
@@ -90,80 +93,92 @@ export function ConnectedSendPath({
       }}
     >
       {/* Broadcast rings at send origin — centered on path start */}
-      <g opacity={0.38}>
+      <g opacity={0.52}>
         <circle
           cx={ORIGIN.x}
           cy={ORIGIN.y}
-          r={18}
+          r={20}
           stroke={color}
-          strokeWidth={0.75}
-          strokeDasharray="4 9"
+          strokeWidth={1}
+          strokeDasharray="4 8"
           fill="none"
         />
         <circle
           cx={ORIGIN.x}
           cy={ORIGIN.y}
-          r={10}
+          r={11}
           stroke={lightColor}
-          strokeWidth={0.5}
-          strokeDasharray="3 6"
+          strokeWidth={0.75}
+          strokeDasharray="3 5"
           fill="none"
-          opacity={0.75}
+          opacity={0.85}
         />
       </g>
+
+      {/* Dark halo for contrast on hero photo */}
+      <path
+        d={SEND_PATH_D}
+        stroke="#1F1C18"
+        strokeWidth={3.75}
+        strokeDasharray="5 7"
+        strokeLinecap="round"
+        fill="none"
+        opacity={0.42}
+      />
 
       {/* Primary delivery trajectory — single connected curve */}
       <path
         d={SEND_PATH_D}
         stroke={color}
-        strokeWidth={1.75}
+        strokeWidth={2.25}
         strokeDasharray="5 7"
         strokeLinecap="round"
         fill="none"
-        opacity={0.48}
+        opacity={0.66}
       />
 
       {/* Origin dot */}
-      <circle cx={ORIGIN.x} cy={ORIGIN.y} r={3} fill={color} opacity={0.9} />
-      <circle cx={ORIGIN.x} cy={ORIGIN.y} r={1.5} fill={lightColor} opacity={0.6} />
+      <circle cx={ORIGIN.x} cy={ORIGIN.y} r={3.5} fill={color} opacity={0.95} />
+      <circle cx={ORIGIN.x} cy={ORIGIN.y} r={1.75} fill={lightColor} opacity={0.7} />
 
       {/* Paper plane ON the path */}
       <g
         transform={`translate(${px}, ${py}) rotate(${rotate}) translate(-18, -18)`}
-        opacity={0.5}
+        opacity={0.82}
       >
         <PlaneGlyphPaths color={color} />
       </g>
 
-      {/* Mid-path waypoint — subtle pulse where curve enters content */}
-      <circle cx={MIDPOINT.x} cy={MIDPOINT.y} r={2} fill={lightColor} opacity={0.45} />
+      {/* Mid-path waypoint — where curve runs beside bullet list */}
+      <circle cx={MIDPOINT.x} cy={MIDPOINT.y} r={2.5} fill={lightColor} opacity={0.6} />
 
       {/* Destination — delivery arrived near CTA */}
       <circle
         cx={DESTINATION.x}
         cy={DESTINATION.y}
-        r={4}
+        r={5}
         fill="none"
         stroke={color}
-        strokeWidth={1.25}
-        opacity={0.7}
+        strokeWidth={1.5}
+        opacity={0.8}
       />
-      <circle cx={DESTINATION.x} cy={DESTINATION.y} r={2} fill={color} opacity={0.85} />
+      <circle cx={DESTINATION.x} cy={DESTINATION.y} r={2.5} fill={color} opacity={0.9} />
       <path
-        d={`M ${DESTINATION.x - 3.5} ${DESTINATION.y} L ${DESTINATION.x - 0.5} ${DESTINATION.y + 3.5} L ${DESTINATION.x + 4.5} ${DESTINATION.y - 3.5}`}
+        d={`M ${DESTINATION.x - 4} ${DESTINATION.y} L ${DESTINATION.x - 0.5} ${DESTINATION.y + 4} L ${DESTINATION.x + 5} ${DESTINATION.y - 4}`}
         stroke={color}
-        strokeWidth={1.25}
+        strokeWidth={1.35}
         strokeLinecap="round"
         strokeLinejoin="round"
         fill="none"
-        opacity={0.75}
+        opacity={0.85}
       />
     </svg>
   );
 }
 
 /**
- * Canvas-level decorations — one unified send path spanning hero through footer.
+ * Canvas-level decorations — unified send path in hero gutter + right margin.
+ * Sits above hero imagery, below copy blocks.
  */
 export function EKDSendFlyerDecorations() {
   return <ConnectedSendPath style={{ zIndex: 3 }} />;
