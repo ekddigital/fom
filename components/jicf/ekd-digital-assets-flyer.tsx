@@ -14,11 +14,11 @@ import {
 } from "@/components/jicf/ekddigital-flyer-theme";
 import { EKDDigitalAssetsFlyerDecorations } from "@/components/jicf/ekd-digital-assets-flyer-decorations";
 
-/** Digital Assets product brand palette — cyan on deep navy */
-const ASSETS_CYAN = "#38BDF8";
-const ASSETS_CYAN_LIGHT = "#7DD3FC";
-const ASSETS_BG = "#0A1628";
-const ASSETS_BG_MID = "#0F2847";
+/** Digital Assets brand palette — matches EKDSend / EKD Digital gold */
+const ASSETS_GOLD = "#C8A061";
+const ASSETS_GOLD_LIGHT = "#E8C589";
+const ASSETS_BG = "#1F1C18";
+const ASSETS_BG_MID = "#2A2520";
 
 const L = DIGITAL_ASSETS_PROMO_LAYOUT;
 
@@ -89,7 +89,7 @@ function BackgroundLayers() {
           width: 220,
           height: 220,
           borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(56,189,248,0.12) 0%, transparent 70%)`,
+          background: `radial-gradient(circle, rgba(200,160,97,0.14) 0%, transparent 70%)`,
           pointerEvents: "none",
         }}
       />
@@ -101,7 +101,7 @@ function BackgroundLayers() {
           width: 180,
           height: 180,
           borderRadius: "50%",
-          background: `radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 70%)`,
+          background: `radial-gradient(circle, rgba(200,160,97,0.08) 0%, transparent 70%)`,
           pointerEvents: "none",
         }}
       />
@@ -119,7 +119,7 @@ function DigitalAssetsHeader() {
           left: 0,
           right: 0,
           height: 2,
-          background: `linear-gradient(to right, transparent, ${ASSETS_CYAN} 35%, ${ASSETS_CYAN_LIGHT} 65%, transparent)`,
+          background: `linear-gradient(to right, transparent, ${ASSETS_GOLD} 35%, ${ASSETS_GOLD_LIGHT} 65%, transparent)`,
           zIndex: 11,
         }}
       />
@@ -134,8 +134,8 @@ function DigitalAssetsHeader() {
           alignItems: "center",
           padding: `0 ${FLYER_PAD_X}px`,
           gap: 12,
-          background: "rgba(10,22,40,0.98)",
-          borderBottom: `2px solid ${ASSETS_CYAN}`,
+          background: "rgba(31,28,24,0.98)",
+          borderBottom: `2px solid ${ASSETS_GOLD}`,
           zIndex: 10,
         }}
       >
@@ -146,8 +146,8 @@ function DigitalAssetsHeader() {
             borderRadius: 10,
             overflow: "hidden",
             flexShrink: 0,
-            border: `1.5px solid rgba(56,189,248,0.55)`,
-            boxShadow: "0 0 12px rgba(56,189,248,0.22)",
+            border: `1.5px solid rgba(200,160,97,0.55)`,
+            boxShadow: "0 0 12px rgba(200,160,97,0.2)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -174,14 +174,14 @@ function DigitalAssetsHeader() {
               lineHeight: 1.1,
             }}
           >
-            Digital<span style={{ color: ASSETS_CYAN }}>Assets</span>
+            Digital<span style={{ color: ASSETS_GOLD }}>Assets</span>
           </p>
           <p
             style={{
               margin: "2px 0 0",
               fontSize: 9,
               fontWeight: 700,
-              color: "#94a3b8",
+              color: "#a8a29e",
               letterSpacing: "0.16em",
               textTransform: "uppercase",
             }}
@@ -191,7 +191,7 @@ function DigitalAssetsHeader() {
         </div>
         <div
           style={{
-            border: `1px solid rgba(56,189,248,0.45)`,
+            border: `1px solid rgba(200,160,97,0.45)`,
             borderRadius: 20,
             padding: "4px 11px",
           }}
@@ -200,7 +200,7 @@ function DigitalAssetsHeader() {
             style={{
               margin: 0,
               fontSize: 8,
-              color: ASSETS_CYAN_LIGHT,
+              color: ASSETS_GOLD_LIGHT,
               fontWeight: 800,
               letterSpacing: "0.03em",
               whiteSpace: "nowrap",
@@ -217,7 +217,7 @@ function DigitalAssetsHeader() {
           left: 0,
           right: 0,
           height: 2,
-          background: `linear-gradient(to right, transparent, ${ASSETS_CYAN} 25%, ${ASSETS_CYAN_LIGHT} 50%, ${ASSETS_CYAN} 75%, transparent)`,
+          background: `linear-gradient(to right, transparent, ${ASSETS_GOLD} 25%, ${ASSETS_GOLD_LIGHT} 50%, ${ASSETS_GOLD} 75%, transparent)`,
         }}
       />
     </>
@@ -251,7 +251,7 @@ function HeroImage() {
           inset: 0,
           zIndex: 1,
           background:
-            "linear-gradient(to bottom, rgba(10,22,40,0.12) 0%, rgba(10,22,40,0.04) 35%, rgba(10,22,40,0.78) 100%)",
+            "linear-gradient(to bottom, rgba(31,28,24,0.15) 0%, rgba(31,28,24,0.05) 35%, rgba(31,28,24,0.75) 100%)",
         }}
       />
       <div
@@ -261,7 +261,7 @@ function HeroImage() {
           left: 0,
           right: 0,
           height: 3,
-          background: `linear-gradient(to right, transparent, ${ASSETS_CYAN} 20%, ${ASSETS_CYAN_LIGHT} 50%, ${ASSETS_CYAN} 80%, transparent)`,
+          background: `linear-gradient(to right, transparent, ${ASSETS_GOLD} 20%, ${ASSETS_GOLD_LIGHT} 50%, ${ASSETS_GOLD} 80%, transparent)`,
         }}
       />
     </FlyerBlock>
@@ -297,7 +297,7 @@ function ContentBlock() {
             margin: `${FLYER_SPACE.lg}px 0 0`,
             fontSize: 14,
             fontWeight: 700,
-            color: "#e2e8f0",
+            color: "#f3f2f0",
             lineHeight: 1.44,
             maxWidth: 420,
           }}
@@ -314,10 +314,10 @@ function ContentBlock() {
         <div style={{ marginTop: FLYER_SPACE.lg }}>
           <div
             style={{
-              background: `linear-gradient(135deg, ${ASSETS_CYAN_LIGHT} 0%, ${ASSETS_CYAN} 100%)`,
+              background: `linear-gradient(135deg, ${ASSETS_GOLD_LIGHT} 0%, ${ASSETS_GOLD} 100%)`,
               padding: "10px 24px",
               textAlign: "center",
-              boxShadow: "0 4px 18px rgba(56,189,248,0.35)",
+              boxShadow: "0 4px 18px rgba(200,160,97,0.35)",
               clipPath:
                 "polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%)",
             }}
@@ -341,7 +341,7 @@ function ContentBlock() {
               margin: `${FLYER_SPACE.xs + 1}px 0 0`,
               fontSize: 13,
               fontWeight: 800,
-              color: ASSETS_CYAN_LIGHT,
+              color: ASSETS_GOLD_LIGHT,
               textAlign: "center",
               letterSpacing: "0.06em",
               lineHeight: 1.25,
@@ -360,7 +360,7 @@ function Bullet({ text }: { text: string }) {
     <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.md + 2 }}>
       <span
         style={{
-          color: ASSETS_CYAN,
+          color: ASSETS_GOLD,
           fontSize: 17,
           fontWeight: 900,
           flexShrink: 0,
@@ -374,7 +374,7 @@ function Bullet({ text }: { text: string }) {
           margin: 0,
           fontSize: 13,
           fontWeight: 700,
-          color: "#f1f5f9",
+          color: "#fafaf9",
           lineHeight: 1.42,
         }}
       >
@@ -394,7 +394,7 @@ function FooterBlock() {
           left: FLYER_PAD_X,
           right: FLYER_PAD_X,
           height: 1,
-          background: `linear-gradient(to right, transparent, rgba(56,189,248,0.4) 50%, transparent)`,
+          background: `linear-gradient(to right, transparent, rgba(200,160,97,0.4) 50%, transparent)`,
         }}
       />
       <div
@@ -412,7 +412,7 @@ function FooterBlock() {
             margin: 0,
             fontSize: 12.5,
             fontWeight: 800,
-            color: "#e2e8f0",
+            color: "#f3f2f0",
             letterSpacing: "0.1em",
             lineHeight: 1.25,
             textTransform: "uppercase",
@@ -425,7 +425,7 @@ function FooterBlock() {
             margin: `3px 0 0`,
             fontSize: 11,
             fontWeight: 700,
-            color: "#94a3b8",
+            color: "#c9c6c2",
             lineHeight: 1.25,
           }}
         >
@@ -438,9 +438,9 @@ function FooterBlock() {
             flexDirection: "column",
             gap: 6,
             padding: "10px 14px",
-            border: `1px solid rgba(56,189,248,0.42)`,
+            border: `1px solid rgba(200,160,97,0.42)`,
             borderRadius: 8,
-            background: "rgba(15,40,71,0.6)",
+            background: "rgba(42,37,32,0.6)",
           }}
         >
           <FooterContactLine
@@ -479,7 +479,7 @@ function FooterContactLine({
           style={{
             fontSize: 9,
             fontWeight: 800,
-            color: ASSETS_CYAN,
+            color: ASSETS_GOLD,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
           }}
@@ -491,7 +491,7 @@ function FooterContactLine({
             marginLeft: 6,
             fontSize: 13,
             fontWeight: 800,
-            color: "#f8fafc",
+            color: "#fafaf9",
             letterSpacing: "0.02em",
           }}
         >

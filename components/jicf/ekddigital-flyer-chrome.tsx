@@ -13,10 +13,10 @@ import {
   BG_DARK,
   BG_MID,
   CONTACT_ROWS,
-  CYAN_TECH,
   FLYER_PORTRAIT_H,
   FLYER_PORTRAIT_W,
   GOLD,
+  GOLD_LIGHT,
   GOLD_PALE,
   PARENT_COMPANY_NAME,
   PARENT_COMPANY_URL,
@@ -74,7 +74,7 @@ function FlyerBgLayers() {
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "radial-gradient(rgba(0,212,255,0.04) 1px, transparent 1px), radial-gradient(rgba(201,151,46,0.05) 1px, transparent 1px)",
+            "radial-gradient(rgba(200,160,97,0.04) 1px, transparent 1px), radial-gradient(rgba(200,160,97,0.05) 1px, transparent 1px)",
           backgroundSize: "22px 22px, 20px 20px",
           pointerEvents: "none",
         }}
@@ -88,7 +88,7 @@ function FlyerBgLayers() {
           height: 280,
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(0,212,255,0.12) 0%, rgba(201,151,46,0.1) 40%, transparent 70%)",
+            "radial-gradient(circle, rgba(200,160,97,0.12) 0%, rgba(200,160,97,0.1) 40%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -101,7 +101,7 @@ function FlyerBgLayers() {
           height: 240,
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(201,151,46,0.11) 0%, rgba(0,212,255,0.06) 50%, transparent 70%)",
+            "radial-gradient(circle, rgba(200,160,97,0.11) 0%, rgba(200,160,97,0.06) 50%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -118,7 +118,7 @@ function FlyerWatermark({ char }: { char: string }) {
         right: 6,
         fontSize: 100,
         fontWeight: 900,
-        color: "rgba(201,151,46,0.045)",
+        color: "rgba(200,160,97,0.045)",
         lineHeight: 1,
         pointerEvents: "none",
         userSelect: "none",
@@ -144,7 +144,7 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
           left: 0,
           right: 0,
           height: 2,
-          background: `linear-gradient(to right, transparent, ${CYAN_TECH} 30%, ${GOLD} 70%, transparent)`,
+          background: `linear-gradient(to right, transparent, ${GOLD_LIGHT} 30%, ${GOLD} 70%, transparent)`,
           zIndex: 11,
         }}
       />
@@ -159,7 +159,7 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
           alignItems: "center",
           padding: "0 18px",
           gap: 11,
-          background: "rgba(0, 12, 36, 0.98)",
+          background: "rgba(31, 28, 24, 0.98)",
           borderBottom: `2.5px solid ${GOLD}`,
           zIndex: 10,
         }}
@@ -171,9 +171,9 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
             borderRadius: "50%",
             overflow: "hidden",
             flexShrink: 0,
-            border: `2px solid rgba(0,212,255,0.45)`,
+            border: `2px solid rgba(200,160,97,0.45)`,
             boxShadow:
-              "0 0 14px rgba(0,212,255,0.25), 0 0 10px rgba(201,151,46,0.2)",
+              "0 0 14px rgba(200,160,97,0.25), 0 0 10px rgba(200,160,97,0.2)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -224,12 +224,12 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
             >
               {tagline}
             </p>
-            <FlyerCircuitAccent opacity={0.4} color={CYAN_TECH} />
+            <FlyerCircuitAccent opacity={0.4} color={GOLD_LIGHT} />
           </div>
         </div>
         <div
           style={{
-            border: "1px solid rgba(201,151,46,0.5)",
+            border: "1px solid rgba(200,160,97,0.5)",
             borderRadius: 20,
             padding: "4px 11px",
           }}
@@ -256,7 +256,7 @@ export function FlyerHeader({ tagline = "Build · Host · Scale" }: FlyerHeaderP
           left: 0,
           right: 0,
           height: 3,
-          background: `linear-gradient(to right, transparent, ${GOLD} 20%, #e6b84a 50%, ${GOLD} 80%, transparent)`,
+          background: `linear-gradient(to right, transparent, ${GOLD} 20%, ${GOLD_LIGHT} 50%, ${GOLD} 80%, transparent)`,
         }}
       />
     </>
@@ -283,7 +283,7 @@ export function FlyerContactFooter({
           left: 0,
           right: 0,
           height: 2.5,
-          background: `linear-gradient(to right, transparent, ${GOLD} 15%, #e6b84a 50%, ${GOLD} 85%, transparent)`,
+          background: `linear-gradient(to right, transparent, ${GOLD} 15%, ${GOLD_LIGHT} 50%, ${GOLD} 85%, transparent)`,
         }}
       />
       <div
@@ -294,7 +294,7 @@ export function FlyerContactFooter({
           left: 0,
           right: 0,
           bottom: 0,
-          background: "rgba(0, 12, 36, 0.98)",
+          background: "rgba(31, 28, 24, 0.98)",
           zIndex: 1,
         }}
       />
@@ -323,7 +323,7 @@ export function FlyerContactFooter({
           }}
         >
           Questions? We&apos;re just a{" "}
-          <span style={{ color: CYAN_TECH }}>button</span> away.
+          <span style={{ color: GOLD_LIGHT }}>button</span> away.
         </p>
         <p
           style={{

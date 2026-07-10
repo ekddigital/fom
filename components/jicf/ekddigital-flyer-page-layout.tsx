@@ -22,7 +22,7 @@ function FlyerPageHeader({
 }) {
   return (
     <div className="text-center mb-6">
-      <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C9972E] mb-2">
+      <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C8A061] mb-2">
         {eyebrow}
       </p>
       <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
@@ -44,7 +44,7 @@ export function EKDDigitalFlyerPageLayout({
     <>
       <PublicHeader />
 
-      <main className="min-h-screen bg-linear-to-b from-[#07090f] via-[#0c1221] to-[#07090f]">
+      <main className="min-h-screen bg-linear-to-b from-[#1F1C18] via-[#2A2520] to-[#1F1C18]">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
           <FlyerPageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
 

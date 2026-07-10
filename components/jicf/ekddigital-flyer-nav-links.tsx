@@ -5,7 +5,7 @@ import {
 } from "@/components/jicf/ekddigital-pricing-data";
 
 const linkClass =
-  "rounded-full border border-[#C9972E]/40 px-3 py-1.5 text-xs font-semibold text-[#e6c258] hover:bg-[#C9972E]/10 transition-colors";
+  "rounded-full border border-[#C8A061]/40 px-3 py-1.5 text-xs font-semibold text-[#E8C589] hover:bg-[#C8A061]/10 transition-colors";
 
 export function EKDDigitalOverviewNavLinks() {
   return (
@@ -75,7 +75,7 @@ export function EKDDigitalPricingNavLinks({ currentSlug }: { currentSlug: string
           key={config.slug}
           href={`${PRICING_ROUTE_PREFIX}/${config.slug}`}
           className={`${linkClass}${
-            config.slug === currentSlug ? " bg-[#C9972E]/20 border-[#C9972E]" : ""
+            config.slug === currentSlug ? " bg-[#C8A061]/20 border-[#C8A061]" : ""
           }`}
           aria-current={config.slug === currentSlug ? "page" : undefined}
         >

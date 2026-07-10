@@ -1,10 +1,10 @@
 import type { CSSProperties } from "react";
 
-/** Digital Assets brand cyan — matches ekd-digital-assets-flyer.tsx */
-export const ASSETS_DECOR_CYAN = "#38BDF8";
-export const ASSETS_DECOR_CYAN_LIGHT = "#7DD3FC";
-/** Brighter stroke for paths on dark / photo areas */
-export const ASSETS_DECOR_CYAN_PATH = "#22D3EE";
+/** Digital Assets brand gold — matches ekd-digital-assets-flyer.tsx / EKDSend */
+export const ASSETS_DECOR_GOLD = "#C8A061";
+export const ASSETS_DECOR_GOLD_LIGHT = "#E8C589";
+/** Slightly brighter gold for path strokes on dark / photo areas */
+export const ASSETS_DECOR_GOLD_PATH = "#D4B06E";
 
 /**
  * Right-gutter secure data arc — stays in negative space:
@@ -28,7 +28,7 @@ type DecorProps = {
 
 /** Inline padlock glyph — centered on (16,16) in 32×32 space */
 function LockGlyphPaths({
-  color = ASSETS_DECOR_CYAN_PATH,
+  color = ASSETS_DECOR_GOLD_PATH,
   opacity = 1,
 }: {
   color?: string;
@@ -104,8 +104,8 @@ function FileNode({
 export function ConnectedSecurePath({
   style,
   opacity = 1,
-  color = ASSETS_DECOR_CYAN_PATH,
-  lightColor = ASSETS_DECOR_CYAN_LIGHT,
+  color = ASSETS_DECOR_GOLD_PATH,
+  lightColor = ASSETS_DECOR_GOLD_LIGHT,
 }: DecorProps & { lightColor?: string }) {
   const { x: lx, y: ly, rotate } = LOCK_ANCHOR;
 
@@ -150,7 +150,7 @@ export function ConnectedSecurePath({
       {/* Dark halo for contrast on hero photo */}
       <path
         d={SECURE_PATH_D}
-        stroke="#0A1628"
+        stroke="#1F1C18"
         strokeWidth={3.75}
         strokeDasharray="4 8"
         strokeLinecap="round"

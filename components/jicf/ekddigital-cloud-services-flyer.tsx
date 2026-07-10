@@ -23,7 +23,7 @@ import {
   flyerBulletRowStyle,
   flyerSectionLabelStyle,
 } from "@/components/jicf/ekddigital-flyer-spacing";
-import { CYAN_TECH, GOLD, GOLD_LIGHT } from "@/components/jicf/ekddigital-flyer-theme";
+import { GOLD, GOLD_LIGHT } from "@/components/jicf/ekddigital-flyer-theme";
 
 const L = CLOUD_FLYER_LAYOUT;
 
@@ -145,7 +145,7 @@ function HeroStrip() {
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(to bottom, rgba(7,9,15,0.35) 0%, rgba(7,9,15,0.15) 40%, rgba(7,9,15,0.82) 100%)",
+            "linear-gradient(to bottom, rgba(31,28,24,0.35) 0%, rgba(31,28,24,0.15) 40%, rgba(31,28,24,0.82) 100%)",
         }}
       />
       <div
@@ -166,7 +166,7 @@ function HeroStrip() {
             margin: 0,
             fontSize: 9,
             fontWeight: 800,
-            color: CYAN_TECH,
+            color: GOLD_LIGHT,
             textTransform: "uppercase",
             letterSpacing: "0.18em",
           }}
@@ -195,8 +195,8 @@ function HeroStrip() {
       >
         <div
           style={{
-            background: "rgba(7,9,15,0.78)",
-            border: "1.5px solid rgba(201,151,46,0.68)",
+            background: "rgba(31,28,24,0.78)",
+            border: "1.5px solid rgba(200,160,97,0.68)",
             borderRadius: 10,
             padding: `${FLYER_SPACE.md}px ${FLYER_SPACE.xl}px`,
             textAlign: "center",
@@ -220,7 +220,7 @@ function HeroStrip() {
               margin: `${FLYER_SPACE.xs}px 0 0`,
               fontSize: 8,
               fontWeight: 700,
-              color: CYAN_TECH,
+              color: GOLD_LIGHT,
               letterSpacing: "0.16em",
               textTransform: "uppercase",
             }}
@@ -329,10 +329,10 @@ function ServiceCard({ service }: { service: Service }) {
     <div
       style={{
         background: service.highlight
-          ? "rgba(201,151,46,0.18)"
+          ? "rgba(200,160,97,0.18)"
           : "rgba(255,255,255,0.07)",
         border: service.highlight
-          ? "1px solid rgba(201,151,46,0.55)"
+          ? "1px solid rgba(200,160,97,0.55)"
           : "1px solid rgba(255,255,255,0.13)",
         borderRadius: 8,
         padding: `${FLYER_SPACE.sm}px ${FLYER_SPACE.sm}px`,
@@ -455,7 +455,7 @@ function SectionDivider({ top }: { top: number }) {
         zIndex: 2,
       }}
     >
-      <FlyerSectionRule color="rgba(0,212,255,0.35)" />
+      <FlyerSectionRule color="rgba(200,160,97,0.35)" />
     </div>
   );
 }

@@ -28,7 +28,6 @@ import {
   flyerSectionLabelStyle,
 } from "@/components/jicf/ekddigital-flyer-spacing";
 import {
-  CYAN_TECH,
   GOLD,
   GOLD_LIGHT,
   GOLD_PALE,
@@ -105,7 +104,7 @@ function PricingHero({
       <FlyerBlock
         top={L.heroTop}
         minHeight={L.heroHeight}
-        style={{ overflow: "hidden", borderBottom: "1px solid rgba(0,212,255,0.2)" }}
+        style={{ overflow: "hidden", borderBottom: "1px solid rgba(200,160,97,0.2)" }}
       >
         <FlyerPillImageClip accentColor={GOLD}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -122,7 +121,7 @@ function PricingHero({
             }}
           />
         </FlyerPillImageClip>
-        <HeroOverlay gradient="rgba(7,9,15,0.55) 0%, rgba(7,9,15,0.88) 100%" />
+        <HeroOverlay gradient="rgba(31,28,24,0.55) 0%, rgba(31,28,24,0.88) 100%" />
         <HeroLabel text={config.heroLabel} position="bottom-left" />
         <HeroHeadlineBox lead={lead} accent={accent} subline={config.heroSubline} borderColor={GOLD} />
       </FlyerBlock>
@@ -137,7 +136,7 @@ function PricingHero({
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(120deg, rgba(201,151,46,0.22) 0%, rgba(0,12,36,0.95) 55%)",
+              "linear-gradient(120deg, rgba(200,160,97,0.22) 0%, rgba(31,28,24,0.95) 55%)",
           }}
         />
         <div
@@ -176,7 +175,7 @@ function PricingHero({
           style={{
             position: "absolute",
             inset: 0,
-            background: `linear-gradient(180deg, rgba(0,12,36,0.4) 0%, rgba(0,12,36,0.96) 100%)`,
+            background: `linear-gradient(180deg, rgba(31,28,24,0.4) 0%, rgba(31,28,24,0.96) 100%)`,
             borderBottom: `2px solid ${GOLD}`,
           }}
         />
@@ -187,7 +186,7 @@ function PricingHero({
             top: 0,
             bottom: 0,
             width: 4,
-            background: `linear-gradient(to bottom, ${GOLD}, ${CYAN_TECH})`,
+            background: `linear-gradient(to bottom, ${GOLD}, ${GOLD_LIGHT})`,
             borderRadius: 2,
           }}
         />
@@ -212,8 +211,8 @@ function PricingHero({
             position: "absolute",
             inset: 0,
             background:
-              "linear-gradient(135deg, rgba(0,212,255,0.18) 0%, rgba(10,22,40,0.96) 50%, rgba(201,151,46,0.12) 100%)",
-            borderBottom: "1px solid rgba(0,212,255,0.35)",
+              "linear-gradient(135deg, rgba(200,160,97,0.18) 0%, rgba(31,28,24,0.96) 50%, rgba(200,160,97,0.12) 100%)",
+            borderBottom: "1px solid rgba(200,160,97,0.35)",
           }}
         />
         <HeroLabel text={config.heroLabel} position="top-left" />
@@ -224,7 +223,7 @@ function PricingHero({
           lead={lead}
           accent={accent}
           subline={config.heroSubline}
-          borderColor={CYAN_TECH}
+          borderColor={GOLD_LIGHT}
           compact
         />
       </FlyerBlock>
@@ -239,8 +238,8 @@ function PricingHero({
           position: "absolute",
           inset: 0,
           background:
-            "linear-gradient(160deg, rgba(0,212,255,0.14) 0%, rgba(0,12,36,0.97) 60%)",
-          borderBottom: `1px solid rgba(0,212,255,0.4)`,
+            "linear-gradient(160deg, rgba(200,160,97,0.14) 0%, rgba(31,28,24,0.97) 60%)",
+          borderBottom: `1px solid rgba(200,160,97,0.4)`,
         }}
       />
       <HeroLabel text={config.heroLabel} position="top-left" />
@@ -252,7 +251,7 @@ function PricingHero({
         lead={lead}
         accent={accent}
         subline={config.heroSubline}
-        borderColor={CYAN_TECH}
+        borderColor={GOLD_LIGHT}
         compact
       />
     </FlyerBlock>
@@ -301,7 +300,7 @@ function HeroLabel({
           margin: 0,
           fontSize: 9,
           fontWeight: 800,
-          color: CYAN_TECH,
+          color: GOLD_LIGHT,
           textTransform: "uppercase",
           letterSpacing: "0.18em",
         }}
@@ -317,7 +316,7 @@ function HeroHeadlineBox({
   lead,
   accent,
   subline,
-  borderColor = CYAN_TECH,
+  borderColor = GOLD_LIGHT,
   align = "center",
   offsetLeft,
   compact,
@@ -333,7 +332,7 @@ function HeroHeadlineBox({
   const box = (
     <div
       style={{
-        background: "rgba(0,12,36,0.82)",
+        background: "rgba(31,28,24,0.82)",
         border: `1.5px solid ${borderColor}`,
         borderRadius: compact ? 10 : 12,
         padding: compact ? `${FLYER_SPACE.md}px ${FLYER_SPACE.lg}px` : `${FLYER_SPACE.md}px 22px`,
@@ -361,7 +360,7 @@ function HeroHeadlineBox({
           margin: `${FLYER_SPACE.xs}px 0 0`,
           fontSize: 8,
           fontWeight: 700,
-          color: CYAN_TECH,
+          color: GOLD_LIGHT,
           letterSpacing: "0.16em",
           textTransform: "uppercase",
         }}
@@ -449,7 +448,7 @@ function BulletsBand({
             margin: `0 0 ${FLYER_SPACE.sm}px`,
             fontSize: 8,
             fontWeight: 800,
-            color: CYAN_TECH,
+            color: GOLD_LIGHT,
             letterSpacing: "0.14em",
             textTransform: "uppercase",
           }}
@@ -517,7 +516,7 @@ function PricingTiersSection({
       minHeight={168}
       padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px`}
     >
-      <FlyerSectionRule color="rgba(0,212,255,0.35)" />
+      <FlyerSectionRule color="rgba(200,160,97,0.35)" />
       <div style={{ ...flyerSectionLabelStyle, marginTop: FLYER_SPACE.md }}>
         <p
           style={{
@@ -574,8 +573,8 @@ function PricingTierCard({
       style={{
         background: highlight
           ? isSsl
-            ? `linear-gradient(90deg, rgba(168,114,34,0.35) 0%, rgba(201,151,46,0.2) 100%)`
-            : "linear-gradient(135deg, rgba(168,114,34,0.35) 0%, rgba(201,151,46,0.28) 100%)"
+            ? `linear-gradient(90deg, rgba(168,114,34,0.35) 0%, rgba(200,160,97,0.2) 100%)`
+            : "linear-gradient(135deg, rgba(168,114,34,0.35) 0%, rgba(200,160,97,0.28) 100%)"
           : "rgba(255,255,255,0.06)",
         border: highlight
           ? `1.5px solid ${GOLD}`

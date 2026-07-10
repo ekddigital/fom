@@ -95,7 +95,7 @@ export const PRICING_FLYER_LAYOUT = {
 } as const;
 
 export const flyerSectionLabelStyle = {
-  borderLeft: "3px solid #C9972E",
+  borderLeft: "3px solid #C8A061",
   paddingLeft: FLYER_SPACE.sm,
   marginBottom: FLYER_SPACE.md,
 } as const;

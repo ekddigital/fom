@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { CYAN_TECH, GOLD } from "@/components/jicf/ekddigital-flyer-theme";
+import { GOLD, GOLD_LIGHT, GOLD_PATH } from "@/components/jicf/ekddigital-flyer-theme";
 
 type MotifProps = {
   style?: CSSProperties;
@@ -11,7 +11,7 @@ type MotifProps = {
 export function FlyerMeshConstellation({
   corner = "top-right",
   opacity = 0.22,
-  color = CYAN_TECH,
+  color = GOLD_LIGHT,
 }: MotifProps & { corner?: "top-right" | "bottom-left" }) {
   const pos =
     corner === "top-right"
@@ -56,7 +56,7 @@ export function FlyerMeshConstellation({
 export function FlyerCircuitAccent({
   style,
   opacity = 0.55,
-  color = CYAN_TECH,
+  color = GOLD_LIGHT,
   flip = false,
 }: MotifProps & { flip?: boolean }) {
   return (
@@ -107,7 +107,7 @@ export function FlyerChevronCluster({ style, opacity = 0.85 }: MotifProps) {
           <path
             d="M2 2 L12 11 L2 20"
             fill="none"
-            stroke={CYAN_TECH}
+            stroke={GOLD_LIGHT}
             strokeWidth={2.5}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -125,12 +125,12 @@ export function FlyerSlantedCta({
   variant = "gold",
 }: {
   children: ReactNode;
-  variant?: "gold" | "cyan";
+  variant?: "gold" | "light";
 }) {
   const bg =
-    variant === "cyan"
-      ? `linear-gradient(135deg, #0099cc 0%, ${CYAN_TECH} 55%, #66e8ff 100%)`
-      : "linear-gradient(135deg, #a87222 0%, #C9972E 40%, #e6b84a 100%)";
+    variant === "light"
+      ? `linear-gradient(135deg, ${GOLD_LIGHT} 0%, ${GOLD} 55%, ${GOLD_PATH} 100%)`
+      : `linear-gradient(135deg, #a87222 0%, ${GOLD} 40%, ${GOLD_LIGHT} 100%)`;
 
   return (
     <div
@@ -140,9 +140,9 @@ export function FlyerSlantedCta({
         textAlign: "center",
         marginBottom: 10,
         boxShadow:
-          variant === "cyan"
-            ? "0 4px 20px rgba(0,212,255,0.35)"
-            : "0 4px 18px rgba(201,151,46,0.35)",
+          variant === "light"
+            ? "0 4px 20px rgba(200,160,97,0.35)"
+            : "0 4px 18px rgba(200,160,97,0.35)",
         clipPath:
           "polygon(10px 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 10px 100%, 0 50%)",
       }}
@@ -155,7 +155,7 @@ export function FlyerSlantedCta({
 /** Gradient accent on headline word (Tech Repair + Annual Fair) */
 export function FlyerGradientWord({
   children,
-  from = CYAN_TECH,
+  from = GOLD_LIGHT,
   to = GOLD,
 }: {
   children: ReactNode;
@@ -179,7 +179,7 @@ export function FlyerGradientWord({
 /** Thin rule with optional wide-tracked label (Annual Fair reference) */
 export function FlyerSectionRule({
   label,
-  color = "rgba(201,151,46,0.45)",
+  color = "rgba(200,160,97,0.45)",
 }: {
   label?: string;
   color?: string;
@@ -213,7 +213,7 @@ export function FlyerSectionRule({
 /** Pill-shaped image frame — left rounded (Conference reference) */
 export function FlyerPillImageClip({
   children,
-  accentColor = CYAN_TECH,
+  accentColor = GOLD_LIGHT,
 }: {
   children: ReactNode;
   accentColor?: string;
@@ -227,7 +227,7 @@ export function FlyerPillImageClip({
         borderRadius: "0 90px 90px 0",
         overflow: "hidden",
         border: `2.5px solid ${accentColor}`,
-        boxShadow: `0 0 24px rgba(0,212,255,0.22), inset 0 0 0 1px rgba(255,255,255,0.08)`,
+        boxShadow: `0 0 24px rgba(200,160,97,0.22), inset 0 0 0 1px rgba(255,255,255,0.08)`,
       }}
     >
       {children}
@@ -249,10 +249,10 @@ export function FlyerContactGrid({
   return (
     <div
       style={{
-        border: "1.5px solid rgba(0,212,255,0.35)",
+        border: "1.5px solid rgba(200,160,97,0.35)",
         borderRadius: 10,
         padding: "10px 8px 8px",
-        background: "rgba(0,12,36,0.55)",
+        background: "rgba(31,28,24,0.55)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -300,7 +300,7 @@ export function FlyerContactGrid({
               style={{
                 margin: "1px 0 0",
                 fontSize: 9.8,
-                color: gold ? "#e6c258" : "#ffffff",
+                color: gold ? GOLD_LIGHT : "#ffffff",
                 fontWeight: 800,
                 lineHeight: 1.25,
               }}

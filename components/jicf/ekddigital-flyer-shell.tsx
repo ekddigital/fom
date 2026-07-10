@@ -13,7 +13,7 @@ import {
 type EKDDigitalFlyerShellProps = {
   children: ReactNode;
   downloadFilename: string;
-  /** PNG export background — defaults to EKD Digital navy */
+  /** PNG export background — defaults to EKD Digital warm dark */
   exportBackgroundColor?: string;
 };
 
@@ -71,7 +71,7 @@ export function EKDDigitalFlyerShell({
           aspectRatio: `${FLYER_PORTRAIT_W} / ${FLYER_PORTRAIT_H}`,
           overflow: "hidden",
           borderRadius: 16,
-          border: "1px solid rgba(201,151,46,0.25)",
+          border: "1px solid rgba(200,160,97,0.25)",
         }}
       >
         <div
@@ -117,7 +117,7 @@ function FlyerShellControls({
         variant="outline"
         onClick={() => window.print()}
         style={{ borderColor: GOLD, color: GOLD }}
-        className="hover:bg-[#C9972E]/10"
+        className="hover:bg-[#C8A061]/10"
       >
         <Printer className="size-4 mr-2" />
         Print / Save PDF

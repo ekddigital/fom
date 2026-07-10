@@ -248,7 +248,7 @@ export default function JICFPage() {
 
             <Link
               href="/jicf/ekddigital"
-              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#C9972E]/50 transition-all duration-300"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#C8A061]/50 transition-all duration-300"
             >
               <div className="relative h-44 overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -257,15 +257,15 @@ export default function JICFPage() {
                   alt="EKDDigital"
                   className="h-full w-full object-cover object-center brightness-75 group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-[#172554]/90 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#1F1C18]/90 to-transparent" />
                 <div className="absolute bottom-4 left-5">
-                  <span className="rounded-full bg-[#C99724]/15 border border-[#C99724]/45 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#C99724]">
+                  <span className="rounded-full bg-[#C8A061]/15 border border-[#C8A061]/45 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#C8A061]">
                     EKDDigital
                   </span>
                 </div>
               </div>
 
-              <div className="bg-[#172554]/90 px-6 py-5 backdrop-blur-sm">
+              <div className="bg-[#1F1C18]/90 px-6 py-5 backdrop-blur-sm">
                 <h2 className="text-xl font-black text-white mb-1">
                   EKDDigital
                 </h2>
@@ -274,15 +274,15 @@ export default function JICFPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-white/70">
                   <span className="flex items-center gap-1.5">
-                    <Clock className="size-3.5 text-[#C9972E]" />
+                    <Clock className="size-3.5 text-[#C8A061]" />
                     Weekday evenings / weekends
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="size-3.5 text-[#C9972E]" />
+                    <MapPin className="size-3.5 text-[#C8A061]" />
                     Online One-on-One
                   </span>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-[#C9972E] text-sm font-semibold group-hover:gap-2 transition-all">
+                <div className="mt-4 flex items-center gap-1 text-[#C8A061] text-sm font-semibold group-hover:gap-2 transition-all">
                   View Flyer
                   <ArrowRight className="size-4" />
                 </div>
@@ -291,11 +291,11 @@ export default function JICFPage() {
 
             <Link
               href="/jicf/ekddigital/services"
-              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#C9972E]/50 transition-all duration-300"
+              className="group block rounded-2xl overflow-hidden shadow-2xl border border-white/10 hover:border-[#C8A061]/50 transition-all duration-300"
             >
-              <div className="relative h-44 overflow-hidden bg-linear-to-br from-[#07090f] via-[#0c1221] to-[#07090f] p-5">
-                <div className="h-full w-full border border-[#C9972E]/30 rounded-xl p-4 flex flex-col justify-between">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#e6c258] font-bold">
+              <div className="relative h-44 overflow-hidden bg-linear-to-br from-[#1F1C18] via-[#2A2520] to-[#1F1C18] p-5">
+                <div className="h-full w-full border border-[#C8A061]/30 rounded-xl p-4 flex flex-col justify-between">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-[#E8C589] font-bold">
                     Cloud &amp; Software
                   </p>
                   <div>
@@ -306,13 +306,13 @@ export default function JICFPage() {
                       EKDSend · Assets · SSL · Email · Hosting
                     </p>
                   </div>
-                  <p className="text-[10px] text-[#C9972E] font-bold uppercase tracking-widest">
+                  <p className="text-[10px] text-[#C8A061] font-bold uppercase tracking-widest">
                     EKD Digital
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[#07090f]/95 px-6 py-5 backdrop-blur-sm border-t border-[#C9972E]/20">
+              <div className="bg-[#1F1C18]/95 px-6 py-5 backdrop-blur-sm border-t border-[#C8A061]/20">
                 <h2 className="text-xl font-black text-white mb-1">
                   EKD Digital Cloud
                 </h2>
@@ -321,15 +321,15 @@ export default function JICFPage() {
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-white/70">
                   <span className="flex items-center gap-1.5">
-                    <Clock className="size-3.5 text-[#C9972E]" />
+                    <Clock className="size-3.5 text-[#C8A061]" />
                     Enterprise-ready platforms
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="size-3.5 text-[#C9972E]" />
+                    <MapPin className="size-3.5 text-[#C8A061]" />
                     Global CDN &amp; APIs
                   </span>
                 </div>
-                <div className="mt-4 flex items-center gap-1 text-[#C9972E] text-sm font-semibold group-hover:gap-2 transition-all">
+                <div className="mt-4 flex items-center gap-1 text-[#C8A061] text-sm font-semibold group-hover:gap-2 transition-all">
                   View Flyer
                   <ArrowRight className="size-4" />
                 </div>
@@ -350,7 +350,7 @@ export default function JICFPage() {
 function EkddigitalPricingHubSection() {
   return (
     <div className="mt-10">
-      <p className="mb-4 text-center text-xs font-bold uppercase tracking-[0.22em] text-[#C9972E]/80">
+      <p className="mb-4 text-center text-xs font-bold uppercase tracking-[0.22em] text-[#C8A061]/80">
         EKD Digital — Service Pricing Flyers
       </p>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -368,34 +368,34 @@ function EkddigitalPricingHubSection() {
         </Link>
         <Link
           href="/jicf/ekddigital/digital-assets"
-          className="group flex items-center justify-between rounded-xl border border-[#38BDF8]/35 bg-[#0A1628]/80 px-4 py-3 hover:border-[#38BDF8]/55 transition-colors sm:col-span-2 lg:col-span-3"
+          className="group flex items-center justify-between rounded-xl border border-[#C8A061]/35 bg-[#1F1C18]/80 px-4 py-3 hover:border-[#C8A061]/55 transition-colors sm:col-span-2 lg:col-span-3"
         >
           <div>
             <p className="text-sm font-bold text-white">Digital Assets — Promotional Flyer</p>
-            <p className="text-xs text-[#94a3b8]">
+            <p className="text-xs text-[#a8a29e]">
               Your assets. Secured. · assets.andgroupco.com
             </p>
           </div>
-          <ArrowRight className="size-4 text-[#38BDF8] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+          <ArrowRight className="size-4 text-[#C8A061] shrink-0 group-hover:translate-x-0.5 transition-transform" />
         </Link>
         {ALL_SERVICE_PRICING_CONFIGS.map((config) => (
           <Link
             key={config.slug}
             href={pricingFlyerHref(config.slug)}
-            className="group flex items-center justify-between rounded-xl border border-[#C9972E]/25 bg-[#07090f]/80 px-4 py-3 hover:border-[#C9972E]/50 transition-colors"
+            className="group flex items-center justify-between rounded-xl border border-[#C8A061]/25 bg-[#1F1C18]/80 px-4 py-3 hover:border-[#C8A061]/50 transition-colors"
           >
             <div>
               <p className="text-sm font-bold text-white">{config.title}</p>
               <p className="text-xs text-[#9ca3af]">{config.subtitle}</p>
             </div>
-            <ArrowRight className="size-4 text-[#C9972E] shrink-0 group-hover:translate-x-0.5 transition-transform" />
+            <ArrowRight className="size-4 text-[#C8A061] shrink-0 group-hover:translate-x-0.5 transition-transform" />
           </Link>
         ))}
       </div>
       <p className="mt-3 text-center text-xs text-[#9ca3af]/80">
         <Link
           href="/jicf/ekddigital/services"
-          className="text-[#C9972E] font-semibold hover:underline"
+          className="text-[#C8A061] font-semibold hover:underline"
         >
           Services overview
         </Link>

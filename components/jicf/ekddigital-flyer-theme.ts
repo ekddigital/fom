@@ -1,11 +1,10 @@
-export const GOLD = "#C9972E";
-export const GOLD_LIGHT = "#e6c258";
+/** EKD Digital canonical brand palette (matches EKDSend promo flyers) */
+export const GOLD = "#C8A061";
+export const GOLD_LIGHT = "#E8C589";
+export const GOLD_PATH = "#D4B06E";
 export const GOLD_PALE = "#f3e8c8";
-export const CYAN_TECH = "#00d4ff";
-export const NAVY_DEEP = "#000c24";
-export const NAVY_MID = "#0a1628";
-export const BG_DARK = NAVY_DEEP;
-export const BG_MID = NAVY_MID;
+export const BG_DARK = "#1F1C18";
+export const BG_MID = "#2A2520";
 
 export const FLYER_PORTRAIT_W = 540;
 export const FLYER_PORTRAIT_H = 900;

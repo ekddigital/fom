@@ -10,7 +10,7 @@ import {
   FlyerMeshConstellation,
   FlyerSlantedCta,
 } from "@/components/jicf/ekddigital-flyer-motifs";
-import { BG_DARK, CYAN_TECH } from "@/components/jicf/ekddigital-flyer-theme";
+import { BG_DARK, BG_MID, GOLD_LIGHT } from "@/components/jicf/ekddigital-flyer-theme";
 
 /* ─── Flyer Canvas ──────────────────────────────────────────────────────────
   540 × 675 px preview → pixelRatio:2 export → 1080 × 1350 px (Instagram 4:5)
@@ -43,7 +43,7 @@ function EKDDigitalFlyerCanvas() {
           position: "absolute",
           inset: 0,
           background:
-            `linear-gradient(160deg, ${BG_DARK} 0%, #0a1628 45%, ${BG_DARK} 100%)`,
+            `linear-gradient(160deg, ${BG_DARK} 0%, ${BG_MID} 45%, ${BG_DARK} 100%)`,
         }}
       />
       <FlyerMeshConstellation corner="top-right" />
@@ -55,7 +55,7 @@ function EKDDigitalFlyerCanvas() {
           position: "absolute",
           inset: 0,
           backgroundImage:
-            "radial-gradient(rgba(0,212,255,0.04) 1px, transparent 1px), radial-gradient(rgba(201,151,46,0.05) 1px, transparent 1px)",
+            "radial-gradient(rgba(200,160,97,0.04) 1px, transparent 1px), radial-gradient(rgba(200,160,97,0.05) 1px, transparent 1px)",
           backgroundSize: "22px 22px, 20px 20px",
           pointerEvents: "none",
         }}
@@ -71,7 +71,7 @@ function EKDDigitalFlyerCanvas() {
           height: 280,
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(201,151,46,0.18) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(200,160,97,0.18) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -86,7 +86,7 @@ function EKDDigitalFlyerCanvas() {
           height: 240,
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(201,151,46,0.11) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(200,160,97,0.11) 0%, transparent 70%)",
           pointerEvents: "none",
         }}
       />
@@ -99,7 +99,7 @@ function EKDDigitalFlyerCanvas() {
           right: -8,
           fontSize: 130,
           fontWeight: 900,
-          color: "rgba(201,151,46,0.045)",
+          color: "rgba(200,160,97,0.045)",
           lineHeight: 1,
           letterSpacing: "-0.05em",
           pointerEvents: "none",
@@ -125,7 +125,7 @@ function EKDDigitalFlyerCanvas() {
           padding: "0 18px",
           gap: 11,
           background: "rgba(7, 9, 15, 0.98)",
-          borderBottom: "2.5px solid #C9972E",
+          borderBottom: "2.5px solid #C8A061",
           zIndex: 10,
         }}
       >
@@ -137,8 +137,8 @@ function EKDDigitalFlyerCanvas() {
             borderRadius: "50%",
             overflow: "hidden",
             flexShrink: 0,
-            border: "2px solid rgba(201,151,46,0.55)",
-            boxShadow: "0 0 16px rgba(201,151,46,0.32)",
+            border: "2px solid rgba(200,160,97,0.55)",
+            boxShadow: "0 0 16px rgba(200,160,97,0.32)",
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -167,7 +167,7 @@ function EKDDigitalFlyerCanvas() {
               lineHeight: 1.1,
             }}
           >
-            EKD <span style={{ color: "#C9972E" }}>Digital</span>
+            EKD <span style={{ color: "#C8A061" }}>Digital</span>
           </p>
           <p
             style={{
@@ -188,7 +188,7 @@ function EKDDigitalFlyerCanvas() {
         {/* Website pill */}
         <div
           style={{
-            border: "1px solid rgba(201,151,46,0.5)",
+            border: "1px solid rgba(200,160,97,0.5)",
             borderRadius: 20,
             padding: "4px 11px",
           }}
@@ -218,7 +218,7 @@ function EKDDigitalFlyerCanvas() {
           right: 0,
           height: 3,
           background:
-            "linear-gradient(to right, transparent, #C9972E 20%, #e6b84a 50%, #C9972E 80%, transparent)",
+            "linear-gradient(to right, transparent, #C8A061 20%, #E8C589 50%, #C8A061 80%, transparent)",
         }}
       />
 
@@ -264,7 +264,7 @@ function EKDDigitalFlyerCanvas() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(to bottom, rgba(7,9,15,0.28) 0%, rgba(7,9,15,0.08) 45%, rgba(7,9,15,0.76) 100%)",
+                "linear-gradient(to bottom, rgba(31,28,24,0.28) 0%, rgba(31,28,24,0.08) 45%, rgba(31,28,24,0.76) 100%)",
             }}
           />
           <div
@@ -279,7 +279,7 @@ function EKDDigitalFlyerCanvas() {
                 margin: 0,
                 fontSize: 11,
                 fontWeight: 800,
-                color: "#e6c258",
+                color: "#E8C589",
                 textTransform: "uppercase",
                 letterSpacing: "0.1em",
                 textShadow: "0 1px 6px rgba(0,0,0,0.6)",
@@ -308,7 +308,7 @@ function EKDDigitalFlyerCanvas() {
             width: 2,
             height: 157,
             background:
-              "linear-gradient(to bottom, transparent 0%, #C9972E 25%, #e6b84a 50%, #C9972E 75%, transparent 100%)",
+              "linear-gradient(to bottom, transparent 0%, #C8A061 25%, #E8C589 50%, #C8A061 75%, transparent 100%)",
             flexShrink: 0,
           }}
         />
@@ -340,7 +340,7 @@ function EKDDigitalFlyerCanvas() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(to bottom, rgba(7,9,15,0.28) 0%, rgba(7,9,15,0.08) 45%, rgba(7,9,15,0.76) 100%)",
+                "linear-gradient(to bottom, rgba(31,28,24,0.28) 0%, rgba(31,28,24,0.08) 45%, rgba(31,28,24,0.76) 100%)",
             }}
           />
           <div
@@ -356,7 +356,7 @@ function EKDDigitalFlyerCanvas() {
                 margin: 0,
                 fontSize: 11,
                 fontWeight: 800,
-                color: "#e6c258",
+                color: "#E8C589",
                 textTransform: "uppercase",
                 letterSpacing: "0.1em",
                 textShadow: "0 1px 6px rgba(0,0,0,0.6)",
@@ -397,8 +397,8 @@ function EKDDigitalFlyerCanvas() {
       >
         <div
           style={{
-            background: "rgba(7,9,15,0.74)",
-            border: "1.5px solid rgba(201,151,46,0.68)",
+            background: "rgba(31,28,24,0.74)",
+            border: "1.5px solid rgba(200,160,97,0.68)",
             borderRadius: 10,
             padding: "9px 18px",
             textAlign: "center",
@@ -423,7 +423,7 @@ function EKDDigitalFlyerCanvas() {
               margin: "3px 0 0",
               fontSize: 8.5,
               fontWeight: 700,
-              color: CYAN_TECH,
+              color: GOLD_LIGHT,
               letterSpacing: "0.16em",
               textTransform: "uppercase",
               textShadow: "0 1px 3px rgba(0,0,0,0.8)",
@@ -454,7 +454,7 @@ function EKDDigitalFlyerCanvas() {
         {/* Section label */}
         <div
           style={{
-            borderLeft: "3px solid #C9972E",
+            borderLeft: "3px solid #C8A061",
             paddingLeft: 8,
             marginBottom: 8,
           }}
@@ -464,7 +464,7 @@ function EKDDigitalFlyerCanvas() {
               margin: 0,
               fontSize: 11,
               fontWeight: 900,
-              color: "#e6c258",
+              color: "#E8C589",
               textTransform: "uppercase",
               letterSpacing: "0.12em",
               textShadow: "0 1px 2px rgba(0,0,0,0.6)",
@@ -491,7 +491,7 @@ function EKDDigitalFlyerCanvas() {
           >
             <span
               style={{
-                color: "#C9972E",
+                color: "#C8A061",
                 fontSize: 14,
                 fontWeight: 900,
                 lineHeight: 1.2,
@@ -526,7 +526,7 @@ function EKDDigitalFlyerCanvas() {
           right: 20,
           height: 1,
           background:
-            "linear-gradient(to right, transparent, rgba(201,151,46,0.4) 20%, rgba(201,151,46,0.4) 80%, transparent)",
+            "linear-gradient(to right, transparent, rgba(200,160,97,0.4) 20%, rgba(200,160,97,0.4) 80%, transparent)",
         }}
       />
 
@@ -560,7 +560,7 @@ function EKDDigitalFlyerCanvas() {
             textShadow: "0 1px 2px rgba(0,0,0,0.45)",
           }}
         >
-          <span style={{ color: "#e6c258" }}>EKD Digital</span> is here to help
+          <span style={{ color: "#E8C589" }}>EKD Digital</span> is here to help
           you with:
         </p>
 
@@ -596,10 +596,10 @@ function EKDDigitalFlyerCanvas() {
                 gap: 6,
                 minWidth: 0,
                 background: highlight
-                  ? "rgba(201,151,46,0.2)"
+                  ? "rgba(200,160,97,0.2)"
                   : "rgba(255,255,255,0.07)",
                 border: highlight
-                  ? "1px solid rgba(201,151,46,0.6)"
+                  ? "1px solid rgba(200,160,97,0.6)"
                   : "1px solid rgba(255,255,255,0.13)",
                 borderRadius: 20,
                 padding: "6px 9px",
@@ -608,7 +608,7 @@ function EKDDigitalFlyerCanvas() {
                 lineHeight: 1,
                 color: highlight ? "#fffef8" : "#f1f5f9",
                 fontWeight: highlight ? 800 : 650,
-                boxShadow: highlight ? "0 2px 8px rgba(201,151,46,0.10)" : undefined,
+                boxShadow: highlight ? "0 2px 8px rgba(200,160,97,0.10)" : undefined,
                 letterSpacing: "0.01em",
               }}
             >
@@ -645,7 +645,7 @@ function EKDDigitalFlyerCanvas() {
           right: 0,
           height: 2.5,
           background:
-            "linear-gradient(to right, transparent, #C9972E 15%, #e6b84a 50%, #C9972E 85%, transparent)",
+            "linear-gradient(to right, transparent, #C8A061 15%, #E8C589 50%, #C8A061 85%, transparent)",
         }}
       />
 
@@ -678,10 +678,10 @@ function EKDDigitalFlyerCanvas() {
           }}
         >
           Don&apos;t give up in silence—we&apos;re just a{" "}
-          <span style={{ color: "#C9972E" }}>button</span> away,
+          <span style={{ color: "#C8A061" }}>button</span> away,
           <br />
           and we help you{" "}
-          <span style={{ color: "#e6c258" }}>recover time</span>.
+          <span style={{ color: "#E8C589" }}>recover time</span>.
         </p>
         <p
           style={{
@@ -760,7 +760,7 @@ export function EKDDigitalFlyerShell() {
         height: 675,
         canvasWidth: 1080,
         canvasHeight: 1350,
-        backgroundColor: "#07090f",
+        backgroundColor: "#1F1C18",
       });
 
       const link = document.createElement("a");
@@ -781,7 +781,7 @@ export function EKDDigitalFlyerShell() {
         <Button
           onClick={() => void downloadPng()}
           disabled={downloading}
-          style={{ background: "#C9972E", color: "#07090f" }}
+          style={{ background: "#C8A061", color: "#1F1C18" }}
           className="hover:opacity-90 font-bold"
         >
           <Download className="size-4 mr-2" />
@@ -790,8 +790,8 @@ export function EKDDigitalFlyerShell() {
         <Button
           variant="outline"
           onClick={printFlyer}
-          style={{ borderColor: "#C9972E", color: "#C9972E" }}
-          className="hover:bg-[#C9972E]/10"
+          style={{ borderColor: "#C8A061", color: "#C8A061" }}
+          className="hover:bg-[#C8A061]/10"
         >
           <Printer className="size-4 mr-2" />
           Print / Save PDF
@@ -807,7 +807,7 @@ export function EKDDigitalFlyerShell() {
           aspectRatio: "4 / 5",
           overflow: "hidden",
           borderRadius: 16,
-          border: "1px solid rgba(201,151,46,0.25)",
+          border: "1px solid rgba(200,160,97,0.25)",
         }}
       >
         <div

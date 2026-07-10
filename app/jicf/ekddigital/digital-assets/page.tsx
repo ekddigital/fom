@@ -13,7 +13,7 @@ export const metadata = buildFlyerMetadata(
 );
 
 const relatedLinkClass =
-  "rounded-lg border border-[#38BDF8]/35 bg-[#0A1628]/80 px-4 py-3 text-left hover:border-[#38BDF8]/60 transition-colors block";
+  "rounded-lg border border-[#C8A061]/35 bg-[#1F1C18]/80 px-4 py-3 text-left hover:border-[#C8A061]/60 transition-colors block";
 
 export default function EKDDigitalAssetsPromoFlyerPage() {
   return (
@@ -26,7 +26,7 @@ export default function EKDDigitalAssetsPromoFlyerPage() {
       <EKDDigitalAssetsFlyerShell />
 
       <div className="mt-8 print:hidden max-w-lg mx-auto space-y-2">
-        <p className="text-xs font-bold uppercase tracking-widest text-[#38BDF8] text-center mb-3">
+        <p className="text-xs font-bold uppercase tracking-widest text-[#C8A061] text-center mb-3">
           Related flyers
         </p>
         <Link
@@ -34,19 +34,19 @@ export default function EKDDigitalAssetsPromoFlyerPage() {
           className={relatedLinkClass}
         >
           <span className="text-sm font-bold text-white">Digital Assets Pricing</span>
-          <span className="block text-xs text-[#94a3b8] mt-0.5">
+          <span className="block text-xs text-[#a8a29e] mt-0.5">
             Storage plans · CDN tiers
           </span>
         </Link>
         <Link href="/jicf/ekddigital/ekdsend" className={relatedLinkClass}>
           <span className="text-sm font-bold text-white">EKDSend</span>
-          <span className="block text-xs text-[#94a3b8] mt-0.5">
+          <span className="block text-xs text-[#a8a29e] mt-0.5">
             Communications platform promotional flyer
           </span>
         </Link>
         <Link href="/jicf/ekddigital/services" className={relatedLinkClass}>
           <span className="text-sm font-bold text-white">EKD Digital Services</span>
-          <span className="block text-xs text-[#94a3b8] mt-0.5">
+          <span className="block text-xs text-[#a8a29e] mt-0.5">
             Cloud &amp; software overview flyer
           </span>
         </Link>
