@@ -12,11 +12,7 @@ import {
   FLYER_PORTRAIT_H,
   FLYER_PORTRAIT_W,
 } from "@/components/jicf/ekddigital-flyer-theme";
-import {
-  EKDSendFlyerBackgroundDecorations,
-  EKDSendFlyerContentDecorations,
-  EKDSendFlyerHeroDecorations,
-} from "@/components/jicf/ekdsend-flyer-decorations";
+import { EKDSendFlyerDecorations } from "@/components/jicf/ekdsend-flyer-decorations";
 
 /** EKDSend product brand palette (from mail/docs/ekdsend-flyer-copy.txt) */
 const EKDSEND_GOLD = "#C8A061";
@@ -66,6 +62,7 @@ function EKDSendPromoCanvas() {
   return (
     <div style={canvasStyle}>
       <BackgroundLayers />
+      <EKDSendFlyerDecorations />
       <EKDSendHeader />
       <HeroImage />
       <ContentBlock />
@@ -108,7 +105,6 @@ function BackgroundLayers() {
           pointerEvents: "none",
         }}
       />
-      <EKDSendFlyerBackgroundDecorations />
     </>
   );
 }
@@ -258,7 +254,6 @@ function HeroImage() {
             "linear-gradient(to bottom, rgba(31,28,24,0.15) 0%, rgba(31,28,24,0.05) 35%, rgba(31,28,24,0.75) 100%)",
         }}
       />
-      <EKDSendFlyerHeroDecorations />
       <div
         style={{
           position: "absolute",
@@ -275,8 +270,12 @@ function HeroImage() {
 
 function ContentBlock() {
   return (
-    <FlyerBlock top={L.contentTop} minHeight={368} padding={`0 ${FLYER_PAD_X}px`}>
-      <EKDSendFlyerContentDecorations />
+    <FlyerBlock
+      top={L.contentTop}
+      minHeight={368}
+      padding={`0 ${FLYER_PAD_X}px`}
+      style={{ zIndex: 4 }}
+    >
       <div style={{ position: "relative", zIndex: 1 }}>
       <h2
         style={{
