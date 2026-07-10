@@ -5,7 +5,6 @@ import {
   FlyerSlantedCta,
 } from "@/components/jicf/ekddigital-flyer-motifs";
 import {
-  FLYER_FOOTER_CONTENT_H,
   FLYER_PAD_X,
   FLYER_SPACE,
 } from "@/components/jicf/ekddigital-flyer-spacing";
@@ -329,7 +328,7 @@ export function FlyerContactFooter({
           top,
           left: 0,
           right: 0,
-          height: FLYER_FOOTER_CONTENT_H,
+          bottom: 0,
           padding: `${FLYER_SPACE.md}px ${FLYER_PAD_X}px ${FLYER_SPACE.lg}px`,
           boxSizing: "border-box",
           zIndex: 2,

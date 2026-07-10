@@ -287,8 +287,9 @@ function ServicesGrid() {
   return (
     <FlyerBlock
       top={L.servicesTop}
-      minHeight={L.servicesMinHeight}
+      bottom={L.servicesBottom}
       padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px`}
+      style={{ display: "flex", flexDirection: "column" }}
     >
       <p
         style={{
@@ -300,6 +301,7 @@ function ServicesGrid() {
       >
         <span style={{ color: GOLD_LIGHT }}>Our services</span> — overview
       </p>
+      <div style={{ flex: 1, minHeight: FLYER_SPACE.sm }} aria-hidden />
       <div
         style={{
           display: "grid",
@@ -471,12 +473,14 @@ function SectionDivider({ top }: { top: number }) {
 function FlyerBlock({
   top,
   minHeight,
+  bottom,
   padding = `${FLYER_SPACE.sm}px ${FLYER_PAD_X}px 0`,
   style,
   children,
 }: {
   top: number;
-  minHeight: number;
+  minHeight?: number;
+  bottom?: number;
   padding?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -486,9 +490,10 @@ function FlyerBlock({
       style={{
         position: "absolute",
         top,
+        ...(bottom != null ? { bottom } : {}),
+        ...(minHeight != null ? { minHeight } : {}),
         left: 0,
         right: 0,
-        minHeight,
         padding,
         zIndex: 2,
         boxSizing: "border-box",

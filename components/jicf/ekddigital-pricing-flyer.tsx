@@ -559,11 +559,13 @@ function PricingTiersSection({
   return (
     <FlyerBlock
       top={L.tiersTop}
-      minHeight={L.tiersMinHeight}
+      bottom={L.tiersBottom}
       padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px`}
+      style={{ display: "flex", flexDirection: "column" }}
     >
       <FlyerSectionRule color="rgba(200,160,97,0.35)" />
-      <div style={{ ...flyerSectionLabelStyle, marginTop: FLYER_SPACE.md }}>
+      <div style={{ flex: 1, minHeight: FLYER_SPACE.sm }} aria-hidden />
+      <div style={{ ...flyerSectionLabelStyle, marginTop: 0 }}>
         <p
           style={{
             margin: 0,
@@ -720,12 +722,14 @@ function PricingTierCard({
 function FlyerBlock({
   top,
   minHeight,
+  bottom,
   padding = `${FLYER_SPACE.sm}px ${FLYER_PAD_X}px 0`,
   style,
   children,
 }: {
   top: number;
-  minHeight: number;
+  minHeight?: number;
+  bottom?: number;
   padding?: string;
   style?: CSSProperties;
   children: ReactNode;
@@ -735,9 +739,10 @@ function FlyerBlock({
       style={{
         position: "absolute",
         top,
+        ...(bottom != null ? { bottom } : {}),
+        ...(minHeight != null ? { minHeight } : {}),
         left: 0,
         right: 0,
-        minHeight,
         padding,
         zIndex: 2,
         boxSizing: "border-box",

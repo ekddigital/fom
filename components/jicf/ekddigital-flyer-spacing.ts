@@ -18,8 +18,8 @@ export const FLYER_PAD_X = 20;
 /** Header (72) + gold rule (3) */
 export const FLYER_HEADER_END = 75;
 
-/** Footer block — CTA + contact grid */
-export const FLYER_FOOTER_CONTENT_H = 178;
+/** Footer block — CTA + 2×2 contact grid + parent line (measured ~200px at 540w) */
+export const FLYER_FOOTER_CONTENT_H = 200;
 
 /** Anchor dense 900px flyers so footer sits flush at canvas bottom */
 export const FLYER_FOOTER_TOP = FLYER_PORTRAIT_H - FLYER_FOOTER_CONTENT_H;
@@ -84,15 +84,15 @@ export const INSTAGRAM_FLYER_LAYOUT = {
 } as const;
 
 function buildCloudFlyerLayout() {
-  const heroHeight = 130;
-  const taglineHeight = 40;
-  const painMinHeight = 108;
+  const heroHeight = 122;
+  const taglineHeight = 36;
+  const painMinHeight = 100;
   const heroTop = FLYER_HEADER_END;
-  const taglineTop = heroTop + heroHeight + FLYER_SPACE.lg;
-  const painTop = taglineTop + taglineHeight + FLYER_SPACE.xl;
-  const servicesTop = painTop + painMinHeight + FLYER_SPACE.xl;
+  const taglineTop = heroTop + heroHeight + FLYER_SPACE.md;
+  const painTop = taglineTop + taglineHeight + FLYER_SPACE.lg;
+  const servicesTop = painTop + painMinHeight + FLYER_SPACE.lg;
   const footerTop = FLYER_FOOTER_TOP;
-  const servicesMinHeight = footerTop - servicesTop - FLYER_SPACE.lg;
+  const servicesFooterGap = FLYER_SPACE.md;
 
   return {
     heroTop,
@@ -102,7 +102,7 @@ function buildCloudFlyerLayout() {
     painTop,
     painMinHeight,
     servicesTop,
-    servicesMinHeight,
+    servicesBottom: FLYER_PORTRAIT_H - footerTop + servicesFooterGap,
     footerTop,
   };
 }
@@ -110,15 +110,16 @@ function buildCloudFlyerLayout() {
 export const CLOUD_FLYER_LAYOUT = buildCloudFlyerLayout();
 
 function buildPricingFlyerLayout() {
-  const heroHeight = 128;
-  const introHeight = 40;
-  const bulletsMinHeight = 80;
+  const heroHeight = 118;
+  const introHeight = 34;
+  const bulletsMinHeight = 62;
   const heroTop = FLYER_HEADER_END;
-  const introTop = heroTop + heroHeight + FLYER_SPACE.lg;
-  const bulletsTop = introTop + introHeight + FLYER_SPACE.lg;
-  const tiersTop = bulletsTop + bulletsMinHeight + FLYER_SPACE.xl;
+  const introTop = heroTop + heroHeight + FLYER_SPACE.md;
+  const bulletsTop = introTop + introHeight + FLYER_SPACE.md;
+  const tiersTop = bulletsTop + bulletsMinHeight + FLYER_SPACE.lg;
   const footerTop = FLYER_FOOTER_TOP;
-  const tiersMinHeight = footerTop - tiersTop - FLYER_SPACE.md;
+  /** Gap between pricing block bottom edge and footer rule */
+  const tiersFooterGap = FLYER_SPACE.md;
 
   return {
     heroTop,
@@ -128,7 +129,7 @@ function buildPricingFlyerLayout() {
     bulletsTop,
     bulletsMinHeight,
     tiersTop,
-    tiersMinHeight,
+    tiersBottom: FLYER_PORTRAIT_H - footerTop + tiersFooterGap,
     footerTop,
   };
 }
