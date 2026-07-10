@@ -86,6 +86,7 @@ function PricingFlyerCanvas({ config }: EKDDigitalServicePricingFlyerProps) {
 
       <FlyerContactFooter
         top={L.footerTop}
+        compact
         ctaHeadline={config.ctaHeadline ?? "GET STARTED →"}
         websiteUrl={config.productUrl}
       />
@@ -485,7 +486,7 @@ function BulletsBand({
   return (
     <FlyerBlock
       top={L.bulletsTop}
-      minHeight={L.bulletsMinHeight}
+      minHeight={L.bulletsHeight}
       padding={`0 ${FLYER_PAD_X}px`}
     >
       {variant === "email" ? (
@@ -559,13 +560,11 @@ function PricingTiersSection({
   return (
     <FlyerBlock
       top={L.tiersTop}
-      bottom={L.tiersBottom}
-      padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px`}
-      style={{ display: "flex", flexDirection: "column" }}
+      minHeight={L.tiersBlockHeight}
+      padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px 0`}
     >
       <FlyerSectionRule color="rgba(200,160,97,0.35)" />
-      <div style={{ flex: 1, minHeight: FLYER_SPACE.sm }} aria-hidden />
-      <div style={{ ...flyerSectionLabelStyle, marginTop: 0 }}>
+      <div style={{ ...flyerSectionLabelStyle, marginTop: FLYER_SPACE.sm }}>
         <p
           style={{
             margin: 0,

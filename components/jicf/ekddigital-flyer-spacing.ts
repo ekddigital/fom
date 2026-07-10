@@ -18,11 +18,21 @@ export const FLYER_PAD_X = 20;
 /** Header (72) + gold rule (3) */
 export const FLYER_HEADER_END = 75;
 
-/** Footer block — CTA + 2×2 contact grid + parent line (measured ~200px at 540w) */
+/** Full footer — CTA + 2×2 contact grid + parent line (cloud services overview) */
 export const FLYER_FOOTER_CONTENT_H = 200;
 
 /** Anchor dense 900px flyers so footer sits flush at canvas bottom */
 export const FLYER_FOOTER_TOP = FLYER_PORTRAIT_H - FLYER_FOOTER_CONTENT_H;
+
+/** Compact pricing-footer rhythm (EKDSend-style CTA + contact strip) */
+export const PRICING_FLYER_FOOTER = {
+  ctaUrlMarginTop: FLYER_SPACE.xs + 1,
+  contactStripMarginTop: 10,
+  contactStripGap: 6,
+  contactStripPadding: "10px 14px",
+  /** CTA + URL + 2-line strip + padding — measured ~132px */
+  contentHeight: 132,
+} as const;
 
 /**
  * Footer top: at least one section gap below content, but never float mid-canvas
@@ -85,14 +95,20 @@ export const INSTAGRAM_FLYER_LAYOUT = {
 
 function buildCloudFlyerLayout() {
   const heroHeight = 122;
-  const taglineHeight = 36;
-  const painMinHeight = 100;
+  const taglineHeight = 32;
+  const bulletRowHeight = 24;
+  const painBulletCount = 4;
+  const painHeight = painBulletCount * bulletRowHeight;
+  const servicesBlockHeight = 418;
   const heroTop = FLYER_HEADER_END;
   const taglineTop = heroTop + heroHeight + FLYER_SPACE.md;
-  const painTop = taglineTop + taglineHeight + FLYER_SPACE.lg;
-  const servicesTop = painTop + painMinHeight + FLYER_SPACE.lg;
-  const footerTop = FLYER_FOOTER_TOP;
-  const servicesFooterGap = FLYER_SPACE.md;
+  const painTop = taglineTop + taglineHeight + FLYER_SPACE.md;
+  const servicesTop = painTop + painHeight + FLYER_SPACE.lg;
+  const contentBottom = servicesTop + servicesBlockHeight;
+  const footerTop = Math.min(
+    contentBottom + FLYER_SPACE.lg,
+    FLYER_FOOTER_TOP,
+  );
 
   return {
     heroTop,
@@ -100,9 +116,9 @@ function buildCloudFlyerLayout() {
     taglineTop,
     taglineHeight,
     painTop,
-    painMinHeight,
+    painHeight,
     servicesTop,
-    servicesBottom: FLYER_PORTRAIT_H - footerTop + servicesFooterGap,
+    servicesBlockHeight,
     footerTop,
   };
 }
@@ -110,16 +126,19 @@ function buildCloudFlyerLayout() {
 export const CLOUD_FLYER_LAYOUT = buildCloudFlyerLayout();
 
 function buildPricingFlyerLayout() {
-  const heroHeight = 118;
-  const introHeight = 34;
-  const bulletsMinHeight = 62;
+  const heroHeight = 240;
+  const introHeight = 26;
+  const bulletRowHeight = 24;
+  const bulletCount = 3;
+  const bulletsHeight = bulletCount * bulletRowHeight;
+  /** rule + label + tier row + footnote (sequential, no flex filler) */
+  const tiersBlockHeight = 148;
   const heroTop = FLYER_HEADER_END;
   const introTop = heroTop + heroHeight + FLYER_SPACE.md;
   const bulletsTop = introTop + introHeight + FLYER_SPACE.md;
-  const tiersTop = bulletsTop + bulletsMinHeight + FLYER_SPACE.lg;
-  const footerTop = FLYER_FOOTER_TOP;
-  /** Gap between pricing block bottom edge and footer rule */
-  const tiersFooterGap = FLYER_SPACE.md;
+  const tiersTop = bulletsTop + bulletsHeight + FLYER_SPACE.lg;
+  const contentBottom = tiersTop + tiersBlockHeight;
+  const footerTop = contentBottom + FLYER_SPACE.lg;
 
   return {
     heroTop,
@@ -127,9 +146,9 @@ function buildPricingFlyerLayout() {
     introTop,
     introHeight,
     bulletsTop,
-    bulletsMinHeight,
+    bulletsHeight,
     tiersTop,
-    tiersBottom: FLYER_PORTRAIT_H - footerTop + tiersFooterGap,
+    tiersBlockHeight,
     footerTop,
   };
 }

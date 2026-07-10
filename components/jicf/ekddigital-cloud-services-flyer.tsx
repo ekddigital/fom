@@ -272,7 +272,7 @@ function PainPointsSection() {
   return (
     <FlyerBlock
       top={L.painTop}
-      minHeight={L.painMinHeight}
+      minHeight={L.painHeight}
       padding={`${FLYER_SPACE.sm}px ${FLYER_PAD_X}px ${FLYER_SPACE.md}px`}
     >
       <SectionLabel>Sound Familiar?</SectionLabel>
@@ -287,9 +287,8 @@ function ServicesGrid() {
   return (
     <FlyerBlock
       top={L.servicesTop}
-      bottom={L.servicesBottom}
-      padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px`}
-      style={{ display: "flex", flexDirection: "column" }}
+      minHeight={L.servicesBlockHeight}
+      padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px 0`}
     >
       <p
         style={{
@@ -301,7 +300,6 @@ function ServicesGrid() {
       >
         <span style={{ color: GOLD_LIGHT }}>Our services</span> — overview
       </p>
-      <div style={{ flex: 1, minHeight: FLYER_SPACE.sm }} aria-hidden />
       <div
         style={{
           display: "grid",

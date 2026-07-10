@@ -7,6 +7,7 @@ import {
 import {
   FLYER_PAD_X,
   FLYER_SPACE,
+  PRICING_FLYER_FOOTER,
 } from "@/components/jicf/ekddigital-flyer-spacing";
 import {
   BG_DARK,
@@ -288,6 +289,8 @@ type FlyerContactFooterProps = {
   ctaSubline?: string;
   websiteUrl?: string;
   contactRows?: readonly FlyerContactRow[];
+  /** EKDSend-style compact strip — pricing flyers */
+  compact?: boolean;
 };
 
 export function FlyerContactFooter({
@@ -296,8 +299,13 @@ export function FlyerContactFooter({
   ctaSubline = "Kingdom workers · Kingdom solutions — our DNA",
   websiteUrl = EKD_DIGITAL_WEBSITE,
   contactRows,
+  compact = false,
 }: FlyerContactFooterProps) {
   const rows = contactRows ?? contactRowsWithWebsite(websiteUrl);
+  const compactRows = rows.filter(
+    (row) => row.label === "Phone / WhatsApp" || row.label === "WeChat ID",
+  );
+
   return (
     <>
       <div
@@ -329,58 +337,201 @@ export function FlyerContactFooter({
           left: 0,
           right: 0,
           bottom: 0,
-          padding: `${FLYER_SPACE.md}px ${FLYER_PAD_X}px ${FLYER_SPACE.lg}px`,
+          padding: compact
+            ? `${FLYER_SPACE.md}px ${FLYER_PAD_X}px ${FLYER_SPACE.lg}px`
+            : `${FLYER_SPACE.md}px ${FLYER_PAD_X}px ${FLYER_SPACE.lg}px`,
           boxSizing: "border-box",
           zIndex: 2,
         }}
       >
-        <p
-          style={{
-            margin: `0 0 ${FLYER_SPACE.xs}px`,
-            fontSize: 10.5,
-            fontWeight: 800,
-            color: "#ffffff",
-            textAlign: "center",
-            letterSpacing: "0.01em",
-            lineHeight: 1.33,
-            textShadow: "0 1px 3px rgba(0,0,0,0.5)",
-          }}
-        >
-          Questions? We&apos;re just a{" "}
-          <span style={{ color: GOLD_LIGHT }}>button</span> away.
-        </p>
-        <p
-          style={{
-            margin: `0 0 ${FLYER_SPACE.sm}px`,
-            fontSize: 7.6,
-            fontWeight: 800,
-            color: "#c9a857",
-            textAlign: "center",
-            letterSpacing: "0.13em",
-            textTransform: "uppercase",
-            lineHeight: 1.25,
-          }}
-        >
-          {ctaSubline}
-        </p>
-        <FlyerSlantedCta>
-          <p
-            style={{
-              margin: 0,
-              fontSize: 11.5,
-              fontWeight: 900,
-              color: BG_DARK,
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-            }}
-          >
-            {ctaHeadline}
-          </p>
-        </FlyerSlantedCta>
-        <FlyerContactGrid rows={rows} />
-        <FlyerParentCompanyLine />
+        {compact ? (
+          <CompactFooterBody
+            ctaHeadline={ctaHeadline}
+            websiteUrl={websiteUrl}
+            contactRows={compactRows}
+          />
+        ) : (
+          <FullFooterBody
+            ctaHeadline={ctaHeadline}
+            ctaSubline={ctaSubline}
+            rows={rows}
+          />
+        )}
       </div>
     </>
+  );
+}
+
+function FullFooterBody({
+  ctaHeadline,
+  ctaSubline,
+  rows,
+}: {
+  ctaHeadline: string;
+  ctaSubline: string;
+  rows: readonly FlyerContactRow[];
+}) {
+  return (
+    <>
+      <p
+        style={{
+          margin: `0 0 ${FLYER_SPACE.xs}px`,
+          fontSize: 10.5,
+          fontWeight: 800,
+          color: "#ffffff",
+          textAlign: "center",
+          letterSpacing: "0.01em",
+          lineHeight: 1.33,
+          textShadow: "0 1px 3px rgba(0,0,0,0.5)",
+        }}
+      >
+        Questions? We&apos;re just a{" "}
+        <span style={{ color: GOLD_LIGHT }}>button</span> away.
+      </p>
+      <p
+        style={{
+          margin: `0 0 ${FLYER_SPACE.sm}px`,
+          fontSize: 7.6,
+          fontWeight: 800,
+          color: "#c9a857",
+          textAlign: "center",
+          letterSpacing: "0.13em",
+          textTransform: "uppercase",
+          lineHeight: 1.25,
+        }}
+      >
+        {ctaSubline}
+      </p>
+      <FlyerSlantedCta>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 11.5,
+            fontWeight: 900,
+            color: BG_DARK,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+          }}
+        >
+          {ctaHeadline}
+        </p>
+      </FlyerSlantedCta>
+      <FlyerContactGrid rows={rows} />
+      <FlyerParentCompanyLine />
+    </>
+  );
+}
+
+function CompactFooterBody({
+  ctaHeadline,
+  websiteUrl,
+  contactRows,
+}: {
+  ctaHeadline: string;
+  websiteUrl: string;
+  contactRows: readonly FlyerContactRow[];
+}) {
+  const F = PRICING_FLYER_FOOTER;
+
+  return (
+    <>
+      <FlyerSlantedCta>
+        <p
+          style={{
+            margin: 0,
+            fontSize: 11.5,
+            fontWeight: 900,
+            color: BG_DARK,
+            letterSpacing: "0.1em",
+            textTransform: "uppercase",
+          }}
+        >
+          {ctaHeadline}
+        </p>
+      </FlyerSlantedCta>
+      <p
+        style={{
+          margin: `${F.ctaUrlMarginTop}px 0 0`,
+          fontSize: 12,
+          fontWeight: 800,
+          color: GOLD_LIGHT,
+          textAlign: "center",
+          letterSpacing: "0.06em",
+          lineHeight: 1.25,
+        }}
+      >
+        {websiteUrl}
+      </p>
+      <div
+        style={{
+          marginTop: F.contactStripMarginTop,
+          display: "flex",
+          flexDirection: "column",
+          gap: F.contactStripGap,
+          padding: F.contactStripPadding,
+          border: `1px solid rgba(200,160,97,0.42)`,
+          borderRadius: 8,
+          background: "rgba(42,37,32,0.6)",
+        }}
+      >
+        {contactRows.map((row) => (
+          <FooterContactLine
+            key={row.label}
+            icon={row.icon}
+            label={row.label === "Phone / WhatsApp" ? "WhatsApp" : row.label}
+            value={row.value}
+          />
+        ))}
+      </div>
+      <FlyerParentCompanyLine />
+    </>
+  );
+}
+
+function FooterContactLine({
+  icon,
+  label,
+  value,
+}: {
+  icon: string;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+      }}
+    >
+      <span style={{ fontSize: 14, lineHeight: 1, flexShrink: 0 }}>{icon}</span>
+      <p style={{ margin: 0, lineHeight: 1.2 }}>
+        <span
+          style={{
+            fontSize: 9,
+            fontWeight: 800,
+            color: GOLD,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+          }}
+        >
+          {label}
+        </span>
+        <span
+          style={{
+            marginLeft: 6,
+            fontSize: 13,
+            fontWeight: 800,
+            color: "#fafaf9",
+            letterSpacing: "0.02em",
+          }}
+        >
+          {value}
+        </span>
+      </p>
+    </div>
   );
 }
 
