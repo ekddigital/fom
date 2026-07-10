@@ -146,7 +146,7 @@ function PricingHero({
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/assets_logo.svg"
+          src={config.brand?.logoSrc ?? "/assets_logo.svg"}
           alt=""
           crossOrigin="anonymous"
           aria-hidden
@@ -227,7 +227,7 @@ function PricingHero({
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/ekdsend_logo.svg"
+          src={config.brand?.logoSrc ?? "/ekdsend_logo.svg"}
           alt=""
           crossOrigin="anonymous"
           aria-hidden
@@ -272,7 +272,7 @@ function PricingHero({
       />
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/ekdsend_logo.svg"
+        src={config.brand?.logoSrc ?? "/ekdsend_logo.svg"}
         alt=""
         crossOrigin="anonymous"
         aria-hidden

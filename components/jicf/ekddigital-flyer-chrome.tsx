@@ -144,11 +144,12 @@ export function FlyerHeader({
   websiteUrl = EKD_DIGITAL_WEBSITE,
   brand,
 }: FlyerHeaderProps) {
+  const isProductBrand = Boolean(brand);
   const logoSrc = brand?.logoSrc ?? "/ekddigital.png";
   const logoAlt = brand?.logoAlt ?? "EKD Digital";
   const brandLead = brand?.brandLead ?? "EKD ";
   const brandAccent = brand?.brandAccent ?? "Digital";
-  const titleFontSize = brand ? 20 : 21;
+  const titleFontSize = isProductBrand ? 20 : 21;
   return (
     <>
       <div
@@ -180,14 +181,18 @@ export function FlyerHeader({
       >
         <div
           style={{
-            width: 46,
-            height: 46,
-            borderRadius: "50%",
+            width: isProductBrand ? 44 : 46,
+            height: isProductBrand ? 44 : 46,
+            borderRadius: isProductBrand ? 10 : "50%",
             overflow: "hidden",
             flexShrink: 0,
-            border: `2px solid rgba(200,160,97,0.45)`,
-            boxShadow:
-              "0 0 14px rgba(200,160,97,0.25), 0 0 10px rgba(200,160,97,0.2)",
+            border: isProductBrand
+              ? `1.5px solid rgba(200,160,97,0.55)`
+              : `2px solid rgba(200,160,97,0.45)`,
+            boxShadow: isProductBrand
+              ? "0 0 12px rgba(200,160,97,0.2)"
+              : "0 0 14px rgba(200,160,97,0.25), 0 0 10px rgba(200,160,97,0.2)",
+            background: isProductBrand ? BG_DARK : undefined,
           }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -198,7 +203,7 @@ export function FlyerHeader({
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
+              objectFit: isProductBrand ? "contain" : "cover",
               display: "block",
             }}
           />

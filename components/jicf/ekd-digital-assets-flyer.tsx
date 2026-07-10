@@ -13,6 +13,7 @@ import {
 import {
   FLYER_PORTRAIT_H,
   FLYER_PORTRAIT_W,
+  DIGITAL_ASSETS_PRODUCT_BRAND,
   DIGITAL_ASSETS_WEBSITE,
 } from "@/components/jicf/ekddigital-flyer-theme";
 import { EKDDigitalAssetsFlyerDecorations } from "@/components/jicf/ekd-digital-assets-flyer-decorations";
@@ -158,8 +159,8 @@ function DigitalAssetsHeader() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/assets_logo.svg"
-            alt="EKD Digital Assets"
+            src={DIGITAL_ASSETS_PRODUCT_BRAND.logoSrc}
+            alt={DIGITAL_ASSETS_PRODUCT_BRAND.logoAlt}
             crossOrigin="anonymous"
             style={{
               width: "100%",
@@ -180,7 +181,10 @@ function DigitalAssetsHeader() {
               lineHeight: 1.1,
             }}
           >
-            Digital<span style={{ color: ASSETS_GOLD }}>Assets</span>
+            Digital
+            <span style={{ color: ASSETS_GOLD }}>
+              {DIGITAL_ASSETS_PRODUCT_BRAND.brandAccent}
+            </span>
           </p>
           <p
             style={{
