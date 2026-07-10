@@ -6,6 +6,8 @@ import {
   EKDSEND_PROMO_LAYOUT,
   FLYER_PAD_X,
   FLYER_SPACE,
+  PROMO_FLYER_CONTENT,
+  PROMO_FLYER_FOOTER,
   flyerBulletRowStyle,
 } from "@/components/jicf/ekddigital-flyer-spacing";
 import {
@@ -21,6 +23,8 @@ const EKDSEND_BG = "#1F1C18";
 const EKDSEND_BG_MID = "#2A2520";
 
 const L = EKDSEND_PROMO_LAYOUT;
+const C = PROMO_FLYER_CONTENT;
+const F = PROMO_FLYER_FOOTER;
 
 const HEADLINE = "COMMUNICATIONS THAT DELIVER.";
 const SUBHEADLINE =
@@ -272,7 +276,7 @@ function ContentBlock() {
   return (
     <FlyerBlock
       top={L.contentTop}
-      minHeight={368}
+      minHeight={L.contentMinHeight}
       padding={`0 ${FLYER_PAD_X}px`}
       style={{ zIndex: 4 }}
     >
@@ -294,7 +298,7 @@ function ContentBlock() {
 
       <p
         style={{
-          margin: `${FLYER_SPACE.lg}px 0 0`,
+          margin: `${C.subheadMarginTop}px 0 0`,
           fontSize: 14,
           fontWeight: 700,
           color: "#f3f2f0",
@@ -305,13 +309,13 @@ function ContentBlock() {
         {SUBHEADLINE}
       </p>
 
-      <div style={{ marginTop: FLYER_SPACE.lg + 4 }}>
+      <div style={{ marginTop: C.bulletsMarginTop }}>
         {BULLETS.map((text) => (
           <Bullet key={text} text={text} />
         ))}
       </div>
 
-      <div style={{ marginTop: FLYER_SPACE.lg + 2 }}>
+      <div style={{ marginTop: C.ctaMarginTop }}>
         <div
           style={{
             background: `linear-gradient(135deg, ${EKDSEND_GOLD_LIGHT} 0%, ${EKDSEND_GOLD} 100%)`,
@@ -338,7 +342,7 @@ function ContentBlock() {
         </div>
         <p
           style={{
-            margin: `${FLYER_SPACE.xs + 1}px 0 0`,
+            margin: `${C.ctaUrlMarginTop}px 0 0`,
             fontSize: 13,
             fontWeight: 800,
             color: EKDSEND_GOLD_LIGHT,
@@ -357,7 +361,7 @@ function ContentBlock() {
 
 function Bullet({ text }: { text: string }) {
   return (
-    <div style={{ ...flyerBulletRowStyle, marginBottom: FLYER_SPACE.lg }}>
+    <div style={{ ...flyerBulletRowStyle, marginBottom: C.bulletMarginBottom }}>
       <span
         style={{
           color: EKDSEND_GOLD,
@@ -390,7 +394,7 @@ function FooterBlock() {
       <div
         style={{
           position: "absolute",
-          top: L.footerTop,
+          top: F.top,
           left: FLYER_PAD_X,
           right: FLYER_PAD_X,
           height: 1,
@@ -400,7 +404,7 @@ function FooterBlock() {
       <div
         style={{
           position: "absolute",
-          top: L.footerTop + FLYER_SPACE.md,
+          top: F.top + F.ruleToTitleGap,
           left: 0,
           right: 0,
           textAlign: "center",
@@ -422,7 +426,7 @@ function FooterBlock() {
         </p>
         <p
           style={{
-            margin: `3px 0 0`,
+            margin: `${F.titleToEmailGap}px 0 0`,
             fontSize: 11,
             fontWeight: 700,
             color: "#c9c6c2",
@@ -433,11 +437,11 @@ function FooterBlock() {
         </p>
         <div
           style={{
-            marginTop: 10,
+            marginTop: F.contactStripMarginTop,
             display: "flex",
             flexDirection: "column",
-            gap: 6,
-            padding: "10px 14px",
+            gap: F.contactStripGap,
+            padding: F.contactStripPadding,
             border: `1px solid rgba(200,160,97,0.42)`,
             borderRadius: 8,
             background: "rgba(42,37,32,0.6)",

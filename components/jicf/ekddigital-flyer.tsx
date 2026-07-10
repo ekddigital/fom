@@ -10,29 +10,24 @@ import {
   FlyerMeshConstellation,
   FlyerSlantedCta,
 } from "@/components/jicf/ekddigital-flyer-motifs";
+import {
+  FLYER_PAD_X,
+  FLYER_SPACE,
+  INSTAGRAM_FLYER_H,
+  INSTAGRAM_FLYER_LAYOUT,
+  flyerBulletRowStyle,
+  flyerSectionLabelStyle,
+} from "@/components/jicf/ekddigital-flyer-spacing";
 import { BG_DARK, BG_MID, GOLD_LIGHT } from "@/components/jicf/ekddigital-flyer-theme";
 
-/* ─── Flyer Canvas ──────────────────────────────────────────────────────────
-  540 × 675 px preview → pixelRatio:2 export → 1080 × 1350 px (Instagram 4:5)
-  All positions are absolute — no flex:1 spacers — for html-to-image fidelity.
-
-  Section map (cumulative top values):
-    Header      :   0 → 72  (72 px)
-    Gold line   :  72 → 75  ( 3 px)
-    Image strip :  75 → 232 (157 px)
-    Pain points : 232 → 352 (120 px)
-    Separator   :      352  (  1 px)
-    Services    : 353 → 468 (115 px)
-    Gold border :      468  ( 2.5px)
-    CTA/Contact : 470.5 → 675 (204.5 px)
-─────────────────────────────────────────────────────────────────────────── */
+const L = INSTAGRAM_FLYER_LAYOUT;
 function EKDDigitalFlyerCanvas() {
   return (
     <div
       style={{
         position: "relative",
         width: 540,
-        height: 675,
+        height: INSTAGRAM_FLYER_H,
         overflow: "hidden",
         fontFamily: "'Arial', 'Helvetica Neue', sans-serif",
       }}
@@ -119,11 +114,11 @@ function EKDDigitalFlyerCanvas() {
           top: 0,
           left: 0,
           right: 0,
-          height: 72,
+          height: L.headerHeight,
           display: "flex",
           alignItems: "center",
-          padding: "0 18px",
-          gap: 11,
+          padding: `0 ${FLYER_PAD_X - 2}px`,
+          gap: FLYER_SPACE.md - 1,
           background: "rgba(7, 9, 15, 0.98)",
           borderBottom: "2.5px solid #C8A061",
           zIndex: 10,
@@ -213,10 +208,10 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 72,
+          top: L.headerHeight,
           left: 0,
           right: 0,
-          height: 3,
+          height: L.headerRuleHeight,
           background:
             "linear-gradient(to right, transparent, #C8A061 20%, #E8C589 50%, #C8A061 80%, transparent)",
         }}
@@ -228,10 +223,10 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 75,
+          top: L.heroTop,
           left: 0,
           right: 0,
-          height: 157,
+          height: L.heroHeight,
           display: "flex",
           zIndex: 2,
         }}
@@ -240,7 +235,7 @@ function EKDDigitalFlyerCanvas() {
         <div
           style={{
             width: 269,
-            height: 157,
+            height: L.heroHeight,
             position: "relative",
             overflow: "hidden",
             flexShrink: 0,
@@ -306,7 +301,7 @@ function EKDDigitalFlyerCanvas() {
         <div
           style={{
             width: 2,
-            height: 157,
+            height: L.heroHeight,
             background:
               "linear-gradient(to bottom, transparent 0%, #C8A061 25%, #E8C589 50%, #C8A061 75%, transparent 100%)",
             flexShrink: 0,
@@ -317,7 +312,7 @@ function EKDDigitalFlyerCanvas() {
         <div
           style={{
             flex: 1,
-            height: 157,
+            height: L.heroHeight,
             position: "relative",
             overflow: "hidden",
           }}
@@ -384,10 +379,10 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 75,
+          top: L.heroTop,
           left: 0,
           right: 0,
-          height: 157,
+          height: L.heroHeight,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -443,22 +438,16 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 232,
+          top: L.painTop,
           left: 0,
           right: 0,
-          height: 120,
-          padding: "10px 20px 7px",
+          height: L.painHeight,
+          padding: `${FLYER_SPACE.md - 2}px ${FLYER_PAD_X}px ${FLYER_SPACE.md - 5}px`,
           zIndex: 2,
         }}
       >
         {/* Section label */}
-        <div
-          style={{
-            borderLeft: "3px solid #C8A061",
-            paddingLeft: 8,
-            marginBottom: 8,
-          }}
-        >
+        <div style={flyerSectionLabelStyle}>
           <p
             style={{
               margin: 0,
@@ -483,10 +472,8 @@ function EKDDigitalFlyerCanvas() {
           <div
             key={point}
             style={{
-              display: "flex",
-              alignItems: "flex-start",
-              gap: 8,
-              marginBottom: 5,
+              ...flyerBulletRowStyle,
+              marginBottom: FLYER_SPACE.xs + 1,
             }}
           >
             <span
@@ -496,7 +483,6 @@ function EKDDigitalFlyerCanvas() {
                 fontWeight: 900,
                 lineHeight: 1.2,
                 flexShrink: 0,
-                marginTop: 0,
               }}
             >
               ›
@@ -521,9 +507,9 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 352,
-          left: 20,
-          right: 20,
+          top: L.separatorTop,
+          left: FLYER_PAD_X,
+          right: FLYER_PAD_X,
           height: 1,
           background:
             "linear-gradient(to right, transparent, rgba(200,160,97,0.4) 20%, rgba(200,160,97,0.4) 80%, transparent)",
@@ -536,16 +522,16 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 353,
+          top: L.servicesTop,
           left: 0,
           right: 0,
-          height: 115,
-          padding: "7px 18px 10px",
+          height: L.servicesHeight,
+          padding: `${FLYER_SPACE.md - 5}px ${FLYER_PAD_X - 2}px ${FLYER_SPACE.md - 2}px`,
           boxSizing: "border-box",
           zIndex: 2,
           display: "flex",
           flexDirection: "column",
-          gap: 16,
+          gap: FLYER_SPACE.lg,
         }}
       >
         <p
@@ -568,8 +554,8 @@ function EKDDigitalFlyerCanvas() {
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            columnGap: 7,
-            rowGap: 6,
+            columnGap: FLYER_SPACE.md - 1,
+            rowGap: FLYER_SPACE.md - 2,
             justifyItems: "stretch",
             alignItems: "center",
             flexShrink: 0,
@@ -640,7 +626,7 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 468,
+          top: L.footerBorderTop,
           left: 0,
           right: 0,
           height: 2.5,
@@ -655,11 +641,11 @@ function EKDDigitalFlyerCanvas() {
       <div
         style={{
           position: "absolute",
-          top: 470.5,
+          top: L.footerTop,
           left: 0,
           right: 0,
           bottom: 0,
-          padding: "11px 20px 16px",
+          padding: `${FLYER_SPACE.md - 1}px ${FLYER_PAD_X}px ${FLYER_SPACE.lg}px`,
           background: "rgba(7, 9, 15, 0.98)",
           zIndex: 2,
         }}
@@ -667,7 +653,7 @@ function EKDDigitalFlyerCanvas() {
         {/* Hope + CTA hook (one-liner from share-note; Kingdom DNA line below) */}
         <p
           style={{
-            margin: "0 0 4px",
+            margin: `0 0 ${FLYER_SPACE.xs}px`,
             fontSize: 10.8,
             fontWeight: 800,
             color: "#ffffff",
@@ -685,7 +671,7 @@ function EKDDigitalFlyerCanvas() {
         </p>
         <p
           style={{
-            margin: "0 0 6px",
+            margin: `0 0 ${FLYER_SPACE.md - 2}px`,
             fontSize: 7.6,
             fontWeight: 800,
             color: "#c9a857",
@@ -757,7 +743,7 @@ export function EKDDigitalFlyerShell() {
         cacheBust: true,
         pixelRatio: 2,
         width: 540,
-        height: 675,
+        height: INSTAGRAM_FLYER_H,
         canvasWidth: 1080,
         canvasHeight: 1350,
         backgroundColor: "#1F1C18",
@@ -814,7 +800,7 @@ export function EKDDigitalFlyerShell() {
           ref={flyerRef}
           style={{
             width: 540,
-            height: 675,
+            height: INSTAGRAM_FLYER_H,
             position: "relative",
             overflow: "hidden",
           }}

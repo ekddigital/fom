@@ -407,7 +407,7 @@ function IntroBand({ config }: { config: ServicePricingFlyerConfig }) {
   return (
     <FlyerBlock
       top={L.introTop}
-      minHeight={40}
+      minHeight={L.introHeight}
       padding={`${FLYER_SPACE.sm}px ${FLYER_PAD_X}px 0`}
     >
       <p
@@ -439,7 +439,7 @@ function BulletsBand({
   return (
     <FlyerBlock
       top={L.bulletsTop}
-      minHeight={72}
+      minHeight={L.bulletsMinHeight}
       padding={`0 ${FLYER_PAD_X}px`}
     >
       {variant === "email" ? (
@@ -513,7 +513,7 @@ function PricingTiersSection({
   return (
     <FlyerBlock
       top={L.tiersTop}
-      minHeight={168}
+      minHeight={L.tiersMinHeight}
       padding={`${FLYER_SPACE.sm}px ${FLYER_SPACE.lg}px`}
     >
       <FlyerSectionRule color="rgba(200,160,97,0.35)" />
