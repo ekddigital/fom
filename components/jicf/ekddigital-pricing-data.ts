@@ -181,6 +181,18 @@ export const DIGITAL_ASSETS_PRICING: ServicePricingFlyerConfig = {
   ],
   tiers: digitalAssetsTiers,
   footnote: `Enterprise SLAs & custom entitlements — ${DIGITAL_ASSETS_WEBSITE}/pricing`,
+  resourceLinks: [
+    {
+      label: "Pricing",
+      href: `https://${DIGITAL_ASSETS_WEBSITE}/pricing`,
+      displayUrl: `${DIGITAL_ASSETS_WEBSITE}/pricing`,
+    },
+    {
+      label: "API Docs",
+      href: `https://${DIGITAL_ASSETS_WEBSITE}/api-docs`,
+      displayUrl: `${DIGITAL_ASSETS_WEBSITE}/api-docs`,
+    },
+  ],
   productUrl: DIGITAL_ASSETS_WEBSITE,
   brand: DIGITAL_ASSETS_PRODUCT_BRAND,
   downloadFilename: "ekddigital-digital-assets-pricing.png",
