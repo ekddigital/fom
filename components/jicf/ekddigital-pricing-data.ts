@@ -1,9 +1,14 @@
 /**
- * Flyer pricing — transactional tiers from lib/jicf/ekddigital-transactional-pricing.ts
- * (synced with mail/src/lib/constants/pricing.ts TRANSACTIONAL_PRODUCT).
- * Other services use platform-appropriate tiers where no dedicated product config exists in-repo.
+ * Flyer pricing — synced with live product configs:
+ * - Transactional / EKDSend: lib/jicf/ekddigital-transactional-pricing.ts (mail TRANSACTIONAL_PRODUCT)
+ * - Digital Assets: lib/jicf/ekddigital-assets-pricing.ts (assets DEFAULT_PLANS)
+ * - Hosting & SSL: illustrative tiers — no dedicated product catalog in-repo
  */
 
+import {
+  DIGITAL_ASSETS_PLANS,
+  formatMonthlyPrice as formatAssetsMonthlyPrice,
+} from "@/lib/jicf/ekddigital-assets-pricing";
 import {
   TRANSACTIONAL_EMAIL_PLANS,
   formatEmailsPerMonth,
@@ -71,6 +76,14 @@ const transactionalEmailTiers: PricingTier[] = TRANSACTIONAL_EMAIL_PLANS.map(
   }),
 );
 
+const digitalAssetsTiers: PricingTier[] = DIGITAL_ASSETS_PLANS.map((plan) => ({
+  name: plan.name,
+  volume: plan.storageLabel,
+  price: formatAssetsMonthlyPrice(plan.monthlyPrice, plan.requiresContact),
+  highlight: plan.popular,
+  contactOnly: plan.requiresContact,
+}));
+
 /** Source: mail TRANSACTIONAL_PRODUCT tiers (monthly pricing) */
 export const TRANSACTIONAL_EMAIL_PRICING: ServicePricingFlyerConfig = {
   slug: "transactional-email",
@@ -100,56 +113,33 @@ export const TRANSACTIONAL_EMAIL_PRICING: ServicePricingFlyerConfig = {
     "Transactional email API plans: Free, Starter, Growth, Scale, and Enterprise. Monthly volumes and pricing from the EKDSend platform.",
 };
 
-/** Source: mail SMS_PRODUCT tiers (representative EKDSend communications pricing) */
+/** Source: mail TRANSACTIONAL_PRODUCT tiers (monthly pricing — es.ekddigital.com) */
 export const EKDSEND_PRICING: ServicePricingFlyerConfig = {
   slug: "ekdsend",
   title: "EKDSend",
-  subtitle: "Email · SMS · Voice APIs",
-  sectionLabel: "Communications Plans",
+  subtitle: "Transactional email · Mailboxes",
+  sectionLabel: "Monthly Plans",
   watermark: "📨",
   variant: "comms",
-  heroLabel: "Unified Communications Platform",
-  heroHeadline: "ONE PLATFORM.",
-  heroSubline: "SMS · Voice · Messaging APIs",
+  heroLabel: "Email API · Mailboxes · Analytics",
+  heroHeadline: "COMMUNICATIONS THAT DELIVER.",
+  heroSubline: `REST & SMTP · ${EKDSEND_WEBSITE}`,
   tagline:
-    "EKDSend powers product notifications and customer outreach with global SMS, programmable voice, and messaging APIs.",
+    "EKDSend powers transactional email and business mailboxes—reliable delivery, custom domains, and developer-friendly APIs.",
   bullets: [
-    "2-way SMS to 200+ countries with delivery receipts",
-    "Programmable voice, IVR, and phone numbers",
-    "Full API access, analytics, and priority support tiers",
+    "100 emails/month free — no credit card required",
+    "REST & SMTP APIs with real-time webhooks",
+    "Mailboxes and storage on your own domains",
   ],
-  tiers: [
-    {
-      name: "Starter",
-      volume: "500 SMS / mo",
-      price: usd(15),
-    },
-    {
-      name: "Business",
-      volume: "5K SMS / mo",
-      price: usd(49),
-      highlight: true,
-    },
-    {
-      name: "Professional",
-      volume: "25K SMS / mo",
-      price: usd(129),
-    },
-    {
-      name: "Enterprise",
-      volume: "Unlimited",
-      price: "Contact",
-      contactOnly: true,
-    },
-  ],
+  tiers: transactionalEmailTiers,
   footnote:
-    `Voice minutes & bundled email API — contact for custom packages · ${EKDSEND_WEBSITE}`,
+    `Dedicated IPs & SLA — contact us · ${EKDSEND_WEBSITE} · Prices from EKDSend mail platform`,
   productUrl: EKDSEND_WEBSITE,
   brand: EKDSEND_PRODUCT_BRAND,
   downloadFilename: "ekddigital-ekdsend-pricing.png",
   metadataTitle: "EKD Digital — EKDSend Pricing",
   metadataDescription:
-    "EKDSend communications platform pricing for SMS, voice, and messaging APIs.",
+    "EKDSend pricing: Free, Starter, Growth, Scale, and Enterprise transactional email plans. Monthly volumes and pricing from es.ekddigital.com.",
 };
 
 export const DIGITAL_ASSETS_PRICING: ServicePricingFlyerConfig = {
@@ -169,31 +159,8 @@ export const DIGITAL_ASSETS_PRICING: ServicePricingFlyerConfig = {
     "Transform and optimize on the edge via CDN",
     "Team permissions and shareable delivery links",
   ],
-  tiers: [
-    {
-      name: "Starter",
-      volume: "50 GB storage",
-      price: usd(29),
-    },
-    {
-      name: "Pro",
-      volume: "500 GB storage",
-      price: usd(99),
-      highlight: true,
-    },
-    {
-      name: "Business",
-      volume: "2 TB storage",
-      price: usd(249),
-    },
-    {
-      name: "Enterprise",
-      volume: "Custom",
-      price: "Contact",
-      contactOnly: true,
-    },
-  ],
-  footnote: `Custom CDN regions & dedicated buckets — ${DIGITAL_ASSETS_WEBSITE}`,
+  tiers: digitalAssetsTiers,
+  footnote: `Enterprise SLAs & custom entitlements — ${DIGITAL_ASSETS_WEBSITE}/pricing`,
   productUrl: DIGITAL_ASSETS_WEBSITE,
   brand: DIGITAL_ASSETS_PRODUCT_BRAND,
   downloadFilename: "ekddigital-digital-assets-pricing.png",
