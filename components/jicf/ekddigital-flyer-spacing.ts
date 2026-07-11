@@ -131,8 +131,8 @@ function buildPricingFlyerLayout() {
   const bulletRowHeight = 24;
   const bulletCount = 3;
   const bulletsHeight = bulletCount * bulletRowHeight;
-  /** rule + label + tier row + footnote (sequential, no flex filler) */
-  const tiersBlockHeight = 148;
+  /** rule + label + tier row + footnote + optional resource links */
+  const tiersBlockHeight = 170;
   const heroTop = FLYER_HEADER_END;
   const introTop = heroTop + heroHeight + FLYER_SPACE.md;
   const bulletsTop = introTop + introHeight + FLYER_SPACE.md;

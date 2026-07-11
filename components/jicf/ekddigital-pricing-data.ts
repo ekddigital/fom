@@ -31,6 +31,12 @@ export type PricingTier = {
   contactOnly?: boolean;
 };
 
+export type PricingResourceLink = {
+  label: string;
+  href: string;
+  displayUrl: string;
+};
+
 /** Visual layout variant per pricing flyer (distinct hero + tier treatment). */
 export type PricingFlyerVariant =
   | "hosting"
@@ -53,6 +59,8 @@ export type ServicePricingFlyerConfig = {
   bullets: readonly string[];
   tiers: readonly PricingTier[];
   footnote: string;
+  /** Optional docs / pricing URLs shown below tier footnote (EKDSend). */
+  resourceLinks?: readonly PricingResourceLink[];
   ctaHeadline?: string;
   productUrl: string;
   brand?: ProductFlyerBrand;
@@ -134,6 +142,18 @@ export const EKDSEND_PRICING: ServicePricingFlyerConfig = {
   tiers: transactionalEmailTiers,
   footnote:
     `Dedicated IPs & SLA — contact us · ${EKDSEND_WEBSITE} · Prices from EKDSend mail platform`,
+  resourceLinks: [
+    {
+      label: "Docs",
+      href: `https://${EKDSEND_WEBSITE}/docs`,
+      displayUrl: `${EKDSEND_WEBSITE}/docs`,
+    },
+    {
+      label: "Pricing",
+      href: `https://${EKDSEND_WEBSITE}/#pricing`,
+      displayUrl: `${EKDSEND_WEBSITE}/#pricing`,
+    },
+  ],
   productUrl: EKDSEND_WEBSITE,
   brand: EKDSEND_PRODUCT_BRAND,
   downloadFilename: "ekddigital-ekdsend-pricing.png",

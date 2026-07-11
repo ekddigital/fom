@@ -10,6 +10,7 @@ import {
 import { EKDDigitalFlyerShell } from "@/components/jicf/ekddigital-flyer-shell";
 import type {
   PricingFlyerVariant,
+  PricingResourceLink,
   PricingTier,
   ServicePricingFlyerConfig,
 } from "@/components/jicf/ekddigital-pricing-data";
@@ -80,6 +81,7 @@ function PricingFlyerCanvas({ config }: EKDDigitalServicePricingFlyerProps) {
         sectionLabel={config.sectionLabel}
         tiers={config.tiers}
         footnote={config.footnote}
+        resourceLinks={config.resourceLinks}
         gridCols={gridCols}
         variant={config.variant}
       />
@@ -544,6 +546,7 @@ function PricingTiersSection({
   sectionLabel,
   tiers,
   footnote,
+  resourceLinks,
   gridCols,
   variant,
 }: {
@@ -551,6 +554,7 @@ function PricingTiersSection({
   sectionLabel: string;
   tiers: readonly PricingTier[];
   footnote: string;
+  resourceLinks?: readonly PricingResourceLink[];
   gridCols: string;
   variant: PricingFlyerVariant;
 }) {
@@ -601,7 +605,57 @@ function PricingTiersSection({
       >
         {footnote}
       </p>
+      {resourceLinks?.length ? (
+        <PricingResourceLinks links={resourceLinks} />
+      ) : null}
     </FlyerBlock>
+  );
+}
+
+function PricingResourceLinks({
+  links,
+}: {
+  links: readonly PricingResourceLink[];
+}) {
+  return (
+    <div
+      style={{
+        marginTop: FLYER_SPACE.sm,
+        display: "flex",
+        flexDirection: "column",
+        gap: 3,
+        padding: `${FLYER_SPACE.xs}px ${FLYER_SPACE.sm}px`,
+        borderLeft: `2px solid ${GOLD}`,
+        background: "rgba(42,37,32,0.35)",
+        borderRadius: "0 6px 6px 0",
+      }}
+    >
+      {links.map((link) => (
+        <p
+          key={link.label}
+          style={{
+            margin: 0,
+            fontSize: 7.5,
+            fontWeight: 700,
+            lineHeight: 1.35,
+          }}
+        >
+          <span
+            style={{
+              color: GOLD_LIGHT,
+              fontWeight: 800,
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+            }}
+          >
+            {link.label}:
+          </span>{" "}
+          <span style={{ color: "#d4d4d8", letterSpacing: "0.02em" }}>
+            {link.displayUrl}
+          </span>
+        </p>
+      ))}
+    </div>
   );
 }
 
