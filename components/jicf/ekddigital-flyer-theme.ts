@@ -9,7 +9,7 @@ export const BG_MID = "#2A2520";
 export const FLYER_PORTRAIT_W = 540;
 export const FLYER_PORTRAIT_H = 900;
 
-export const PARENT_COMPANY_NAME = "A.N.D. Group of Companies LLC";
+export const PARENT_COMPANY_NAME = "A.N.D. GROUP OF COMPANIES LLC";
 export const PARENT_COMPANY_URL = "https://andgroupco.com";
 export const PARENT_COMPANY_WEBSITE_LABEL = "andgroupco.com";
 
