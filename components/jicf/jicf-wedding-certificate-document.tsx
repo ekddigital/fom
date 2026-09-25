@@ -94,10 +94,10 @@ export function JicfWeddingCertificateDocument({
           <p className="jicf-oversight">
             The holy matrimony was celebrated under the authority and pastoral
             oversight of {org}, uniting the below two persons in lawful and
-            sacred marriage before God and witnesses.
+            sacred marriage before God and witnesses,{" "}
+            <span className="jicf-inline-name">{husband}</span> and{" "}
+            <span className="jicf-inline-name">{wife}</span>.
           </p>
-          <p className="jicf-party-name">{husband}</p>
-          <p className="jicf-party-name">{wife}</p>
           <p className="jicf-covenant">{data.covenantText}</p>
         </div>
 
@@ -166,7 +166,7 @@ export const jicfWeddingCertificateStyles = `
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
-    padding: 8mm 12mm 9mm;
+    padding: 8mm 12mm 18mm;
   }
   .jicf-wedding-header {
     display: flex;
@@ -246,13 +246,13 @@ export const jicfWeddingCertificateStyles = `
     font-size: 4.6mm;
     line-height: 1.32;
   }
-  .jicf-party-name {
-    margin: 1mm 0 0;
+  .jicf-inline-name {
     color: var(--jicf-red);
-    font-size: 5.8mm;
-    font-style: italic;
-    font-weight: 700;
-    line-height: 1.15;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+    white-space: nowrap;
   }
   .jicf-covenant {
     margin: 1.2mm 6mm 0;
@@ -268,7 +268,7 @@ export const jicfWeddingCertificateStyles = `
       "couple witnesses"
       "pastor pastor";
     column-gap: 16mm;
-    row-gap: 3mm;
+    row-gap: 2.2mm;
     align-items: start;
     margin-top: 0;
     padding-bottom: 0;

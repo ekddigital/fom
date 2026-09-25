@@ -133,9 +133,8 @@ export const jicfWeddingCertificate: CertificateTemplate = {
     {
       id: "oversight",
       type: "text",
-      content:
-        "The holy matrimony was celebrated under the authority and pastoral oversight of Jinan International Christian Fellowship, uniting the below two persons in lawful and sacred marriage before God and witnesses.",
-      position: { x: 36, y: 292, width: 928, height: 48 },
+      content: `The holy matrimony was celebrated under the authority and pastoral oversight of Jinan International Christian Fellowship, uniting the below two persons in lawful and sacred marriage before God and witnesses, <span style="color:${RED};white-space:nowrap">Mr. Joshua Bosco Barvor</span> and <span style="color:${RED};white-space:nowrap">Miss Ruphine Manaweh Harmon</span>.`,
+      position: { x: 36, y: 292, width: 928, height: 78 },
       style: {
         fontSize: 18,
         fontFamily: "serif",
@@ -145,39 +144,11 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       },
     },
     {
-      id: "husband-display",
-      type: "text",
-      content: "Mr. Joshua Bosco Barvor",
-      position: { x: 50, y: 342, width: 900, height: 28 },
-      style: {
-        fontSize: 24,
-        fontFamily: "serif",
-        fontWeight: "bold",
-        fontStyle: "italic",
-        color: RED,
-        textAlign: "center",
-      },
-    },
-    {
-      id: "wife-display",
-      type: "text",
-      content: "Miss Ruphine Manaweh Harmon",
-      position: { x: 50, y: 372, width: 900, height: 28 },
-      style: {
-        fontSize: 24,
-        fontFamily: "serif",
-        fontWeight: "bold",
-        fontStyle: "italic",
-        color: RED,
-        textAlign: "center",
-      },
-    },
-    {
       id: "covenant",
       type: "text",
       content:
         "The two individuals have willingly entered into the covenant of marriage, promising to love, honor, cherish, and abide with one another, for better or for worse, in sickness and in health, till death do them part, according to the sacred teachings of the Christian faith.",
-      position: { x: 36, y: 402, width: 928, height: 50 },
+      position: { x: 36, y: 376, width: 928, height: 72 },
       style: {
         fontSize: 18,
         fontFamily: "serif",
@@ -191,14 +162,14 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "husband-line",
       type: "shape",
       content: "",
-      position: { x: 110, y: 464, width: 310, height: 2 },
+      position: { x: 110, y: 456, width: 310, height: 2 },
       style: { color: NAVY },
     },
     {
       id: "husband-caption",
       type: "text",
       content: "(Husband's signature)",
-      position: { x: 90, y: 470, width: 350, height: 20 },
+      position: { x: 90, y: 462, width: 350, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
@@ -211,14 +182,14 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "wife-line",
       type: "shape",
       content: "",
-      position: { x: 110, y: 506, width: 310, height: 2 },
+      position: { x: 110, y: 494, width: 310, height: 2 },
       style: { color: NAVY },
     },
     {
       id: "wife-caption",
       type: "text",
       content: "(Wife's signature)",
-      position: { x: 90, y: 512, width: 350, height: 20 },
+      position: { x: 90, y: 500, width: 350, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
@@ -231,14 +202,14 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "witness-1-line",
       type: "shape",
       content: "",
-      position: { x: 580, y: 464, width: 310, height: 2 },
+      position: { x: 580, y: 456, width: 310, height: 2 },
       style: { color: NAVY },
     },
     {
       id: "witness-1-sign",
       type: "text",
       content: "(Witness 1)",
-      position: { x: 560, y: 470, width: 350, height: 20 },
+      position: { x: 560, y: 462, width: 350, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
@@ -251,14 +222,14 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "witness-2-line",
       type: "shape",
       content: "",
-      position: { x: 580, y: 506, width: 310, height: 2 },
+      position: { x: 580, y: 494, width: 310, height: 2 },
       style: { color: NAVY },
     },
     {
       id: "witness-2-sign",
       type: "text",
       content: "(Witness 2)",
-      position: { x: 560, y: 512, width: 350, height: 20 },
+      position: { x: 560, y: 500, width: 350, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
@@ -271,7 +242,7 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "marriage-note",
       type: "text",
       content: "This marriage was celebrated between us",
-      position: { x: 150, y: 540, width: 700, height: 20 },
+      position: { x: 150, y: 524, width: 700, height: 20 },
       style: {
         fontSize: 17,
         fontFamily: "serif",
@@ -283,7 +254,7 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "presence",
       type: "text",
       content: "In the Presence of",
-      position: { x: 200, y: 560, width: 600, height: 20 },
+      position: { x: 200, y: 546, width: 600, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
@@ -296,14 +267,14 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "pastor-signature",
       type: "image",
       content: "/pastor_Joe_signaturepng.png",
-      position: { x: 385, y: 580, width: 230, height: 28 },
+      position: { x: 385, y: 566, width: 230, height: 26 },
       style: {},
     },
     {
       id: "pastor-name",
       type: "text",
       content: "Pastor Joseph Summers",
-      position: { x: 180, y: 608, width: 640, height: 20 },
+      position: { x: 180, y: 594, width: 640, height: 20 },
       style: {
         fontSize: 18,
         fontFamily: "serif",
@@ -316,7 +287,7 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "pastor-role",
       type: "text",
       content: "(Officiating Minister)",
-      position: { x: 180, y: 628, width: 640, height: 20 },
+      position: { x: 180, y: 614, width: 640, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
@@ -329,7 +300,7 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "pastor-date",
       type: "text",
       content: "26 September 2026",
-      position: { x: 180, y: 648, width: 640, height: 20 },
+      position: { x: 180, y: 634, width: 640, height: 20 },
       style: {
         fontSize: 16,
         fontFamily: "serif",
