@@ -42,8 +42,8 @@ const TEXT_FIELDS: Array<{
   { key: "ceremonyYear", label: "Year", placeholder: "2026" },
   { key: "churchAddress", label: "Church address", wide: true },
   { key: "location", label: "Ceremony place", placeholder: "Hangzhou, China" },
-  { key: "brideName", label: "Bride" },
-  { key: "groomName", label: "Groom" },
+  { key: "groomName", label: "Husband" },
+  { key: "brideName", label: "Wife" },
   { key: "officiantName", label: "Officiant" },
   { key: "witness1Name", label: "Witness 1 name (optional)" },
   { key: "witness2Name", label: "Witness 2 name (optional)" },
@@ -75,8 +75,8 @@ export function JicfWeddingCertificateShell({
   const certificateRef = useRef<HTMLDivElement | null>(null);
 
   const fileBase = useMemo(
-    () => slugFileBase(data.brideName, data.groomName),
-    [data.brideName, data.groomName],
+    () => slugFileBase(data.groomName, data.brideName),
+    [data.groomName, data.brideName],
   );
 
   const patch = (key: FieldKey, value: string) => {

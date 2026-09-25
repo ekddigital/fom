@@ -320,8 +320,8 @@ export class DatabaseCertificateService {
 
       const certificateFields = {
         templateId,
-        recipientFirstName: record.brideName,
-        recipientLastName: `& ${record.groomName}`,
+        recipientFirstName: record.groomName,
+        recipientLastName: `& ${record.brideName}`,
         recipientEmail: "no-email+jicf-2026-wed-0001@placeholder.com",
         issuedBy: superAdminUser.id,
         verificationId: JICF_WEDDING_CERTIFICATE_ID,

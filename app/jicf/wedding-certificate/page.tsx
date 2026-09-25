@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = pageMetadata({
   title: "JICF Wedding Certificate",
   description:
-    "Official Jinan International Christian Fellowship wedding certificate for Ruphine Manaweh Harmon and Joshua Bosco Barvor.",
+    "Official Jinan International Christian Fellowship wedding certificate for Mr. Joshua Bosco Barvor and Miss Ruphine Manaweh Harmon.",
   path: "/jicf/wedding-certificate",
   index: false,
 });

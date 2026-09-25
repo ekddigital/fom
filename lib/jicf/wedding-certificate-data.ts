@@ -90,8 +90,8 @@ export const JICF_WEDDING_HARMON_BARVOR: JicfWeddingCertificateData = {
   ceremonyYear: "2026",
   location: "Hangzhou, China",
   churchAddress: JICF_CHURCH_ADDRESS,
-  brideName: "Ruphine Manaweh Harmon",
-  groomName: "Joshua Bosco Barvor",
+  brideName: "Miss Ruphine Manaweh Harmon",
+  groomName: "Mr. Joshua Bosco Barvor",
   officiantName: "Pastor Joseph Summers",
   certificateId: JICF_WEDDING_CERTIFICATE_ID,
 };
@@ -116,5 +116,5 @@ export function certificateSentenceParts(data: JicfWeddingCertificateData): {
 
 export function buildCertificationText(data: JicfWeddingCertificateData): string {
   const parts = certificateSentenceParts(data);
-  return `This is to certify that on the ${parts.day} day of ${parts.month}, ${parts.year}, in ${parts.location}, ${parts.bride} and ${parts.groom} were united in marriage.`;
+  return `This is to certify that on the ${parts.day} day of ${parts.month}, ${parts.year}, in ${parts.location}, ${parts.groom} and ${parts.bride} were united in marriage.`;
 }

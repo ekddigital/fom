@@ -53,8 +53,9 @@ export function JicfWeddingCertificateDocument({
   const year = data.ceremonyYear.trim() || "2026";
   const location = data.location.trim() || "Hangzhou, China";
   const churchAddress = data.churchAddress.trim() || JICF_CHURCH_ADDRESS;
-  const bride = data.brideName.trim() || "Ruphine Manaweh Harmon";
-  const groom = data.groomName.trim() || "Joshua Bosco Barvor";
+  const wife = data.brideName.trim() || "Miss Ruphine Manaweh Harmon";
+  const husband = data.groomName.trim() || "Mr. Joshua Bosco Barvor";
+  const pastorDate = `${day.replace(/(st|nd|rd|th)$/i, "")} ${month} ${year}`.trim();
   const org =
     data.organizationName.trim() || "Jinan International Christian Fellowship";
 
@@ -92,25 +93,25 @@ export function JicfWeddingCertificateDocument({
           This is to certify that on the <strong>{day}</strong> day of{" "}
           <strong>{month}</strong>, <strong>{year}</strong>, in{" "}
           <strong>{location}</strong>,{" "}
-          <span className="jicf-inline-name">{bride}</span> and{" "}
-          <span className="jicf-inline-name">{groom}</span> were united in
+          <span className="jicf-inline-name">{husband}</span> and{" "}
+          <span className="jicf-inline-name">{wife}</span> were united in
           marriage.
         </p>
         <p className="jicf-covenant">{data.covenantText}</p>
 
         <footer className="jicf-sign-row">
-          <SignatureBlock name={groom} role="Groom" lineLabel="Signature" />
-          <SignatureBlock name={bride} role="Bride" lineLabel="Signature" />
-          <SignatureBlock name="" role="Witness 1" lineLabel="Signature" />
-          <SignatureBlock name="" role="Witness 2" lineLabel="Signature" />
+          <SignatureBlock name={husband} role="Husband" lineLabel="Signature" />
+          <SignatureBlock name={wife} role="Wife" lineLabel="Signature" />
           <SignatureBlock
-            name={data.officiantName}
+            name={data.officiantName.trim() || "Pastor Joseph Summers"}
             role="Pastor (Officiant)"
             lineLabel="Signature & Date"
             imageSrc={PASTOR_SIGNATURE_SRC}
             imageAlt="Signature of Pastor Joseph Summers"
-            date={`${day} ${month} ${year}`}
+            date={pastorDate}
           />
+          <SignatureBlock name="" role="Witness 1" lineLabel="Signature" />
+          <SignatureBlock name="" role="Witness 2" lineLabel="Signature" />
         </footer>
       </div>
     </article>
@@ -243,27 +244,27 @@ export const jicfWeddingCertificateStyles = `
   }
   .jicf-sign-row {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    column-gap: 10mm;
+    grid-template-columns: 1.15fr 1.2fr 1.15fr 0.85fr 0.85fr;
+    column-gap: 4mm;
     margin-top: 8mm;
   }
   .jicf-sig-block { min-width: 0; text-align: center; }
   .jicf-sig-role {
     margin: 0;
     color: var(--jicf-navy);
-    font-size: 3.3mm;
+    font-size: 3.1mm;
     font-weight: 700;
-    letter-spacing: 0.16mm;
+    letter-spacing: 0.08mm;
     text-transform: uppercase;
   }
   .jicf-sig-name {
     margin: 1.4mm 0 0;
-    min-height: 6mm;
+    min-height: 9mm;
     color: var(--jicf-navy);
-    font-size: 3.3mm;
+    font-size: 3.5mm;
     font-weight: 700;
-    line-height: 1.15;
-    overflow-wrap: anywhere;
+    line-height: 1.2;
+    overflow-wrap: break-word;
   }
   .jicf-sig-slot {
     display: flex;

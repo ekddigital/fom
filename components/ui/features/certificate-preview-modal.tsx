@@ -222,7 +222,7 @@ export function CertificatePreviewModal({
   }, [isWeddingCertificate, template.name]);
 
   const displayRecipient = isWeddingCertificate
-    ? "Ruphine Manaweh Harmon & Joshua Bosco Barvor"
+    ? "Mr. Joshua Bosco Barvor & Miss Ruphine Manaweh Harmon"
     : recipientName;
 
   // Sample security features for preview - using environment-aware URL
