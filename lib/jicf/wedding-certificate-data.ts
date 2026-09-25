@@ -46,7 +46,7 @@ export type JicfWeddingCertificateData = {
 };
 
 export const JICF_WEDDING_COVENANT =
-  "According to the ordinance of Christian marriage, they promise to love, honor, and cherish one another, for better or for worse, in sickness and in health, till death do them part.";
+  "The two individuals have willingly entered into the covenant of marriage, promising to love, honor, cherish, and abide with one another, for better or for worse, in sickness and in health, till death do them part, according to the sacred teachings of the Christian faith.";
 
 export const JICF_WEDDING_BLANK: JicfWeddingCertificateData = {
   organizationName: "Jinan International Christian Fellowship",
@@ -83,7 +83,7 @@ export const JICF_WEDDING_HARMON_BARVOR: JicfWeddingCertificateData = {
   location: "Hangzhou, China",
   brideName: "Ruphine Manaweh Harmon",
   groomName: "Joshua Bosco Barvor",
-  officiantName: "Pastor Joseph Summers",
+  officiantName: "Joseph Summers",
   certificateId: JICF_WEDDING_CERTIFICATE_ID,
 };
 

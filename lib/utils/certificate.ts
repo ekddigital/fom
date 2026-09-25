@@ -32,7 +32,12 @@ export function generateCertificateId(
   const getOrgPrefix = (name: string): string => {
     const nameUpper = name.toUpperCase();
     if (nameUpper.includes("JULS")) return "JULS";
-    if (nameUpper.includes("JICF") || nameUpper.includes("SERVICE"))
+    if (
+      nameUpper.includes("JICF") ||
+      nameUpper.includes("SERVICE") ||
+      nameUpper.includes("WEDDING") ||
+      nameUpper.includes("MARRIAGE")
+    )
       return "JICF";
     return "FOM";
   };
@@ -58,6 +63,8 @@ export function generateCertificateId(
     if (nameUpper.includes("CHAIRPERSON")) return "CHR";
     if (nameUpper.includes("COMPLETION")) return "CMP";
     if (nameUpper.includes("RECOGNITION")) return "REC";
+    if (nameUpper.includes("WEDDING") || nameUpper.includes("MARRIAGE"))
+      return "WED";
 
     // Default: use first 3 letters of the template name
     return name

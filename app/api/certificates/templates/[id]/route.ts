@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { dbCertificateService } from "@/lib/services/certificate-database";
-import { jicfCertificateOfService } from "@/lib/utils/certificates/jicf";
+import {
+  jicfCertificateOfService,
+  jicfWeddingCertificate,
+} from "@/lib/utils/certificates/jicf";
 
 // Handler for GET, PUT, and DELETE requests to /api/certificates/templates/[id]
 export async function GET(
@@ -18,7 +21,30 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (
+      id === "wedding-certificate" ||
+      id === "jicf-wedding-certificate"
+    ) {
+      await dbCertificateService.ensureJicfWeddingRecord();
+    }
+
     const template = await dbCertificateService.getTemplate(id);
+
+    if (
+      template?.name === "Wedding Certificate" ||
+      id === "wedding-certificate" ||
+      id === "jicf-wedding-certificate"
+    ) {
+      return NextResponse.json({
+        ...(template ?? {
+          id: "wedding-certificate",
+          name: "Wedding Certificate",
+        }),
+        name: "Wedding Certificate",
+        description: jicfWeddingCertificate.description,
+        templateData: JSON.parse(JSON.stringify(jicfWeddingCertificate)),
+      });
+    }
 
     if (!template) {
       return NextResponse.json(

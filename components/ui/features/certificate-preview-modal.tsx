@@ -6,6 +6,7 @@ import {
   TemplateElement,
   generateCertificateId,
 } from "@/lib/utils/certificate";
+import { JICF_WEDDING_CERTIFICATE_ID } from "@/lib/jicf/wedding-certificate-data";
 import { getVerificationUrl } from "@/lib/utils/url";
 import { generateCertificateQRCode } from "@/lib/utils/qr-code-generator";
 import {
@@ -211,10 +212,18 @@ export function CertificatePreviewModal({
     });
   }, []);
 
-  // Generate a sample certificate ID based on the template
+  const isWeddingCertificate =
+    (template.name || "").trim().toLowerCase() === "wedding certificate";
+
+  // Wedding record keeps a stable id. Other templates still get a sample id.
   const certificateId = React.useMemo(() => {
+    if (isWeddingCertificate) return JICF_WEDDING_CERTIFICATE_ID;
     return generateCertificateId(template.name || "Certificate", 1);
-  }, [template.name]);
+  }, [isWeddingCertificate, template.name]);
+
+  const displayRecipient = isWeddingCertificate
+    ? "Ruphine Manaweh Harmon & Joshua Bosco Barvor"
+    : recipientName;
 
   // Sample security features for preview - using environment-aware URL
   const sampleVerificationUrl = React.useMemo(() => {
@@ -832,10 +841,11 @@ export function CertificatePreviewModal({
             <strong>Elements:</strong> {template.elements.length}
           </span>
           <span>
-            <strong>Recipient:</strong> {recipientName}
+            <strong>Recipient:</strong> {displayRecipient}
           </span>
           <span>
-            <strong>Date:</strong> {issueDate}
+            <strong>Date:</strong>{" "}
+            {isWeddingCertificate ? "26 September 2026" : issueDate}
           </span>
         </div>
       </div>
