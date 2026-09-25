@@ -16,6 +16,9 @@ import {
   FileText,
   Headphones,
 } from "lucide-react";
+import { resourcesPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = resourcesPlaceholderMetadata;
 
 export default function ResourcesLibraryPage() {
   const resources = [

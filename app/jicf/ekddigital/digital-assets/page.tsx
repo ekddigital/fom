@@ -10,6 +10,7 @@ import { pricingFlyerHref } from "@/components/jicf/ekddigital-pricing-data";
 export const metadata = buildFlyerMetadata(
   "EKD Digital Assets — Your Assets. Secured.",
   "Digital Assets promotional flyer: secure DAM with global CDN delivery. WhatsApp +86 185 0683 2159 · WeChat EKD231777285010 · assets.andgroupco.com",
+  "/jicf/ekddigital/digital-assets",
 );
 
 const relatedLinkClass =

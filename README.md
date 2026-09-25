@@ -2,7 +2,13 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+If `npm i` fails in Puppeteer’s postinstall (`chrome-headless-shell` zip error), skip the browser download. Certificate PDF rendering needs Chrome at **runtime**, not for `next build`:
+
+```bash
+PUPPETEER_SKIP_DOWNLOAD=1 npm i
+```
+
+Then run the development server:
 
 ```bash
 npm run dev

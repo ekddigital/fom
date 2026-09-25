@@ -8,10 +8,19 @@ import { FomStats } from "@/components/ui/sections/fom-stats";
 import { FomTestimonials } from "@/components/ui/sections/fom-testimonials";
 import { FomNewsletter } from "@/components/ui/sections/fom-newsletter";
 import { FOM_BRAND } from "@/lib/constants/fom";
+import { JsonLd } from "@/components/seo/json-ld";
+import { organizationGraph } from "@/lib/seo/json-ld";
+import { homeMetadata } from "@/lib/seo/public-pages";
+import { getSiteUrl } from "@/lib/seo/site-url";
+
+export const metadata = homeMetadata;
 
 export default function Home() {
+  const origin = getSiteUrl().origin;
+
   return (
     <div className="min-h-screen bg-background">
+      <JsonLd data={organizationGraph({ origin })} />
       <PublicHeader />
 
       <HeroSection />

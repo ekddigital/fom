@@ -1,17 +1,31 @@
-import type { Metadata } from "next";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
 import { GraduatesCelebrationFlyerShell } from "@/components/jicf/graduates-celebration-flyer";
+import { JsonLd } from "@/components/seo/json-ld";
+import { eventLd } from "@/lib/seo/json-ld";
+import { OG_IMAGES } from "@/lib/seo/og-images";
+import { graduatesMetadata } from "@/lib/seo/public-pages";
+import { absoluteUrl, getSiteUrl } from "@/lib/seo/site-url";
 
-export const metadata: Metadata = {
-  title: "JICF Graduates Service, Celebration & Dinner 2026",
-  description:
-    "JICF Graduates Service, Celebration & Dinner — Sunday, June 14, 2026. Service from 14:30 to 17:00, dinner after service.",
-};
+export const metadata = graduatesMetadata;
 
 export default function JICFGraduatesCelebrationPage() {
+  const origin = getSiteUrl().origin;
+
   return (
     <>
+      <JsonLd
+        data={eventLd({
+          origin,
+          url: absoluteUrl("/jicf/graduates-celebration"),
+          name: "JICF Graduates Service, Celebration & Dinner 2026",
+          description: graduatesMetadata.description ?? "",
+          image: absoluteUrl(OG_IMAGES.graduates),
+          startDate: "2026-06-14T14:30:00+08:00",
+          endDate: "2026-06-14T17:00:00+08:00",
+          locationName: "Jinan International Christian Fellowship",
+        })}
+      />
       <PublicHeader />
 
       <main className="min-h-screen bg-linear-to-b from-[#172554] via-[#0c436a] to-[#172554]">

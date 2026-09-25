@@ -1,13 +1,9 @@
-import type { Metadata } from "next";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
 import { EnglishTutoringFlyerShell } from "@/components/jicf/english-tutoring-flyer";
+import { englishTutoringMetadata } from "@/lib/seo/public-pages";
 
-export const metadata: Metadata = {
-  title: "KET PET IELTS Online One-on-One English Tutoring",
-  description:
-    "Professional one-on-one English tutoring for KET, PET and IELTS with personalized study plans, exam strategy, mock tests and free trial lesson.",
-};
+export const metadata = englishTutoringMetadata;
 
 export default function EnglishTutoringPage() {
   return (

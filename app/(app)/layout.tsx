@@ -4,6 +4,9 @@ import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { DashboardHeader } from "@/components/ui/layout/dashboard-header";
 import { DashboardSidebar } from "@/components/ui/layout/dashboard-sidebar";
+import { noindexMetadata } from "@/lib/seo/page-metadata";
+
+export const metadata = noindexMetadata;
 
 interface DashboardLayoutProps {
   children: ReactNode;

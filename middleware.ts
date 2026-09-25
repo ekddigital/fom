@@ -2,71 +2,120 @@ import NextAuth from "next-auth";
 import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
 import type { NextAuthRequest } from "next-auth";
+import {
+  APEX_HOST,
+  CANONICAL_HOST,
+  isLaunchpadHost,
+  requestHostname,
+} from "@/lib/seo/site-url";
 
 const { auth } = NextAuth(authConfig);
 
+const PRIVATE_PREFIXES = ["/dash", "/admin", "/mgmt"];
+
+const NOINDEX_PREFIXES = [
+  ...PRIVATE_PREFIXES,
+  "/content",
+  "/manage-events",
+  "/ministry-certificates",
+  "/jicf/ekddigital",
+];
+
+const AUTH_PATHS = ["/sign-in", "/sign-up"];
+
+function pathStartsWith(path: string, prefixes: string[]): boolean {
+  return prefixes.some(
+    (prefix) => path === prefix || path.startsWith(`${prefix}/`),
+  );
+}
+
+function isPrivatePath(path: string): boolean {
+  return pathStartsWith(path, PRIVATE_PREFIXES);
+}
+
+function isNoindexPath(path: string): boolean {
+  return pathStartsWith(path, NOINDEX_PREFIXES);
+}
+
+function isAuthPage(path: string): boolean {
+  return AUTH_PATHS.includes(path) || path.startsWith("/auth");
+}
+
+function isCrawlerDiscoveryPath(path: string): boolean {
+  return (
+    path === "/robots.txt" ||
+    path === "/sitemap.xml" ||
+    path.endsWith("/opengraph-image") ||
+    path.endsWith("/twitter-image")
+  );
+}
+
+function applySeoHeaders(req: NextAuthRequest, response: NextResponse) {
+  const host = requestHostname(
+    req.headers.get("x-forwarded-host"),
+    req.nextUrl.hostname,
+  );
+
+  if (
+    isLaunchpadHost(host) ||
+    isNoindexPath(req.nextUrl.pathname) ||
+    isAuthPage(req.nextUrl.pathname)
+  ) {
+    response.headers.set("X-Robots-Tag", "noindex, nofollow");
+  }
+
+  return response;
+}
+
 export default auth((req: NextAuthRequest) => {
-  // req.auth is the Session object (null if unauthenticated)
   const session = req.auth;
-  const isAuthPage =
-    req.nextUrl.pathname === "/sign-in" ||
-    req.nextUrl.pathname === "/sign-up" ||
-    req.nextUrl.pathname.startsWith("/auth");
-  const isProtectedRoute =
-    req.nextUrl.pathname.startsWith("/dash") ||
-    req.nextUrl.pathname.startsWith("/mgmt") ||
-    req.nextUrl.pathname.startsWith("/admin");
+  const path = req.nextUrl.pathname;
+  const host = requestHostname(
+    req.headers.get("x-forwarded-host"),
+    req.nextUrl.hostname,
+  );
 
-  // Redirect authenticated users away from auth pages
-  if (isAuthPage && session) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (host === APEX_HOST) {
+    const url = req.nextUrl.clone();
+    url.hostname = CANONICAL_HOST;
+    url.protocol = "https:";
+    url.port = "";
+    return NextResponse.redirect(url, 301);
   }
 
-  // Allow unauthenticated access to auth pages
-  if (isAuthPage) {
-    return NextResponse.next();
+  if (isCrawlerDiscoveryPath(path) || !isPrivatePath(path)) {
+    if (isAuthPage(path) && session) {
+      return applySeoHeaders(req, NextResponse.redirect(new URL("/", req.url)));
+    }
+    return applySeoHeaders(req, NextResponse.next());
   }
 
-  // Protect dashboard routes
-  if (isProtectedRoute && !session) {
+  if (!session) {
     const signInUrl = new URL("/sign-in", req.url);
-    signInUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
-    return NextResponse.redirect(signInUrl);
+    signInUrl.searchParams.set("callbackUrl", path);
+    return applySeoHeaders(req, NextResponse.redirect(signInUrl));
   }
 
-  // Role-based protection
-  if (session) {
-    const userRole = (session.user as unknown as Record<string, unknown>)
-      ?.role as string;
+  const userRole = (session.user as unknown as Record<string, unknown>)
+    ?.role as string;
 
-    // Ministry leader routes
-    if (req.nextUrl.pathname.startsWith("/mgmt")) {
-      if (!["MINISTRY_LEADER", "ADMIN", "SUPER_ADMIN"].includes(userRole)) {
-        return NextResponse.redirect(new URL("/dash", req.url));
-      }
-    }
-
-    // Admin routes
-    if (req.nextUrl.pathname.startsWith("/admin")) {
-      if (!["ADMIN", "SUPER_ADMIN"].includes(userRole)) {
-        return NextResponse.redirect(new URL("/dash", req.url));
-      }
+  if (path.startsWith("/mgmt")) {
+    if (!["MINISTRY_LEADER", "ADMIN", "SUPER_ADMIN"].includes(userRole)) {
+      return applySeoHeaders(req, NextResponse.redirect(new URL("/dash", req.url)));
     }
   }
 
-  return NextResponse.next();
+  if (path.startsWith("/admin")) {
+    if (!["ADMIN", "SUPER_ADMIN"].includes(userRole)) {
+      return applySeoHeaders(req, NextResponse.redirect(new URL("/dash", req.url)));
+    }
+  }
+
+  return applySeoHeaders(req, NextResponse.next());
 });
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
   ],
 };

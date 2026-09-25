@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Calendar, Clock, Heart, Share } from "lucide-react";
+import { devotionalsPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = devotionalsPlaceholderMetadata;
 
 export default function DevotionalsPage() {
   const devotionals = [

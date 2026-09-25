@@ -23,8 +23,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const config = getPricingConfigBySlug(slug);
-  if (!config) return { title: "EKD Digital — Pricing" };
-  return buildFlyerMetadata(config.metadataTitle, config.metadataDescription);
+  if (!config) return { robots: { index: false, follow: false } };
+  return buildFlyerMetadata(
+    config.metadataTitle,
+    config.metadataDescription,
+    `/jicf/ekddigital/services/pricing/${slug}`,
+  );
 }
 
 export default async function EKDDigitalServicePricingPage({ params }: PageProps) {

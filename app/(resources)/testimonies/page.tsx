@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Calendar, Heart, Share, Quote } from "lucide-react";
+import { testimoniesPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = testimoniesPlaceholderMetadata;
 
 export default function TestimoniesPage() {
   const testimonies = [

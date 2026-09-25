@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
 import { EKDDigitalFlyerShell } from "@/components/jicf/ekddigital-flyer";
+import { buildFlyerMetadata } from "@/components/jicf/ekddigital-flyer-page-layout";
 
-export const metadata: Metadata = {
-  title: "EKD Digital — Build · Write · Deliver",
-  description:
-    "EKD Digital helps students and professionals with academic papers, thesis writing, Android & iOS apps, websites, desktop applications and technical writing. We are just a button away.",
-};
+export const metadata = buildFlyerMetadata(
+  "EKD Digital — Build · Write · Deliver",
+  "EKD Digital helps students and professionals with academic papers, thesis writing, Android & iOS apps, websites, desktop applications and technical writing.",
+  "/jicf/ekddigital",
+);
 
 export default function EKDDigitalFlyerPage() {
   return (

@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
@@ -7,16 +6,30 @@ import {
   pricingFlyerHref,
 } from "@/components/jicf/ekddigital-pricing-data";
 import { Calendar, MapPin, Clock, ArrowRight } from "lucide-react";
+import { JsonLd } from "@/components/seo/json-ld";
+import { webPageLd } from "@/lib/seo/json-ld";
+import { jicfMetadata } from "@/lib/seo/public-pages";
+import { getSiteUrl } from "@/lib/seo/site-url";
 
-export const metadata: Metadata = {
-  title: "JICF — Jinan International Christian Fellowship",
-  description:
-    "Jinan International Christian Fellowship (JICF) — a welcoming English-speaking Christian community in Jinan, China.",
-};
+export const metadata = jicfMetadata;
 
 export default function JICFPage() {
+  const origin = getSiteUrl().origin;
+
   return (
     <>
+      <JsonLd
+        data={webPageLd({
+          origin,
+          path: "/jicf",
+          name: "Jinan International Christian Fellowship",
+          description: jicfMetadata.description ?? "",
+          crumbs: [
+            { name: "Home", url: `${origin}/` },
+            { name: "JICF", url: `${origin}/jicf` },
+          ],
+        })}
+      />
       <PublicHeader />
 
       <main className="min-h-screen bg-linear-to-b from-[#172554] via-[#0c436a] to-[#172554]">

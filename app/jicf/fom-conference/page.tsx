@@ -1,24 +1,32 @@
-import type { Metadata } from "next";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
 import { FOMConferenceFlyerShell } from "@/components/jicf/fom-conference-flyer";
-import { FOM_BRAND, FOM_LOGO } from "@/lib/constants/fom";
+import { FOM_BRAND } from "@/lib/constants/fom";
+import { JsonLd } from "@/components/seo/json-ld";
+import { eventLd } from "@/lib/seo/json-ld";
+import { OG_IMAGES } from "@/lib/seo/og-images";
+import { conferenceMetadata } from "@/lib/seo/public-pages";
+import { absoluteUrl, getSiteUrl } from "@/lib/seo/site-url";
 
-export const metadata: Metadata = {
-  title: "FOM Conference 2026 — Fishers of Men",
-  description:
-    "Fishers of Men Conference — May 22–24, 2026. Sessions, all-night fellowship at Thompson's Place, and Sunday games & fellowship.",
-  openGraph: {
-    title: "FOM Conference — May 22–24, 2026",
-    description:
-      "Join Fishers of Men for three days of teaching, worship, and fellowship.",
-    images: [{ url: FOM_LOGO.png, alt: FOM_LOGO.alt }],
-  },
-};
+export const metadata = conferenceMetadata;
 
 export default function FOMConferencePage() {
+  const origin = getSiteUrl().origin;
+
   return (
     <>
+      <JsonLd
+        data={eventLd({
+          origin,
+          url: absoluteUrl("/jicf/fom-conference"),
+          name: "FOM Conference 2026",
+          description: conferenceMetadata.description ?? "",
+          image: absoluteUrl(OG_IMAGES.conference),
+          startDate: "2026-05-22",
+          endDate: "2026-05-24",
+          locationName: "Thompson's Place",
+        })}
+      />
       <PublicHeader />
 
       <main className="min-h-screen bg-linear-to-b from-[#060d1f] via-[#0c1a3a] to-[#132a52]">

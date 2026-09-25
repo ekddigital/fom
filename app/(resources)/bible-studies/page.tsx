@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Book, Calendar, Clock, Users, Download } from "lucide-react";
+import { bibleStudiesPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = bibleStudiesPlaceholderMetadata;
 
 export default function BibleStudiesPage() {
   const studies = [

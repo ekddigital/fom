@@ -3,67 +3,67 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "@/components/providers/session-provider";
 import { geistSans, geistMono } from "@/lib/fonts";
+import { DEFAULT_DESCRIPTION, LOGO_PATH, SITE_NAME } from "@/lib/seo/constants";
+import { OG_IMAGES } from "@/lib/seo/og-images";
+import { getSiteUrl } from "@/lib/seo/site-url";
 import "./globals.css";
 
+const site = getSiteUrl();
+
 export const metadata: Metadata = {
-  title: "Fishers of Men - Bringing Jesus to the World",
-  description:
-    "Fishers of Men is a Christian organization founded in 2019 dedicated to preaching the gospel worldwide and spreading the Word of God through ministry, missions, and community engagement.",
-  keywords: [
-    "Fishers of Men",
-    "Christian organization",
-    "Gospel",
-    "Ministry",
-    "Missions",
-    "Bible study",
-    "Prayer",
-    "Community",
-    "Faith",
-    "Jesus Christ",
-  ],
-  authors: [{ name: "Fishers of Men" }],
-  creator: "Fishers of Men",
-  metadataBase: new URL("https://www.fomjesus.org"),
+  metadataBase: site,
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
+  alternates: { canonical: "/" },
+  authors: [{ name: SITE_NAME, url: site.origin }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.fomjesus.org",
-    title: "Fishers of Men - Bringing Jesus to the World",
-    description:
-      "Join us in spreading the love of Jesus Christ through ministry, missions, and community engagement.",
-    siteName: "Fishers of Men",
+    url: "/",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
     images: [
       {
-        url: "/banner.png",
+        url: OG_IMAGES.default,
         width: 1200,
         height: 630,
-        alt: "Fishers of Men - Bringing Jesus to the World",
-      },
-      {
-        url: "/Logo.png",
-        width: 400,
-        height: 400,
-        alt: "Fishers of Men Logo",
+        alt: SITE_NAME,
+        type: "image/png",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fishers of Men - Bringing Jesus to the World",
-    description:
-      "Join us in spreading the love of Jesus Christ through ministry, missions, and community engagement.",
-    images: ["/banner.png"],
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    images: [OG_IMAGES.default],
     creator: "@fomjesus",
     site: "@fomjesus",
-  },
-  icons: {
-    icon: "/Logo.png",
-    shortcut: "/favicon.ico",
-    apple: "/Logo.png",
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
+  icons: {
+    icon: LOGO_PATH,
+    shortcut: "/favicon.ico",
+    apple: LOGO_PATH,
   },
 };
 
@@ -72,7 +72,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get font classes - fonts are now guaranteed to be initialized at module scope
   const fontClasses = [
     geistSans.variable,
     geistMono.variable,

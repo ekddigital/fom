@@ -15,6 +15,9 @@ import {
   Download,
   Image,
 } from "lucide-react";
+import { missionReportsPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = missionReportsPlaceholderMetadata;
 
 export default function MissionReportsPage() {
   const reports = [

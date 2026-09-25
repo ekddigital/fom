@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { PublicHeader } from "@/components/ui/layout/public-header";
 import { PublicFooter } from "@/components/ui/layout/public-footer";
+import { pageMetadata } from "@/lib/seo/page-metadata";
 
 type EKDDigitalFlyerPageLayoutProps = {
   eyebrow: string;
@@ -66,6 +67,12 @@ export function EKDDigitalFlyerPageLayout({
 export function buildFlyerMetadata(
   title: string,
   description: string,
+  path = "/jicf/ekddigital",
 ): Metadata {
-  return { title, description };
+  return pageMetadata({
+    title,
+    description,
+    path,
+    index: false,
+  });
 }

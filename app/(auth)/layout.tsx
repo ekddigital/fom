@@ -1,5 +1,8 @@
 import { ReactNode } from "react";
 import { FomLogo } from "@/components/ui/branding/fom-logo";
+import { noindexMetadata } from "@/lib/seo/page-metadata";
+
+export const metadata = noindexMetadata;
 
 interface AuthLayoutProps {
   children: ReactNode;

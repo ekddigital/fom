@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Video, Calendar, Clock, User, Play } from "lucide-react";
+import { sermonsPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = sermonsPlaceholderMetadata;
 
 export default function SermonsPage() {
   const sermons = [

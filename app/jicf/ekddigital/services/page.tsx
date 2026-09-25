@@ -13,6 +13,7 @@ import {
 export const metadata = buildFlyerMetadata(
   "EKD Digital — Build · Host · Scale",
   "EKD Digital builds custom software and delivers cloud services: EKDSend communications APIs, digital asset management, SSL certificates, transactional email, and cloud hosting.",
+  "/jicf/ekddigital/services",
 );
 
 const pricingLinkClass =

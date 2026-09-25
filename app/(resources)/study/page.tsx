@@ -24,6 +24,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { studyPlaceholderMetadata } from "@/lib/seo/public-pages";
+
+export const metadata = studyPlaceholderMetadata;
 
 export default function StudyPage() {
   const studyPrograms = [
