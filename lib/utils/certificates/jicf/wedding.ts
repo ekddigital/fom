@@ -82,7 +82,7 @@ export const jicfWeddingCertificate: CertificateTemplate = {
       id: "certification",
       type: "text",
       content:
-        "This is to certify that on the {{ceremonyDay}} day of {{ceremonyMonth}}, {{ceremonyYear}}, a sacred marriage ceremony was solemnly officiated and completed in {{location}}.",
+        "This is to certify that on the {{ceremonyDay}} day of {{ceremonyMonth}}, {{ceremonyYear}}, in {{location}}, {{brideName}} and {{groomName}} were united in marriage.",
       position: { x: 90, y: 184, width: 820, height: 48 },
       style: {
         fontSize: 14,

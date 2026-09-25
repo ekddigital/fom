@@ -46,7 +46,7 @@ export type JicfWeddingCertificateData = {
 };
 
 export const JICF_WEDDING_COVENANT =
-  "The two individuals have willingly entered into the covenant of marriage, promising to love, honor, cherish, and abide with one another, for better or for worse, in sickness and in health, till death do them part, according to the sacred teachings of the Christian faith.";
+  "According to the ordinance of Christian marriage, they promise to love, honor, and cherish one another, for better or for worse, in sickness and in health, till death do them part.";
 
 export const JICF_WEDDING_BLANK: JicfWeddingCertificateData = {
   organizationName: "Jinan International Christian Fellowship",
@@ -87,26 +87,25 @@ export const JICF_WEDDING_HARMON_BARVOR: JicfWeddingCertificateData = {
   certificateId: JICF_WEDDING_CERTIFICATE_ID,
 };
 
+export function certificateSentenceParts(data: JicfWeddingCertificateData): {
+  day: string;
+  month: string;
+  year: string;
+  location: string;
+  bride: string;
+  groom: string;
+} {
+  return {
+    day: data.ceremonyDay.trim() || "____",
+    month: data.ceremonyMonth.trim() || "________",
+    year: data.ceremonyYear.trim() || "____",
+    location: data.location.trim() || "________",
+    bride: data.brideName.trim() || "____________",
+    groom: data.groomName.trim() || "____________",
+  };
+}
+
 export function buildCertificationText(data: JicfWeddingCertificateData): string {
-  const day = data.ceremonyDay.trim() || "____";
-  const month = data.ceremonyMonth.trim() || "________";
-  const year = data.ceremonyYear.trim() || "____";
-  const location = data.location.trim() || "________";
-  return `This is to certify that on the ${day} day of ${month}, ${year}, a sacred marriage ceremony was solemnly officiated and completed in ${location}.`;
-}
-
-export function buildOversightText(data: JicfWeddingCertificateData): string {
-  const org =
-    data.organizationName.trim() || "Jinan International Christian Fellowship";
-  return `The holy matrimony was celebrated under the authority and pastoral oversight of ${org}, uniting the below two persons in lawful and sacred marriage before God and witnesses.`;
-}
-
-export function displayPartyName(name: string, fallback: string): string {
-  const trimmed = name.trim();
-  return trimmed.length > 0 ? trimmed : fallback;
-}
-
-export function displayWitnessName(name: string): string {
-  const trimmed = name.trim();
-  return trimmed.length > 0 ? trimmed : "\u00a0";
+  const parts = certificateSentenceParts(data);
+  return `This is to certify that on the ${parts.day} day of ${parts.month}, ${parts.year}, in ${parts.location}, ${parts.bride} and ${parts.groom} were united in marriage.`;
 }
