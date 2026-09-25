@@ -171,8 +171,9 @@ export const jicfWeddingCertificateStyles = `
   .jicf-wedding-header {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 6mm;
+    margin-left: -3mm;
   }
   .jicf-wedding-logo {
     width: 38mm;
