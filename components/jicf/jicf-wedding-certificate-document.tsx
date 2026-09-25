@@ -145,7 +145,7 @@ export const jicfWeddingCertificateStyles = `
     width: ${JICF_WEDDING_PAGE_WIDTH_MM}mm;
     height: ${JICF_WEDDING_PAGE_HEIGHT_MM}mm;
     overflow: hidden;
-    background: var(--jicf-cream);
+    background: #fffef8;
     color: var(--jicf-ink);
     font-family: Georgia, "Times New Roman", Times, serif;
     box-shadow: 0 12px 40px rgba(25, 5, 112, 0.18);
@@ -155,8 +155,9 @@ export const jicfWeddingCertificateStyles = `
   .jicf-wedding-page *::after { box-sizing: border-box; }
   .jicf-wedding-frame { pointer-events: none; position: absolute; }
   .jicf-wedding-frame-inner {
-    inset: 5mm;
-    border: 0.35mm solid var(--jicf-navy);
+    inset: 3.2mm;
+    border: 4.2mm solid var(--jicf-red);
+    background: #fffef8;
   }
   .jicf-wedding-inner {
     position: relative;
@@ -164,7 +165,7 @@ export const jicfWeddingCertificateStyles = `
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 10mm 16mm 8mm;
+    padding: 12mm 18mm 10mm;
   }
   .jicf-wedding-header {
     display: flex;
@@ -184,12 +185,12 @@ export const jicfWeddingCertificateStyles = `
     color: var(--jicf-navy);
     font-size: 5.6mm;
     font-weight: 700;
-    letter-spacing: 0.18mm;
+    letter-spacing: 0.04mm;
     line-height: 1.12;
     text-transform: uppercase;
   }
   .jicf-place {
-    margin: 1.2mm auto 0;
+    margin: 2.4mm auto 0;
     max-width: 150mm;
     color: var(--jicf-navy);
     font-size: 3.3mm;
@@ -197,19 +198,19 @@ export const jicfWeddingCertificateStyles = `
     line-height: 1.25;
   }
   .jicf-subtitle {
-    margin: 1mm 0 0;
+    margin: 2.6mm 0 0;
     color: var(--jicf-red);
     font-size: 3.8mm;
     font-style: italic;
     font-weight: 700;
   }
-  .jicf-title-block { margin-top: 2.4mm; text-align: center; }
+  .jicf-title-block { margin-top: 5.5mm; text-align: center; }
   .jicf-title {
     margin: 0;
     color: var(--jicf-navy);
     font-size: 8mm;
     font-weight: 700;
-    letter-spacing: 0.8mm;
+    letter-spacing: 0.12mm;
     line-height: 1;
     text-transform: uppercase;
   }

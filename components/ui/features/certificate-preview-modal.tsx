@@ -1,5 +1,4 @@
 import React from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   TemplateData,
@@ -153,6 +152,26 @@ export function CertificatePreviewModal({
     [],
   );
 
+  const prepareCloneForRaster = React.useCallback((clonedDoc: Document) => {
+    const root = clonedDoc.querySelector(
+      "[data-html2canvas-safe]",
+    ) as HTMLElement | null;
+    if (!root) return;
+
+    root.querySelectorAll("div").forEach((node) => {
+      const el = node as HTMLElement;
+      el.style.letterSpacing = "normal";
+      el.style.wordSpacing = "normal";
+      if (!el.style.fontFamily || el.style.fontFamily === "serif") {
+        el.style.fontFamily = '"Times New Roman", Times, serif';
+      }
+      // html2canvas draws flex text on top of itself. Block layout keeps glyphs apart.
+      if (el.childElementCount === 0) {
+        el.style.display = "block";
+      }
+    });
+  }, []);
+
   const waitForCaptureAssets = React.useCallback(async () => {
     const captureRoot = certificateRef.current;
     if (!captureRoot) {
@@ -227,6 +246,10 @@ export function CertificatePreviewModal({
     ? "Mr. Joshua Bosco Barvor & Miss Ruphine Manaweh Harmon"
     : recipientName;
 
+  const exportFileBase = isWeddingCertificate
+    ? JICF_WEDDING_CERTIFICATE_ID
+    : `${template.name || "certificate"}-${recipientName.replace(/\s+/g, "-")}`;
+
   // Sample security features for preview - using environment-aware URL
   const sampleVerificationUrl = React.useMemo(() => {
     return getVerificationUrl(certificateId);
@@ -271,6 +294,7 @@ export function CertificatePreviewModal({
     const savedTransformPNG = scaledParentPNG ? scaledParentPNG.style.transform : "";
     if (scaledParentPNG) scaledParentPNG.style.transform = "scale(1)";
     try {
+      if (document.fonts?.ready) await document.fonts.ready;
       await waitForCaptureAssets();
 
       // Annotate computed styles before capture to fix color corruption
@@ -292,13 +316,12 @@ export function CertificatePreviewModal({
         scrollY: 0,
         onclone: (clonedDoc) => {
           sanitizeCloneForHtml2Canvas(clonedDoc);
+          prepareCloneForRaster(clonedDoc);
         },
       });
 
       const link = document.createElement("a");
-      link.download = `${
-        template.name || "certificate"
-      }-${recipientName.replace(/\s+/g, "-")}.png`;
+      link.download = `${exportFileBase}.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (error) {
@@ -319,6 +342,7 @@ export function CertificatePreviewModal({
     const savedTransformPDF = scaledParentPDF ? scaledParentPDF.style.transform : "";
     if (scaledParentPDF) scaledParentPDF.style.transform = "scale(1)";
     try {
+      if (document.fonts?.ready) await document.fonts.ready;
       await waitForCaptureAssets();
 
       // Annotate computed styles before capture to fix color corruption
@@ -340,6 +364,7 @@ export function CertificatePreviewModal({
         scrollY: 0,
         onclone: (clonedDoc) => {
           sanitizeCloneForHtml2Canvas(clonedDoc);
+          prepareCloneForRaster(clonedDoc);
         },
       });
 
@@ -361,12 +386,7 @@ export function CertificatePreviewModal({
         template.pageSettings.width,
         template.pageSettings.height,
       );
-      pdf.save(
-        `${template.name || "certificate"}-${recipientName.replace(
-          /\s+/g,
-          "-",
-        )}.pdf`,
-      );
+      pdf.save(`${exportFileBase}.pdf`);
     } catch (error) {
       console.error("Error downloading PDF:", error);
     } finally {
@@ -739,8 +759,13 @@ export function CertificatePreviewModal({
                     fontSize: dynamicSizing.fontSize
                       ? `${dynamicSizing.fontSize}px`
                       : undefined,
-                    fontFamily: element.style.fontFamily || "serif",
+                    fontFamily:
+                      !element.style.fontFamily ||
+                      element.style.fontFamily === "serif"
+                        ? '"Times New Roman", Times, serif'
+                        : element.style.fontFamily,
                     fontWeight: element.style.fontWeight || "normal",
+                    fontStyle: element.style.fontStyle || "normal",
                     color: element.style.color || "#000000",
                     textAlign: element.style.textAlign || "left",
                     backgroundColor:
@@ -748,15 +773,9 @@ export function CertificatePreviewModal({
                         ? element.style.color
                         : undefined,
                     borderRadius: element.style.borderRadius || undefined,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent:
-                      element.style.textAlign === "center"
-                        ? "center"
-                        : element.style.textAlign === "right"
-                          ? "flex-end"
-                          : "flex-start",
+                    display: "block",
                     overflow: "hidden",
+                    letterSpacing: "normal",
                     lineHeight: dynamicSizing.lineHeight,
                     whiteSpace: "pre-line",
                   };
@@ -779,23 +798,19 @@ export function CertificatePreviewModal({
                     const imageSrc = replaceImageVariables(element.content);
                     return (
                       <div key={element.id} style={elementStyle}>
-                        <Image
+                        {/* Plain img so html2canvas captures the file, not a Next image optimizer URL. */}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                           src={imageSrc}
-                          alt="Certificate Image"
-                          width={element.position.width}
-                          height={element.position.height}
+                          alt=""
                           style={{
                             width: "100%",
                             height: "100%",
                             objectFit: "contain",
-                            borderRadius: element.style.borderRadius || "0px", // Apply template borderRadius
-                            border: "none", // Ensure no browser default border
-                            outline: "none", // Ensure no outline
-                            boxShadow: "none", // Ensure no box shadow
-                          }}
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
+                            borderRadius: element.style.borderRadius || "0px",
+                            border: "none",
+                            outline: "none",
+                            boxShadow: "none",
                           }}
                         />
                       </div>

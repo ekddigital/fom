@@ -74,10 +74,11 @@ export function JicfWeddingCertificateShell({
   const [isExporting, setIsExporting] = useState(false);
   const certificateRef = useRef<HTMLDivElement | null>(null);
 
-  const fileBase = useMemo(
-    () => slugFileBase(data.groomName, data.brideName),
-    [data.groomName, data.brideName],
-  );
+  const fileBase = useMemo(() => {
+    const id = data.certificateId.trim();
+    if (id) return id;
+    return slugFileBase(data.groomName, data.brideName);
+  }, [data.certificateId, data.groomName, data.brideName]);
 
   const patch = (key: FieldKey, value: string) => {
     setData((current) => ({ ...current, [key]: value }));
@@ -109,10 +110,15 @@ export function JicfWeddingCertificateShell({
     clone.style.height = `${height}px`;
     clone.style.transform = "none";
     clone.style.boxShadow = "none";
+    clone.querySelectorAll<HTMLElement>("*").forEach((el) => {
+      el.style.letterSpacing = "normal";
+      el.style.wordSpacing = "normal";
+    });
     wrapper.appendChild(clone);
     document.body.appendChild(wrapper);
 
     try {
+      if (document.fonts?.ready) await document.fonts.ready;
       const images = clone.querySelectorAll("img");
       await Promise.all(
         Array.from(images).map(
@@ -129,7 +135,7 @@ export function JicfWeddingCertificateShell({
       );
 
       return await toPng(clone, {
-        backgroundColor: JICF_WEDDING_COLORS.ivory,
+        backgroundColor: "#fffef8",
         pixelRatio: 2,
         cacheBust: true,
         width,
