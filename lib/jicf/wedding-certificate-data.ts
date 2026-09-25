@@ -53,7 +53,7 @@ export type JicfWeddingCertificateData = {
 };
 
 export const JICF_WEDDING_COVENANT =
-  "According to the ordinance of Christian marriage, they promise to love, honor, and cherish one another, for better or for worse, in sickness and in health, till death do them part.";
+  "The two individuals have willingly entered into the covenant of marriage, promising to love, honor, cherish, and abide with one another, for better or for worse, in sickness and in health, till death do them part, according to the sacred teachings of the Christian faith.";
 
 export const JICF_WEDDING_BLANK: JicfWeddingCertificateData = {
   organizationName: "Jinan International Christian Fellowship",
@@ -116,5 +116,5 @@ export function certificateSentenceParts(data: JicfWeddingCertificateData): {
 
 export function buildCertificationText(data: JicfWeddingCertificateData): string {
   const parts = certificateSentenceParts(data);
-  return `This is to certify that on the ${parts.day} day of ${parts.month}, ${parts.year}, in ${parts.location}, ${parts.groom} and ${parts.bride} were united in marriage.`;
+  return `This is to certify that on the ${parts.day} day of ${parts.month}, ${parts.year}, a sacred marriage ceremony was solemnly officiated and completed in ${parts.location}.`;
 }

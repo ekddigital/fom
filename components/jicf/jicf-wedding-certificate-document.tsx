@@ -9,35 +9,28 @@ const PASTOR_SIGNATURE_SRC = "/pastor_Joe_signaturepng.png";
 export const JICF_WEDDING_PAGE_WIDTH_MM = 297;
 export const JICF_WEDDING_PAGE_HEIGHT_MM = 210;
 
-function SignatureBlock({
+function HandSignature({
   name,
-  role,
-  lineLabel,
-  imageSrc,
-  imageAlt,
-  date,
+  label,
+  reserveName = false,
 }: {
   name: string;
-  role: string;
-  lineLabel: string;
-  imageSrc?: string;
-  imageAlt?: string;
-  date?: string;
+  label: string;
+  reserveName?: boolean;
 }) {
-  const shownName = name.trim();
+  const shown = name.trim();
   return (
-    <div className="jicf-sig-block">
-      <p className="jicf-sig-role">{role}</p>
-      <p className="jicf-sig-name">{shownName || "\u00a0"}</p>
-      <div className="jicf-sig-slot">
-        {imageSrc ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={imageSrc} alt={imageAlt || ""} className="jicf-pastor-signature" />
-        ) : null}
-        {date ? <p className="jicf-sig-date">{date}</p> : null}
-      </div>
+    <div className="jicf-hand-sign">
+      {shown ? (
+        <p className="jicf-hand-name">{shown}</p>
+      ) : reserveName ? (
+        <p className="jicf-hand-name" aria-hidden="true">
+          {"\u00a0"}
+        </p>
+      ) : null}
+      <div className="jicf-sign-space" aria-hidden="true" />
       <div className="jicf-sig-line" aria-hidden="true" />
-      <p className="jicf-sig-line-label">{lineLabel}</p>
+      <p className="jicf-sig-line-label">{label}</p>
     </div>
   );
 }
@@ -56,6 +49,10 @@ export function JicfWeddingCertificateDocument({
   const wife = data.brideName.trim() || "Miss Ruphine Manaweh Harmon";
   const husband = data.groomName.trim() || "Mr. Joshua Bosco Barvor";
   const pastorDate = `${day.replace(/(st|nd|rd|th)$/i, "")} ${month} ${year}`.trim();
+  const officiant = data.officiantName.trim() || "Joseph Summers";
+  const pastorName = /^pastor\b/i.test(officiant)
+    ? officiant
+    : `Pastor ${officiant}`;
   const org =
     data.organizationName.trim() || "Jinan International Christian Fellowship";
 
@@ -89,29 +86,56 @@ export function JicfWeddingCertificateDocument({
           ) : null}
         </div>
 
-        <p className="jicf-cert-lead">
-          This is to certify that on the <strong>{day}</strong> day of{" "}
-          <strong>{month}</strong>, <strong>{year}</strong>, in{" "}
-          <strong>{location}</strong>,{" "}
-          <span className="jicf-inline-name">{husband}</span> and{" "}
-          <span className="jicf-inline-name">{wife}</span> were united in
-          marriage.
-        </p>
-        <p className="jicf-covenant">{data.covenantText}</p>
+        <div className="jicf-cert-body">
+          <p className="jicf-cert-lead">
+            This is to certify that on the <strong>{day}</strong> day of{" "}
+            <strong>{month}</strong>, <strong>{year}</strong>, a sacred marriage
+            ceremony was solemnly officiated and completed in{" "}
+            <strong>{location}</strong>.
+          </p>
+          <p className="jicf-oversight">
+            The holy matrimony was celebrated under the authority and pastoral
+            oversight of {org}, uniting the below two persons in lawful and
+            sacred marriage before God and witnesses.
+          </p>
+          <p className="jicf-party-name">{husband}</p>
+          <p className="jicf-party-name">{wife}</p>
+          <p className="jicf-covenant">{data.covenantText}</p>
+        </div>
 
-        <footer className="jicf-sign-row">
-          <SignatureBlock name={husband} role="Husband" lineLabel="Signature" />
-          <SignatureBlock name={wife} role="Wife" lineLabel="Signature" />
-          <SignatureBlock
-            name={data.officiantName.trim() || "Pastor Joseph Summers"}
-            role="Pastor (Officiant)"
-            lineLabel="Signature & Date"
-            imageSrc={PASTOR_SIGNATURE_SRC}
-            imageAlt="Signature of Pastor Joseph Summers"
-            date={pastorDate}
-          />
-          <SignatureBlock name="" role="Witness 1" lineLabel="Signature" />
-          <SignatureBlock name="" role="Witness 2" lineLabel="Signature" />
+        <footer className="jicf-sign-layout">
+          <p className="jicf-sign-note">
+            This marriage was celebrated between us
+          </p>
+          <div className="jicf-sign-couples">
+            <HandSignature name={husband} label="(Husband's signature)" />
+            <HandSignature name={wife} label="(Wife's signature)" />
+          </div>
+          <div className="jicf-sign-witnesses">
+            <HandSignature
+              name=""
+              label="(Witness 1)"
+              reserveName
+            />
+            <HandSignature
+              name=""
+              label="(Witness 2)"
+              reserveName
+            />
+          </div>
+          <div className="jicf-sign-pastor">
+            <p className="jicf-presence">In the Presence of</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={PASTOR_SIGNATURE_SRC}
+              alt="Signature of Pastor Joseph Summers"
+              className="jicf-pastor-signature"
+            />
+            <div className="jicf-sig-line jicf-pastor-line" aria-hidden="true" />
+            <p className="jicf-pastor-name">{pastorName}</p>
+            <p className="jicf-pastor-role">(Officiating Minister)</p>
+            <p className="jicf-sig-date">{pastorDate}</p>
+          </div>
         </footer>
       </div>
     </article>
@@ -154,7 +178,7 @@ export const jicfWeddingCertificateStyles = `
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 14mm 18mm 12mm;
+    padding: 10mm 16mm 8mm;
   }
   .jicf-wedding-header {
     display: flex;
@@ -163,8 +187,8 @@ export const jicfWeddingCertificateStyles = `
     gap: 8mm;
   }
   .jicf-wedding-logo {
-    width: 28mm;
-    height: 28mm;
+    width: 24mm;
+    height: 24mm;
     object-fit: contain;
     flex: 0 0 auto;
   }
@@ -172,7 +196,7 @@ export const jicfWeddingCertificateStyles = `
   .jicf-org-name {
     margin: 0;
     color: var(--jicf-navy);
-    font-size: 6.4mm;
+    font-size: 5.6mm;
     font-weight: 700;
     letter-spacing: 0.18mm;
     line-height: 1.12;
@@ -193,11 +217,11 @@ export const jicfWeddingCertificateStyles = `
     font-style: italic;
     font-weight: 700;
   }
-  .jicf-title-block { margin-top: 5mm; text-align: center; }
+  .jicf-title-block { margin-top: 2.4mm; text-align: center; }
   .jicf-title {
     margin: 0;
     color: var(--jicf-navy);
-    font-size: 9mm;
+    font-size: 8mm;
     font-weight: 700;
     letter-spacing: 0.8mm;
     line-height: 1;
@@ -206,11 +230,10 @@ export const jicfWeddingCertificateStyles = `
   .jicf-ornament { display: flex; justify-content: center; margin-top: 2.4mm; }
   .jicf-ornament-rule {
     display: block;
-    width: 72mm;
-    height: 1.3mm;
-    background: var(--jicf-yellow);
+    width: 70mm;
+    height: 0.7mm;
+    background: var(--jicf-gold);
     border-radius: 1mm;
-    box-shadow: 0 0 0 0.35mm var(--jicf-gold);
   }
   .jicf-cert-id {
     margin: 2.2mm 0 0;
@@ -220,131 +243,142 @@ export const jicfWeddingCertificateStyles = `
     letter-spacing: 0.2mm;
     text-align: center;
   }
+  .jicf-cert-body { margin-top: 2.6mm; text-align: center; }
   .jicf-cert-lead {
-    margin: 3.2mm 4mm 0;
-    text-align: center;
+    margin: 0 6mm;
     color: var(--jicf-ink);
-    font-size: 4.1mm;
-    line-height: 1.35;
+    font-size: 4mm;
+    line-height: 1.32;
   }
   .jicf-cert-lead strong { font-weight: 700; }
-  .jicf-inline-name {
+  .jicf-oversight {
+    margin: 1.8mm 8mm 0;
+    color: var(--jicf-ink);
+    font-size: 3.6mm;
+    line-height: 1.32;
+  }
+  .jicf-party-name {
+    margin: 1.4mm 0 0;
     color: var(--jicf-red);
+    font-size: 5.4mm;
     font-style: italic;
     font-weight: 700;
-    font-size: 5.6mm;
+    line-height: 1.15;
   }
   .jicf-covenant {
-    margin: 2.6mm 4mm 0;
-    text-align: center;
+    margin: 2mm 8mm 0;
     color: var(--jicf-navy);
-    font-size: 3.6mm;
+    font-size: 3.5mm;
     font-style: italic;
-    line-height: 1.35;
+    line-height: 1.32;
   }
-  .jicf-sign-row {
+  .jicf-sign-layout {
+    flex: 1;
     display: grid;
-    grid-template-columns: 1.15fr 1.2fr 1.15fr 0.85fr 0.85fr;
-    column-gap: 4mm;
-    margin-top: 8mm;
+    grid-template-columns: 36mm 1.15fr 0.9fr;
+    grid-template-areas:
+      "note couple witnesses"
+      "pastor pastor pastor";
+    column-gap: 6mm;
+    row-gap: 2mm;
+    align-items: center;
+    margin-top: 2.5mm;
+    min-height: 0;
   }
-  .jicf-sig-block { min-width: 0; text-align: center; }
-  .jicf-sig-role {
+  .jicf-sign-note {
+    grid-area: note;
+    align-self: center;
     margin: 0;
-    color: var(--jicf-navy);
-    font-size: 3.1mm;
-    font-weight: 700;
-    letter-spacing: 0.08mm;
-    text-transform: uppercase;
+    max-width: 34mm;
+    color: var(--jicf-ink);
+    font-size: 3.3mm;
+    line-height: 1.25;
+    text-align: left;
   }
-  .jicf-sig-name {
-    margin: 1.4mm 0 0;
-    min-height: 9mm;
+  .jicf-sign-couples {
+    grid-area: couple;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3.2mm;
+  }
+  .jicf-sign-witnesses {
+    grid-area: witnesses;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3.2mm;
+    min-width: 0;
+  }
+  .jicf-sign-pastor {
+    grid-area: pastor;
+    text-align: center;
+  }
+  .jicf-presence {
+    margin: 0;
+    color: var(--jicf-ink);
+    font-size: 3.2mm;
+    font-style: italic;
+  }
+  .jicf-hand-sign { width: 72mm; max-width: 100%; text-align: center; }
+  .jicf-sign-witnesses .jicf-hand-sign { width: 64mm; }
+  .jicf-hand-name {
+    margin: 0;
     color: var(--jicf-navy);
     font-size: 3.5mm;
     font-weight: 700;
-    line-height: 1.2;
-    overflow-wrap: break-word;
+    line-height: 1.15;
   }
-  .jicf-sig-slot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    height: 14mm;
-  }
-  .jicf-sig-line {
-    border-bottom: 0.4mm solid var(--jicf-navy);
-  }
+  .jicf-sign-space { height: 6.5mm; }
+  .jicf-sig-line { border-bottom: 0.35mm solid var(--jicf-navy); }
+  .jicf-pastor-line { width: 72mm; margin: 0 auto; }
   .jicf-sig-line-label {
-    margin: 1.2mm 0 0;
+    margin: 0.8mm 0 0;
     color: var(--jicf-muted);
     font-size: 3mm;
     font-style: italic;
   }
-  .jicf-sig-body {
-    margin: 1mm 0 0;
-    color: var(--jicf-ink);
-    font-size: 2.8mm;
-    line-height: 1.3;
-    text-align: center;
-  }
-  .jicf-pastor-signature {
-    display: block;
-    height: 9mm;
-    width: auto;
-    max-width: 48mm;
-    margin: 1mm auto 0;
-    object-fit: contain;
-  }
-  .jicf-sig-date {
-    margin: 0.6mm 0 0;
-    color: var(--jicf-navy);
-    font-size: 3mm;
-    font-weight: 700;
-    text-align: center;
-  }
-  .jicf-witness-col { min-width: 0; }
-  .jicf-witness-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 5mm;
-    margin-top: 2mm;
-  }
-  .jicf-parties {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: end;
-    column-gap: 4mm;
-    margin: 3mm 0 0;
-  }
-  .jicf-party { text-align: center; }
-  .jicf-party-label {
+  .jicf-sig-role {
     margin: 0;
     color: var(--jicf-navy);
-    font-size: 2.8mm;
+    font-size: 3.2mm;
     font-weight: 700;
-    letter-spacing: 0.4mm;
+    letter-spacing: 0.12mm;
     text-transform: uppercase;
   }
-  .jicf-party-name {
+  .jicf-sig-body {
     margin: 0.8mm 0 0;
-    color: var(--jicf-red);
-    font-size: 5.2mm;
-    font-style: italic;
-    font-weight: 700;
-  }
-  .jicf-parties-and {
-    margin: 0 0 1mm;
-    color: var(--jicf-gold);
-    font-size: 5mm;
-    font-weight: 700;
-  }
-  .jicf-oversight {
-    margin: 2.4mm 6mm 0;
-    text-align: center;
     color: var(--jicf-ink);
-    font-size: 3.8mm;
-    line-height: 1.4;
+    font-size: 3.1mm;
+    line-height: 1.28;
+  }
+  .jicf-pastor-testimony { margin-left: auto; margin-right: auto; max-width: 170mm; }
+  .jicf-pastor-signature {
+    display: block;
+    height: 11mm;
+    width: auto;
+    max-width: 52mm;
+    margin: 0.6mm auto 0;
+    object-fit: contain;
+  }
+  .jicf-pastor-name {
+    margin: 0.8mm 0 0;
+    color: var(--jicf-navy);
+    font-size: 3.6mm;
+    font-weight: 700;
+  }
+  .jicf-pastor-role {
+    margin: 0.3mm 0 0;
+    color: var(--jicf-navy);
+    font-size: 3.1mm;
+    font-style: italic;
+  }
+  .jicf-sig-date {
+    margin: 0.3mm 0 0;
+    color: var(--jicf-navy);
+    font-size: 3.2mm;
+    font-weight: 700;
   }
 `;
