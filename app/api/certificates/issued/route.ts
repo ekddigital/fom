@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { dbCertificateService } from "@/lib/services/certificate-database";
 
 export async function GET(request: NextRequest) {
   try {
@@ -9,6 +10,8 @@ export async function GET(request: NextRequest) {
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    await dbCertificateService.ensureJicfWeddingRecord();
 
     // Parse query parameters
     const searchParams = request.nextUrl.searchParams;

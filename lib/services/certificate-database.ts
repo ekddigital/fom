@@ -15,6 +15,10 @@ import {
   OrganizationConfig, // Import OrganizationConfig
 } from "../utils/certificate-manager";
 import { CERTIFICATE_TEMPLATES } from "../utils/certificate-templates";
+import {
+  JICF_WEDDING_CERTIFICATE_ID,
+  JICF_WEDDING_HARMON_BARVOR,
+} from "../jicf/wedding-certificate-data";
 
 /**
  * Database Certificate Service
@@ -100,6 +104,7 @@ export class DatabaseCertificateService {
       // Seed default certificate templates with override
       console.log("📋 Seeding certificate templates with override...");
       await this.seedCertificateTemplates();
+      await this.ensureJicfWeddingRecord();
 
       console.log("✅ Database initialization completed successfully");
     } catch (error) {
@@ -251,6 +256,96 @@ export class DatabaseCertificateService {
         timeout: 60000, // 60 second timeout for the entire transaction
       }
     );
+  }
+
+  /**
+   * Upsert the JICF wedding template and the Harmon–Barvor certificate.
+   * Safe to call when other templates already exist. Never throws.
+   * The record stores the certificate id as text. qrCodeData stays empty so
+   * renderers do not draw a QR code.
+   */
+  async ensureJicfWeddingRecord(): Promise<void> {
+    try {
+      const superAdminUser = await prisma.user.findFirst({
+        where: { role: "SUPER_ADMIN" },
+        orderBy: { createdAt: "asc" },
+      });
+      if (!superAdminUser) {
+        console.warn(
+          "Skipping JICF wedding seed: no SUPER_ADMIN user is available",
+        );
+        return;
+      }
+
+      const template = CERTIFICATE_TEMPLATES.find(
+        (item) => item.name === "Wedding Certificate",
+      );
+      if (!template?.name) return;
+
+      const templateId = this.generateTemplateId(template.name);
+      const templateFields = {
+        name: template.name,
+        description:
+          template.description ||
+          "Official JICF wedding certificate. No QR code.",
+        category: "wedding",
+        typeCode: "WED",
+        templateData: JSON.parse(JSON.stringify(template)),
+        defaultSecurityLevel: "STANDARD",
+        createdBy: superAdminUser.id,
+        isActive: true,
+        organizationId: "jicf",
+      };
+
+      await prisma.certificateTemplate.upsert({
+        where: { id: templateId },
+        create: { id: templateId, ...templateFields },
+        update: { ...templateFields, updatedAt: new Date() },
+      });
+
+      const record = JICF_WEDDING_HARMON_BARVOR;
+      const certificateData = {
+        ...record,
+        renderQr: false,
+        brideName: record.brideName,
+        groomName: record.groomName,
+        officiantName: record.officiantName,
+        location: record.location,
+        ceremonyDay: record.ceremonyDay,
+        ceremonyMonth: record.ceremonyMonth,
+        ceremonyYear: record.ceremonyYear,
+        covenantText: record.covenantText,
+        certificateId: JICF_WEDDING_CERTIFICATE_ID,
+      };
+
+      const certificateFields = {
+        templateId,
+        recipientFirstName: record.brideName,
+        recipientLastName: `& ${record.groomName}`,
+        recipientEmail: "no-email+jicf-2026-wed-0001@placeholder.com",
+        issuedBy: superAdminUser.id,
+        verificationId: JICF_WEDDING_CERTIFICATE_ID,
+        certificateData,
+        securityLevel: "STANDARD",
+        organizationId: "jicf",
+        pdfPath: "",
+        pngPath: "",
+        qrCodeData: "",
+        issueDate: new Date("2026-09-26T04:00:00.000Z"),
+        status: "active",
+      };
+
+      await prisma.certificate.upsert({
+        where: { id: JICF_WEDDING_CERTIFICATE_ID },
+        create: {
+          id: JICF_WEDDING_CERTIFICATE_ID,
+          ...certificateFields,
+        },
+        update: certificateFields,
+      });
+    } catch (error) {
+      console.error("JICF wedding certificate seed failed:", error);
+    }
   }
 
   /**
@@ -448,8 +543,8 @@ export class DatabaseCertificateService {
    */
   async getCertificate(id: string): Promise<CompleteCertificate | null> {
     try {
-      const dbCert = await prisma.certificate.findUnique({
-        where: { id },
+      const dbCert = await prisma.certificate.findFirst({
+        where: { OR: [{ id }, { verificationId: id }] },
         include: {
           template: true,
           issuer: {
@@ -532,14 +627,30 @@ export class DatabaseCertificateService {
       // Log verification attempt
       await prisma.certificateVerification.create({
         data: {
-          certificateId: id,
+          certificateId: certificate.id,
           verifiedByIp: verifierIp,
           verificationMethod,
         },
       });
 
-      // Use certificate manager for verification logic
-      return this.certificateManager.verifyCertificate(id, signature);
+      const memory = this.certificateManager.verifyCertificate(
+        certificate.id,
+        signature,
+      );
+      if (memory.reason !== "Certificate not found") return memory;
+
+      if (certificate.id === JICF_WEDDING_CERTIFICATE_ID) {
+        if (certificate.status !== "active") {
+          return {
+            valid: false,
+            certificate,
+            reason: `Certificate is ${certificate.status}`,
+          };
+        }
+        return { valid: true, certificate };
+      }
+
+      return memory;
     } catch (error) {
       console.error("Error verifying certificate:", error);
       return { valid: false, reason: "Verification error" };
@@ -957,6 +1068,8 @@ export class DatabaseCertificateService {
     if (nameUpper.includes("CHAIRPERSON")) return "CHR";
     if (nameUpper.includes("COMPLETION")) return "CMP";
     if (nameUpper.includes("RECOGNITION")) return "REC";
+    if (nameUpper.includes("WEDDING") || nameUpper.includes("MARRIAGE"))
+      return "WED";
 
     // Default: use first 3 letters of the template name
     return name
@@ -998,6 +1111,8 @@ export class DatabaseCertificateService {
     if (nameUpper.includes("YOUTH")) return "youth";
     if (nameUpper.includes("EXCELLENCE")) return "excellence";
     if (nameUpper.includes("SERVICE")) return "service";
+    if (nameUpper.includes("WEDDING") || nameUpper.includes("MARRIAGE"))
+      return "wedding";
     return "appreciation";
   }
 

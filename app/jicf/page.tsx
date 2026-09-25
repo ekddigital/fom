@@ -56,6 +56,14 @@ export default function JICFPage() {
             gather to worship, grow in faith, and do life together.
           </p>
           <div className="mt-4 h-px bg-white/10 mx-auto max-w-xs" />
+          <p className="mt-5">
+            <Link
+              href="/jicf/wedding-certificate"
+              className="text-sm font-semibold text-[#efe31e] underline-offset-4 hover:underline"
+            >
+              Wedding certificate
+            </Link>
+          </p>
         </div>
 
         {/* Event cards */}

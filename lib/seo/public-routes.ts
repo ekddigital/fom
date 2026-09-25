@@ -26,7 +26,8 @@ export type PublicRoute = {
  *   `/ministry`, `/missions`
  *
  * Public tools / share flyers (noindex):
- *   `/verify-certificate`, `/jicf/english-tutoring`, `/jicf/ekddigital/**`
+ *   `/verify-certificate`, `/jicf/english-tutoring`, `/jicf/ekddigital/**`,
+ *   `/jicf/wedding-certificate`
  *
  * Auth:
  *   `/sign-in`, `/sign-up`, `/auth/**`
@@ -118,4 +119,5 @@ export const ROBOTS_DISALLOW = [
   "/manage-events",
   "/ministry-certificates",
   "/jicf/ekddigital",
+  "/jicf/wedding-certificate",
 ] as const;

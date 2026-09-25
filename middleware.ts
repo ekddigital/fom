@@ -2,12 +2,7 @@ import NextAuth from "next-auth";
 import { authConfig } from "@/lib/auth.config";
 import { NextResponse } from "next/server";
 import type { NextAuthRequest } from "next-auth";
-import {
-  APEX_HOST,
-  CANONICAL_HOST,
-  isLaunchpadHost,
-  requestHostname,
-} from "@/lib/seo/site-url";
+import { isLaunchpadHost, requestHostname } from "@/lib/seo/site-url";
 
 const { auth } = NextAuth(authConfig);
 
@@ -19,6 +14,7 @@ const NOINDEX_PREFIXES = [
   "/manage-events",
   "/ministry-certificates",
   "/jicf/ekddigital",
+  "/jicf/wedding-certificate",
 ];
 
 const AUTH_PATHS = ["/sign-in", "/sign-up"];
@@ -70,18 +66,13 @@ function applySeoHeaders(req: NextAuthRequest, response: NextResponse) {
 export default auth((req: NextAuthRequest) => {
   const session = req.auth;
   const path = req.nextUrl.pathname;
-  const host = requestHostname(
-    req.headers.get("x-forwarded-host"),
-    req.nextUrl.hostname,
-  );
 
-  if (host === APEX_HOST) {
-    const url = req.nextUrl.clone();
-    url.hostname = CANONICAL_HOST;
-    url.protocol = "https:";
-    url.port = "";
-    return NextResponse.redirect(url, 301);
-  }
+  // Do not 301 apex → https://www.fomjesus.org.
+  // Launchpad nginx already 301s www → apex when both names are attached.
+  // Those two redirects chase each other: the health check
+  // `curl -fsSIL --resolve www.fomjesus.org:80:127.0.0.1 http://www.fomjesus.org`
+  // follows www → https://fomjesus.org → www until curl error 47.
+  // Serve 200 for both hosts. rel=canonical stays https://www.fomjesus.org.
 
   if (isCrawlerDiscoveryPath(path) || !isPrivatePath(path)) {
     if (isAuthPage(path) && session) {

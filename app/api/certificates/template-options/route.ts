@@ -11,6 +11,7 @@ export async function GET() {
       console.log("📋 No templates found, initializing database...");
       await dbCertificateService.initializeDefaults();
     }
+    await dbCertificateService.ensureJicfWeddingRecord();
 
     // Get all available template options
     const templateOptions = await dbCertificateService.getTemplateOptions();
