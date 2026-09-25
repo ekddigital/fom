@@ -217,7 +217,7 @@ export function JicfWeddingCertificateShell({
       <Card className="jicf-wedding-no-print">
         <CardHeader>
           <CardTitle style={{ color: JICF_WEDDING_COLORS.navy }}>
-            JICF Wedding Certificate
+            JICF Marriage Certificate
           </CardTitle>
           <CardDescription>
             Landscape marriage record for Jinan International Christian

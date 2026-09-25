@@ -61,7 +61,7 @@ export default function JICFPage() {
               href="/jicf/wedding-certificate"
               className="text-sm font-semibold text-[#efe31e] underline-offset-4 hover:underline"
             >
-              Wedding certificate
+              Marriage certificate
             </Link>
           </p>
         </div>

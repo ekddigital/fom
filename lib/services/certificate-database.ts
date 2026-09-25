@@ -207,7 +207,10 @@ export class DatabaseCertificateService {
           if (!template.name) continue;
 
           // Generate a predictable ID based on template name
-          const templateId = this.generateTemplateId(template.name);
+          const templateId =
+            template.id === "jicf-wedding-certificate"
+              ? "wedding-certificate"
+              : this.generateTemplateId(template.name);
 
           // Get type code from certificate utils
           const typeCode = this.generateTypeCode(template.name);
@@ -278,11 +281,14 @@ export class DatabaseCertificateService {
       }
 
       const template = CERTIFICATE_TEMPLATES.find(
-        (item) => item.name === "Wedding Certificate",
+        (item) =>
+          item.id === "jicf-wedding-certificate" ||
+          item.name === "Marriage Certificate" ||
+          item.name === "Wedding Certificate",
       );
       if (!template?.name) return;
 
-      const templateId = this.generateTemplateId(template.name);
+      const templateId = "wedding-certificate";
       const templateFields = {
         name: template.name,
         description:

@@ -61,8 +61,6 @@ export function JicfWeddingCertificateDocument({
       className="jicf-wedding-page"
       aria-label={`${data.title} — ${data.organizationName}`}
     >
-      <div className="jicf-wedding-frame jicf-wedding-frame-outer" />
-      <div className="jicf-wedding-frame jicf-wedding-frame-gold" />
       <div className="jicf-wedding-frame jicf-wedding-frame-inner" />
 
       <div className="jicf-wedding-inner">
@@ -104,26 +102,18 @@ export function JicfWeddingCertificateDocument({
         </div>
 
         <footer className="jicf-sign-layout">
-          <p className="jicf-sign-note">
-            This marriage was celebrated between us
-          </p>
           <div className="jicf-sign-couples">
-            <HandSignature name={husband} label="(Husband's signature)" />
-            <HandSignature name={wife} label="(Wife's signature)" />
+            <HandSignature name="" label="(Husband's signature)" />
+            <HandSignature name="" label="(Wife's signature)" />
           </div>
           <div className="jicf-sign-witnesses">
-            <HandSignature
-              name=""
-              label="(Witness 1)"
-              reserveName
-            />
-            <HandSignature
-              name=""
-              label="(Witness 2)"
-              reserveName
-            />
+            <HandSignature name="" label="(Witness 1)" />
+            <HandSignature name="" label="(Witness 2)" />
           </div>
           <div className="jicf-sign-pastor">
+            <p className="jicf-sign-note">
+              This marriage was celebrated between us
+            </p>
             <p className="jicf-presence">In the Presence of</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -131,7 +121,6 @@ export function JicfWeddingCertificateDocument({
               alt="Signature of Pastor Joseph Summers"
               className="jicf-pastor-signature"
             />
-            <div className="jicf-sig-line jicf-pastor-line" aria-hidden="true" />
             <p className="jicf-pastor-name">{pastorName}</p>
             <p className="jicf-pastor-role">(Officiating Minister)</p>
             <p className="jicf-sig-date">{pastorDate}</p>
@@ -165,12 +154,9 @@ export const jicfWeddingCertificateStyles = `
   .jicf-wedding-page *::before,
   .jicf-wedding-page *::after { box-sizing: border-box; }
   .jicf-wedding-frame { pointer-events: none; position: absolute; }
-  .jicf-wedding-frame-outer { inset: 4mm; border: 0.7mm solid var(--jicf-red); }
-  .jicf-wedding-frame-gold { inset: 5.3mm; border: 0.35mm solid var(--jicf-gold); }
   .jicf-wedding-frame-inner {
-    inset: 6.3mm;
-    border: 0.4mm solid var(--jicf-navy);
-    background: var(--jicf-cream);
+    inset: 5mm;
+    border: 0.35mm solid var(--jicf-navy);
   }
   .jicf-wedding-inner {
     position: relative;
@@ -273,27 +259,23 @@ export const jicfWeddingCertificateStyles = `
     line-height: 1.32;
   }
   .jicf-sign-layout {
-    flex: 1;
     display: grid;
-    grid-template-columns: 36mm 1.15fr 0.9fr;
+    grid-template-columns: 1fr 1fr;
     grid-template-areas:
-      "note couple witnesses"
-      "pastor pastor pastor";
-    column-gap: 6mm;
-    row-gap: 2mm;
-    align-items: center;
-    margin-top: 2.5mm;
-    min-height: 0;
+      "couple witnesses"
+      "pastor pastor";
+    column-gap: 16mm;
+    row-gap: 5mm;
+    align-items: start;
+    margin-top: 4mm;
+    padding-bottom: 8mm;
   }
   .jicf-sign-note {
-    grid-area: note;
-    align-self: center;
-    margin: 0;
-    max-width: 34mm;
+    margin: 0 0 1.2mm;
     color: var(--jicf-ink);
-    font-size: 3.3mm;
+    font-size: 3.4mm;
     line-height: 1.25;
-    text-align: left;
+    text-align: center;
   }
   .jicf-sign-couples {
     grid-area: couple;
@@ -333,7 +315,6 @@ export const jicfWeddingCertificateStyles = `
   }
   .jicf-sign-space { height: 6.5mm; }
   .jicf-sig-line { border-bottom: 0.35mm solid var(--jicf-navy); }
-  .jicf-pastor-line { width: 72mm; margin: 0 auto; }
   .jicf-sig-line-label {
     margin: 0.8mm 0 0;
     color: var(--jicf-muted);

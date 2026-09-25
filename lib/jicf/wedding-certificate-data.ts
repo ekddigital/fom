@@ -58,7 +58,7 @@ export const JICF_WEDDING_COVENANT =
 export const JICF_WEDDING_BLANK: JicfWeddingCertificateData = {
   organizationName: "Jinan International Christian Fellowship",
   subtitle: "Official Marriage Certification",
-  title: "Wedding Certificate",
+  title: "Marriage Certificate",
   ceremonyDay: "",
   ceremonyMonth: "",
   ceremonyYear: "",

@@ -213,7 +213,9 @@ export function CertificatePreviewModal({
   }, []);
 
   const isWeddingCertificate =
-    (template.name || "").trim().toLowerCase() === "wedding certificate";
+    ["wedding certificate", "marriage certificate"].includes(
+      (template.name || "").trim().toLowerCase(),
+    );
 
   // Wedding record keeps a stable id. Other templates still get a sample id.
   const certificateId = React.useMemo(() => {

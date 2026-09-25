@@ -7,9 +7,9 @@ import { dbCertificateService } from "@/lib/services/certificate-database";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = pageMetadata({
-  title: "JICF Wedding Certificate",
+  title: "JICF Marriage Certificate",
   description:
-    "Official Jinan International Christian Fellowship wedding certificate for Mr. Joshua Bosco Barvor and Miss Ruphine Manaweh Harmon.",
+    "Official Jinan International Christian Fellowship marriage certificate for Mr. Joshua Bosco Barvor and Miss Ruphine Manaweh Harmon.",
   path: "/jicf/wedding-certificate",
   index: false,
 });

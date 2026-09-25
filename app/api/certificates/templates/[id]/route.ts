@@ -23,6 +23,7 @@ export async function GET(
 
     if (
       id === "wedding-certificate" ||
+      id === "marriage-certificate" ||
       id === "jicf-wedding-certificate"
     ) {
       await dbCertificateService.ensureJicfWeddingRecord();
@@ -32,15 +33,17 @@ export async function GET(
 
     if (
       template?.name === "Wedding Certificate" ||
+      template?.name === "Marriage Certificate" ||
       id === "wedding-certificate" ||
+      id === "marriage-certificate" ||
       id === "jicf-wedding-certificate"
     ) {
       return NextResponse.json({
         ...(template ?? {
           id: "wedding-certificate",
-          name: "Wedding Certificate",
+          name: "Marriage Certificate",
         }),
-        name: "Wedding Certificate",
+        name: "Marriage Certificate",
         description: jicfWeddingCertificate.description,
         templateData: JSON.parse(JSON.stringify(jicfWeddingCertificate)),
       });
