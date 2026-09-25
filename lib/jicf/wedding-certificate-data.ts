@@ -7,6 +7,10 @@ import { JICF_COLORS } from "@/lib/utils/certificates/jicf/constants";
 
 export const JICF_WEDDING_CERTIFICATE_ID = "JICF-2026-WED-0001";
 
+/** Fellowship home. The wedding itself was held in Hangzhou. */
+export const JICF_CHURCH_ADDRESS =
+  "Building 13, Sanlizhuang Community, Jinan, Shandong, P.R. China";
+
 /** Same palette as the JICF Certificate of Service. */
 export const JICF_WEDDING_COLORS = {
   navy: JICF_COLORS.blue,
@@ -28,7 +32,10 @@ export type JicfWeddingCertificateData = {
   ceremonyDay: string;
   ceremonyMonth: string;
   ceremonyYear: string;
+  /** Where the wedding was held. */
   location: string;
+  /** Fellowship address. Not the ceremony city. */
+  churchAddress: string;
   brideName: string;
   groomName: string;
   covenantText: string;
@@ -46,7 +53,7 @@ export type JicfWeddingCertificateData = {
 };
 
 export const JICF_WEDDING_COVENANT =
-  "The two individuals have willingly entered into the covenant of marriage, promising to love, honor, cherish, and abide with one another, for better or for worse, in sickness and in health, till death do them part, according to the sacred teachings of the Christian faith.";
+  "According to the ordinance of Christian marriage, they promise to love, honor, and cherish one another, for better or for worse, in sickness and in health, till death do them part.";
 
 export const JICF_WEDDING_BLANK: JicfWeddingCertificateData = {
   organizationName: "Jinan International Christian Fellowship",
@@ -56,6 +63,7 @@ export const JICF_WEDDING_BLANK: JicfWeddingCertificateData = {
   ceremonyMonth: "",
   ceremonyYear: "",
   location: "",
+  churchAddress: JICF_CHURCH_ADDRESS,
   brideName: "",
   groomName: "",
   covenantText: JICF_WEDDING_COVENANT,
@@ -81,9 +89,10 @@ export const JICF_WEDDING_HARMON_BARVOR: JicfWeddingCertificateData = {
   ceremonyMonth: "September",
   ceremonyYear: "2026",
   location: "Hangzhou, China",
+  churchAddress: JICF_CHURCH_ADDRESS,
   brideName: "Ruphine Manaweh Harmon",
   groomName: "Joshua Bosco Barvor",
-  officiantName: "Joseph Summers",
+  officiantName: "Pastor Joseph Summers",
   certificateId: JICF_WEDDING_CERTIFICATE_ID,
 };
 
