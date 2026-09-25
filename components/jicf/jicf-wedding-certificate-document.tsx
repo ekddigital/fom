@@ -165,17 +165,18 @@ export const jicfWeddingCertificateStyles = `
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 12mm 18mm 10mm;
+    justify-content: space-between;
+    padding: 8mm 12mm 9mm;
   }
   .jicf-wedding-header {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8mm;
+    gap: 6mm;
   }
   .jicf-wedding-logo {
-    width: 24mm;
-    height: 24mm;
+    width: 38mm;
+    height: 38mm;
     object-fit: contain;
     flex: 0 0 auto;
   }
@@ -183,38 +184,38 @@ export const jicfWeddingCertificateStyles = `
   .jicf-org-name {
     margin: 0;
     color: var(--jicf-navy);
-    font-size: 5.6mm;
+    font-size: 6.8mm;
     font-weight: 700;
     letter-spacing: 0.04mm;
     line-height: 1.12;
     text-transform: uppercase;
   }
   .jicf-place {
-    margin: 2.4mm auto 0;
-    max-width: 150mm;
+    margin: 1.2mm auto 0;
+    max-width: 220mm;
     color: var(--jicf-navy);
-    font-size: 3.3mm;
+    font-size: 4.4mm;
     font-weight: 700;
     line-height: 1.25;
   }
   .jicf-subtitle {
-    margin: 2.6mm 0 0;
+    margin: 1.4mm 0 0;
     color: var(--jicf-red);
-    font-size: 3.8mm;
+    font-size: 4.8mm;
     font-style: italic;
     font-weight: 700;
   }
-  .jicf-title-block { margin-top: 5.5mm; text-align: center; }
+  .jicf-title-block { margin-top: 0; text-align: center; }
   .jicf-title {
     margin: 0;
     color: var(--jicf-navy);
-    font-size: 8mm;
+    font-size: 9.6mm;
     font-weight: 700;
-    letter-spacing: 0.12mm;
-    line-height: 1;
+    letter-spacing: 0.06mm;
+    line-height: 1.05;
     text-transform: uppercase;
   }
-  .jicf-ornament { display: flex; justify-content: center; margin-top: 2.4mm; }
+  .jicf-ornament { display: flex; justify-content: center; margin-top: 1.4mm; }
   .jicf-ornament-rule {
     display: block;
     width: 70mm;
@@ -223,39 +224,39 @@ export const jicfWeddingCertificateStyles = `
     border-radius: 1mm;
   }
   .jicf-cert-id {
-    margin: 2.2mm 0 0;
+    margin: 1.2mm 0 0;
     color: var(--jicf-navy);
-    font-size: 3.6mm;
+    font-size: 4.4mm;
     font-weight: 700;
-    letter-spacing: 0.2mm;
+    letter-spacing: 0;
     text-align: center;
   }
-  .jicf-cert-body { margin-top: 2.6mm; text-align: center; }
+  .jicf-cert-body { margin-top: 0; text-align: center; }
   .jicf-cert-lead {
     margin: 0 6mm;
     color: var(--jicf-ink);
-    font-size: 4mm;
+    font-size: 4.8mm;
     line-height: 1.32;
   }
   .jicf-cert-lead strong { font-weight: 700; }
   .jicf-oversight {
-    margin: 1.8mm 8mm 0;
+    margin: 1.2mm 6mm 0;
     color: var(--jicf-ink);
-    font-size: 3.6mm;
+    font-size: 4.6mm;
     line-height: 1.32;
   }
   .jicf-party-name {
-    margin: 1.4mm 0 0;
+    margin: 1mm 0 0;
     color: var(--jicf-red);
-    font-size: 5.4mm;
+    font-size: 5.8mm;
     font-style: italic;
     font-weight: 700;
     line-height: 1.15;
   }
   .jicf-covenant {
-    margin: 2mm 8mm 0;
+    margin: 1.2mm 6mm 0;
     color: var(--jicf-navy);
-    font-size: 3.5mm;
+    font-size: 4.6mm;
     font-style: italic;
     line-height: 1.32;
   }
@@ -266,15 +267,15 @@ export const jicfWeddingCertificateStyles = `
       "couple witnesses"
       "pastor pastor";
     column-gap: 16mm;
-    row-gap: 5mm;
+    row-gap: 3mm;
     align-items: start;
-    margin-top: 4mm;
-    padding-bottom: 8mm;
+    margin-top: 0;
+    padding-bottom: 0;
   }
   .jicf-sign-note {
     margin: 0 0 1.2mm;
     color: var(--jicf-ink);
-    font-size: 3.4mm;
+    font-size: 4.4mm;
     line-height: 1.25;
     text-align: center;
   }
@@ -284,7 +285,7 @@ export const jicfWeddingCertificateStyles = `
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 3.2mm;
+    gap: 2mm;
   }
   .jicf-sign-witnesses {
     grid-area: witnesses;
@@ -292,7 +293,7 @@ export const jicfWeddingCertificateStyles = `
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 3.2mm;
+    gap: 2mm;
     min-width: 0;
   }
   .jicf-sign-pastor {
@@ -302,7 +303,7 @@ export const jicfWeddingCertificateStyles = `
   .jicf-presence {
     margin: 0;
     color: var(--jicf-ink);
-    font-size: 3.2mm;
+    font-size: 4.4mm;
     font-style: italic;
   }
   .jicf-hand-sign { width: 72mm; max-width: 100%; text-align: center; }
@@ -314,12 +315,12 @@ export const jicfWeddingCertificateStyles = `
     font-weight: 700;
     line-height: 1.15;
   }
-  .jicf-sign-space { height: 6.5mm; }
+  .jicf-sign-space { height: 6mm; }
   .jicf-sig-line { border-bottom: 0.35mm solid var(--jicf-navy); }
   .jicf-sig-line-label {
     margin: 0.8mm 0 0;
     color: var(--jicf-muted);
-    font-size: 3mm;
+    font-size: 4.2mm;
     font-style: italic;
   }
   .jicf-sig-role {
@@ -348,19 +349,19 @@ export const jicfWeddingCertificateStyles = `
   .jicf-pastor-name {
     margin: 0.8mm 0 0;
     color: var(--jicf-navy);
-    font-size: 3.6mm;
+    font-size: 5mm;
     font-weight: 700;
   }
   .jicf-pastor-role {
     margin: 0.3mm 0 0;
     color: var(--jicf-navy);
-    font-size: 3.1mm;
+    font-size: 4.2mm;
     font-style: italic;
   }
   .jicf-sig-date {
     margin: 0.3mm 0 0;
     color: var(--jicf-navy);
-    font-size: 3.2mm;
+    font-size: 4.4mm;
     font-weight: 700;
   }
 `;
