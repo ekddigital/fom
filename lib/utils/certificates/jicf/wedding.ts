@@ -133,7 +133,7 @@ export const jicfWeddingCertificate: CertificateTemplate = {
     {
       id: "oversight",
       type: "text",
-      content: `The holy matrimony was celebrated under the authority and pastoral oversight of Jinan International Christian Fellowship, uniting the below two persons in lawful and sacred marriage before God and witnesses, <span style="color:${RED};white-space:nowrap">Mr. Joshua Bosco Barvor</span> and <span style="color:${RED};white-space:nowrap">Miss Ruphine Manaweh Harmon</span>.`,
+      content: `The holy matrimony was celebrated under the authority and pastoral oversight of Jinan International Christian Fellowship, uniting the below two persons in lawful and sacred marriage before God and witnesses, <span style="font-weight:bold;white-space:nowrap">Mr. Joshua Bosco Barvor</span> and <span style="font-weight:bold;white-space:nowrap">Miss Ruphine Manaweh Harmon</span>.`,
       position: { x: 36, y: 292, width: 928, height: 78 },
       style: {
         fontSize: 18,

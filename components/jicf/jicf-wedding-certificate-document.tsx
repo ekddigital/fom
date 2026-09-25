@@ -247,10 +247,10 @@ export const jicfWeddingCertificateStyles = `
     line-height: 1.32;
   }
   .jicf-inline-name {
-    color: var(--jicf-red);
+    color: inherit;
     font-size: inherit;
     font-style: inherit;
-    font-weight: inherit;
+    font-weight: 700;
     line-height: inherit;
     white-space: nowrap;
   }
