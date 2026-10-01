@@ -1,4 +1,4 @@
-import NextAuth, { type NextAuthConfig, type User } from "next-auth";
+import NextAuth, { customFetch, type NextAuthConfig, type User } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
@@ -17,6 +17,42 @@ const config: NextAuthConfig = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      [customFetch]: async (input, init) => {
+        const response = await fetch(input, init);
+        const requestUrl = new URL(
+          input instanceof Request ? input.url : String(input),
+        );
+
+        if (
+          !response.ok ||
+          requestUrl.origin !== "https://accounts.google.com" ||
+          requestUrl.pathname !== "/.well-known/openid-configuration"
+        ) {
+          return response;
+        }
+
+        const metadata = await response.clone().json();
+        if (metadata.authorization_response_iss_parameter_supported !== true) {
+          return response;
+        }
+
+        const headers = new Headers(response.headers);
+        headers.delete("content-encoding");
+        headers.delete("content-length");
+        headers.delete("etag");
+
+        return new Response(
+          JSON.stringify({
+            ...metadata,
+            authorization_response_iss_parameter_supported: false,
+          }),
+          {
+            status: response.status,
+            statusText: response.statusText,
+            headers,
+          },
+        );
+      },
       profile(profile) {
         return {
           id: profile.sub,

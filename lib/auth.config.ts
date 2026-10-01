@@ -1,6 +1,6 @@
 /**
  * Edge-safe auth config — no Prisma, no Node.js-only imports.
- * Used by middleware.ts (Edge runtime).
+ * Used by middleware.ts without Prisma or Node-only application modules.
  * Full auth (with Prisma) lives in lib/auth.ts (Node.js runtime only).
  */
 import type { NextAuthConfig } from "next-auth";
