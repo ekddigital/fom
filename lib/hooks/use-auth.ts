@@ -217,13 +217,14 @@ export function useAuth() {
         callbackUrl: "/",
       });
 
-      if (result?.error) {
+      if (result?.error || !result?.url) {
         return {
           success: false,
           message: "Google sign-in failed",
         };
       }
 
+      window.location.assign(result.url);
       return {
         success: true,
         message: "Successfully signed in with Google",
